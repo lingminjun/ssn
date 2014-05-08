@@ -9,6 +9,6 @@
 #ifndef ssn_ssnbase_h
 #define ssn_ssnbase_h
 
-
+#import "NSString+SSN.h"
 
 #endif

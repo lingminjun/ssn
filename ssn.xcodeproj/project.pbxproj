@@ -19,6 +19,9 @@
 		53D16408191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
 		53D16410191A629C00AD4C81 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53D1640E191A629C00AD4C81 /* InfoPlist.strings */; };
 		53D16412191A629C00AD4C81 /* ssnTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D16411191A629C00AD4C81 /* ssnTests.m */; };
+		53D16421191A674F00AD4C81 /* NSString+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D16420191A674F00AD4C81 /* NSString+SSN.m */; };
+		53D16425191A699000AD4C81 /* SSNMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D16424191A699000AD4C81 /* SSNMeta.m */; };
+		53D1642B191A77AB00AD4C81 /* SSNModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D1642A191A77AB00AD4C81 /* SSNModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +52,13 @@
 		53D1640D191A629C00AD4C81 /* ssnTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ssnTests-Info.plist"; sourceTree = "<group>"; };
 		53D1640F191A629C00AD4C81 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		53D16411191A629C00AD4C81 /* ssnTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ssnTests.m; sourceTree = "<group>"; };
+		53D1641F191A674F00AD4C81 /* NSString+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSN.h"; sourceTree = "<group>"; };
+		53D16420191A674F00AD4C81 /* NSString+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSN.m"; sourceTree = "<group>"; };
+		53D16422191A689200AD4C81 /* ssnbase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ssnbase.h; sourceTree = "<group>"; };
+		53D16423191A699000AD4C81 /* SSNMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNMeta.h; sourceTree = "<group>"; };
+		53D16424191A699000AD4C81 /* SSNMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNMeta.m; sourceTree = "<group>"; };
+		53D16429191A77AB00AD4C81 /* SSNModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNModel.h; sourceTree = "<group>"; };
+		53D1642A191A77AB00AD4C81 /* SSNModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +118,7 @@
 		53D163E9191A629C00AD4C81 /* ssn */ = {
 			isa = PBXGroup;
 			children = (
+				53D1641B191A66B500AD4C81 /* ssn */,
 				53D163F2191A629C00AD4C81 /* AppDelegate.h */,
 				53D163F3191A629C00AD4C81 /* AppDelegate.m */,
 				53D163FB191A629C00AD4C81 /* ViewController.h */,
@@ -144,6 +155,44 @@
 				53D1640E191A629C00AD4C81 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		53D1641B191A66B500AD4C81 /* ssn */ = {
+			isa = PBXGroup;
+			children = (
+				53D1641C191A670500AD4C81 /* base */,
+				53D1641D191A670500AD4C81 /* db */,
+				53D1641E191A670500AD4C81 /* net */,
+			);
+			path = ssn;
+			sourceTree = "<group>";
+		};
+		53D1641C191A670500AD4C81 /* base */ = {
+			isa = PBXGroup;
+			children = (
+				53D1641F191A674F00AD4C81 /* NSString+SSN.h */,
+				53D16420191A674F00AD4C81 /* NSString+SSN.m */,
+				53D16422191A689200AD4C81 /* ssnbase.h */,
+			);
+			path = base;
+			sourceTree = "<group>";
+		};
+		53D1641D191A670500AD4C81 /* db */ = {
+			isa = PBXGroup;
+			children = (
+				53D16423191A699000AD4C81 /* SSNMeta.h */,
+				53D16424191A699000AD4C81 /* SSNMeta.m */,
+				53D16429191A77AB00AD4C81 /* SSNModel.h */,
+				53D1642A191A77AB00AD4C81 /* SSNModel.m */,
+			);
+			path = db;
+			sourceTree = "<group>";
+		};
+		53D1641E191A670500AD4C81 /* net */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = net;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -241,9 +290,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53D16421191A674F00AD4C81 /* NSString+SSN.m in Sources */,
 				53D163FD191A629C00AD4C81 /* ViewController.m in Sources */,
+				53D1642B191A77AB00AD4C81 /* SSNModel.m in Sources */,
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
+				53D16425191A699000AD4C81 /* SSNMeta.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
