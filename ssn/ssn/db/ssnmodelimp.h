@@ -10,7 +10,7 @@
 #define ssn_ssnmodelimp_h
 
 
-/*主键一旦被赋值就不能再次赋值，再次赋值将会抛出异常，主键不支持null*/
+/*对于非临时model对象，主键一旦被赋值就不能再次赋值，再次赋值将会抛出异常，主键不支持null*/
 #define ssnimpTextPrimary(key)      /*实现string类型主键*/            SSNSynthesizePrimaryObj(key)
 #define ssnimpIntPrimary(key)       /*实现int类型主键*/               SSNSynthesizePrimaryInt(key)
 

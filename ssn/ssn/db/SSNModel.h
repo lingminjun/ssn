@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "ssnmodelimp.h"
 
+@protocol SSNModelLoadProtocol;  //数据加载协议
+
 /*
  实体中能承载的属性类型主要是sqlite能装载的数据，如int(bool),float,data,string，其他对象请不要设置为表字段
  
@@ -39,7 +41,8 @@
 
 - (void)refreshModel;//needUpdate为yes时，此方法才能刷新对象数据，否则忽略
 
-
+//给当前实例设置加载源，根据不同model类型进行区分
++ (void)setLoader:(id <SSNModelLoadProtocol>)loader;
 @end
 
 
@@ -50,6 +53,14 @@
 //取值方法，int,bool,float等基本类型采用NSNumber方式使用
 - (id)getObjectValueForKey:(NSString *)key;
 - (void)setObjectValue:(id)value forKey:(NSString *)key;
+
+@end
+
+
+@protocol SSNModelLoadProtocol <NSObject>
+
+//加载某类型实例的数据，keyPredicate意味着是主键，所以只返回一个对象
+- (NSDictionary *)modelClass:(id)cls loadDatasWithPredicate:(NSString *)keyPredicate;
 
 @end
 

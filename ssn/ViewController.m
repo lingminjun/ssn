@@ -32,6 +32,8 @@
     NSLog(@"%ld",m.age);
     NSLog(@"%f",m.hight);
     
+    m.uid = @"6666666";
+    
     NSLog(@"%p",[TestModel class]);
     NSLog(@"%@",[TestModel primaryKeys]);
     NSLog(@"%@",[TestModel valuesKeys]);

@@ -40,12 +40,12 @@ NSString *const SSNModelException = @"SSNModelException";
 {
     NSArray *_primaryKeys;
     NSArray *_valuesKeys;
+    __weak id<SSNModelLoadProtocol> _loader;
 }
 
 @property (nonatomic,strong) NSArray *primaryKeys;
 @property (nonatomic,strong) NSArray *valuesKeys;
-
-- (BOOL)containsKey:(NSString *)key;
+@property (nonatomic,weak) id<SSNModelLoadProtocol> loader;
 
 @end
 
@@ -73,6 +73,15 @@ NSString *const SSNModelException = @"SSNModelException";
 
 @property (nonatomic) BOOL hasChanged;      //数据本身有提交与永久存储数据不同的值，临时数据永远返回NO
 
++ (id <SSNModelLoadProtocol>)loader;
+- (id <SSNModelLoadProtocol>)loader;
+
+//当前model是否包此主key
++ (BOOL)modelContainedThePrimaryKey:(NSString *)key;
+
+//当前model是否包此key
++ (BOOL)modelContainedTheKey:(NSString *)key;
+
 @end
 
 
@@ -94,10 +103,10 @@ NSString *const SSNModelException = @"SSNModelException";
 }
 
 - (BOOL)isFault {
-//    if (self.meta) {
-//        <#statements#>
-//    }
-    return YES;
+    if (!self.meta) {
+        return NO;
+    }
+    return [self.meta isFault];
 }
 
 - (BOOL)needUpdate {
@@ -173,16 +182,72 @@ NSString *const SSNModelException = @"SSNModelException";
 #pragma mark SSNModel协议实现 (派生类 get set方法实现)
 //取值方法，int,bool,float等基本类型采用NSNumber方式使用
 - (id)getObjectValueForKey:(NSString *)key {//核心方法
-    return [self.vls valueForKey:key];
+    
+    id v = [self.vls valueForKey:key];
+    
+    //取到数据直接返回
+    if (v) {
+        return v;
+    }
+    
+    //临时数据
+    if (!self.meta) {
+        return v;
+    }
+    
+    //非临时数据，看元数据是否加载
+    if (![self.meta isFault]) {//已经加载
+        [self.vls setDictionary:self.meta.vls];
+        return [self.vls valueForKey:key];
+    }
+    
+    //还未加载,则加载数据
+    id <SSNModelLoadProtocol> theLoader = [self loader];
+    if (theLoader) {
+        NSDictionary *datas = [theLoader modelClass:[self class] loadDatasWithPredicate:[self keyPredicate]];
+        if (datas) {
+            [SSNMeta loadMeta:self.meta datas:datas];
+            [self.vls setDictionary:datas];
+            v = [self.vls valueForKey:key];
+        }
+    }
+    
+    return v;
 }
 
 - (void)setObjectValue:(id)value forKey:(NSString *)key {//核心方法
     
-//    if (<#condition#>) {
-//        <#statements#>
-//    }
+    //临时数据，直接设置
+    if (!self.meta) {
+        [self.vls setValue:value forKey:key];
+        self.hasChanged = YES;
+        return ;
+    }
     
+    //非临时数据，先加载值
+    id v = [self getObjectValueForKey:key];
+    if (!v || [v isKindOfClass:[NSNull class]]) {//数据库中还没有对应字段
+        [self.vls setValue:value forKey:key];
+        self.hasChanged = YES;
+        return ;
+    }
+    
+    //判断是否相等，如果相等，就不要再设置了
+    BOOL isEqual = [value compare:v];
+    if (isEqual) {
+        return ;
+    }
+    
+    //是否为主键，如果是主键，直接抛出异常
+    if ([[self class] modelContainedThePrimaryKey:key]) {
+        [NSException raise: SSNModelException
+                    format: @"%@对象主键%@是不可更改的",self,key];
+        return ;
+    }
+    
+    //不是主键，且不相等，覆盖
     [self.vls setValue:value forKey:key];
+    self.hasChanged = YES;
 }
 
 
@@ -193,6 +258,23 @@ NSString *const SSNModelException = @"SSNModelException";
         share = [[NSMutableDictionary alloc] init];
     });
     return share;
+}
+
++ (void)setLoader:(id <SSNModelLoadProtocol>)loader {
+    NSDictionary *dic = [self modelsValuesKeys];
+    NSString *cls = [NSString stringWithUTF8Format:"%p",self];
+    SSNModelKeys *keysObj = [dic objectForKey:cls];
+    keysObj.loader = loader;
+}
+
++ (id <SSNModelLoadProtocol>)loader {
+    NSDictionary *dic = [self modelsValuesKeys];
+    NSString *cls = [NSString stringWithUTF8Format:"%p",self];
+    SSNModelKeys *keysObj = [dic objectForKey:cls];
+    return keysObj.loader;
+}
+- (id <SSNModelLoadProtocol>)loader {
+    return [[self class] loader];
 }
 
 + (NSArray *)primaryKeys {
@@ -226,12 +308,20 @@ NSString *const SSNModelException = @"SSNModelException";
     keysObj.primaryKeys = [pkeys copy];
 }
 
+//当前model是否包此主key
++ (BOOL)modelContainedThePrimaryKey:(NSString *)key {
+    NSMutableDictionary *dic = [self modelsValuesKeys];
+    NSString *cls = [NSString stringWithUTF8Format:"%p",self];
+    SSNModelKeys *keys = [dic objectForKey:cls];
+    return [keys.primaryKeys containsObject:key];
+}
+
 //当前model是否包此key
 + (BOOL)modelContainedTheKey:(NSString *)key {
     NSMutableDictionary *dic = [self modelsValuesKeys];
     NSString *cls = [NSString stringWithUTF8Format:"%p",self];
     SSNModelKeys *keys = [dic objectForKey:cls];
-    return [keys containsKey:key];
+    return [keys.valuesKeys containsObject:key];
 }
 
 + (void)initialize {
@@ -370,10 +460,7 @@ NSString *const SSNModelException = @"SSNModelException";
 
 @synthesize primaryKeys = _primaryKeys;
 @synthesize valuesKeys = _valuesKeys;
-
-- (BOOL)containsKey:(NSString *)key {
-    return [self.valuesKeys containsObject:key];
-}
+@synthesize loader = _loader;
 
 @end
 
