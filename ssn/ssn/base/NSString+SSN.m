@@ -177,4 +177,43 @@
     return NO;
 }
 
+#pragma mark predicate
++ (NSString *)predicateValue:(id)value key:(NSString *)key;
+ {
+    if ([value isKindOfClass:[NSString class]]) {
+        return [NSString stringWithUTF8Format:"%s = '%s'",[key UTF8String],[(NSString *)value UTF8String]];
+    }
+    else if (value == nil || [value isEqual:[NSNull null]]) {
+        return [NSString stringWithUTF8Format:"%s IS NULL",[key UTF8String]];
+    }
+    else {
+        return [NSString stringWithUTF8Format:"%s = %s",[key UTF8String],[[(NSObject *)value description] UTF8String]];
+    }
+}
+
++ (NSString *)predicateValues:(NSArray *)values keys:(NSArray *)keys
+{
+    NSMutableString * string = [NSMutableString stringWithCapacity:1];
+    NSInteger index = 0;
+    const NSUInteger values_count = [values count];
+    for (NSString * key in keys) {
+        
+        id value = nil;
+        if (index < values_count) {
+            value = [values objectAtIndex:index];
+        }
+        
+        if (index) {
+            [string appendString:@" AND "];
+        }
+        
+        NSString * temString = [self predicateValue:value key:key];
+        [string appendString:temString];
+        
+        index++;
+    }
+    
+    return string;
+}
+
 @end

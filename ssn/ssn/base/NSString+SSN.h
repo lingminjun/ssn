@@ -33,4 +33,9 @@
 
 + (BOOL)isString:(NSString *)str1 equalToString:(NSString *)str2;//除了字符串相等外，如下情况：nil == nil，"" == nil也相等
 
+//对Predicate支持,顺序按照keys的顺序，values 少于 keys时，用null替代
++ (NSString *)predicateValue:(id)value key:(NSString *)key;
+
++ (NSString *)predicateValues:(NSArray *)values keys:(NSArray *)keys;
+
 @end

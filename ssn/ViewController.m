@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "TestModel.h"
 
 @interface ViewController ()
 
@@ -18,6 +19,24 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    TestModel *m = [[TestModel alloc] init];
+    m.name = @"lingminjun";
+    m.uid = @"3344422";
+    m.age = 56;
+    m.hight = 16.5f;
+    m.type = 0;
+//    [m ssn_model_set_on_text:@"ddd"];
+//    m.text = @"ttttt";
+    NSLog(@"%@",m.name);
+    NSLog(@"%@",m.uid);
+    NSLog(@"%ld",m.age);
+    NSLog(@"%f",m.hight);
+    
+    NSLog(@"%p",[TestModel class]);
+    NSLog(@"%@",[TestModel primaryKeys]);
+    NSLog(@"%@",[TestModel valuesKeys]);
+    
+    NSLog(@"%@",[m keyPredicate]);
 }
 
 - (void)didReceiveMemoryWarning

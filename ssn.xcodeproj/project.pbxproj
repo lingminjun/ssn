@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		53123F98191D25E10012A900 /* TestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53123F97191D25E10012A900 /* TestModel.m */; };
 		53D163E4191A629C00AD4C81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E3191A629C00AD4C81 /* Foundation.framework */; };
 		53D163E6191A629C00AD4C81 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E5191A629C00AD4C81 /* CoreGraphics.framework */; };
 		53D163E8191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
@@ -35,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		53123F96191D25E10012A900 /* TestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestModel.h; sourceTree = "<group>"; };
+		53123F97191D25E10012A900 /* TestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
 		53D163E0191A629C00AD4C81 /* ssn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ssn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D163E3191A629C00AD4C81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		53D163E5191A629C00AD4C81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -59,6 +62,7 @@
 		53D16424191A699000AD4C81 /* SSNMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNMeta.m; sourceTree = "<group>"; };
 		53D16429191A77AB00AD4C81 /* SSNModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNModel.h; sourceTree = "<group>"; };
 		53D1642A191A77AB00AD4C81 /* SSNModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNModel.m; sourceTree = "<group>"; };
+		53D8F9D1191DDFE00048FF65 /* ssnmodelimp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ssnmodelimp.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +128,8 @@
 				53D163FB191A629C00AD4C81 /* ViewController.h */,
 				53D163FC191A629C00AD4C81 /* ViewController.m */,
 				53D163EA191A629C00AD4C81 /* Supporting Files */,
+				53123F96191D25E10012A900 /* TestModel.h */,
+				53123F97191D25E10012A900 /* TestModel.m */,
 			);
 			path = ssn;
 			sourceTree = "<group>";
@@ -184,6 +190,7 @@
 				53D16424191A699000AD4C81 /* SSNMeta.m */,
 				53D16429191A77AB00AD4C81 /* SSNModel.h */,
 				53D1642A191A77AB00AD4C81 /* SSNModel.m */,
+				53D8F9D1191DDFE00048FF65 /* ssnmodelimp.h */,
 			);
 			path = db;
 			sourceTree = "<group>";
@@ -295,6 +302,7 @@
 				53D1642B191A77AB00AD4C81 /* SSNModel.m in Sources */,
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
+				53123F98191D25E10012A900 /* TestModel.m in Sources */,
 				53D16425191A699000AD4C81 /* SSNMeta.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -494,6 +502,7 @@
 				53D16417191A629C00AD4C81 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		53D16418191A629C00AD4C81 /* Build configuration list for PBXNativeTarget "ssnTests" */ = {
 			isa = XCConfigurationList;
@@ -502,6 +511,7 @@
 				53D1641A191A629C00AD4C81 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
