@@ -20,9 +20,9 @@
 		53D16408191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
 		53D16410191A629C00AD4C81 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53D1640E191A629C00AD4C81 /* InfoPlist.strings */; };
 		53D16412191A629C00AD4C81 /* ssnTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D16411191A629C00AD4C81 /* ssnTests.m */; };
-		53D16421191A674F00AD4C81 /* NSString+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D16420191A674F00AD4C81 /* NSString+SSN.m */; };
-		53D16425191A699000AD4C81 /* SSNMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D16424191A699000AD4C81 /* SSNMeta.m */; };
-		53D1642B191A77AB00AD4C81 /* SSNModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D1642A191A77AB00AD4C81 /* SSNModel.m */; };
+		53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB166191FBB6000BEB29D /* NSString+SSN.m */; };
+		53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB169191FBB6000BEB29D /* SSNMeta.m */; };
+		53ECB16E191FBB6000BEB29D /* SSNModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB16A191FBB6000BEB29D /* SSNModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,14 +55,14 @@
 		53D1640D191A629C00AD4C81 /* ssnTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ssnTests-Info.plist"; sourceTree = "<group>"; };
 		53D1640F191A629C00AD4C81 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		53D16411191A629C00AD4C81 /* ssnTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ssnTests.m; sourceTree = "<group>"; };
-		53D1641F191A674F00AD4C81 /* NSString+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSN.h"; sourceTree = "<group>"; };
-		53D16420191A674F00AD4C81 /* NSString+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSN.m"; sourceTree = "<group>"; };
-		53D16422191A689200AD4C81 /* ssnbase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ssnbase.h; sourceTree = "<group>"; };
-		53D16423191A699000AD4C81 /* SSNMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNMeta.h; sourceTree = "<group>"; };
-		53D16424191A699000AD4C81 /* SSNMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNMeta.m; sourceTree = "<group>"; };
-		53D16429191A77AB00AD4C81 /* SSNModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNModel.h; sourceTree = "<group>"; };
-		53D1642A191A77AB00AD4C81 /* SSNModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNModel.m; sourceTree = "<group>"; };
-		53D8F9D1191DDFE00048FF65 /* ssnmodelimp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ssnmodelimp.h; sourceTree = "<group>"; };
+		53ECB15E191FBB6000BEB29D /* NSString+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSN.h"; sourceTree = "<group>"; };
+		53ECB15F191FBB6000BEB29D /* ssnbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnbase.h; sourceTree = "<group>"; };
+		53ECB161191FBB6000BEB29D /* SSNModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNModel.h; sourceTree = "<group>"; };
+		53ECB162191FBB6000BEB29D /* ssnmodelimp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnmodelimp.h; sourceTree = "<group>"; };
+		53ECB166191FBB6000BEB29D /* NSString+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSN.m"; sourceTree = "<group>"; };
+		53ECB168191FBB6000BEB29D /* SSNMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNMeta.h; sourceTree = "<group>"; };
+		53ECB169191FBB6000BEB29D /* SSNMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNMeta.m; sourceTree = "<group>"; };
+		53ECB16A191FBB6000BEB29D /* SSNModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,36 +166,76 @@
 		53D1641B191A66B500AD4C81 /* ssn */ = {
 			isa = PBXGroup;
 			children = (
-				53D1641C191A670500AD4C81 /* base */,
-				53D1641D191A670500AD4C81 /* db */,
-				53D1641E191A670500AD4C81 /* net */,
+				53ECB15C191FBB6000BEB29D /* inc */,
+				53ECB164191FBB6000BEB29D /* src */,
 			);
 			path = ssn;
 			sourceTree = "<group>";
 		};
-		53D1641C191A670500AD4C81 /* base */ = {
+		53ECB15C191FBB6000BEB29D /* inc */ = {
 			isa = PBXGroup;
 			children = (
-				53D1641F191A674F00AD4C81 /* NSString+SSN.h */,
-				53D16420191A674F00AD4C81 /* NSString+SSN.m */,
-				53D16422191A689200AD4C81 /* ssnbase.h */,
+				53ECB15D191FBB6000BEB29D /* base */,
+				53ECB160191FBB6000BEB29D /* db */,
+				53ECB163191FBB6000BEB29D /* net */,
+			);
+			path = inc;
+			sourceTree = "<group>";
+		};
+		53ECB15D191FBB6000BEB29D /* base */ = {
+			isa = PBXGroup;
+			children = (
+				53ECB15E191FBB6000BEB29D /* NSString+SSN.h */,
+				53ECB15F191FBB6000BEB29D /* ssnbase.h */,
 			);
 			path = base;
 			sourceTree = "<group>";
 		};
-		53D1641D191A670500AD4C81 /* db */ = {
+		53ECB160191FBB6000BEB29D /* db */ = {
 			isa = PBXGroup;
 			children = (
-				53D16423191A699000AD4C81 /* SSNMeta.h */,
-				53D16424191A699000AD4C81 /* SSNMeta.m */,
-				53D16429191A77AB00AD4C81 /* SSNModel.h */,
-				53D1642A191A77AB00AD4C81 /* SSNModel.m */,
-				53D8F9D1191DDFE00048FF65 /* ssnmodelimp.h */,
+				53ECB161191FBB6000BEB29D /* SSNModel.h */,
+				53ECB162191FBB6000BEB29D /* ssnmodelimp.h */,
 			);
 			path = db;
 			sourceTree = "<group>";
 		};
-		53D1641E191A670500AD4C81 /* net */ = {
+		53ECB163191FBB6000BEB29D /* net */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = net;
+			sourceTree = "<group>";
+		};
+		53ECB164191FBB6000BEB29D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				53ECB165191FBB6000BEB29D /* base */,
+				53ECB167191FBB6000BEB29D /* db */,
+				53ECB16B191FBB6000BEB29D /* net */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		53ECB165191FBB6000BEB29D /* base */ = {
+			isa = PBXGroup;
+			children = (
+				53ECB166191FBB6000BEB29D /* NSString+SSN.m */,
+			);
+			path = base;
+			sourceTree = "<group>";
+		};
+		53ECB167191FBB6000BEB29D /* db */ = {
+			isa = PBXGroup;
+			children = (
+				53ECB168191FBB6000BEB29D /* SSNMeta.h */,
+				53ECB169191FBB6000BEB29D /* SSNMeta.m */,
+				53ECB16A191FBB6000BEB29D /* SSNModel.m */,
+			);
+			path = db;
+			sourceTree = "<group>";
+		};
+		53ECB16B191FBB6000BEB29D /* net */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -297,13 +337,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53D16421191A674F00AD4C81 /* NSString+SSN.m in Sources */,
 				53D163FD191A629C00AD4C81 /* ViewController.m in Sources */,
-				53D1642B191A77AB00AD4C81 /* SSNModel.m in Sources */,
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
+				53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */,
+				53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
+				53ECB16E191FBB6000BEB29D /* SSNModel.m in Sources */,
 				53123F98191D25E10012A900 /* TestModel.m in Sources */,
-				53D16425191A699000AD4C81 /* SSNMeta.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

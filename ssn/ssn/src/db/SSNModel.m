@@ -40,12 +40,12 @@ NSString *const SSNModelException = @"SSNModelException";
 {
     NSArray *_primaryKeys;
     NSArray *_valuesKeys;
-    __weak id<SSNModelLoadProtocol> _loader;
+    __weak id<SSNModelManagerProtocol> _manager;
 }
 
 @property (nonatomic,strong) NSArray *primaryKeys;
 @property (nonatomic,strong) NSArray *valuesKeys;
-@property (nonatomic,weak) id<SSNModelLoadProtocol> loader;
+@property (nonatomic,weak) id<SSNModelManagerProtocol> manager;
 
 @end
 
@@ -73,8 +73,8 @@ NSString *const SSNModelException = @"SSNModelException";
 
 @property (nonatomic) BOOL hasChanged;      //数据本身有提交与永久存储数据不同的值，临时数据永远返回NO
 
-+ (id <SSNModelLoadProtocol>)loader;
-- (id <SSNModelLoadProtocol>)loader;
++ (id <SSNModelManagerProtocol>)manager;
+- (id <SSNModelManagerProtocol>)manager;
 
 //当前model是否包此主key
 + (BOOL)modelContainedThePrimaryKey:(NSString *)key;
@@ -123,6 +123,14 @@ NSString *const SSNModelException = @"SSNModelException";
     }
     
     return NO;
+}
+
+- (BOOL)isDeleted {
+    if ([self isTemporary]) {
+        return NO;
+    }
+    
+    return self.meta.isDeleted;
 }
 
 - (NSString *)keyPredicate {
@@ -178,6 +186,99 @@ NSString *const SSNModelException = @"SSNModelException";
     return self;
 }
 
+#pragma mark 与永久库操作
+//db 操作
+- (BOOL)insertToStore {
+    NSString *predicate = [self keyPredicate];
+    if ([predicate length] == 0) {
+        return NO;
+    }
+    
+    BOOL result = [[self manager] model:self insertDatas:self.vls forPredicate:predicate];
+    if (!result) {
+        return NO;
+    }
+    
+    //插入成功，必须保存meta
+    if (self.meta) {//存在meta，需要，更新信息
+        [SSNMeta loadMeta:self.meta datas:self.vls];
+        self.opt = self.meta.opt;
+    }
+    else {//不存在
+        self.meta = SSNMetaFactory([self class], predicate);
+        [SSNMeta loadMeta:self.meta datas:self.vls];
+        self.opt = self.meta.opt;
+    }
+    
+    return result;
+}
+
+- (BOOL)updateToStore {
+    if ([self isTemporary]) {
+        return NO;
+    }
+    
+    if (![self hasChanged]) {
+        return NO;
+    }
+    
+    NSString *predicate = [self keyPredicate];
+    if ([predicate length] == 0) {
+        return NO;
+    }
+    
+    NSArray *pKeys = [[self class] primaryKeys];
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:self.vls];
+    [dic removeObjectsForKeys:pKeys];
+    
+    BOOL result = [[self manager] model:self updateDatas:dic forPredicate:predicate];
+    if (!result) {
+        return NO;
+    }
+    
+    //插入成功，必须保存meta
+    if (self.meta) {//存在meta，需要，更新信息
+        [SSNMeta loadMeta:self.meta datas:self.vls];
+        self.opt = self.meta.opt;
+    }
+    else {//不存在
+        self.meta = SSNMetaFactory([self class], predicate);
+        [SSNMeta loadMeta:self.meta datas:self.vls];
+        self.opt = self.meta.opt;
+    }
+    self.hasChanged = NO;
+    
+    return result;
+}
+
+- (BOOL)deleteFromStore {
+    if ([self isTemporary]) {
+        return NO;
+    }
+    
+    NSString *predicate = [self keyPredicate];
+    if ([predicate length] == 0) {
+        return NO;
+    }
+    
+    BOOL result = [[self manager] model:self deleteForPredicate:predicate];
+    if (!result) {
+        return NO;
+    }
+    
+    //插入成功，必须保存meta
+    if (self.meta) {//存在meta，需要，更新信息
+        [SSNMeta deleteMeta:self.meta];
+        self.opt = self.meta.opt;
+    }
+    else {//不存在
+        self.meta = SSNMetaFactory([self class], predicate);
+        [SSNMeta deleteMeta:self.meta];
+        self.opt = self.meta.opt;
+    }
+    
+    return YES;
+}
 
 #pragma mark SSNModel协议实现 (派生类 get set方法实现)
 //取值方法，int,bool,float等基本类型采用NSNumber方式使用
@@ -202,9 +303,9 @@ NSString *const SSNModelException = @"SSNModelException";
     }
     
     //还未加载,则加载数据
-    id <SSNModelLoadProtocol> theLoader = [self loader];
-    if (theLoader) {
-        NSDictionary *datas = [theLoader modelClass:[self class] loadDatasWithPredicate:[self keyPredicate]];
+    id <SSNModelManagerProtocol> theManager = [self manager];
+    if (theManager) {
+        NSDictionary *datas = [theManager model:self loadDatasWithPredicate:[self keyPredicate]];
         if (datas) {
             [SSNMeta loadMeta:self.meta datas:datas];
             [self.vls setDictionary:datas];
@@ -260,21 +361,21 @@ NSString *const SSNModelException = @"SSNModelException";
     return share;
 }
 
-+ (void)setLoader:(id <SSNModelLoadProtocol>)loader {
++ (void)setManager:(id<SSNModelManagerProtocol>)manager {
     NSDictionary *dic = [self modelsValuesKeys];
     NSString *cls = [NSString stringWithUTF8Format:"%p",self];
     SSNModelKeys *keysObj = [dic objectForKey:cls];
-    keysObj.loader = loader;
+    keysObj.manager = manager;
 }
 
-+ (id <SSNModelLoadProtocol>)loader {
++ (id <SSNModelManagerProtocol>)manager {
     NSDictionary *dic = [self modelsValuesKeys];
     NSString *cls = [NSString stringWithUTF8Format:"%p",self];
     SSNModelKeys *keysObj = [dic objectForKey:cls];
-    return keysObj.loader;
+    return keysObj.manager;
 }
-- (id <SSNModelLoadProtocol>)loader {
-    return [[self class] loader];
+- (id <SSNModelManagerProtocol>)manager {
+    return [[self class] manager];
 }
 
 + (NSArray *)primaryKeys {
@@ -434,6 +535,24 @@ NSString *const SSNModelException = @"SSNModelException";
     }
 }
 
+#pragma mark 校验方法重载
+- (BOOL)isEqual:(SSNModel *)other {
+    
+    if ([other isKindOfClass:[SSNModel class]]) {
+        return NO;
+    }
+    
+    if (self.meta && self.meta == other.meta) {
+        return YES;
+    }
+    
+    return [self.keyPredicate isEqualToString:other.keyPredicate];
+}
+
+- (NSUInteger)hash {
+    return [self.keyPredicate hash];
+}
+
 #pragma mark 支持拷贝
 - (SSNModel *)copyWithZone:(NSZone *)zone {
     SSNModel *cp = [[[self class] alloc] init];
@@ -460,7 +579,7 @@ NSString *const SSNModelException = @"SSNModelException";
 
 @synthesize primaryKeys = _primaryKeys;
 @synthesize valuesKeys = _valuesKeys;
-@synthesize loader = _loader;
+@synthesize manager = _manager;
 
 @end
 

@@ -20,6 +20,7 @@ static pthread_mutex_t meta_mutex;
 @property (nonatomic,strong) id tcls;
 @property (nonatomic) NSUInteger opt;
 @property (nonatomic) BOOL isFault;
+@property (nonatomic) BOOL isDeleted;
 
 @end
 
@@ -31,6 +32,7 @@ static pthread_mutex_t meta_mutex;
 @synthesize tcls = _tcls;
 @synthesize opt = _opt;
 @synthesize isFault = _isFault;
+@synthesize isDeleted = _isDeleted;
 
 #pragma mark 实现Meta 工程
 + (NSMutableDictionary *)metaPool {
@@ -110,6 +112,8 @@ static pthread_mutex_t meta_mutex;
     
     [meta.vls setDictionary:datas];
     meta.isFault = NO;
+    meta.opt = meta.opt + 1;
+    meta.isDeleted = NO;
     
     return YES;
 }
@@ -125,7 +129,19 @@ static pthread_mutex_t meta_mutex;
     }
     
     [meta.vls setDictionary:keyDatas];
+    meta.opt = meta.opt + 1;
+    meta.isDeleted = NO;
     
+    return YES;
+}
+
++ (BOOL)deleteMeta:(SSNMeta *)meta {
+    if (meta.isDeleted) {
+        return NO;
+    }
+    
+    meta.isDeleted = YES;
+    meta.opt = meta.opt + 1;
     return YES;
 }
 
