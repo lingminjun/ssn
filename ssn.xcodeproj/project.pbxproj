@@ -23,6 +23,9 @@
 		53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB166191FBB6000BEB29D /* NSString+SSN.m */; };
 		53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB169191FBB6000BEB29D /* SSNMeta.m */; };
 		53ECB16E191FBB6000BEB29D /* SSNModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB16A191FBB6000BEB29D /* SSNModel.m */; };
+		53ECB171191FBDE900BEB29D /* SSNDataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB16F191FBDE900BEB29D /* SSNDataBase.m */; };
+		53ECB172191FBDE900BEB29D /* SSNTableColumnInfo+TableDefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB170191FBDE900BEB29D /* SSNTableColumnInfo+TableDefined.m */; };
+		53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +66,11 @@
 		53ECB168191FBB6000BEB29D /* SSNMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNMeta.h; sourceTree = "<group>"; };
 		53ECB169191FBB6000BEB29D /* SSNMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNMeta.m; sourceTree = "<group>"; };
 		53ECB16A191FBB6000BEB29D /* SSNModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNModel.m; sourceTree = "<group>"; };
+		53ECB16F191FBDE900BEB29D /* SSNDataBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SSNDataBase.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		53ECB170191FBDE900BEB29D /* SSNTableColumnInfo+TableDefined.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "SSNTableColumnInfo+TableDefined.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		53ECB173191FBDF300BEB29D /* SSNDataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDataBase.h; sourceTree = "<group>"; };
+		53ECB174191FBDF300BEB29D /* SSNTableColumnInfo+TableDefined.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "SSNTableColumnInfo+TableDefined.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		53ECB175191FC11500BEB29D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */,
 				53D163E6191A629C00AD4C81 /* CoreGraphics.framework in Frameworks */,
 				53D163E8191A629C00AD4C81 /* UIKit.framework in Frameworks */,
 				53D163E4191A629C00AD4C81 /* Foundation.framework in Frameworks */,
@@ -111,6 +120,7 @@
 		53D163E2191A629C00AD4C81 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				53ECB175191FC11500BEB29D /* libsqlite3.dylib */,
 				53D163E3191A629C00AD4C81 /* Foundation.framework */,
 				53D163E5191A629C00AD4C81 /* CoreGraphics.framework */,
 				53D163E7191A629C00AD4C81 /* UIKit.framework */,
@@ -194,6 +204,8 @@
 		53ECB160191FBB6000BEB29D /* db */ = {
 			isa = PBXGroup;
 			children = (
+				53ECB173191FBDF300BEB29D /* SSNDataBase.h */,
+				53ECB174191FBDF300BEB29D /* SSNTableColumnInfo+TableDefined.h */,
 				53ECB161191FBB6000BEB29D /* SSNModel.h */,
 				53ECB162191FBB6000BEB29D /* ssnmodelimp.h */,
 			);
@@ -228,6 +240,8 @@
 		53ECB167191FBB6000BEB29D /* db */ = {
 			isa = PBXGroup;
 			children = (
+				53ECB16F191FBDE900BEB29D /* SSNDataBase.m */,
+				53ECB170191FBDE900BEB29D /* SSNTableColumnInfo+TableDefined.m */,
 				53ECB168191FBB6000BEB29D /* SSNMeta.h */,
 				53ECB169191FBB6000BEB29D /* SSNMeta.m */,
 				53ECB16A191FBB6000BEB29D /* SSNModel.m */,
@@ -339,9 +353,11 @@
 			files = (
 				53D163FD191A629C00AD4C81 /* ViewController.m in Sources */,
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
+				53ECB171191FBDE900BEB29D /* SSNDataBase.m in Sources */,
 				53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */,
 				53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
+				53ECB172191FBDE900BEB29D /* SSNTableColumnInfo+TableDefined.m in Sources */,
 				53ECB16E191FBB6000BEB29D /* SSNModel.m in Sources */,
 				53123F98191D25E10012A900 /* TestModel.m in Sources */,
 			);

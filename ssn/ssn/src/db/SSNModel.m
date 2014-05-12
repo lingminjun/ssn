@@ -55,7 +55,7 @@ NSString *const SSNModelException = @"SSNModelException";
 @interface SSNModel () <SSNModel>
 {
     SSNMeta * _meta;            //源数据
-    NSMutableDictionary * _vls; //数据存储
+    NSMutableDictionary * _vls; //数据存储,对应数据表（关系存储keyPredicate字段）
     NSString *_keyPredicate;    //对象主键
     
     //操作数
@@ -67,6 +67,7 @@ NSString *const SSNModelException = @"SSNModelException";
 
 @property (nonatomic,strong) SSNMeta * meta;
 @property (nonatomic,strong) NSMutableDictionary *vls;
+@property (nonatomic,strong) NSMutableDictionary *rvls;
 @property (nonatomic,strong) NSString *keyPredicate;
 
 @property (nonatomic) NSUInteger opt;
@@ -75,6 +76,8 @@ NSString *const SSNModelException = @"SSNModelException";
 
 + (id <SSNModelManagerProtocol>)manager;
 - (id <SSNModelManagerProtocol>)manager;
+
++ (void)setKeys:(NSArray *)keys primaryKeys:(NSArray *)pkeys;
 
 //当前model是否包此主key
 + (BOOL)modelContainedThePrimaryKey:(NSString *)key;
@@ -283,6 +286,7 @@ NSString *const SSNModelException = @"SSNModelException";
 #pragma mark SSNModel协议实现 (派生类 get set方法实现)
 //取值方法，int,bool,float等基本类型采用NSNumber方式使用
 - (id)getObjectValueForKey:(NSString *)key {//核心方法
+    NSAssert([key length], @"不能传入没有意义key");
     
     id v = [self.vls valueForKey:key];
     
@@ -318,6 +322,8 @@ NSString *const SSNModelException = @"SSNModelException";
 
 - (void)setObjectValue:(id)value forKey:(NSString *)key {//核心方法
     
+    NSAssert([key length], @"不能传入没有意义key");
+    
     //临时数据，直接设置
     if (!self.meta) {
         [self.vls setValue:value forKey:key];
@@ -334,7 +340,7 @@ NSString *const SSNModelException = @"SSNModelException";
     }
     
     //判断是否相等，如果相等，就不要再设置了
-    BOOL isEqual = [value compare:v];
+    BOOL isEqual = [value isEqual:v];
     if (isEqual) {
         return ;
     }

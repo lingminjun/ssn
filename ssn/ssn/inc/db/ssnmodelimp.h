@@ -71,6 +71,7 @@ SSNSynthesizeGetterFloat(pro) \
 SSNSynthesizeSetterNormalFloat(pro) \
 _Pragma("clang diagnostic pop")
 
+
 #define SSNSynthesizeGetterObj(key) \
 - (id) key { \
     return [(id<SSNModel>)self getObjectValueForKey:@# key];\
@@ -85,7 +86,6 @@ _Pragma("clang diagnostic pop")
 - (double) key { \
     return [[(id<SSNModel>)self getObjectValueForKey:@# key] doubleValue];\
 }
-
 
 #define SSNSynthesizeSetterPrimaryObj(key) \
 - (void) ssn_model_set_op_ ## key:(id) tem_ ## key { \
@@ -116,6 +116,5 @@ _Pragma("clang diagnostic pop")
 - (void) ssn_model_set_fn_ ## key:(double) tem_ ## key { \
     [(id<SSNModel>)self setObjectValue:@(tem_ ## key) forKey:@# key];\
 }
-
 
 #endif
