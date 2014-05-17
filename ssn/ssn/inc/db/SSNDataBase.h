@@ -18,9 +18,10 @@
 @interface SSNDataBase : NSObject
 
 @property(nonatomic,copy) NSString *pathToDataBase;
-@property(nonatomic,readonly) NSUInteger currentVersion;//数据库版本
+@property(nonatomic,readonly) NSUInteger currentVersion;//数据库版本，没有初始化前currentVersion
 
-- (id)initWithPath:(NSString *)filePath version:(NSUInteger)version;//version传入nil表示取当前版本，0开始
+//如果传入的version小于当前的数据库版本，传入值将被忽略
+- (id)initWithPath:(NSString *)filePath version:(NSUInteger)version;
 
 //创建表，内部做单步数据表迁移（如果发现历史版本）
 - (void)createTable:(NSString *)tableName withDelegate:(id <SSNModelTableProtocol>)delegate;
@@ -30,11 +31,17 @@
 - (void)open;
 - (void)close;
 
-//aclass传入NULL时默认用NSDictionary代替，当执行单纯的sql时，忽略aclass，返回值将为nil,为了防止sql注入，请写入参数替换"..."
-- (NSArray *)queryObjects:(Class)aclass executeSql:(NSString *)sql, ...;//参数必须传入object对象,无法执行DDL操作，仅仅支持DML操作,请以nil结尾
-- (void)executeTransaction:(void(^)(SSNDataBase *dataBase))transaction;//执行事务，在arc中请注意传入strong参数，确保操作完成，防止循环引用
 
-//取当前数据库中信息
+#pragma sql method
+//aclass传入NULL时默认用NSDictionary代替，当执行单纯的sql时，忽略aclass，返回值将为nil,为了防止sql注入，请输入参数
+- (NSArray *)queryObjects:(Class)aclass sql:(NSString *)sql, ...;//参数必须传入object对象,无法执行DDL操作，仅仅支持DML操作,请以nil结尾
+- (void)queryObjects:(Class)aclass completion:(void (^)(NSArray *results))completion sql:(NSString *)sql, ...;
+
+#pragma Transaction method
+//执行事务，在arc中请注意传入strong参数，确保操作完成，防止循环引用
+- (void)executeSync:(BOOL)sync inTransaction:(void (^)(SSNDataBase *dataBase, BOOL *rollback))block;
+
+#pragma Other API
 - (NSArray *)columnsForTableName:(NSString *)tableName;
 - (NSArray *)tableNames;
 

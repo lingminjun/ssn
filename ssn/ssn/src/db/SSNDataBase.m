@@ -24,6 +24,33 @@ NSString *const kSSNDBTableVersionLog        = @"db_tb_vs_lg";
 NSString *const kSSNDBTableName              = @"tbNm";  //表名字
 NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于数据库版本）
 
+NSString *const kSSNDBVersonKey              = @"_ssn_db_version";
+
+
+#if OS_OBJECT_USE_OBJC
+#undef SDDispatchQueueRelease
+#undef SDDispatchQueueSetterSementics
+#define SDDispatchQueueRelease(q)
+#define SDDispatchQueueSetterSementics strong
+#else
+#undef SDDispatchQueueRelease
+#undef SDDispatchQueueSetterSementics
+#define SDDispatchQueueRelease(q) (dispatch_release(q))
+#define SDDispatchQueueSetterSementics assign
+#endif
+
+//safe recursive dispatch_sync.
+static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t block,const void *key){
+    if (dispatch_get_specific(key)) {
+        if (block) {
+            block();
+        }
+    }
+    else {
+        dispatch_sync(queue, block);
+    }
+}
+
 #pragma -
 #pragma mark 数据表列字段定义
 @interface SSNTableColumnInfo () {
@@ -61,12 +88,24 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
 #pragma -
 #pragma mark 数据库管理类
 @interface SSNDataBase () {
-    NSString *_pathToDataBase;
-    sqlite3 *_database;
+    NSString    *_pathToDataBase;
+    NSString    *_queueSpecific;
+    sqlite3     *_database;
+    dispatch_queue_t _ioQueue;
     BOOL _isOpen;
     BOOL _transAction;
+    NSUInteger _toldVersion;
     NSUInteger _currentVersion;
+    
 }
+
+@property (nonatomic, strong) NSString    *queueSpecific;
+
+#if OS_OBJECT_USE_OBJC
+@property (nonatomic, strong) dispatch_queue_t ioQueue;
+#else 
+@property (nonatomic, readwrite) dispatch_queue_t ioQueue;
+#endif
 
 - (void)raiseSqliteException:(NSString *)errorMessage;
 - (NSArray *)columnNamesForStatement:(sqlite3_stmt *)statement;
@@ -95,6 +134,9 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
 - (NSInteger)versionForTableName:(NSString *)tableName;//当前数据表的版本
 - (void)removeVersionForTableName:(NSString *)tableName;//删除表版本记录
 
+- (void)saveDataBaseVersion:(NSUInteger)version;
+- (NSUInteger)dataBaseVersion;
+
 
 - (void)createTableTemplateInfoTable;
 - (void)saveTableColumns:(NSArray *)cols forTemplateName:(NSString *)tableName dataBaseVersion:(NSInteger)version;
@@ -105,6 +147,10 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
 - (NSArray *)executeSql:(NSString *)sql;
 - (NSArray *)queryObjects:(Class)aclass executeSql:(NSString *)sql arguments:(NSArray *)arguments;
 
+
+//
+//- (void)
+
 @end
 
 
@@ -113,13 +159,61 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
 @synthesize pathToDataBase = _pathToDataBase;
 @synthesize currentVersion = _currentVersion;
 
+@synthesize queueSpecific = _queueSpecific;
+@synthesize ioQueue = _ioQueue;
+
+- (void)setIoQueue:(dispatch_queue_t)queue {
+#if OS_OBJECT_USE_OBJC
+    _ioQueue = queue;
+#else
+    if (queue) {
+        dispatch_retain(queue);
+    }
+    
+    if (_ioQueue) {
+        dispatch_release(_ioQueue);
+    }
+    
+    _ioQueue = queue;
+#endif
+}
+
+- (dispatch_queue_t)ioQueue {
+    if (_ioQueue) {
+        return _ioQueue;
+    }
+    
+    self.ioQueue  = dispatch_queue_create([self.queueSpecific UTF8String], DISPATCH_QUEUE_SERIAL);
+    
+    dispatch_queue_t high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH,0);
+    dispatch_set_target_queue(_ioQueue,high);
+    dispatch_queue_set_specific(_ioQueue, (__bridge const void *)self.queueSpecific, (__bridge void *)self.queueSpecific, NULL);
+    return _ioQueue;
+}
+
 - (id)initWithPath:(NSString *)filePath version:(NSUInteger)version
 {
     if (self = [super init]) {
         self.pathToDataBase = filePath;
-        _currentVersion = version;
+        self.queueSpecific=[NSString stringWithFormat:@"ssn.database.%lu.%@", (unsigned long)version, self];
+        _toldVersion = version;
     }
     return self;
+}
+
+#pragma mark 执行函数
+- (void)executeSync:(BOOL)isSync withBlock:(dispatch_block_t)block {
+    
+    if (!block) {
+        return ;
+    }
+    
+    if (isSync) {
+        ssn_dispatch_recursive_sync(self.ioQueue, block,(__bridge const void *)self.queueSpecific);
+    }
+    else {
+        dispatch_async(self.ioQueue, block);
+    }
 }
 
 #pragma -
@@ -241,6 +335,24 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
     [self executeSql:sql];
 }
 
+- (void)saveDataBaseVersion:(NSUInteger)version {
+    NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@,%@) VALUES(?,?)",
+                     kSSNDBTableVersionLog,kSSNDBTableName,kSSNDBTableVersion];
+    [self queryObjects:NULL executeSql:sql arguments:[NSArray arrayWithObjects:kSSNDBVersonKey,[NSNumber numberWithInteger:version], nil]];
+}
+
+- (NSUInteger)dataBaseVersion {
+    NSString *sql = [NSString stringWithFormat:@"SELECT %@ FROM %@ WHERE %@ = ?",
+                     kSSNDBTableVersion,kSSNDBTableVersionLog,kSSNDBTableName];
+    NSArray *v = [self queryObjects:NULL executeSql:sql arguments:[NSArray arrayWithObject:kSSNDBVersonKey]];
+    if ([v count]) {
+        return [[[v objectAtIndex:0] objectForKey:kSSNDBTableVersion] integerValue];
+    }
+    else {
+        return 0;
+    }
+}
+
 
 - (void)saveTableColumns:(NSArray *)cols forTemplateName:(NSString *)tableName dataBaseVersion:(NSInteger)version {
     NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@,%@,%@,%@,%@,%@,%@) VALUES(?,?,?,?,?,?,?)",
@@ -257,7 +369,7 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
                      ];
     NSString *v_tbaleName = [NSString stringWithFormat:@"%ld-%@",version,tableName];
     
-    [self executeTransaction:^(SSNDataBase *dataBase) {
+    [self executeSync:YES inTransaction:^(SSNDataBase *dataBase, BOOL *rollback) {
         for (SSNTableColumnInfo *col in cols) {
             [self queryObjects:NULL executeSql:sql arguments:[NSArray arrayWithObjects:v_tbaleName,
                                                               col.column,
@@ -309,11 +421,11 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
 - (void)createTable:(NSString *)tableName columns:(NSArray *)columns {
     @autoreleasepool {
         
-    NSArray *sqls = [SSNTableColumnInfo table:tableName createSqlsForColumns:columns];
-    
-    for (NSString *tem_sql in sqls) {
-        [self executeSql:tem_sql];
-    }
+        NSArray *sqls = [SSNTableColumnInfo table:tableName createSqlsForColumns:columns];
+        
+        for (NSString *tem_sql in sqls) {
+            [self executeSql:tem_sql];
+        }
     
     }
 }
@@ -328,7 +440,7 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
         templateName = tableName;
     }
     
-    @synchronized(self) {
+    dispatch_block_t block = ^{ @autoreleasepool {
     
         //获取当前表格版本
         NSUInteger dbVersion = [self versionForTableName:tableName];
@@ -345,79 +457,63 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
             respond = YES;
         }
         
-        if (dbVersion == 0) {//表示没有创建过表
-            NSArray *ary = [self tableColumnsWithTemplateName:templateName dataBaseVersion:self.currentVersion];
+        NSArray *(^t_block)(NSUInteger version,NSArray *lastAry,BOOL saveColumns) = ^(NSUInteger version,NSArray *lastAry,BOOL saveColumns) {
+            NSArray *ary = [self tableColumnsWithTemplateName:templateName dataBaseVersion:version];
             if ([ary count] == 0 && respond) {
-                ary = [delegate dataBase:self columnsForTemplateName:templateName databaseVersion:self.currentVersion];
+                ary = [delegate dataBase:self columnsForTemplateName:templateName databaseVersion:version];
             }
             
-            NSAssert([ary count], @"创建数据表 %@ 没找到表信息",tableName);
+            NSAssert([ary count], @"创建数据表 %@ 没找到%ld版本的表信息",tableName,version);
             
-            [self createTable:tableName columns:ary];
+            if (lastAry) {
+                [self mapingTable:tableName fromColumns:lastAry toColumns:ary];
+            }
+            else {
+                [self createTable:tableName columns:ary];
+            }
             
-            [self saveTableColumns:ary forTemplateName:tableName dataBaseVersion:self.currentVersion];
+            
+            if (saveColumns) {//存入新的版本值
+                [self saveTableColumns:ary forTemplateName:tableName dataBaseVersion:version];
+            }
+            
+            return ary;
+        };
+        
+        if (dbVersion == 0) {//表示没有创建过表，直接从当前版本开始创建表
+            t_block(self.currentVersion,nil,YES);
         }
         else {
             NSArray *lastCols = nil;
             
             for (NSUInteger versionIndex = dbVersion; versionIndex <= self.currentVersion; versionIndex++) {
-                
                 @autoreleasepool {
-                    NSArray *ary = [self tableColumnsWithTemplateName:templateName dataBaseVersion:versionIndex];
-                    if ([ary count] == 0 && respond) {
-                        ary = [delegate dataBase:self columnsForTemplateName:templateName databaseVersion:versionIndex];
-                    }
-                    
-                    if ([ary count]) {//如果count == 0 表示没有更新，
-                        if (lastCols) {
-                            [self mapingTable:tableName fromColumns:lastCols toColumns:ary];
-                        }
-                        else {
-                            [self createTable:tableName columns:ary];
-                        }
-                        
-                        lastCols = ary;
-                    }
+                    lastCols = t_block(versionIndex,lastCols,NO);
                 }
-                
             }
             
             //存入新的版本值，即使没有变化
             [self saveTableColumns:lastCols forTemplateName:tableName dataBaseVersion:self.currentVersion];
         }
     
-    }
+    }};
+    
+    [self executeSync:YES withBlock:block];
 }
 
 - (void)dropTable:(NSString *)tableName {
     NSString *sql = [NSString stringWithUTF8Format:"DROP TABLE %s",[tableName UTF8String]];
     
-    @synchronized(self) {
+    dispatch_block_t block = ^{
         [self queryObjects:NULL executeSql:sql arguments:nil];
         [self removeVersionForTableName:tableName];
-    }
+    };
+    
+    [self executeSync:YES withBlock:block];
 }
 
 #pragma -
 #pragma mark 数据库操作
-
-//+ (void)createTableWithDB:(MojoDatabase *)db
-//{
-//
-//  NSString *sql = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (userId TEXT, mineId TEXT, name TEXT, pinyin TEXT COLLATE NOCASE, pyIndex INTEGER, alias TEXT, aliasPinyin TEXT, avatar TEXT, iSSNTar INTEGER, lastModify TEXT, primary key(userId, mineId))", [[self class] tableName]];
-//
-//    NSString *sql = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (userId TEXT, mineId TEXT, name TEXT, pinyin TEXT COLLATE NOCASE, pyIndex INTEGER, alias TEXT, aliasPinyin TEXT, avatar TEXT, iSSNTar INTEGER, lastModify TEXT, primary key(userId, mineId))", [[self class] tableName]];
-//    [db executeSql:sql];
-//    
-//    sql = [NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS idx_pinyin ON %@(pinyin)", [[self class] tableName]];
-//    [db executeSql:sql];
-//
-//    sql = [NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS idx_pyIndex ON %@(pyIndex)", [[self class] tableName]];
-//    [db executeSql:sql];
-//[NSString stringWithFormat:@"CREATE UNIQUE INDEX IF NOT EXISTS idx_messages_MidUid ON %@(messageId, userId)", [[self class] tableName]];
-//
-//}
-
 - (void)raiseSqliteException:(NSString *)errorMessage
 {
     [NSException raise:@"SSNDatabaseSQLiteException" format:errorMessage, sqlite3_errmsg16(_database)];
@@ -514,7 +610,7 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
     //确认下路径
     [SSNDataBase insureThePath:self.pathToDataBase];
     
-    @synchronized (self) {
+    dispatch_block_t block = ^{
         // config sqlite to work with the same connection on multiple threads
         if (sqlite3_config(SQLITE_CONFIG_SERIALIZED) == SQLITE_OK) {
             //NSLog(@"Can now use sqlite on multiple threads, using the same connection");
@@ -535,21 +631,35 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
         if (_isOpen) {//创建好数据库升级表
             [self createTableVersionLogTable];
             [self createTableTemplateInfoTable];
+            
+            NSUInteger dbvs = [self dataBaseVersion];
+            if (dbvs >= _toldVersion) {
+                _currentVersion = dbvs;
+            }
+            else {
+                _currentVersion = _toldVersion;
+                [self saveDataBaseVersion:_toldVersion];
+            }
         }
-        
-    }
+    };
+    
+    [self executeSync:YES withBlock:block];
 }
 
 - (void)close {
     
-    @synchronized(self) {
+    dispatch_block_t block = ^{
         if (sqlite3_close(_database) != SQLITE_OK) {
             [self raiseSqliteException:@"Failed to close database with message '%S'."];
         }
         else {
             _isOpen = NO;
+            _currentVersion = 0;
+            
         }
-    }
+    };
+    
+    [self executeSync:YES withBlock:block];
 }
 
 - (BOOL)bindArguments:(NSArray *)arguments toStatement:(sqlite3_stmt *)statement {
@@ -646,92 +756,134 @@ NSString *const kSSNDBTableVersion           = @"vs";    //版本（不可大于
     return NO;
 }
 
-- (NSArray *)queryObjects:(Class)aclass executeSql:(NSString *)sql, ... {
+- (NSArray *)queryObjects:(Class)aclass sql:(NSString *)sql, ... {
     
     if ([SSNDataBase isDDLSQL:sql]) {
+        
+        NSAssert(YES, @"SSNDatabaseSQLiteException 此接口不支持DDL操作");
+        
         return [NSArray array];
     }
     
-    NSArray *result = nil;
+    __block NSArray *result = nil;
     @autoreleasepool {
         
-    NSMutableArray *arguments = [NSMutableArray array];
-    
-    va_list argumentList;
-    va_start(argumentList, sql);
-    id argument;
-    while ((argument = va_arg(argumentList, id))) {
-        [arguments addObject:argument];
-    }
-    va_end(argumentList);
-    
-    Class rowClass = aclass;
-    if (!rowClass) {
-        rowClass = [NSMutableDictionary class];
-    }
-    
-    if ([arguments count]) {
-        arguments = nil;
-    }
-    
-    @synchronized(self) {
-        NSArray *temResult = [self queryObjects:rowClass executeSql:sql arguments:arguments];
-        if ([temResult count]) {
-            result = [[NSMutableArray alloc] initWithArray:temResult];
+        NSMutableArray *arguments = [NSMutableArray array];
+        
+        va_list argumentList;
+        va_start(argumentList, sql);
+        id argument;
+        while ((argument = va_arg(argumentList, id))) {
+            [arguments addObject:argument];
         }
-    }
-    
+        va_end(argumentList);
+        
+        Class rowClass = aclass;
+        if (!rowClass) {
+            rowClass = [NSMutableDictionary class];
+        }
+        
+        if ([arguments count]) {
+            arguments = nil;
+        }
+        
+        dispatch_block_t block = ^{
+            result = [self queryObjects:rowClass executeSql:sql arguments:arguments];
+        };
+        
+        [self executeSync:YES withBlock:block];
     }
     
     return result;
+}
+
+- (void)queryObjects:(Class)aclass completion:(void (^)(NSArray *results))completion sql:(NSString *)sql, ... {
+    if ([SSNDataBase isDDLSQL:sql]) {
+        
+        NSAssert(YES, @"SSNDatabaseSQLiteException 此接口不支持DDL操作");
+        
+        return ;
+    }
+    
+    @autoreleasepool {
+        
+        NSMutableArray *arguments = [NSMutableArray array];
+        
+        va_list argumentList;
+        va_start(argumentList, sql);
+        id argument;
+        while ((argument = va_arg(argumentList, id))) {
+            [arguments addObject:argument];
+        }
+        va_end(argumentList);
+        
+        Class rowClass = aclass;
+        if (!rowClass) {
+            rowClass = [NSMutableDictionary class];
+        }
+        
+        if ([arguments count]) {
+            arguments = nil;
+        }
+        
+        dispatch_block_t block = ^{
+            NSArray *result = [self queryObjects:rowClass executeSql:sql arguments:arguments];
+            
+            completion(result);
+        };
+        
+        [self executeSync:NO withBlock:block];
+    }
 }
 
 - (NSArray *)executeSql:(NSString *)sql {
     return [self queryObjects:NULL executeSql:sql arguments:nil];
 }
 
-- (void)executeTransaction:(void(^)(SSNDataBase *dataBase))transaction {
+- (void)executeSync:(BOOL)sync inTransaction:(void (^)(SSNDataBase *dataBase, BOOL *rollback))block {
     
-    if (transaction) {
-        @synchronized(self) {
-            BOOL needCommit = NO;
-            if (!_transAction) {
-                needCommit = YES;
-                _transAction = YES;
-                [self executeSql:@"BEGIN IMMEDIATE TRANSACTION;"];
-            }
-            
-            transaction(self);
-            
-            if (needCommit) {
-                [self executeSql:@"COMMIT TRANSACTION;"];
-                _transAction = NO;
-            }
-        }
+    if (!block) {
+        return ;
     }
     
+    dispatch_block_t in_block = ^{
+        BOOL rollback = NO;
+        [self executeSql:@"BEGIN IMMEDIATE TRANSACTION;"];
+        
+        block(self , &rollback);
+        
+        if (rollback) {
+            [self executeSql:@"ROLLBACK TRANSACTION;"];
+        }
+        else {
+            [self executeSql:@"COMMIT TRANSACTION;"];
+        }
+    };
+    
+    [self executeSync:sync withBlock:in_block];
 }
 
 - (NSArray *)columnsForTableName:(NSString *)tableName
 {
-    NSArray *results = nil;
-    @synchronized(self) {
+    __block NSArray *results = nil;
+    [self executeSync:YES withBlock:^{
         results = [self executeSql:[NSString stringWithFormat:@"pragma table_info(%@)", tableName]];
-    }
+    }];
     return [results valueForKey:@"name"];
 }
 
 - (NSArray *)tables
 {
-    return [self executeSql:@"SELECT * FROM sqlite_master WHERE type = 'table'"];
+    __block NSArray *results = nil;
+    [self executeSync:YES withBlock:^{
+        results = [self executeSql:@"SELECT * FROM sqlite_master WHERE type = 'table'"];
+    }];
+    return results;
 }
 
 - (NSArray *)tableNames
 {
-    NSArray *tables = nil;
-    @synchronized(self) {
-        tables = [[self tables] valueForKey:@"name"];
-    }
+    NSArray *tables = [[self tables] valueForKey:@"name"];
     if ([tables count]) {
         NSMutableArray *temAry = [NSMutableArray arrayWithArray:tables];
         [temAry removeObject:kSSNDBTableTemplateHistory];
