@@ -555,18 +555,14 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
                     columnTypes:(NSArray *)columnTypes
                     columnNames:(NSArray *)columnNames
 {
-    @synchronized(row) {//需要保证单个数据完整性
+    int columnCount = sqlite3_column_count(statement);
+    
+    for (int i = 0; i < columnCount; i++) {
+        id value = [self valueFromStatement:statement column:i columnTypes:columnTypes];
         
-        int columnCount = sqlite3_column_count(statement);
-        
-        for (int i = 0; i < columnCount; i++) {
-            id value = [self valueFromStatement:statement column:i columnTypes:columnTypes];
-            
-            if (value != nil) {
-                [row setValue:value forKey:[columnNames objectAtIndex:i]];
-            }
+        if (value != nil) {
+            [row setValue:value forKey:[columnNames objectAtIndex:i]];
         }
-        
     }
 }
 
