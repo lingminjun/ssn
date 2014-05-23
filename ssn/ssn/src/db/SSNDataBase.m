@@ -512,6 +512,24 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
     [self executeSync:YES withBlock:block];
 }
 
+- (void)executeDDLSql:(NSString *)sql {
+    if ([sql length] == 0) {
+        return ;
+    }
+    
+    if (![SSNDataBase isDDLSQL:sql]) {
+        NSAssert(YES, @"SSNDatabaseSQLiteException 此接口仅仅支持DDL操作");
+        return ;
+    }
+    
+    dispatch_block_t block = ^{
+        [self queryObjects:NULL executeSql:sql arguments:nil];
+    };
+    
+    [self executeSync:YES withBlock:block];
+
+}
+
 #pragma -
 #pragma mark 数据库操作
 - (void)raiseSqliteException:(NSString *)errorMessage

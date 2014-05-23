@@ -26,6 +26,7 @@
 //创建表，内部做单步数据表迁移（如果发现历史版本）
 - (void)createTable:(NSString *)tableName withDelegate:(id <SSNModelTableProtocol>)delegate;
 - (void)dropTable:(NSString *)tableName;//如果需要删除表，请调用此方法删除
+- (void)executeDDLSql:(NSString *)sql;//此方法主要执行一些框架无法满足的DDL操作，如实现联合索引和唯一索引等
 
 - (BOOL)isOpen;
 - (void)open;
