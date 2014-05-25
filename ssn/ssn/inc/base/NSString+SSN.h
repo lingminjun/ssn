@@ -39,4 +39,10 @@
 //对Predicate支持,顺序按照keys的顺序，values 少于 keys时，用null替代 key1 = value1 AND key2 = value2 AND key3 IS NULL
 + (NSString *)predicateValues:(NSArray *)values keys:(NSArray *)keys;
 
+//对Predicate支持,顺序按照keys的顺序，
++ (NSString *)predicateKeyAndValues:(NSDictionary *)keyAndValues;
+
+//对Predicate支持,顺序按照keys的顺序，默认使用逗号分隔
++ (NSString *)predicateStringKeyAndValues:(NSDictionary *)keyAndValues componentsJoinedByString:(NSString *)separator;
+
 @end

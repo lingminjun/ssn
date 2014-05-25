@@ -37,6 +37,8 @@
 //aclass传入NULL时默认用NSDictionary代替，当执行单纯的sql时，忽略aclass，返回值将为nil,为了防止sql注入，请输入参数
 - (NSArray *)queryObjects:(Class)aclass sql:(NSString *)sql, ...;//参数必须传入object对象,无法执行DDL操作，仅仅支持DML操作,请以nil结尾
 - (void)queryObjects:(Class)aclass completion:(void (^)(NSArray *results))completion sql:(NSString *)sql, ...;
+- (NSArray *)queryObjects:(Class)aclass sql:(NSString *)sql arguments:(NSArray *)arguments;//参数必须传入object对象,无法执行DDL操作，仅仅支持DML操作,请以nil结尾
+- (void)queryObjects:(Class)aclass completion:(void (^)(NSArray *results))completion sql:(NSString *)sql arguments:(NSArray *)arguments;
 
 #pragma Transaction method
 //执行事务，在arc中请注意传入strong参数，确保操作完成，防止循环引用

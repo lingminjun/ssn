@@ -27,6 +27,11 @@
 //设置表字段，或者说是实体属性字段，key要求字母开头，可以包含字母，下划线，和数字
 + (NSArray *)primaryKeys;               //数据主键
 + (NSArray *)valuesKeys;                //对应永久存储的所有字段，包含primaryKeys
+- (NSArray *)primaryKeys;               //数据主键
+- (NSArray *)valuesKeys;                //对应永久存储的所有字段，包含primaryKeys
+
++ (NSString *)valueTypeForKey:(NSString *)valueKey;//返回{"@","i","f","v"},分别表示，oc对象，int，和float，void(未知)
+- (NSString *)valueTypeForKey:(NSString *)valueKey;//返回{"@","i","f","v"},分别表示，oc对象，int，和float，void(未知)
 
 - (NSString *)keyPredicate;             //数据存储主键组合，如：@"gid = '101' AND uid = '231890'"
 
@@ -46,6 +51,13 @@
 //给当前实例设置加载源，根据不同model类型进行区分
 + (void)setManager:(id <SSNModelManagerProtocol>)manager;
 
+/*工程方法*/
+//只有注册maneger 后，下面方法才有效
++ (instancetype)modelWithKeyPredicate:(NSString *)keyPredicate;//内部会校验其 keyPredicate的合法性
++ (instancetype)modelWithValues:(NSArray *)values keys:(NSArray *)keys;
++ (instancetype)modelWithKeyAndValues:(NSDictionary *)keyValues;
+
+/*io方法*/
 //db 操作
 - (BOOL)insertToStore;//delete的数据将调用model:updateDatas:forPredicate:方法执行
 - (BOOL)updateToStore;//非临时数据且非删除数据，并且有更改将会调用model:insertDatas:forPredicate:方法执行

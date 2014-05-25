@@ -60,6 +60,7 @@
 		53D16411191A629C00AD4C81 /* ssnTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ssnTests.m; sourceTree = "<group>"; };
 		53D4FD7E192F1AE700A934E9 /* SSNDBTableManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBTableManager.h; sourceTree = "<group>"; };
 		53D4FD81192F1B3B00A934E9 /* SSNDBTableManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBTableManager.m; sourceTree = "<group>"; };
+		53D4FD86192FABA200A934E9 /* ssndb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ssndb.h; sourceTree = "<group>"; };
 		53ECB15E191FBB6000BEB29D /* NSString+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSN.h"; sourceTree = "<group>"; };
 		53ECB15F191FBB6000BEB29D /* ssnbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnbase.h; sourceTree = "<group>"; };
 		53ECB161191FBB6000BEB29D /* SSNModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNModel.h; sourceTree = "<group>"; };
@@ -208,6 +209,7 @@
 				53ECB161191FBB6000BEB29D /* SSNModel.h */,
 				53ECB162191FBB6000BEB29D /* ssnmodelimp.h */,
 				53D4FD7E192F1AE700A934E9 /* SSNDBTableManager.h */,
+				53D4FD86192FABA200A934E9 /* ssndb.h */,
 			);
 			path = db;
 			sourceTree = "<group>";

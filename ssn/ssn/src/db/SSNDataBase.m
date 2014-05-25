@@ -121,7 +121,7 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
 - (BOOL)bindArguments:(NSArray *)arguments toStatement:(sqlite3_stmt *)statement;
 
 //目录控制
-+ (void)insureThePath:(NSString *)thePath;
++ (NSString *)insureThePath:(NSString *)thePath;
 
 + (BOOL)isDDLSQL:(NSString *)sql;//
 
@@ -218,19 +218,20 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
 
 #pragma -
 #pragma mark 路径处理
-+ (void)insureThePath:(NSString *)thePath {
++ (NSString *)insureThePath:(NSString *)thePath {
     static NSString *application_Home = nil;
+    static NSString *documentsDirectory = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         @autoreleasepool {
             NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-            NSString *documentsDirectory = [paths objectAtIndex:0];
+            documentsDirectory = [paths objectAtIndex:0];
             application_Home = [[NSString alloc] initWithString:[documentsDirectory stringByDeletingLastPathComponent]];
         }
     });
     
     if (![thePath hasPrefix:application_Home]) {//路径是合理的
-        return ;
+        thePath = [documentsDirectory stringByAppendingPathComponent:thePath];
     }
     
     @autoreleasepool {
@@ -240,6 +241,8 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
             [fileManager createDirectoryAtPath:dirPath withIntermediateDirectories:YES attributes:nil error:nil];
         }
     }
+    
+    return thePath;
 }
 
 #pragma -
@@ -518,7 +521,7 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
     }
     
     if (![SSNDataBase isDDLSQL:sql]) {
-        NSAssert(YES, @"SSNDatabaseSQLiteException 此接口仅仅支持DDL操作");
+        [NSException raise:@"SSNDatabaseSQLiteException" format:@"此接口仅仅支持DDL操作"];
         return ;
     }
     
@@ -622,7 +625,7 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
 - (void)open {
     
     //确认下路径
-    [SSNDataBase insureThePath:self.pathToDataBase];
+    self.pathToDataBase = [SSNDataBase insureThePath:self.pathToDataBase];
     
     dispatch_block_t block = ^{
         // config sqlite to work with the same connection on multiple threads
@@ -691,12 +694,42 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
         id argument = [arguments objectAtIndex:i-1];
         if([argument isKindOfClass:[NSString class]])
             sqlite3_bind_text(statement, i, [argument UTF8String], -1, SQLITE_TRANSIENT);
-        else if([argument isKindOfClass:[NSData class]])
-            sqlite3_bind_blob(statement, i, [argument bytes], (int)[argument length], SQLITE_TRANSIENT);
+        else if([argument isKindOfClass:[NSData class]]) {
+            const void *bytes = [argument bytes];
+            if (!bytes) {
+                // it's an empty NSData object, aka [NSData data].
+                // Don't pass a NULL pointer, or sqlite will bind a SQL null instead of a blob.
+                bytes = "";
+            }
+            sqlite3_bind_blob(statement, i, bytes, (int)[argument length], SQLITE_TRANSIENT);
+        }
         else if([argument isKindOfClass:[NSDate class]])
             sqlite3_bind_double(statement, i, [argument timeIntervalSince1970]);
-        else if([argument isKindOfClass:[NSNumber class]])
-            sqlite3_bind_double(statement, i, [argument doubleValue]);
+        else if([argument isKindOfClass:[NSNumber class]]) {
+            if (strcmp([argument objCType], @encode(BOOL)) == 0) {
+                sqlite3_bind_int(statement, i, ([argument boolValue] ? 1 : 0));
+            }
+            else if (strcmp([argument objCType], @encode(int)) == 0) {
+                sqlite3_bind_int64(statement, i, [argument longValue]);
+            }
+            else if (strcmp([argument objCType], @encode(long)) == 0) {
+                sqlite3_bind_int64(statement, i, [argument longValue]);
+            }
+            else if (strcmp([argument objCType], @encode(long long)) == 0) {
+                sqlite3_bind_int64(statement, i, [argument longLongValue]);
+            }
+            else if (strcmp([argument objCType], @encode(unsigned long long)) == 0) {
+                sqlite3_bind_int64(statement, i, (long long)[argument unsignedLongLongValue]);
+            }
+            else if (strcmp([argument objCType], @encode(float)) == 0) {
+                sqlite3_bind_double(statement, i, [argument floatValue]);
+            }
+            else if (strcmp([argument objCType], @encode(double)) == 0) {
+                sqlite3_bind_double(statement, i, [argument doubleValue]);
+            } else {
+                sqlite3_bind_text(statement, i, [[argument description] UTF8String], -1, SQLITE_TRANSIENT);
+            }
+        }
         else if([argument isKindOfClass:[NSNull class]])
             sqlite3_bind_null(statement, i);
         else {
@@ -774,7 +807,7 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
     
     if ([SSNDataBase isDDLSQL:sql]) {
         
-        NSAssert(YES, @"SSNDatabaseSQLiteException 此接口不支持DDL操作");
+        [NSException raise:@"SSNDatabaseSQLiteException" format:@"此接口不支持DDL操作"];
         
         return [NSArray array];
     }
@@ -814,7 +847,7 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
 - (void)queryObjects:(Class)aclass completion:(void (^)(NSArray *results))completion sql:(NSString *)sql, ... {
     if ([SSNDataBase isDDLSQL:sql]) {
         
-        NSAssert(YES, @"SSNDatabaseSQLiteException 此接口不支持DDL操作");
+        [NSException raise:@"SSNDatabaseSQLiteException" format:@"此接口不支持DDL操作"];
         
         return ;
     }
@@ -838,6 +871,59 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
         
         if ([arguments count]) {
             arguments = nil;
+        }
+        
+        dispatch_block_t block = ^{
+            NSArray *result = [self queryObjects:rowClass executeSql:sql arguments:arguments];
+            
+            completion(result);
+        };
+        
+        [self executeSync:NO withBlock:block];
+    }
+}
+
+- (NSArray *)queryObjects:(Class)aclass sql:(NSString *)sql arguments:(NSArray *)arguments
+{
+    if ([SSNDataBase isDDLSQL:sql]) {
+        
+        [NSException raise:@"SSNDatabaseSQLiteException" format:@"此接口不支持DDL操作"];
+        
+        return [NSArray array];
+    }
+    
+    __block NSArray *result = nil;
+    @autoreleasepool {
+        
+        Class rowClass = aclass;
+        if (!rowClass) {
+            rowClass = [NSMutableDictionary class];
+        }
+        
+        dispatch_block_t block = ^{
+            result = [self queryObjects:rowClass executeSql:sql arguments:arguments];
+        };
+        
+        [self executeSync:YES withBlock:block];
+    }
+    
+    return result;
+}
+
+- (void)queryObjects:(Class)aclass completion:(void (^)(NSArray *results))completion sql:(NSString *)sql arguments:(NSArray *)arguments
+{
+    if ([SSNDataBase isDDLSQL:sql]) {
+        
+        [NSException raise:@"SSNDatabaseSQLiteException" format:@"此接口不支持DDL操作"];
+        
+        return ;
+    }
+    
+    @autoreleasepool {
+        
+        Class rowClass = aclass;
+        if (!rowClass) {
+            rowClass = [NSMutableDictionary class];
         }
         
         dispatch_block_t block = ^{

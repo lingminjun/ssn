@@ -216,4 +216,52 @@
     return string;
 }
 
++ (NSString *)predicateKeyAndValues:(NSDictionary *)keyAndValues {
+    NSMutableString * string = [NSMutableString stringWithCapacity:1];
+    
+    BOOL isFirst = YES;
+    for (NSString * key in [keyAndValues allKeys]) {
+        
+        id value = [keyAndValues objectForKey:key];
+        
+        if (!isFirst) {
+            [string appendString:@" AND "];
+        }
+        
+        NSString * temString = [self predicateValue:value key:key];
+        [string appendString:temString];
+        
+        isFirst = NO;
+    }
+    
+    return string;
+
+}
+
++ (NSString *)predicateStringKeyAndValues:(NSDictionary *)keyAndValues componentsJoinedByString:(NSString *)separator {
+    NSString *sep = separator;
+    if ([sep length] == 0) {
+        sep = @",";
+    }
+    
+    NSMutableString * string = [NSMutableString stringWithCapacity:1];
+    
+    BOOL isFirst = YES;
+    for (NSString * key in [keyAndValues allKeys]) {
+        
+        id value = [keyAndValues objectForKey:key];
+        
+        if (!isFirst) {
+            [string appendString:sep];
+        }
+        
+        NSString * temString = [self predicateValue:value key:key];
+        [string appendString:temString];
+        
+        isFirst = NO;
+    }
+    
+    return string;
+}
+
 @end

@@ -40,11 +40,13 @@ NSString *const SSNModelException = @"SSNModelException";
 {
     NSArray *_primaryKeys;
     NSArray *_valuesKeys;
+    NSArray *_valuesTypes;
     __weak id<SSNModelManagerProtocol> _manager;
 }
 
 @property (nonatomic,strong) NSArray *primaryKeys;
 @property (nonatomic,strong) NSArray *valuesKeys;
+@property (nonatomic,strong) NSArray *valuesTypes;
 @property (nonatomic,weak) id<SSNModelManagerProtocol> manager;
 
 @end
@@ -150,7 +152,7 @@ NSString *const SSNModelException = @"SSNModelException";
     
     //需要检查主键是否有值
     @autoreleasepool {
-        NSArray *pKeys = [[self class] primaryKeys];
+        NSArray *pKeys = [self primaryKeys];
         NSMutableArray *values = [NSMutableArray arrayWithCapacity:1];
         BOOL notValue = NO;
         for (NSString *key in pKeys) {
@@ -192,6 +194,8 @@ NSString *const SSNModelException = @"SSNModelException";
 #pragma mark 与永久库操作
 //db 操作
 - (BOOL)insertToStore {
+    NSAssert([self manager], @"请设置%@对象管理器，设置方法调用+setManager:方法",[self class]);
+    
     NSString *predicate = [self keyPredicate];
     if ([predicate length] == 0) {
         return NO;
@@ -217,6 +221,8 @@ NSString *const SSNModelException = @"SSNModelException";
 }
 
 - (BOOL)updateToStore {
+    NSAssert([self manager], @"请设置%@对象管理器，设置方法调用+setManager:方法",[self class]);
+    
     if ([self isTemporary]) {
         return NO;
     }
@@ -230,7 +236,7 @@ NSString *const SSNModelException = @"SSNModelException";
         return NO;
     }
     
-    NSArray *pKeys = [[self class] primaryKeys];
+    NSArray *pKeys = [self primaryKeys];
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:self.vls];
     [dic removeObjectsForKeys:pKeys];
     
@@ -255,6 +261,8 @@ NSString *const SSNModelException = @"SSNModelException";
 }
 
 - (BOOL)deleteFromStore {
+    NSAssert([self manager], @"请设置%@对象管理器，设置方法调用+setManager:方法",[self class]);
+    
     if ([self isTemporary]) {
         return NO;
     }
@@ -385,6 +393,9 @@ NSString *const SSNModelException = @"SSNModelException";
 }
 
 + (NSArray *)primaryKeys {
+    
+    NSAssert([self class] != [SSNModel class], @"必须实现派生Model后此方法才有意义");
+    
     NSDictionary *dic = [self modelsValuesKeys];
     NSString *cls = [NSString stringWithUTF8Format:"%p",self];
     SSNModelKeys *keysObj = [dic objectForKey:cls];
@@ -392,10 +403,45 @@ NSString *const SSNModelException = @"SSNModelException";
 }
 
 + (NSArray *)valuesKeys {
+    
+    NSAssert([self class] != [SSNModel class], @"必须实现派生Model后此方法才有意义");
+    
     NSDictionary *dic = [self modelsValuesKeys];
     NSString *cls = [NSString stringWithUTF8Format:"%p",self];
     SSNModelKeys *keysObj = [dic objectForKey:cls];
     return keysObj.valuesKeys;
+}
+
+- (NSArray *)primaryKeys {
+    return [[self class] primaryKeys];
+}
+
+- (NSArray *)valuesKeys {
+    return [[self class] valuesKeys];
+}
+
++ (NSString *)valueTypeForKey:(NSString *)valueKey {
+    if ([valueKey length] == 0) {
+        return @"v";
+    }
+    
+    NSAssert([self class] != [SSNModel class], @"必须实现派生Model后此方法才有意义");
+    
+    NSDictionary *dic = [self modelsValuesKeys];
+    NSString *cls = [NSString stringWithUTF8Format:"%p",self];
+    SSNModelKeys *keysObj = [dic objectForKey:cls];
+    
+    NSInteger index = [keysObj.valuesKeys indexOfObject:valueKey];
+    
+    if (index < [keysObj.valuesTypes count]) {
+        return [keysObj.valuesTypes objectAtIndex:index];
+    }
+    
+    return @"v";
+}
+
+- (NSString *)valueTypeForKey:(NSString *)valueKey {
+    return [[self class] valueTypeForKey:valueKey];
 }
 
 //设置表字段，或者说是实体属性字段
@@ -577,6 +623,91 @@ NSString *const SSNModelException = @"SSNModelException";
     }
 }
 
+#pragma - mark 工程方法实现
++ (instancetype)modelWithKeyPredicate:(NSString *)keyPredicate {
+    NSAssert([self manager], @"请设置%@对象管理器，设置方法调用+setManager:方法",[self class]);
+    
+    //简单校验keyPredicate
+    BOOL notKey = NO;
+    for (NSString *key in [self primaryKeys]) {
+        if ([keyPredicate rangeOfString:key].length == 0) {
+            notKey = YES;
+            break ;
+        }
+    }
+    
+    if (notKey) {
+        return nil;
+    }
+    
+    SSNModel *m = [[[self class] alloc] init];
+    m.keyPredicate = keyPredicate;
+    m.meta = SSNMetaFactory([self class], keyPredicate);
+    
+    return m;
+}
+
++ (instancetype)modelWithValues:(NSArray *)values keys:(NSArray *)keys {
+    NSAssert([self manager], @"请设置%@对象管理器，设置方法调用+setManager:方法",[self class]);
+    
+    //简单校验keyPredicate
+    NSSet *kset = [NSSet setWithArray:keys];
+    NSSet *pset = [NSSet setWithArray:[self primaryKeys]];
+    
+    if (![pset isSubsetOfSet:kset]) {
+        return nil;
+    }
+
+    NSString *keyPredicate = [NSString predicateValues:values keys:keys];
+    
+    SSNModel *m = [[[self class] alloc] init];
+    m.keyPredicate = keyPredicate;
+    m.meta = SSNMetaFactory([self class], keyPredicate);
+    
+    return m;
+}
+
++ (instancetype)modelWithKeyAndValues:(NSDictionary *)keyValues {
+    NSAssert([self manager], @"请设置%@对象管理器，设置方法调用+setManager:方法",[self class]);
+    
+    //简单校验keyPredicate
+    NSSet *kset = [NSSet setWithArray:[keyValues allKeys]];
+    NSSet *pset = [NSSet setWithArray:[self primaryKeys]];
+    
+    if (![pset isSubsetOfSet:kset]) {
+        return nil;
+    }
+    
+    NSString *keyPredicate = [NSString predicateKeyAndValues:keyValues];
+    
+    SSNModel *m = [[[self class] alloc] init];
+    m.keyPredicate = keyPredicate;
+    m.meta = SSNMetaFactory([self class], keyPredicate);
+    
+    return m;
+}
+
+#pragma mark debug description;
+- (NSString *)description {
+    NSMutableString *str = [NSMutableString stringWithFormat:@"<%@:%p ",NSStringFromClass([self class]),self];
+    
+    [str appendFormat:@"keyPredicate = \"%@\",\n",[self keyPredicate]];
+    
+    for (NSString *key in [self valuesKeys]) {
+        id value = [self.vls objectForKey:key];
+        if (value) {
+            [str appendFormat:@"%@ = %@,\n",key,value];
+        }
+        else {
+            [str appendFormat:@"%@ = nil,\n",key];
+        }
+    }
+    
+    [str appendString:@">"];
+    
+    return str;
+}
+
 @end
 
 
@@ -585,6 +716,7 @@ NSString *const SSNModelException = @"SSNModelException";
 
 @synthesize primaryKeys = _primaryKeys;
 @synthesize valuesKeys = _valuesKeys;
+@synthesize valuesTypes = _valuesTypes;
 @synthesize manager = _manager;
 
 @end
