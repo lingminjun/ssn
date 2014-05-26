@@ -30,34 +30,6 @@
     [TestModel setManager:self];
     
 	// Do any additional setup after loading the view, typically from a nib.
-    TestModel *m = [TestModel modelWithKeyPredicate:@"type = 0 AND uid = '3344422'"];
-    
-    
-    
-    m.name = @"lingminjun";
-//    m.uid = @"3344422";
-    m.age = 56;
-    m.hight = 16.5f;
-//    m.type = 0;
-    m.sex = YES;
-    
-    [m updateToStore];
-    
-//    [m ssn_model_set_on_text:@"ddd"];
-//    m.text = @"ttttt";
-//    NSLog(@"%@",m.name);
-//    NSLog(@"%@",m.uid);
-//    NSLog(@"%ld",m.age);
-//    NSLog(@"%f",m.hight);
-//    
-//    //m.uid = @"6666666";
-//    
-//    NSLog(@"%p",[TestModel class]);
-//    NSLog(@"%@",[TestModel primaryKeys]);
-//    NSLog(@"%@",[TestModel valuesKeys]);
-//    
-//    NSLog(@"%@",[m keyPredicate]);
-    NSLog(@"%@",m);
 }
 
 
@@ -65,9 +37,6 @@
     [super viewDidAppear:animated];
     
     TestModel *m = [TestModel modelWithKeyPredicate:@"type = 0 AND uid = '3344422'"];
-    
-//    m.uid = @"3344422";
-//    m.type = 0;
     
     NSLog(@"%@",m);
     

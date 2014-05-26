@@ -691,15 +691,21 @@ NSString *const SSNModelException = @"SSNModelException";
 - (NSString *)description {
     NSMutableString *str = [NSMutableString stringWithFormat:@"<%@:%p ",NSStringFromClass([self class]),self];
     
-    [str appendFormat:@"keyPredicate = \"%@\",\n",[self keyPredicate]];
+    [str appendFormat:@"keyPredicate = \"%@\", ",[self keyPredicate]];
+    
+    [str appendFormat:@"isTemporary = %d, ",[self isTemporary]];
+    
+    [str appendFormat:@"isFault = %d, ",[self isFault]];
+    
+    [str appendFormat:@"hasChanged = %d, \n",[self hasChanged]];
     
     for (NSString *key in [self valuesKeys]) {
         id value = [self.vls objectForKey:key];
         if (value) {
-            [str appendFormat:@"%@ = %@,\n",key,value];
+            [str appendFormat:@"\t%@ = %@,\n",key,value];
         }
         else {
-            [str appendFormat:@"%@ = nil,\n",key];
+            [str appendFormat:@"\t%@ = nil,\n",key];
         }
     }
     
