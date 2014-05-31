@@ -9,6 +9,9 @@
 #import "SSNModelManager.h"
 #import "SSNDataBase.h"
 #import "ssnbase.h"
+#import "SSNModelPrivate.h"
+#import "SSNMeta.h"
+
 
 @interface SSNModelManager () {
     SSNDataBase *_database;
@@ -81,37 +84,114 @@
     return [aclass modelWithKeyAndValues:keyValues manager:self];
 }
 
-//- (BOOL)insertModel:(SSNModel *)model {//delete的数据将调用model:updateDatas:forPredicate:方法执行
-//    if (model.manager == nil) {
-//        return NO;
-//    }
-//    NSAssert(model.manager != self, @"请设置%@对象管理器，设置方法调用+setManager:方法",[self class]);
-//    
-//    NSString *predicate = [model keyPredicate];
-//    if ([predicate length] == 0) {
-//        return NO;
-//    }
-//    
-//    BOOL result = [[self manager] model:self insertDatas:self.vls forPredicate:predicate];
-//    if (!result) {
-//        return NO;
-//    }
-//    
-//    //插入成功，必须保存meta
-//    if (self.meta) {//存在meta，需要，更新信息
-//        [SSNMeta loadMeta:self.meta datas:self.vls];
-//        self.opt = self.meta.opt;
-//    }
-//    else {//不存在
-//        self.meta = SSNMetaFactory([self class], predicate);
-//        [SSNMeta loadMeta:self.meta datas:self.vls];
-//        self.opt = self.meta.opt;
-//    }
-//    
-//    return result;
-//}
-//- (BOOL)updateModel:(SSNModel *)model;//非临时数据且非删除数据，并且有更改将会调用model:insertDatas:forPredicate:方法执行
-//- (BOOL)deleteModel:(SSNModel *)model;//非临时数据，或者非已经删除数据，都会调用model:deleteForPredicate:方法执行
+- (BOOL)insertModel:(SSNModel *)model {//delete的数据将调用model:updateDatas:forPredicate:方法执行
+    if (model.manager == nil) {
+        return NO;
+    }
+    NSAssert(model.manager != self, @"%@对象管理器与实际操作管理器不是同一实例",self);
+    
+    NSString *predicate = [model keyPredicate];
+    if ([predicate length] == 0) {
+        return NO;
+    }
+    
+    BOOL result = [self model:model insertDatas:model.vls forPredicate:predicate];
+    if (!result) {
+        return NO;
+    }
+    
+    //插入成功，必须保存meta
+    if (model.meta) {//存在meta，需要，更新信息
+        [SSNMeta loadMeta:model.meta datas:model.vls];
+        model.opt = model.meta.opt;
+    }
+    else {//不存在
+        model.meta = SSNMetaFactory([model class], predicate);
+        [SSNMeta loadMeta:model.meta datas:model.vls];
+        model.opt = model.meta.opt;
+    }
+    
+    return result;
+}
+- (BOOL)updateModel:(SSNModel *)model {
+    
+    if (model.manager == nil) {
+        return NO;
+    }
+    NSAssert(model.manager != self, @"%@对象管理器与实际操作管理器不是同一实例",self);
+    
+    if ([model isTemporary]) {
+        return NO;
+    }
+    
+    if (![model hasChanged]) {
+        return NO;
+    }
+    
+    NSString *predicate = [model keyPredicate];
+    if ([predicate length] == 0) {
+        return NO;
+    }
+    
+    NSArray *pKeys = [model primaryKeys];
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:model.vls];
+    [dic removeObjectsForKeys:pKeys];
+    
+    BOOL result = [self model:model updateDatas:dic forPredicate:predicate];
+    if (!result) {
+        return NO;
+    }
+    
+    //插入成功，必须保存meta
+    if (model.meta) {//存在meta，需要，更新信息
+        [SSNMeta loadMeta:model.meta datas:model.vls];
+        model.opt = model.meta.opt;
+    }
+    else {//不存在
+        model.meta = SSNMetaFactory([model class], predicate);
+        [SSNMeta loadMeta:model.meta datas:model.vls];
+        model.opt = model.meta.opt;
+    }
+    model.hasChanged = NO;
+    
+    return result;
+
+}
+
+- (BOOL)deleteModel:(SSNModel *)model {
+    if (model.manager == nil) {
+        return NO;
+    }
+    
+    NSAssert(model.manager != self, @"%@对象管理器与实际操作管理器不是同一实例",self);
+    
+    if ([model isTemporary]) {
+        return NO;
+    }
+    
+    NSString *predicate = [model keyPredicate];
+    if ([predicate length] == 0) {
+        return NO;
+    }
+    
+    BOOL result = [self model:model deleteForPredicate:predicate];
+    if (!result) {
+        return NO;
+    }
+    
+    //插入成功，必须保存meta
+    if (model.meta) {//存在meta，需要，更新信息
+        [SSNMeta deleteMeta:model.meta];
+        model.opt = model.meta.opt;
+    }
+    else {//不存在
+        model.meta = SSNMetaFactory([model class], predicate);
+        [SSNMeta deleteMeta:model.meta];
+        model.opt = model.meta.opt;
+    }
+    
+    return YES;
+}
 
 #endif
 

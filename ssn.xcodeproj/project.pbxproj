@@ -42,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5310FF4C19396ED500FF9896 /* SSNModelPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSNModelPrivate.h; sourceTree = "<group>"; };
 		53123F96191D25E10012A900 /* TestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestModel.h; sourceTree = "<group>"; };
 		53123F97191D25E10012A900 /* TestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
 		53D163E0191A629C00AD4C81 /* ssn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ssn.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -262,6 +263,7 @@
 				53ECB16A191FBB6000BEB29D /* SSNModel.m */,
 				53FF9F471934E188009117AB /* SSNDBSection.h */,
 				53FF9F481934E188009117AB /* SSNDBSection.m */,
+				5310FF4C19396ED500FF9896 /* SSNModelPrivate.h */,
 			);
 			path = db;
 			sourceTree = "<group>";
