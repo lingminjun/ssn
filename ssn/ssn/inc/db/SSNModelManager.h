@@ -13,7 +13,7 @@
 
 @interface SSNModelManager : NSObject <SSNModelManagerProtocol>
 
-@property (nonatomic,strong,readonly) SSNDataBase *database;
+@property (nonatomic,strong,readonly) SSNDataBase *database;//默认不管理链接
 
 - (id)initWithDataBase:(SSNDataBase *)database;
 

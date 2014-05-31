@@ -129,6 +129,9 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
 
 + (BOOL)isDDLSQL:(NSString *)sql;//
 
+//主线程通知
+- (void)postMainThreadNotification:(NSString *)key info:(NSDictionary *)info;
+
 //表创建
 - (void)createTable:(NSString *)tableName columns:(NSArray *)columns;
 
@@ -218,6 +221,15 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
     else {
         dispatch_async(self.ioQueue, block);
     }
+}
+
+#pragma - mark 通知
+- (void)postMainThreadNotification:(NSString *)key info:(NSDictionary *)info {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:key
+                                                            object:self
+                                                          userInfo:info];
+    });
 }
 
 #pragma -
@@ -487,6 +499,10 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
             return ary;
         };
         
+        //通知界面，正在迁移
+        NSDictionary *notifyInfo = [NSDictionary dictionaryWithObject:tableName forKey:SSNDBTableNameKey];
+        [self postMainThreadNotification:SSNDBTableWillMigrateNotification info:notifyInfo];
+        
         if (dbVersion == 0) {//表示没有创建过表，直接从当前版本开始创建表
             t_block(self.currentVersion,nil,YES);
         }
@@ -503,6 +519,7 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
             [self saveTableColumns:lastCols forTemplateName:tableName dataBaseVersion:self.currentVersion];
         }
     
+        [self postMainThreadNotification:SSNDBTableDidMigrateNotification info:notifyInfo];
     }};
     
     [self executeSync:YES withBlock:block];
