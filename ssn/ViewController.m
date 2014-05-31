@@ -11,9 +11,11 @@
 #import "TestModel.h"
 #import "ssnbase.h"
 
+
 @interface ViewController ()
 {
     SSNDataBase *sharedb;
+    SSNModelManager *manager;
 }
 @end
 
@@ -23,11 +25,19 @@
 {
     [super viewDidLoad];
     
-    sharedb = [[SSNDataBase alloc] initWithPath:@"test/db.sqlite" version:1];
-    [sharedb open];
-    [sharedb createTable:@"TestModel" withDelegate:[TestModel class]];
     
-    [TestModel setManager:self];
+    
+   
+    
+    SSNDataBase *db = [[SSNDataBase alloc] initWithPath:@"test/db.sqlite" version:1];
+    [db open];
+    [db createTable:@"TestModel" withDelegate:[TestModel class]];
+    
+    manager = [[SSNModelManager alloc] initWithDataBase:db];
+    
+    
+    
+    //[TestModel setManager:self];
     
 	// Do any additional setup after loading the view, typically from a nib.
 }
@@ -36,7 +46,9 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    TestModel *m = [TestModel modelWithKeyPredicate:@"type = 0 AND uid = '3344422'"];
+    //TestModel *m = [TestModel modelWithKeyPredicate:@"type = 0 AND uid = '3344422'"];
+    
+    TestModel *m = [manager modelWithClass:[TestModel class] keyPredicate:@"type = 0 AND uid = '3344422'"];
     
     NSLog(@"%@",m);
     

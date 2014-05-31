@@ -41,13 +41,17 @@ NSString *const SSNModelException = @"SSNModelException";
     NSArray *_primaryKeys;
     NSArray *_valuesKeys;
     NSArray *_valuesTypes;
+#ifndef SSN_USER_DETACHED_MODEL_MANAGER
     __weak id<SSNModelManagerProtocol> _manager;
+#endif
 }
 
 @property (nonatomic,strong) NSArray *primaryKeys;
 @property (nonatomic,strong) NSArray *valuesKeys;
 @property (nonatomic,strong) NSArray *valuesTypes;
+#ifndef SSN_USER_DETACHED_MODEL_MANAGER
 @property (nonatomic,weak) id<SSNModelManagerProtocol> manager;
+#endif
 
 @end
 
@@ -59,6 +63,10 @@ NSString *const SSNModelException = @"SSNModelException";
     SSNMeta * _meta;            //源数据
     NSMutableDictionary * _vls; //数据存储,对应数据表（关系存储keyPredicate字段）
     NSString *_keyPredicate;    //对象主键
+    
+#ifdef SSN_USER_DETACHED_MODEL_MANAGER
+    __weak id<SSNModelManagerProtocol> _manager;
+#endif
     
     //操作数
     NSUInteger _opt;            //操作数
@@ -72,12 +80,17 @@ NSString *const SSNModelException = @"SSNModelException";
 @property (nonatomic,strong) NSMutableDictionary *rvls;
 @property (nonatomic,strong) NSString *keyPredicate;
 
+#ifdef SSN_USER_DETACHED_MODEL_MANAGER
+@property (nonatomic,weak) id<SSNModelManagerProtocol> manager;
+#endif
+
 @property (nonatomic) NSUInteger opt;
 
 @property (nonatomic) BOOL hasChanged;      //数据本身有提交与永久存储数据不同的值，临时数据永远返回NO
 
+#ifndef SSN_USER_DETACHED_MODEL_MANAGER
 + (id <SSNModelManagerProtocol>)manager;
-- (id <SSNModelManagerProtocol>)manager;
+#endif
 
 + (void)setKeys:(NSArray *)keys primaryKeys:(NSArray *)pkeys;
 
@@ -375,6 +388,7 @@ NSString *const SSNModelException = @"SSNModelException";
     return share;
 }
 
+#ifndef SSN_USER_DETACHED_MODEL_MANAGER
 + (void)setManager:(id<SSNModelManagerProtocol>)manager {
     NSDictionary *dic = [self modelsValuesKeys];
     NSString *cls = [NSString stringWithUTF8Format:"%p",self];
@@ -388,9 +402,16 @@ NSString *const SSNModelException = @"SSNModelException";
     SSNModelKeys *keysObj = [dic objectForKey:cls];
     return keysObj.manager;
 }
+#endif
+
 - (id <SSNModelManagerProtocol>)manager {
+#ifndef SSN_USER_DETACHED_MODEL_MANAGER
     return [[self class] manager];
+#else
+    return _manager;
+#endif
 }
+
 
 + (NSArray *)primaryKeys {
     
@@ -624,6 +645,7 @@ NSString *const SSNModelException = @"SSNModelException";
 }
 
 #pragma - mark 工程方法实现
+#ifndef SSN_USER_DETACHED_MODEL_MANAGER
 + (instancetype)modelWithKeyPredicate:(NSString *)keyPredicate {
     NSAssert([self manager], @"请设置%@对象管理器，设置方法调用+setManager:方法",[self class]);
     
@@ -686,6 +708,72 @@ NSString *const SSNModelException = @"SSNModelException";
     
     return m;
 }
+#else
++ (instancetype)modelWithKeyPredicate:(NSString *)keyPredicate manager:(id <SSNModelManagerProtocol>)manager {
+    NSAssert(manager, @"请设置%@对象管理器",[self class]);
+    
+    //简单校验keyPredicate
+    BOOL notKey = NO;
+    for (NSString *key in [self primaryKeys]) {
+        if ([keyPredicate rangeOfString:key].length == 0) {
+            notKey = YES;
+            break ;
+        }
+    }
+    
+    if (notKey) {
+        return nil;
+    }
+    
+    SSNModel *m = [[[self class] alloc] init];
+    m.manager = manager;
+    m.keyPredicate = keyPredicate;
+    m.meta = SSNMetaFactory([self class], keyPredicate);
+    
+    return m;
+}
++ (instancetype)modelWithValues:(NSArray *)values keys:(NSArray *)keys manager:(id <SSNModelManagerProtocol>)manager {
+    NSAssert(manager, @"请设置%@对象管理器",[self class]);
+    
+    //简单校验keyPredicate
+    NSSet *kset = [NSSet setWithArray:keys];
+    NSSet *pset = [NSSet setWithArray:[self primaryKeys]];
+    
+    if (![pset isSubsetOfSet:kset]) {
+        return nil;
+    }
+    
+    NSString *keyPredicate = [NSString predicateValues:values keys:keys];
+    
+    SSNModel *m = [[[self class] alloc] init];
+    m.manager = manager;
+    m.keyPredicate = keyPredicate;
+    m.meta = SSNMetaFactory([self class], keyPredicate);
+    
+    return m;
+
+}
++ (instancetype)modelWithKeyAndValues:(NSDictionary *)keyValues manager:(id <SSNModelManagerProtocol>)manager {
+    NSAssert(manager, @"请设置%@对象管理器",[self class]);
+    
+    //简单校验keyPredicate
+    NSSet *kset = [NSSet setWithArray:[keyValues allKeys]];
+    NSSet *pset = [NSSet setWithArray:[self primaryKeys]];
+    
+    if (![pset isSubsetOfSet:kset]) {
+        return nil;
+    }
+    
+    NSString *keyPredicate = [NSString predicateKeyAndValues:keyValues];
+    
+    SSNModel *m = [[[self class] alloc] init];
+    m.manager = manager;
+    m.keyPredicate = keyPredicate;
+    m.meta = SSNMetaFactory([self class], keyPredicate);
+    
+    return m;
+}
+#endif
 
 #pragma mark debug description;
 - (NSString *)description {
@@ -723,7 +811,10 @@ NSString *const SSNModelException = @"SSNModelException";
 @synthesize primaryKeys = _primaryKeys;
 @synthesize valuesKeys = _valuesKeys;
 @synthesize valuesTypes = _valuesTypes;
+
+#ifndef SSN_USER_DETACHED_MODEL_MANAGER
 @synthesize manager = _manager;
+#endif
 
 @end
 

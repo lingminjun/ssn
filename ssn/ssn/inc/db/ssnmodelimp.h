@@ -10,6 +10,9 @@
 #define ssn_ssnmodelimp_h
 
 
+#define SSN_USER_DETACHED_MODEL_MANAGER //使用SSNModelManager来管理对象的操作，这样主要是收敛io操作，如果你的工程比较庞大复杂，建议使用SSNModelManager
+
+
 /*对于非临时model对象，主键一旦被赋值就不能再次赋值，再次赋值将会抛出异常，主键不支持null*/
 #define ssnimpTextPrimary(key)      /*实现string类型主键*/            SSNSynthesizePrimaryObj(key)
 #define ssnimpIntPrimary(key)       /*实现int类型主键*/               SSNSynthesizePrimaryInt(key)

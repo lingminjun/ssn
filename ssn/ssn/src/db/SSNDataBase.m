@@ -9,6 +9,10 @@
 #import "SSNDataBase.h"
 #import "ssnbase.h"
 
+NSString *SSNDBTableWillMigrateNotification  = @"SSNDBTableWillMigrateNotification";//数据准备迁移 mainThread
+NSString *SSNDBTableDidMigrateNotification   = @"SSNDBTableDidMigrateNotification";//数据迁移结束 mainThread
+NSString *SSNDBTableNameKey                  = @"SSNDBTableNameKey";
+
 //表模板定义（表模板名_版本，列名，列类型，是否主键，是否有索引，默认值，数据迁移描述）
 NSString *const kSSNDBTableTemplateHistory   = @"db_tb_tp_lg";
 NSString *const kSSNDBTableTemplateName      = @"vtbNm";//version-TableName

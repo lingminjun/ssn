@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "ssnmodelimp.h"
 
+
 @protocol SSNModelManagerProtocol;  //数据加载协议
 
 /*
@@ -48,6 +49,9 @@
 
 - (void)refreshModel;//needUpdate为yes时，此方法才能刷新对象数据，否则忽略
 
+- (id <SSNModelManagerProtocol>)manager;//对象管理器
+
+#ifndef SSN_USER_DETACHED_MODEL_MANAGER //自行管理
 //给当前实例设置加载源，根据不同model类型进行区分
 + (void)setManager:(id <SSNModelManagerProtocol>)manager;
 
@@ -62,6 +66,15 @@
 - (BOOL)insertToStore;//delete的数据将调用model:updateDatas:forPredicate:方法执行
 - (BOOL)updateToStore;//非临时数据且非删除数据，并且有更改将会调用model:insertDatas:forPredicate:方法执行
 - (BOOL)deleteFromStore;//非临时数据，或者非已经删除数据，都会调用model:deleteForPredicate:方法执行
+
+#else
+
+/*工程方法, manager不能为空*/
++ (instancetype)modelWithKeyPredicate:(NSString *)keyPredicate manager:(id <SSNModelManagerProtocol>)manager;//内部会校验其 keyPredicate的合法性
++ (instancetype)modelWithValues:(NSArray *)values keys:(NSArray *)keys manager:(id <SSNModelManagerProtocol>)manager;
++ (instancetype)modelWithKeyAndValues:(NSDictionary *)keyValues manager:(id <SSNModelManagerProtocol>)manager;
+
+#endif
 
 @end
 

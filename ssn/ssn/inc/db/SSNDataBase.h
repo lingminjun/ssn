@@ -9,6 +9,10 @@
 #import <Foundation/Foundation.h>
 #import <sqlite3.h>
 
+FOUNDATION_EXTERN NSString *SSNDBTableWillMigrateNotification;//数据准备迁移 mainThread
+FOUNDATION_EXTERN NSString *SSNDBTableDidMigrateNotification;//数据迁移结束 mainThread
+FOUNDATION_EXTERN NSString *SSNDBTableNameKey;
+
 @protocol SSNModelTableProtocol;
 
 /*
