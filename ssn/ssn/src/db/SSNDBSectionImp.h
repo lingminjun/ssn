@@ -1,5 +1,5 @@
 //
-//  SSNDBSection.h
+//  SSNDBSectionImp.h
 //  ssn
 //
 //  Created by lingminjun on 14-5-27.
@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SSNFetchController.h"
 
-@interface SSNDBSection : NSObject
+@interface SSNDBSectionImp : NSObject <SSNDBSection>
 
 @end

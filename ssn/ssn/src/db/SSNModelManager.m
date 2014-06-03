@@ -9,6 +9,7 @@
 #import "SSNModelManager.h"
 #import "SSNDataBase.h"
 #import "ssnbase.h"
+#import "SSNModel.h"
 #import "SSNModelPrivate.h"
 #import "SSNMeta.h"
 

@@ -13,6 +13,7 @@ FOUNDATION_EXTERN NSString *SSNDBTableWillMigrateNotification;//数据准备迁�
 FOUNDATION_EXTERN NSString *SSNDBTableDidMigrateNotification;//数据迁移结束 mainThread
 FOUNDATION_EXTERN NSString *SSNDBTableNameKey;
 
+
 @protocol SSNModelTableProtocol;
 
 /*

@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SSNModel.h"
+#import "SSNModelManagerProtocol.h"
 
-@class SSNDataBase;
+//FOUNDATION_EXTERN NSString *SSNDBModelDidChangeNotification;//非主线程通知
+
+@class SSNModel,SSNDataBase;
 
 @interface SSNModelManager : NSObject <SSNModelManagerProtocol>
 

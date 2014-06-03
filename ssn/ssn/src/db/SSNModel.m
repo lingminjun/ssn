@@ -16,6 +16,7 @@
 #import "SSNMeta.h"
 #import "ssnbase.h"
 #import "SSNModelPrivate.h"
+#import "SSNModelManagerProtocol.h"
 
 static const char *ssn_method_header            = "ssn_model_set_";
 //属性类型 位于方法 15位

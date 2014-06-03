@@ -11,6 +11,7 @@
 
 #import "ssnmodelimp.h"
 #import "SSNModel.h"
+#import "SSNModelManagerProtocol.h"
 #ifdef SSN_USER_DETACHED_MODEL_MANAGER
 #import "SSNModelManager.h"
 #endif

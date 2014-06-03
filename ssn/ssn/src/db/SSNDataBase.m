@@ -43,17 +43,11 @@ NSString *const kSSNDBVersonKey              = @"_ssn_db_version";
 #define SDDispatchQueueSetterSementics assign
 #endif
 
-//safe recursive dispatch_sync.
-static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t block,const void *key){
-    if (dispatch_get_specific(key)) {
-        if (block) {
-            block();
-        }
-    }
-    else {
-        dispatch_sync(queue, block);
-    }
-}
+#define Using_Optimize_Dispatch //提交block优化
+
+#ifdef Using_Optimize_Dispatch
+#import <pthread.h>
+#endif
 
 #pragma -
 #pragma mark 数据表列字段定义
@@ -101,6 +95,11 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
     NSUInteger _toldVersion;
     NSUInteger _currentVersion;
     
+#ifdef Using_Optimize_Dispatch
+    pthread_mutex_t async_mutex;
+    NSMutableArray *_asynBlocks;
+    BOOL _hasAsynBlocks;
+#endif
 }
 
 @property (nonatomic, strong) NSString    *queueSpecific;
@@ -204,8 +203,17 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
         self.pathToDataBase = filePath;
         self.queueSpecific=[NSString stringWithFormat:@"ssn.database.%lu.%@", (unsigned long)version, self];
         _toldVersion = version;
+#ifdef Using_Optimize_Dispatch
+        pthread_mutex_init(&async_mutex, NULL);
+#endif
     }
     return self;
+}
+
+- (void)dealloc {
+#ifdef Using_Optimize_Dispatch
+    pthread_mutex_destroy(&async_mutex);
+#endif
 }
 
 #pragma mark 执行函数
@@ -214,13 +222,69 @@ static void ssn_dispatch_recursive_sync(dispatch_queue_t queue, dispatch_block_t
     if (!block) {
         return ;
     }
-    
+#ifndef Using_Optimize_Dispatch
     if (isSync) {
-        ssn_dispatch_recursive_sync(self.ioQueue, block,(__bridge const void *)self.queueSpecific);
+        if (dispatch_get_specific((__bridge const void *)self.queueSpecific)) {
+            if (block) {
+                block();
+            }
+        }
+        else {
+            dispatch_sync(self.ioQueue, block);
+        }
     }
     else {
         dispatch_async(self.ioQueue, block);
     }
+#else
+    if (isSync) {
+        if (dispatch_get_specific((__bridge const void *)self.queueSpecific)) {
+            if (block) {
+                block();
+            }
+        }
+        else {
+            
+            dispatch_sync(self.ioQueue, block);
+            
+            //断开asyn_block的继续提交，导致此次同步一直等待
+            if (_hasAsynBlocks) {
+                pthread_mutex_lock(&async_mutex);
+                _hasAsynBlocks = NO;//不清除 _asynBlocks
+                pthread_mutex_unlock(&async_mutex);
+            }
+        }
+    }
+    else {
+        dispatch_block_t a_block = ^{//aysn_blocks的数组 处理 的block
+            NSMutableArray *s_ary = nil;
+            
+            pthread_mutex_lock(&async_mutex);
+            s_ary = _asynBlocks;
+            _asynBlocks = nil;//提前结束掉
+            _hasAsynBlocks = NO;
+            pthread_mutex_unlock(&async_mutex);
+            
+            for (dispatch_block_t ablock in s_ary) {//执行所有block
+                ablock();
+            }
+        };
+        
+        //判断是否已经提交 asyn_block
+        pthread_mutex_lock(&async_mutex);
+        if (!_hasAsynBlocks) {
+            _hasAsynBlocks = YES;
+            _asynBlocks = [NSMutableArray arrayWithCapacity:1];
+            
+            //提交处理 aysn_blocks的数组
+            dispatch_async(self.ioQueue, a_block);
+        }
+        
+        [_asynBlocks addObject:block];//加入block到处理数组
+        
+        pthread_mutex_unlock(&async_mutex);
+    }
+#endif
 }
 
 #pragma - mark 通知
