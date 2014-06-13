@@ -199,6 +199,8 @@ NSString *const kSSNDBVersonKey              = @"_ssn_db_version";
 
 - (id)initWithPath:(NSString *)filePath version:(NSUInteger)version
 {
+    NSAssert([filePath length], @"请传入正确的文件地址");
+    
     if (self = [super init]) {
         self.pathToDataBase = filePath;
         self.queueSpecific=[NSString stringWithFormat:@"ssn.database.%lu.%@", (unsigned long)version, self];
@@ -206,11 +208,15 @@ NSString *const kSSNDBVersonKey              = @"_ssn_db_version";
 #ifdef Using_Optimize_Dispatch
         pthread_mutex_init(&async_mutex, NULL);
 #endif
+        [self open];
     }
     return self;
 }
 
 - (void)dealloc {
+    if ([self isOpen]) {
+        [self close];
+    }
 #ifdef Using_Optimize_Dispatch
     pthread_mutex_destroy(&async_mutex);
 #endif

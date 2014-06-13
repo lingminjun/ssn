@@ -8,14 +8,18 @@
 
 #import <Foundation/Foundation.h>
 #import "SSNModelManagerProtocol.h"
+#import "ssnmodelimp.h"
 
 //FOUNDATION_EXTERN NSString *SSNDBModelDidChangeNotification;//非主线程通知
 
 @class SSNModel,SSNDataBase;
 
+/*
+ 只对实例对象进行管理，链接，表创建与删除，属于database职责
+ */
 @interface SSNModelManager : NSObject <SSNModelManagerProtocol>
 
-@property (nonatomic,strong,readonly) SSNDataBase *database;//默认不管理链接
+@property (nonatomic,strong,readonly) SSNDataBase *database;//不管理链接
 
 - (id)initWithDataBase:(SSNDataBase *)database;
 

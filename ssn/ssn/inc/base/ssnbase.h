@@ -11,6 +11,7 @@
 
 #import "NSString+SSN.h"
 
+#import <sys/time.h>
 
 #define SSNBeginTrackTime(t)   \
 struct timeval t ## _b_tv;\

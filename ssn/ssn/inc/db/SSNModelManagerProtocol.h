@@ -25,10 +25,10 @@
 - (BOOL)model:(SSNModel *)model deleteForPredicate:(NSString *)keyPredicate;
 
 //批量数据支持，数据全部取出来
-- (NSArray *)keysWithQueryPredicate:(NSString *)queryPredicate group:(NSString *)group sortDescriptors:(NSArray *)sortDescriptors;
+- (NSArray *)keys:(NSArray *)keys query:(NSString *)queryPredicate group:(NSString *)group sortDescriptors:(NSArray *)sortDescriptors;
 
 //这是取单个分组中的数据，
-- (NSArray *)keysWithQueryPredicate:(NSString *)queryPredicate sortDescriptors:(NSArray *)sortDescriptors offset:(NSUInteger)offset size:(NSUInteger)size;
+- (NSArray *)keys:(NSArray *)keys query:(NSString *)queryPredicate sortDescriptors:(NSArray *)sortDescriptors offset:(NSUInteger)offset size:(NSUInteger)size;
 
 //批量存储接口
 - (BOOL)storeInsert:(NSArray *)inserts update:(NSArray *)updates delete:(NSArray *)deletes;

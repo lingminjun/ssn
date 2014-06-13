@@ -333,6 +333,12 @@ NSString *const SSNModelException = @"SSNModelException";
     self.hasChanged = YES;
 }
 
+//- (id)objectForKeyedSubscript:(id)key {
+//    return [self getObjectValueForKey:key];
+//}
+//- (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key {
+//    [self setObjectValue:obj forKey:key];
+//}
 
 + (NSMutableDictionary *)modelsValuesKeys {
     static NSMutableDictionary *share = nil;

@@ -33,10 +33,9 @@ FOUNDATION_EXTERN NSString *SSNDBTableNameKey;
 - (void)dropTable:(NSString *)tableName;//如果需要删除表，请调用此方法删除
 - (void)executeDDLSql:(NSString *)sql;//此方法主要执行一些框架无法满足的DDL操作，如实现联合索引和唯一索引等
 
-- (BOOL)isOpen;
-- (void)open;
-- (void)close;
-
+- (BOOL)isOpen;//是否已经打开
+- (void)open;//对象创建意味着已经open，除非你有特许需要，永远不要调用
+- (void)close;//对象创建意味着已经open，对象释放则close，除非你有特许需要，永远不要调用
 
 #pragma sql method
 //aclass传入NULL时默认用NSDictionary代替，当执行单纯的sql时，忽略aclass，返回值将为nil,为了防止sql注入，请输入参数

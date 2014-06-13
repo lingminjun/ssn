@@ -87,6 +87,10 @@
 - (id)getObjectValueForKey:(NSString *)key;
 - (void)setObjectValue:(id)value forKey:(NSString *)key;
 
+////采用快速取值
+//- (id)objectForKeyedSubscript:(NSString *)key;
+//- (void)setObject:(id)obj forKeyedSubscript:(NSString *)key;
+
 @end
 
 

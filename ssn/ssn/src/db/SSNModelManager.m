@@ -72,6 +72,26 @@
     return YES;
 }
 
+//批量数据支持，数据全部取出来
+- (NSArray *)keys:(NSArray *)keys query:(NSString *)queryPredicate group:(NSString *)group sortDescriptors:(NSArray *)sortDescriptors {
+    
+//    NSString *sql = [NSString stringWithFormat:@"SELECT %@ "]
+//    
+//    [self.database queryObjects:nil sql:[NSString stringWithFormat:@"INSERT INTO TestModel (%@) VALUES (%@)",keysString,valueString] arguments:values];
+    return nil;
+}
+
+//这是取单个分组中的数据，
+- (NSArray *)keys:(NSArray *)keys query:(NSString *)queryPredicate sortDescriptors:(NSArray *)sortDescriptors offset:(NSUInteger)offset size:(NSUInteger)size {
+    return nil;
+}
+
+//批量存储接口
+- (BOOL)storeInsert:(NSArray *)inserts update:(NSArray *)updates delete:(NSArray *)deletes {
+    //self.database
+    return YES;
+}
+
 
 #ifdef SSN_USER_DETACHED_MODEL_MANAGER
 //需要接管所有实例创建方法

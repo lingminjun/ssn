@@ -1,0 +1,60 @@
+一、Navigator
+
+    Navigator主要实现url对控制器的路由过程，比较过HHRouter，JLRouter和routable-ios，除了JLRouter其他都有对UIViewController的基本路由，而JLRouter仅仅做的是url与action（block）的映射，如果需要实现控制器管理，还需在上面实现一个url和对应路由控制器的实现。
+
+    下面讲讲Navigator为我们做了什么？
+
+    1、不是固定url(scheme,host,path三元素组合)对应一个viewController。而是仅仅一个pathComponent对应一个viewContrller。
+       如下面的例子：
+       nav ==> navigationController,
+       tab ==> tabBarController,
+       list ==> tableViewController,
+       
+       当open的url1 = “app://nav/list”和url2 = “app://tab/list”时，最终都将打开一个tableViewController。而中间的路径，可以看做是不同的目录（父控制器）。一般目录结构可以理解为app的控制器组织结构，当我们需要调整app的组织结构时，那些控制器的对应关系并不需要改变。
+
+
+    2、在同一个目录下，对已存在控制器进行询问是否能打开此界面（canRespondURL:query:）。
+
+       在大多数应用中都会用到。
+       如打开个人资料	url1 = “app://contact/person_detail”，
+       然后再次进人主页	url2 = “app://contact/home_page”，
+       然后在主页中某个入口又可以打开个人资料页，此时为了避免循环push问题，经常需要查找栈，根据栈情况是push新页面还是pop to老页面。使用Navigator，轻松解决此问题，只需要个人资料页实现协议方法：canRespondURL:query:，在对应的参数上（person_id==open_friend_id）返回YES即可。open仍然采用url1就好了，Navigator自然就会检查栈的情况push或者pop。
+
+
+    3、不仅仅是路由控制器，只要满足page或者parentPage协议，你可以实现事件的绑定，如自带EventHandler事件绑定，让ViewModel实现更简单。
+
+      继续上面peron_detail==>home_page页的例子，如果你在home_page页面做了一件事情，解除了好友关系，这是你要通知person_detail页面，需要做出一些列的界面调整（界面调整可以放在viewWillAppear中，这点是次要的），更重要的是你可能需要更改person_detail页面某些数据的值。此时你需要完成以下几个步骤：
+      a）在person_detail中产生一个EventHandler实例，把要处理的内容放到block中，注意不要做属性，避免循环应用。
+      b）对person_detail实现ParentPage协议，在containedPages中返回（a）生产的EventHandler实例。
+      c）在home_page页取open url = “app://contact/person_detail/handler”。
+      这样就OK了。
+
+      参考代码
+- (NSArray *)containedPages {
+    return @[[EventHandler eventBlock:^(NSURL *url, NSDictionary *query) {
+        //TODO self.title = @"ChangedTitle";
+    }]];
+}
+
+    4、UINavigationController和UITabBarController等控制器已经实现page相关协议，能快速构建app的UI框架。
+
+
+
+二、NiceQueue与NavigationQueueController
+
+    导航栏控制器已知存在push和pop动画叠加问题，容易出现界面错乱，甚至crash的问题，为解决这个问题引入“阀门控制队列（NiceQueue）”。此队列内部其实是一个简单地serial queue，当提交的事件返回值为YES时，表示队列的下一个block能立即执行，如果返回NO时，则队列会等待fire（开关）。
+
+    NiceQueue的实现非常简单巧妙，创建一个serial queue，将目标queue设置为main queue，提交的block执行后得到返回值，如果是yes则把serial queue挂起，这样后面的block自然就需要等待执行了。
+
+    我听到一些实现思路，如采用semaphore，这里都是在主线程，直接semaphore等于找死，如果转到异步线程你要花费更多资源和时间；barrier方式貌似可行，但是在barrier中仍然需要semaphore；加锁的思路就更加不要提了。嵌套runloop方式是可行，我以前采用此种方式实现，效果其实差不多，GCD实现更具优雅性。
+
+    NavigationQueueController继承UINaviagtionController，内部重载push，pop一些列方法，将这些方法放到一个NiceQueue中，每一动作提交进入后，都需要等待动作动画结束。
+
+
+    具体实现使用请参照源码。。。。
+
+
+
+
+
+
