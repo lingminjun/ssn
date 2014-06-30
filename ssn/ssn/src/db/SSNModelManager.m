@@ -35,23 +35,23 @@
 }
 
 //加载某类型实例的数据，keyPredicate意味着是主键，所以只返回一个对象
-- (NSDictionary *)model:(SSNModel *)model loadDatasWithPredicate:(NSString *)keyPredicate {
-    NSArray *ary = [self.database queryObjects:nil sql:[NSString stringWithFormat:@"SELECT * FROM TestModel WHERE %@",keyPredicate],nil];
+- (NSDictionary *)model:(SSNModel *)model table:(NSString *)table loadDatasWithPredicate:(NSString *)keyPredicate {
+    NSArray *ary = [self.database queryObjects:nil sql:[NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@",table,keyPredicate],nil];
     return [ary lastObject];
 }
 
 //更新实例，不包含主键，存储成功请返回YES，否则返回失败
-- (BOOL)model:(SSNModel *)model updateDatas:(NSDictionary *)valueKeys forPredicate:(NSString *)keyPredicate {
+- (BOOL)model:(SSNModel *)model table:(NSString *)table updateDatas:(NSDictionary *)valueKeys forPredicate:(NSString *)keyPredicate {
     
     NSString *setValuesString = [NSString predicateStringKeyAndValues:valueKeys componentsJoinedByString:@","];
     
-    [self.database queryObjects:nil sql:[NSString stringWithFormat:@"UPDATE TestModel SET %@ WHERE %@",setValuesString,keyPredicate],nil];
+    [self.database queryObjects:nil sql:[NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE %@",table,setValuesString,keyPredicate],nil];
     
     return YES;
 }
 
 //插入实例，如果数据库中已经存在，可以使用replace，也可以返回NO，表示插入失败，根据使用者需要
-- (BOOL)model:(SSNModel *)model insertDatas:(NSDictionary *)valueKeys forPredicate:(NSString *)keyPredicate {
+- (BOOL)model:(SSNModel *)model table:(NSString *)table insertDatas:(NSDictionary *)valueKeys forPredicate:(NSString *)keyPredicate {
     
     NSString *keysString = [[valueKeys allKeys] componentsJoinedByString:@","];
     NSMutableArray *vs = [NSMutableArray array];
@@ -61,33 +61,126 @@
     NSString *valueString = [vs componentsJoinedByString:@","];
     NSArray *values = [valueKeys objectsForKeys:[valueKeys allKeys] notFoundMarker:[NSNull null]];
     
-    [self.database queryObjects:nil sql:[NSString stringWithFormat:@"INSERT INTO TestModel (%@) VALUES (%@)",keysString,valueString] arguments:values];
+    [self.database queryObjects:nil sql:[NSString stringWithFormat:@"INSERT INTO %@ (%@) VALUES (%@)",table,keysString,valueString] arguments:values];
     
     return YES;
 }
 
 //删除实例
-- (BOOL)model:(SSNModel *)model deleteForPredicate:(NSString *)keyPredicate {
-    [self.database queryObjects:nil sql:[NSString stringWithFormat:@"DELETE FROM TestModel WHERE %@",keyPredicate]];
+- (BOOL)model:(SSNModel *)model table:(NSString *)table deleteForPredicate:(NSString *)keyPredicate {
+    [self.database queryObjects:nil sql:[NSString stringWithFormat:@"DELETE FROM %@ WHERE %@",table,keyPredicate]];
     return YES;
 }
 
-//批量数据支持，数据全部取出来
-- (NSArray *)keys:(NSArray *)keys query:(NSString *)queryPredicate group:(NSString *)group sortDescriptors:(NSArray *)sortDescriptors {
+- (NSString *)sqlWithKeys:(NSArray *)keys table:(NSString *)table query:(NSString *)queryPredicate group:(NSString *)group sortDescriptors:(NSArray *)sortDescriptors offset:(NSUInteger)offset size:(NSUInteger)size {
+    NSString *rsql = nil;
+    @autoreleasepool {
+        NSMutableString *sql = [NSMutableString stringWithString:@"SELECT "];
+        BOOL isFirst = YES;
+        for (NSString *str in keys) {
+            
+            if (isFirst) {
+                isFirst = NO;
+            }
+            else {
+                [sql appendString:@","];
+            }
+            
+            if ([str length]) {
+                [sql appendString:str];
+            }
+        }
+        
+        if ([group length]) {
+            
+            if (!isFirst) {
+                [sql appendString:@","];
+            }
+            
+            [sql appendString:group];
+        }
+        
+        //from
+        [sql appendFormat:@" FROM %@",table];
+        
+        
+        //条件
+        [sql appendFormat:@" WHERE %@ ",queryPredicate];
+        
+        //排序
+        isFirst = YES;
+        if ([sortDescriptors count]) {
+            [sql appendString:@" ORDER BY "];
+            for (NSSortDescriptor *sort in sortDescriptors) {
+                if (isFirst) {
+                    isFirst = NO;
+                }
+                else {
+                    [sql appendString:@","];
+                }
+                
+                if (sort.ascending) {
+                    [sql appendFormat:@"%@ ASC",sort.key];
+                }
+                else {
+                    [sql appendFormat:@"%@ DESC",sort.key];
+                }
+            }
+        }
+        
+        if (size > 0) {
+            if (offset) {
+                [sql appendFormat:@"LIMIT %lu,%lu",(unsigned long)offset,(unsigned long)size];
+            }
+            else {
+                [sql appendFormat:@"LIMIT %lu",(unsigned long)size];
+            }
+        }
+        
+        rsql = [NSString stringWithString:sql];
+    }
     
-//    NSString *sql = [NSString stringWithFormat:@"SELECT %@ "]
-//    
-//    [self.database queryObjects:nil sql:[NSString stringWithFormat:@"INSERT INTO TestModel (%@) VALUES (%@)",keysString,valueString] arguments:values];
-    return nil;
+    return rsql;
+}
+
+//批量数据支持，数据全部取出来
+- (NSArray *)keys:(NSArray *)keys table:(NSString *)table query:(NSString *)queryPredicate group:(NSString *)group sortDescriptors:(NSArray *)sortDescriptors {
+    
+    NSString *sql = [self sqlWithKeys:keys
+                                table:table
+                                query:queryPredicate
+                                group:group
+                      sortDescriptors:sortDescriptors
+                               offset:0
+                                 size:0];
+    
+    NSArray *ary = [self.database queryObjects:nil sql:sql arguments:nil];
+    
+    return ary;
 }
 
 //这是取单个分组中的数据，
-- (NSArray *)keys:(NSArray *)keys query:(NSString *)queryPredicate sortDescriptors:(NSArray *)sortDescriptors offset:(NSUInteger)offset size:(NSUInteger)size {
+- (NSArray *)keys:(NSArray *)keys table:(NSString *)table query:(NSString *)queryPredicate sortDescriptors:(NSArray *)sortDescriptors offset:(NSUInteger)offset size:(NSUInteger)size {
+    
+    NSString *sql = [self sqlWithKeys:keys
+                                table:table
+                                query:queryPredicate
+                                group:nil
+                      sortDescriptors:sortDescriptors
+                               offset:offset
+                                 size:size];
+    
+    NSArray *ary = [self.database queryObjects:nil sql:sql arguments:nil];
+    
+    return ary;
+}
+
+- (NSArray *)sqlsWithInsert:(NSArray *)inserts update:(NSArray *)updates delete:(NSArray *)deletes table:(NSString *)table {
     return nil;
 }
 
 //批量存储接口
-- (BOOL)storeInsert:(NSArray *)inserts update:(NSArray *)updates delete:(NSArray *)deletes {
+- (BOOL)storeInsert:(NSArray *)inserts update:(NSArray *)updates delete:(NSArray *)deletes table:(NSString *)table {
     //self.database
     return YES;
 }
@@ -116,7 +209,7 @@
         return NO;
     }
     
-    BOOL result = [self model:model insertDatas:model.vls forPredicate:predicate];
+    BOOL result = [self model:model table:[model tableName] insertDatas:model.vls forPredicate:predicate];
     if (!result) {
         return NO;
     }
@@ -158,7 +251,7 @@
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:model.vls];
     [dic removeObjectsForKeys:pKeys];
     
-    BOOL result = [self model:model updateDatas:dic forPredicate:predicate];
+    BOOL result = [self model:model table:[model tableName] updateDatas:dic forPredicate:predicate];
     if (!result) {
         return NO;
     }
@@ -195,7 +288,7 @@
         return NO;
     }
     
-    BOOL result = [self model:model deleteForPredicate:predicate];
+    BOOL result = [self model:model table:[model tableName] deleteForPredicate:predicate];
     if (!result) {
         return NO;
     }

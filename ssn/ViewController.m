@@ -48,7 +48,7 @@
     
     //TestModel *m = [TestModel modelWithKeyPredicate:@"type = 0 AND uid = '3344422'"];
     
-    TestModel *m = [manager modelWithClass:[TestModel class] keyPredicate:@"type = 0 AND uid = '3344422'"];
+    TestModel *m = (TestModel *)[manager modelWithClass:[TestModel class] keyPredicate:@"type = 0 AND uid = '3344422'"];
     
     NSLog(@"%@",m);
     
@@ -57,7 +57,7 @@
     NSLog(@"%ld",m.age);
     NSLog(@"%f",m.hight);
     
-    //m[@"name"] = @"dddddd";
+    m[@"name"] = @"dddddd";
     
     NSLog(@"%@",m);
 }

@@ -169,7 +169,7 @@ NSString *const SSNModelException = @"SSNModelException";
         return NO;
     }
     
-    BOOL result = [[self manager] model:self insertDatas:self.vls forPredicate:predicate];
+    BOOL result = [[self manager] model:self table:[self tableName] insertDatas:self.vls forPredicate:predicate];
     if (!result) {
         return NO;
     }
@@ -208,7 +208,7 @@ NSString *const SSNModelException = @"SSNModelException";
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:self.vls];
     [dic removeObjectsForKeys:pKeys];
     
-    BOOL result = [[self manager] model:self updateDatas:dic forPredicate:predicate];
+    BOOL result = [[self manager] model:self table:[self tableName] updateDatas:dic forPredicate:predicate];
     if (!result) {
         return NO;
     }
@@ -240,7 +240,7 @@ NSString *const SSNModelException = @"SSNModelException";
         return NO;
     }
     
-    BOOL result = [[self manager] model:self deleteForPredicate:predicate];
+    BOOL result = [[self manager] model:self table:[self tableName] deleteForPredicate:predicate];
     if (!result) {
         return NO;
     }
@@ -285,7 +285,7 @@ NSString *const SSNModelException = @"SSNModelException";
     //还未加载,则加载数据
     id <SSNModelManagerProtocol> theManager = [self manager];
     if (theManager) {
-        NSDictionary *datas = [theManager model:self loadDatasWithPredicate:[self keyPredicate]];
+        NSDictionary *datas = [theManager model:self table:[self tableName] loadDatasWithPredicate:[self keyPredicate]];
         if (datas) {
             [SSNMeta loadMeta:self.meta datas:datas];
             [self.vls setDictionary:datas];
@@ -333,12 +333,12 @@ NSString *const SSNModelException = @"SSNModelException";
     self.hasChanged = YES;
 }
 
-//- (id)objectForKeyedSubscript:(id)key {
-//    return [self getObjectValueForKey:key];
-//}
-//- (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key {
-//    [self setObjectValue:obj forKey:key];
-//}
+- (id)objectForKeyedSubscript:(NSString *)key {
+    return [self getObjectValueForKey:key];
+}
+- (void)setObject:(id)obj forKeyedSubscript:(NSString *)key {
+    [self setObjectValue:obj forKey:key];
+}
 
 + (NSMutableDictionary *)modelsValuesKeys {
     static NSMutableDictionary *share = nil;
@@ -371,6 +371,15 @@ NSString *const SSNModelException = @"SSNModelException";
 #else
     return _manager;
 #endif
+}
+
+//默认返回类名
++ (NSString *)tableName {
+    return NSStringFromClass([self class]);
+}
+
+- (NSString *)tableName {
+    return [[self class] tableName];
 }
 
 

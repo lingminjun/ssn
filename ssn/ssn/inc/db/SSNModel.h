@@ -25,6 +25,10 @@
 
 @interface SSNModel : NSObject <NSCopying>
 
+//默认返回类名
++ (NSString *)tableName;
+- (NSString *)tableName;
+
 //设置表字段，或者说是实体属性字段，key要求字母开头，可以包含字母，下划线，和数字
 + (NSArray *)primaryKeys;               //数据主键
 + (NSArray *)valuesKeys;                //对应永久存储的所有字段，包含primaryKeys
@@ -76,6 +80,10 @@
 
 #endif
 
+//采用快速取值
+- (id)objectForKeyedSubscript:(NSString *)key;
+- (void)setObject:(id)obj forKeyedSubscript:(NSString *)key;
+
 @end
 
 
@@ -87,13 +95,7 @@
 - (id)getObjectValueForKey:(NSString *)key;
 - (void)setObjectValue:(id)value forKey:(NSString *)key;
 
-////采用快速取值
-//- (id)objectForKeyedSubscript:(NSString *)key;
-//- (void)setObject:(id)obj forKeyedSubscript:(NSString *)key;
-
 @end
-
-
 
 
 
