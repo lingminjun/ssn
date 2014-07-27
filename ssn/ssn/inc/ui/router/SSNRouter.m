@@ -398,6 +398,10 @@
 
 - (NSURL *)searchURLWithPage:(id<SSNPage>)page {
     
+    if (!page) {
+        return nil;
+    }
+    
     NSURL *url = nil;
     
     @autoreleasepool {
@@ -412,6 +416,8 @@
         if ([parents objectAtIndex:0] != self.window.rootViewController) {
             return nil;
         }
+        
+        [parents addObject:page];
         
         NSMutableString *urlstr = [NSMutableString stringWithCapacity:1];
         [urlstr appendFormat:@"%@://",self.scheme];
