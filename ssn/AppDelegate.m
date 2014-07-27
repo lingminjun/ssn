@@ -9,10 +9,61 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 
+@interface MyTestObject : NSObject
+
+@end
+
+@implementation MyTestObject
+
++ (void)load {
+    if ([NSThread isMainThread]) {
+        NSLog(@"load in main thread");
+    }
+    else {
+        NSLog(@"load not in main thread");
+    }
+}
+
++ (void)initialize {
+    if ([NSThread isMainThread]) {
+        NSLog(@"initialize in main thread");
+    }
+    else {
+        NSLog(@"initialize not in main thread");
+    }
+}
+
++ (void)testFun {
+    NSLog(@"testFun");
+}
+
++ (void)testFun1 {
+    NSLog(@"testFun1");
+}
+
+@end
+
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
+    
+    
+    
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [MyTestObject testFun];
+        MyTestObject *test = [[MyTestObject alloc] init];
+        NSLog(@"%@",test);
+    });
+    
+    
+    NSLog(@"kkkkkkk%p",self);
+    
+    
+    
     // Override point for customization after application launch.
     
     ViewController *vc = [[ViewController alloc] init];
@@ -23,6 +74,7 @@
     [self.window addSubview:vc.view];
     
     [self.window makeKeyAndVisible];
+    
     
     return YES;
 }

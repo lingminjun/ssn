@@ -146,7 +146,16 @@
 //批量数据支持，数据全部取出来
 - (NSArray *)keys:(NSArray *)keys table:(NSString *)table query:(NSString *)queryPredicate group:(NSString *)group sortDescriptors:(NSArray *)sortDescriptors {
     
-    NSString *sql = [self sqlWithKeys:keys
+    NSMutableArray *gkeys = [NSMutableArray arrayWithCapacity:1];
+    if (keys) {
+        [gkeys setArray:keys];
+    }
+    
+    if (group) {
+        [gkeys addObject:group];
+    }
+    
+    NSString *sql = [self sqlWithKeys:gkeys
                                 table:table
                                 query:queryPredicate
                                 group:group
@@ -175,9 +184,13 @@
     return ary;
 }
 
-- (NSArray *)sqlsWithInsert:(NSArray *)inserts update:(NSArray *)updates delete:(NSArray *)deletes table:(NSString *)table {
-    return nil;
-}
+//- (NSArray *)sqlsWithInsert:(NSArray *)inserts update:(NSArray *)updates delete:(NSArray *)deletes table:(NSString *)table {
+//    NSMutableArray *sqls = [NSMutableArray arrayWithCapacity:3];
+//    
+//    for (<#initialization#>; <#condition#>; <#increment#>) {
+//        <#statements#>
+//    }
+//}
 
 //批量存储接口
 - (BOOL)storeInsert:(NSArray *)inserts update:(NSArray *)updates delete:(NSArray *)deletes table:(NSString *)table {

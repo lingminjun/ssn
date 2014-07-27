@@ -18,7 +18,7 @@
 - (id)initWithManager:(id <SSNModelManagerProtocol>)manager //不能为空
                 model:(NSString *)modelName
        sectionKeyPath:(NSString *)sectionKeyPath
-            predicate:(NSPredicate *)predicate
+            predicate:(NSString *)predicate
       sortDescriptors:(NSArray *)sortDescriptors
                offset:(NSUInteger)offset
             batchSize:(NSUInteger)size;
@@ -26,7 +26,7 @@
 + (instancetype)fetchControllerWithManager:(id <SSNModelManagerProtocol>)manager //不能为空
                                      model:(NSString *)modelName
                             sectionKeyPath:(NSString *)sectionKeyPath//针对model的属性
-                                 predicate:(NSPredicate *)predicate
+                                 predicate:(NSString *)predicate
                            sortDescriptors:(NSArray *)sortDescriptors
                                     offset:(NSUInteger)offset
                                  batchSize:(NSUInteger)size;
@@ -39,7 +39,7 @@
 - (NSString *)sectionKeyPath;//返回nil表示这是里仅仅提供一个默认的分组
 
 //
-- (NSPredicate *)predicate;
+- (NSString *)predicate;
 
 //
 - (NSArray *)sortDescriptors;
