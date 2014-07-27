@@ -13,13 +13,15 @@
 - (NSArray *)routerPaths {
     NSMutableArray *paths = [NSMutableArray array];
     NSString *url_host = [self host];
-    if (url_host) {
+    if ([url_host length] && ![url_host isEqualToString:@"/"]) {
         [paths addObject:url_host];
     }
     
     NSArray *url_paths = [self pathComponents];
-    if (url_paths) {
-        [paths addObjectsFromArray:url_paths];
+    for (NSString *url_path in url_paths) {
+        if ([url_path length] && ![url_path isEqualToString:@"/"]) {
+            [paths addObject:url_path];
+        }
     }
     
     return paths;

@@ -50,6 +50,13 @@
     return _pmap;
 }
 
+- (UIWindow *)window {
+    if (!_window) {
+        _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    }
+    return _window;
+}
+
 @dynamic map;
 - (NSDictionary *)map {
     return [self.pmap copy];
@@ -176,8 +183,13 @@
             break ;
         }
         
-        parent_page = [parent_page parentPage];
         current_page = parent_page;
+        if (parent_page == self.window.rootViewController) {
+            parent_page = self.window;
+        }
+        else {
+            parent_page = [parent_page parentPage];
+        }
     }
     
     return openSuccess;
@@ -207,28 +219,6 @@
     return NO;
 }
 
-- (id<SSNParentPage>)martchParentPageWithParent:(id<SSNParentPage>)parent
-                                    targetClass:(Class)class
-                                     respondURL:(NSURL *)respondURL
-                                          query:(NSDictionary *)query {
-    if (NO == [parent respondsToSelector:@selector(containedPages)]) {
-        return nil;
-    }
-    
-    NSArray *pages = [parent containedPages];
-    
-    //找到已经存在的父控制器
-    for (id<SSNPage> page in pages) {
-        if ([page isKindOfClass:class] && [page conformsToProtocol:@protocol(SSNParentPage)]) {
-            if ([self page:page targetClass:class respondURL:respondURL query:query]) {
-                return (id<SSNParentPage>)page;
-            }
-        }
-    }
-    
-    return nil;
-}
-
 - (BOOL)page:(id <SSNPage>)page targetClass:(Class)targetClass respondURL:(NSURL *)url query:(NSDictionary *)query {
     if (![page isKindOfClass:targetClass]) {
         return NO;
@@ -247,92 +237,106 @@
     return YES;
 }
 
-- (SSNSearchResult *)resultWithParent:(id <SSNParentPage>)parent
-                              lastPath:(NSString *)lastPath
-                           targetClass:(Class)targetClass
-                           originalURL:(NSURL *)url
-                                 query:(NSDictionary *)query {
-    SSNSearchResult *result = [[SSNSearchResult alloc] init];
-    result.parentPage = parent;
-    result.lastPath = lastPath;
+- (SSNSearchResult *)searchPathWithURL:(NSURL *)url
+                                 query:(NSDictionary *)query
+                                parent:(id<SSNParentPage>)parent
+                                 index:(NSInteger)index
+                                 paths:(NSArray *)paths {
     
+    //防越界
+    if (index >= [paths count]) {
+        return nil;
+    }
+    
+    NSString *path = [paths objectAtIndex:index];
+    id class_type = [self.pmap objectForKey:path];
+    
+    //特殊的handler，不需要注册
+    if ([path isEqualToString:@"handler"]) {
+        class_type = [SSNEventHandler class];
+    }
+    
+    if (nil == class_type) {
+        return nil;
+    }
+    
+    //看父控制器是否能打开
+    BOOL canOpen = NO;
+    if ([parent respondsToSelector:@selector(canRespondURL:query:)]) {
+        canOpen = [parent canRespondURL:url query:query];
+    }
+    
+    if (!canOpen) {//父节点无法打开
+        return nil;
+    }
+    
+    //父节点打开后先找已经存在的
+    NSArray *pages = nil;
     if ([parent respondsToSelector:@selector(containedPages)]) {
-        NSArray *pages = [parent containedPages];
+        pages = [parent containedPages];
+    }
+    
+    SSNSearchResult *rt = nil;
+    //需要分是不是最后一个来处理
+    if (index + 1 == [paths count]) {
+        
+        rt = [[SSNSearchResult alloc] init];
+        rt.parentPage = parent;
+        rt.lastPath = path;
+        
         for (id<SSNPage> page in pages) {
-            //尽管找到类似的路径，还是需要确定叶子节点是否响应url
-            if ([self page:page targetClass:targetClass respondURL:url query:query]) {
-                result.targetPage = page;
+            
+            if (![page isKindOfClass:class_type]) {
+                continue ;
+            }
+                
+            BOOL canRespond = NO;
+            if ([page respondsToSelector:@selector(canRespondURL:query:)]) {
+                canRespond = [page canRespondURL:url query:query];
+            }
+            
+            if (canRespond) {
+                rt.targetPage = page;
                 break ;
             }
         }
+        
     }
-    
-    return result;
+    else {
+        for (id<SSNPage> page in pages) {
+            
+            if (![page isKindOfClass:class_type]) {
+                continue ;
+            }
+            
+            rt = [self searchPathWithURL:url
+                                   query:query
+                                  parent:(id<SSNParentPage>)page
+                                   index:index + 1
+                                   paths:paths];
+            
+            if (rt) {
+                break;
+            }
+        }
+    }
+
+    return rt;
 }
 
 - (SSNSearchResult *)searchPageWithURL:(NSURL *)url query:(NSDictionary *)query {
     
-    NSUInteger path_depth = 0;
-    
     NSArray *paths = [url routerPaths];
     
-    Class pre_class_type = nil;
-    NSString *lastPath = nil;
+    id<SSNParentPage> parent_page = self.window;
     
-    id<SSNParentPage> parent_page = self.window.rootViewController;
+    SSNSearchResult *rt = [self searchPathWithURL:url
+                                            query:query
+                                           parent:parent_page
+                                            index:0
+                                            paths:paths];
     
-    //遍历按照路径去校验
-    for (NSString *path in paths) {
-        if ([path length] == 0) {
-            continue ;
-        }
-        
-        if ([path isEqualToString:@"/"]) {
-            continue ;
-        }
-        
-        id class_type = [self.pmap objectForKey:path];
-        
-        //特殊的handler，不需要注册
-        if ([path isEqualToString:@"handler"]) {
-            class_type = [SSNEventHandler class];
-        }
-        
-        if (nil == class_type) {
-            return nil;
-        }
-        
-        //深度超过1，需要向前确认目录是否已经存在，如果不存在，不需要继续校验
-        if (pre_class_type && ![parent_page isKindOfClass:pre_class_type]) {
-            return nil;
-        }
-        
-        //寻找对应的父控制器
-        parent_page = [self martchParentPageWithParent:parent_page
-                                           targetClass:pre_class_type
-                                            respondURL:url
-                                                 query:query];
-        
-        if (nil == parent_page) {//没有找到，不再继续，router无法完成
-            return nil;
-        }
-
-        
-        pre_class_type = class_type;
-        lastPath = path;
-        path_depth++;
-    }
-    
-    //路径为零，无法路由
-    if (path_depth == 0) {
-        return nil;
-    }
-    
-    return [self resultWithParent:parent_page
-                         lastPath:lastPath
-                      targetClass:pre_class_type
-                      originalURL:url
-                            query:query];
+    return rt;
 }
 
 - (SSNSearchResult *)loadPageWithURL:(NSURL *)url query:(NSDictionary *)query {

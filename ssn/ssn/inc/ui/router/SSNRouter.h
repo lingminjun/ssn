@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "SSNPage.h"
 
+#import "SSNVC+Router.h"//关注实现
+
 @protocol SSNRouterDelegate;
 
 @interface SSNRouter : NSObject

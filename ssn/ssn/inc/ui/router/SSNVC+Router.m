@@ -10,6 +10,10 @@
 
 @implementation UIWindow (SSNRouter)
 
+- (BOOL)canRespondURL:(NSURL *)url query:(NSDictionary *)query {
+    return YES;
+}
+
 - (id<SSNParentPage>)parentPage {
     return nil;
 }
@@ -45,6 +49,8 @@
             self.rootViewController = vc;
         }
         
+        [self makeKeyAndVisible];
+        
         return YES;
     }
     
@@ -67,6 +73,14 @@
 
 
 @implementation UIViewController (SSNRouter)
+
+- (BOOL)canRespondURL:(NSURL *)url query:(NSDictionary *)query {
+    return NO;
+}
+
+- (void)handleURL:(NSURL *)url query:(NSDictionary *)query {
+    self.title = [query objectForKey:@"title"];
+}
 
 - (id<SSNParentPage>)parentPage {
     if (self.presentingViewController) {
@@ -121,6 +135,10 @@
 @end
 
 @implementation UINavigationController (SSNRouter)
+
+- (BOOL)canRespondURL:(NSURL *)url query:(NSDictionary *)query {
+    return YES;
+}
 
 - (NSArray *)containedPages {
     NSMutableArray *pages = [NSMutableArray arrayWithCapacity:1];
@@ -202,6 +220,10 @@
 
 @implementation UITabBarController (SSNRouter)
 
+- (BOOL)canRespondURL:(NSURL *)url query:(NSDictionary *)query {
+    return YES;
+}
+
 - (NSArray *)containedPages {
     NSMutableArray *pages = [NSMutableArray arrayWithCapacity:1];
     NSArray *vcs = self.viewControllers;
@@ -250,9 +272,16 @@
     
     NSArray *vcs = self.viewControllers;
     
-    if ([vcs containsObject:vc]) {
-        self.selectedViewController = vc;
+    if (![vcs containsObject:vc]) {
+        NSMutableArray *tvcs = [NSMutableArray arrayWithCapacity:1];
+        if (vcs) {
+            [tvcs setArray:vcs];
+        }
+        [tvcs addObject:vc];
+        [self setViewControllers:tvcs];
     }
+    
+    self.selectedViewController = vc;
     
     return YES;
 }
