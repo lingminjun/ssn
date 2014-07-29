@@ -118,12 +118,6 @@
         return ;
     }
     
-    if ([self.finalVCS count] == 0 && [self.viewControllers count] == 0) {
-        [self.finalVCS addObject:viewController];
-        [super pushViewController:viewController animated:animated];
-        return ;
-    }
-    
     [self.finalVCS addObject:viewController];
     
     NSString *tag = [NSString stringWithFormat:@"%@",viewController];
@@ -227,12 +221,6 @@
 - (void)setViewControllers:(NSArray *)viewControllers animated:(BOOL)animated {
     
     if (0 == [viewControllers count]) {
-        return ;
-    }
-    
-    if ([self.finalVCS count] == 0 && [self.viewControllers count] == 0) {
-        [self.finalVCS setArray:viewControllers];
-        [super setViewControllers:viewControllers animated:animated];
         return ;
     }
     
