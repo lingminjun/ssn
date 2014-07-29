@@ -8,6 +8,15 @@
 
 #import "NiceQueue.h"
 
+
+#define dispatch_block_begin(block) __weak typeof(self) w_self = self;\
+dispatch_block_t block = ^{ \
+__strong typeof(w_self) self = w_self;\
+if (nil == self) { return ;}\
+@autoreleasepool
+#define dispatch_block_end(block)   }
+
+
 @interface NiceQueue ()
 
 @property (nonatomic,strong) NSString *identify;
@@ -20,6 +29,7 @@
 #endif
 
 @property (nonatomic,strong) NSString *currentTag;
+@property (nonatomic) NSInteger actionCount;
 @property (nonatomic) BOOL isSuspend;
 
 - (void)startTimer:(NSTimeInterval)timeOut tag:(NSString *)tag;
@@ -90,6 +100,16 @@
     return _actionQueue;
 }
 
+- (void)suspendActionQueue {
+    self.isSuspend = YES;
+    dispatch_suspend(self.actionQueue);
+}
+
+- (void)resumeActionQueue {
+    dispatch_resume(self.actionQueue);
+    self.isSuspend = NO;
+}
+
 - (id)initWithIdentify:(NSString *)identify {
     self = [super init];
     if (self) {
@@ -105,15 +125,9 @@
         return ;
     }
     
-    __weak typeof(self) w_self = self;
-    dispatch_block_t block = ^{
-        __strong typeof(w_self) s_self = w_self;
+    dispatch_block_begin(block) {
         
-        if (nil == s_self) {
-            return ;
-        }
-        
-        s_self.currentTag = tag;
+        self.currentTag = tag;
         
         BOOL notWait = action(tag);
         
@@ -124,16 +138,23 @@
                 [self startTimer:timeOut tag:tag];
             }
             
-            s_self.isSuspend = YES;
-            dispatch_suspend(s_self.actionQueue);
-            NSLog(@"%@ queue freeze！tag = %@",s_self.identify,tag);
+            [self suspendActionQueue];
+            NSLog(@"%@ queue freeze！tag = %@, actionCount = %d",self.identify,tag,self.actionCount);
         }
         else {
-            s_self.currentTag = nil;
+            self.currentTag = nil;
+            self.actionCount -= 1;
         }
-    };
+        
+    }dispatch_block_end(block);
     
-    dispatch_async(self.actionQueue, block);
+    self.actionCount += 1;
+    if (self.actionCount == 1) {//第一个不入栈
+        block();
+    }
+    else {
+        dispatch_async(self.actionQueue, block);
+    }
 }
 
 - (void)addAction:(BOOL (^)(NSString *))action {
@@ -150,24 +171,21 @@
         || [self.currentTag isEqualToString:tag]) {
         
         //保证在主线程中执行
-        dispatch_block_t block = ^{
+        dispatch_block_begin(block) {
             if (self.isSuspend) {
                 
                 [self cancelTimerForTag:tag];
                 
-                dispatch_resume(self.actionQueue);
-                self.isSuspend = NO;
+                [self resumeActionQueue];
                 self.currentTag = nil;
-                NSLog(@"%@ queue fire！tag = %@",self.identify, tag);
+                
+                self.actionCount -= 1;
+                
+                NSLog(@"%@ queue fire！tag = %@ ,actionCount = %d",self.identify, tag,self.actionCount);
             }
-        };
+        }dispatch_block_end(block);
         
-        if ([NSThread isMainThread]) {
-            block();
-        }
-        else {
-            dispatch_async(dispatch_get_main_queue(), block);
-        }
+        block();
     }
 }
 
@@ -181,10 +199,9 @@
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, mainQueue);
     dispatch_time_t del = dispatch_time(DISPATCH_TIME_NOW, timeOut * NSEC_PER_SEC);
     dispatch_source_set_timer(timer, del, timeOut * NSEC_PER_SEC, 1ull * NSEC_PER_USEC);
-    dispatch_source_set_event_handler(timer, ^{
-        __strong typeof(w_self) s_self = w_self;
-        NSLog(@"%@ queue timeOut！tag = %@",s_self.identify, tag);
-        [s_self fireForTag:tag];
+    dispatch_source_set_event_handler(timer, ^{ __strong typeof(w_self) self = w_self; if (!self) {return ;}
+        NSLog(@"%@ queue timeOut！tag = %@",self.identify, tag);
+        [self fireForTag:tag];
     });
     self.timer = timer;
     dispatch_resume(timer);
