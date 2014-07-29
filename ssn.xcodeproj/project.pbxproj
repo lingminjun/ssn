@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		53123F98191D25E10012A900 /* TestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53123F97191D25E10012A900 /* TestModel.m */; };
+		533378AE1986431200084428 /* SSNDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378AD1986431200084428 /* SSNDB.m */; };
+		533378B11986432800084428 /* SSNDBPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B01986432800084428 /* SSNDBPool.m */; };
+		533378B41986435B00084428 /* SSNDBTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B31986435B00084428 /* SSNDBTable.m */; };
 		535F26651983A21D00C0D7C0 /* db.md in Resources */ = {isa = PBXBuildFile; fileRef = 535F26641983A21D00C0D7C0 /* db.md */; };
 		535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F266C1983F09100C0D7C0 /* SSNRouter.m */; };
 		535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F26731983F7A800C0D7C0 /* NSURL+Router.m */; };
@@ -52,6 +55,12 @@
 		53123F96191D25E10012A900 /* TestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestModel.h; sourceTree = "<group>"; };
 		53123F97191D25E10012A900 /* TestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
 		5312B7531939955D00C250EF /* SSNModelManagerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSNModelManagerProtocol.h; sourceTree = "<group>"; };
+		533378AC1986431200084428 /* SSNDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDB.h; sourceTree = "<group>"; };
+		533378AD1986431200084428 /* SSNDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDB.m; sourceTree = "<group>"; };
+		533378AF1986432800084428 /* SSNDBPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBPool.h; sourceTree = "<group>"; };
+		533378B01986432800084428 /* SSNDBPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBPool.m; sourceTree = "<group>"; };
+		533378B21986435B00084428 /* SSNDBTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBTable.h; sourceTree = "<group>"; };
+		533378B31986435B00084428 /* SSNDBTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBTable.m; sourceTree = "<group>"; };
 		535F26641983A21D00C0D7C0 /* db.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = db.md; sourceTree = "<group>"; };
 		535F266B1983F09100C0D7C0 /* SSNRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRouter.h; sourceTree = "<group>"; };
 		535F266C1983F09100C0D7C0 /* SSNRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRouter.m; sourceTree = "<group>"; };
@@ -128,6 +137,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		533378AB198642DA00084428 /* db */ = {
+			isa = PBXGroup;
+			children = (
+				533378AC1986431200084428 /* SSNDB.h */,
+				533378AD1986431200084428 /* SSNDB.m */,
+				533378AF1986432800084428 /* SSNDBPool.h */,
+				533378B01986432800084428 /* SSNDBPool.m */,
+				533378B21986435B00084428 /* SSNDBTable.h */,
+				533378B31986435B00084428 /* SSNDBTable.m */,
+			);
+			path = db;
+			sourceTree = "<group>";
+		};
 		535F266A1983F06300C0D7C0 /* router */ = {
 			isa = PBXGroup;
 			children = (
@@ -268,6 +290,7 @@
 		53ECB160191FBB6000BEB29D /* db */ = {
 			isa = PBXGroup;
 			children = (
+				533378AB198642DA00084428 /* db */,
 				53ECB173191FBDF300BEB29D /* SSNDataBase.h */,
 				53ECB161191FBB6000BEB29D /* SSNModel.h */,
 				53ECB162191FBB6000BEB29D /* ssnmodelimp.h */,
@@ -439,11 +462,14 @@
 				53ECB16E191FBB6000BEB29D /* SSNModel.m in Sources */,
 				53123F98191D25E10012A900 /* TestModel.m in Sources */,
 				535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */,
+				533378AE1986431200084428 /* SSNDB.m in Sources */,
 				53D4FD82192F1B3B00A934E9 /* SSNDBTableManager.m in Sources */,
 				53FAA14B193381FF00CD2596 /* SSNFetchController.m in Sources */,
 				535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */,
 				53FF9F491934E188009117AB /* SSNDBSectionImp.m in Sources */,
+				533378B41986435B00084428 /* SSNDBTable.m in Sources */,
 				535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */,
+				533378B11986432800084428 /* SSNDBPool.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
