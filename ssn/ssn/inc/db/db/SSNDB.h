@@ -10,4 +10,8 @@
 
 @interface SSNDB : NSObject
 
+- (instancetype)initWithScop:(NSString *)scop;
+
+- (NSString *)dbpath;
+
 @end

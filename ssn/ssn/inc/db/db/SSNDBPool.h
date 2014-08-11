@@ -7,7 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SSNDB.h"
 
 @interface SSNDBPool : NSObject
+
++ (instancetype)shareInstance;
+
+- (SSNDB *)dbWithScop:(NSString *)scop;
 
 @end
