@@ -7,7 +7,7 @@
 //
 
 #import "TestModel.h"
-#import "ssndb.h"
+#import "ssndb1.h"
 
 @implementation TestModel
 

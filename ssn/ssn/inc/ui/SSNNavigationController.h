@@ -1,5 +1,5 @@
 //
-//  NavigationQueueController.h
+//  SSNNavigationController.h
 //  Routable
 //
 //  Created by lingminjun on 14-6-10.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface NavigationQueueController : UINavigationController
+@interface SSNNavigationController : UINavigationController
 
 - (void)setNavigationDelegate:(id<UINavigationControllerDelegate>)navigationDelegate;
 

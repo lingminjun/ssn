@@ -1,12 +1,12 @@
 //
-//  NavigationQueueController.m
+//  SSNNavigationController.m
 //  Routable
 //
 //  Created by lingminjun on 14-6-10.
 //  Copyright (c) 2014年 TurboProp Inc. All rights reserved.
 //
 
-#import "NavigationQueueController.h"
+#import "SSNNavigationController.h"
 #import "NiceQueue.h"
 
 #define AnimatdTimeOut(animated) ((animated)?0.7f:0.3f)
@@ -20,7 +20,7 @@
 @end
 
 
-@interface NavigationQueueController ()
+@interface SSNNavigationController ()
 
 @property (nonatomic,strong) NSMutableArray *finalVCS;
 @property (nonatomic,strong) NiceQueue *queue;
@@ -33,7 +33,7 @@
 
 @end
 
-@implementation NavigationQueueController
+@implementation SSNNavigationController
 
 @synthesize finalVCS = _finalVCS;
 @synthesize queue = _queue;
@@ -262,7 +262,7 @@
     return self;
 }
 
-- (void)undoPopAction:(NavigationQueueController *)navigationController {
+- (void)undoPopAction:(SSNNavigationController *)navigationController {
     if (navigationController.undoVCS) {
         NSLog(@"undo navigation vcs[%lud]",(unsigned long)[navigationController.undoVCS count]);
         [navigationController.finalVCS setArray:navigationController.undoVCS];
@@ -277,7 +277,7 @@
     }
 }
 
-- (void)redoPopAction:(NavigationQueueController *)navigationController viewController:(UIViewController *)viewController {
+- (void)redoPopAction:(SSNNavigationController *)navigationController viewController:(UIViewController *)viewController {
     
     navigationController.undoVCS = nil;
     
@@ -298,8 +298,8 @@
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     
 #ifdef __IPHONE_7_0
-    if ([navigationController isKindOfClass:[NavigationQueueController class]]) {
-        NavigationQueueController *queueNav = (NavigationQueueController *)navigationController;
+    if ([navigationController isKindOfClass:[SSNNavigationController class]]) {
+        SSNNavigationController *queueNav = (SSNNavigationController *)navigationController;
         queueNav.isUndo = NO;
         if (queueNav.undoVCS) {
             //先还原操作（pop可能只是ios中的拖拽）
@@ -318,8 +318,8 @@
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     
-    if ([navigationController isKindOfClass:[NavigationQueueController class]]) {
-        NavigationQueueController *queueNav = (NavigationQueueController *)navigationController;
+    if ([navigationController isKindOfClass:[SSNNavigationController class]]) {
+        SSNNavigationController *queueNav = (SSNNavigationController *)navigationController;
 #ifdef __IPHONE_7_0
         [self redoPopAction:queueNav viewController:viewController];
 #endif
