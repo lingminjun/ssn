@@ -15,13 +15,21 @@
 		535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F266C1983F09100C0D7C0 /* SSNRouter.m */; };
 		535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F26731983F7A800C0D7C0 /* NSURL+Router.m */; };
 		535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F267619841ED800C0D7C0 /* SSNVC+Router.m */; };
+		538E3835199869430061692E /* DMTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3834199869430061692E /* DMTabViewController.m */; };
+		538E3838199869880061692E /* DMContactNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3837199869880061692E /* DMContactNavController.m */; };
+		538E383B199869A20061692E /* DMSessionNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E383A199869A20061692E /* DMSessionNavController.m */; };
+		538E383E199869BF0061692E /* DMSettingNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E383D199869BF0061692E /* DMSettingNavController.m */; };
+		538E3841199869E00061692E /* DMSignNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3840199869E00061692E /* DMSignNavController.m */; };
+		538E3844199869F90061692E /* DMSignViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3843199869F90061692E /* DMSignViewController.m */; };
+		538E384719986A3B0061692E /* DMContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384619986A3B0061692E /* DMContactViewController.m */; };
+		538E384A19986A560061692E /* DMSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384919986A560061692E /* DMSessionViewController.m */; };
+		538E384D19986A700061692E /* DMSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384C19986A700061692E /* DMSettingViewController.m */; };
 		53D163E4191A629C00AD4C81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E3191A629C00AD4C81 /* Foundation.framework */; };
 		53D163E6191A629C00AD4C81 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E5191A629C00AD4C81 /* CoreGraphics.framework */; };
 		53D163E8191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
 		53D163EE191A629C00AD4C81 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53D163EC191A629C00AD4C81 /* InfoPlist.strings */; };
 		53D163F0191A629C00AD4C81 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D163EF191A629C00AD4C81 /* main.m */; };
 		53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D163F3191A629C00AD4C81 /* AppDelegate.m */; };
-		53D163FD191A629C00AD4C81 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D163FC191A629C00AD4C81 /* ViewController.m */; };
 		53D16406191A629C00AD4C81 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D16405191A629C00AD4C81 /* XCTest.framework */; };
 		53D16407191A629C00AD4C81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E3191A629C00AD4C81 /* Foundation.framework */; };
 		53D16408191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
@@ -69,6 +77,24 @@
 		535F26731983F7A800C0D7C0 /* NSURL+Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Router.m"; sourceTree = "<group>"; };
 		535F267519841ED800C0D7C0 /* SSNVC+Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNVC+Router.h"; sourceTree = "<group>"; };
 		535F267619841ED800C0D7C0 /* SSNVC+Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SSNVC+Router.m"; sourceTree = "<group>"; };
+		538E3833199869430061692E /* DMTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMTabViewController.h; sourceTree = "<group>"; };
+		538E3834199869430061692E /* DMTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMTabViewController.m; sourceTree = "<group>"; };
+		538E3836199869880061692E /* DMContactNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMContactNavController.h; sourceTree = "<group>"; };
+		538E3837199869880061692E /* DMContactNavController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMContactNavController.m; sourceTree = "<group>"; };
+		538E3839199869A20061692E /* DMSessionNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSessionNavController.h; sourceTree = "<group>"; };
+		538E383A199869A20061692E /* DMSessionNavController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSessionNavController.m; sourceTree = "<group>"; };
+		538E383C199869BF0061692E /* DMSettingNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSettingNavController.h; sourceTree = "<group>"; };
+		538E383D199869BF0061692E /* DMSettingNavController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSettingNavController.m; sourceTree = "<group>"; };
+		538E383F199869E00061692E /* DMSignNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSignNavController.h; sourceTree = "<group>"; };
+		538E3840199869E00061692E /* DMSignNavController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSignNavController.m; sourceTree = "<group>"; };
+		538E3842199869F90061692E /* DMSignViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSignViewController.h; sourceTree = "<group>"; };
+		538E3843199869F90061692E /* DMSignViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSignViewController.m; sourceTree = "<group>"; };
+		538E384519986A3B0061692E /* DMContactViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMContactViewController.h; sourceTree = "<group>"; };
+		538E384619986A3B0061692E /* DMContactViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMContactViewController.m; sourceTree = "<group>"; };
+		538E384819986A560061692E /* DMSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSessionViewController.h; sourceTree = "<group>"; };
+		538E384919986A560061692E /* DMSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSessionViewController.m; sourceTree = "<group>"; };
+		538E384B19986A700061692E /* DMSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSettingViewController.h; sourceTree = "<group>"; };
+		538E384C19986A700061692E /* DMSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSettingViewController.m; sourceTree = "<group>"; };
 		53D163E0191A629C00AD4C81 /* ssn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ssn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D163E3191A629C00AD4C81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		53D163E5191A629C00AD4C81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -79,8 +105,6 @@
 		53D163F1191A629C00AD4C81 /* ssn-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ssn-Prefix.pch"; sourceTree = "<group>"; };
 		53D163F2191A629C00AD4C81 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		53D163F3191A629C00AD4C81 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		53D163FB191A629C00AD4C81 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		53D163FC191A629C00AD4C81 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		53D16404191A629C00AD4C81 /* ssnTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ssnTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D16405191A629C00AD4C81 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		53D1640D191A629C00AD4C81 /* ssnTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ssnTests-Info.plist"; sourceTree = "<group>"; };
@@ -164,6 +188,71 @@
 			path = router;
 			sourceTree = "<group>";
 		};
+		538E382D199868710061692E /* demo */ = {
+			isa = PBXGroup;
+			children = (
+				538E3832199869080061692E /* tab */,
+				538E382E199868E10061692E /* contact */,
+				538E382F199868E10061692E /* session */,
+				538E3830199868E10061692E /* setting */,
+				538E3831199868E10061692E /* sign */,
+			);
+			path = demo;
+			sourceTree = "<group>";
+		};
+		538E382E199868E10061692E /* contact */ = {
+			isa = PBXGroup;
+			children = (
+				538E3836199869880061692E /* DMContactNavController.h */,
+				538E3837199869880061692E /* DMContactNavController.m */,
+				538E384519986A3B0061692E /* DMContactViewController.h */,
+				538E384619986A3B0061692E /* DMContactViewController.m */,
+			);
+			path = contact;
+			sourceTree = "<group>";
+		};
+		538E382F199868E10061692E /* session */ = {
+			isa = PBXGroup;
+			children = (
+				538E3839199869A20061692E /* DMSessionNavController.h */,
+				538E383A199869A20061692E /* DMSessionNavController.m */,
+				538E384819986A560061692E /* DMSessionViewController.h */,
+				538E384919986A560061692E /* DMSessionViewController.m */,
+			);
+			path = session;
+			sourceTree = "<group>";
+		};
+		538E3830199868E10061692E /* setting */ = {
+			isa = PBXGroup;
+			children = (
+				538E383C199869BF0061692E /* DMSettingNavController.h */,
+				538E383D199869BF0061692E /* DMSettingNavController.m */,
+				538E384B19986A700061692E /* DMSettingViewController.h */,
+				538E384C19986A700061692E /* DMSettingViewController.m */,
+			);
+			path = setting;
+			sourceTree = "<group>";
+		};
+		538E3831199868E10061692E /* sign */ = {
+			isa = PBXGroup;
+			children = (
+				538E383F199869E00061692E /* DMSignNavController.h */,
+				538E3840199869E00061692E /* DMSignNavController.m */,
+				538E3842199869F90061692E /* DMSignViewController.h */,
+				538E3843199869F90061692E /* DMSignViewController.m */,
+			);
+			path = sign;
+			sourceTree = "<group>";
+		};
+		538E3832199869080061692E /* tab */ = {
+			isa = PBXGroup;
+			children = (
+				538E3833199869430061692E /* DMTabViewController.h */,
+				538E3834199869430061692E /* DMTabViewController.m */,
+			);
+			path = tab;
+			sourceTree = "<group>";
+		};
 		53D163D7191A629C00AD4C81 = {
 			isa = PBXGroup;
 			children = (
@@ -198,11 +287,10 @@
 		53D163E9191A629C00AD4C81 /* ssn */ = {
 			isa = PBXGroup;
 			children = (
+				538E382D199868710061692E /* demo */,
 				53D1641B191A66B500AD4C81 /* ssn */,
 				53D163F2191A629C00AD4C81 /* AppDelegate.h */,
 				53D163F3191A629C00AD4C81 /* AppDelegate.m */,
-				53D163FB191A629C00AD4C81 /* ViewController.h */,
-				53D163FC191A629C00AD4C81 /* ViewController.m */,
 				53D163EA191A629C00AD4C81 /* Supporting Files */,
 				53123F96191D25E10012A900 /* TestModel.h */,
 				53123F97191D25E10012A900 /* TestModel.m */,
@@ -452,24 +540,32 @@
 			files = (
 				53D688C019387BE7008D8DBE /* SSNModelManager.m in Sources */,
 				53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */,
-				53D163FD191A629C00AD4C81 /* ViewController.m in Sources */,
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
 				53ECB171191FBDE900BEB29D /* SSNDataBase.m in Sources */,
 				53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */,
 				53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */,
+				538E384D19986A700061692E /* DMSettingViewController.m in Sources */,
+				538E3844199869F90061692E /* DMSignViewController.m in Sources */,
 				53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
 				53ECB16E191FBB6000BEB29D /* SSNModel.m in Sources */,
 				53123F98191D25E10012A900 /* TestModel.m in Sources */,
 				535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */,
 				533378AE1986431200084428 /* SSNDB.m in Sources */,
+				538E384A19986A560061692E /* DMSessionViewController.m in Sources */,
 				53D4FD82192F1B3B00A934E9 /* SSNDBTableManager.m in Sources */,
 				53FAA14B193381FF00CD2596 /* SSNFetchController.m in Sources */,
 				535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */,
 				53FF9F491934E188009117AB /* SSNDBSectionImp.m in Sources */,
 				533378B41986435B00084428 /* SSNDBTable.m in Sources */,
+				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
 				535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */,
+				538E384719986A3B0061692E /* DMContactViewController.m in Sources */,
+				538E3841199869E00061692E /* DMSignNavController.m in Sources */,
+				538E3838199869880061692E /* DMContactNavController.m in Sources */,
+				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
 				533378B11986432800084428 /* SSNDBPool.m in Sources */,
+				538E3835199869430061692E /* DMTabViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,6 +688,7 @@
 				GCC_PREFIX_HEADER = "ssn/ssn-Prefix.pch";
 				INFOPLIST_FILE = "ssn/ssn-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -605,6 +702,7 @@
 				GCC_PREFIX_HEADER = "ssn/ssn-Prefix.pch";
 				INFOPLIST_FILE = "ssn/ssn-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
