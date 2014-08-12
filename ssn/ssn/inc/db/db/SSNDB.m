@@ -8,12 +8,18 @@
 
 #import "SSNDB.h"
 #import "ssnbase.h"
+#import <sqlite3.h>
+#import "SSNCuteSerialQueue.h"
+#import "NSFileManager+SSN.h"
 
 #define SSNDBFileName @"db.sqlite"
 
 @interface SSNDB ()
-
-@property (nonatomic, strong) NSString *dbpath;
+{
+    sqlite3 *_database;
+    NSString *_dbpath;
+    SSNCuteSerialQueue *_ioQueue;
+}
 
 @end
 
@@ -21,37 +27,10 @@
 
 + (NSString *)pathForScop:(NSString *)scop
 {
-    static NSString *dbDirectory = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        @autoreleasepool
-        {
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-            NSString *documentsDirectory = [paths objectAtIndex:0];
-            dbDirectory = [documentsDirectory stringByAppendingPathComponent:@"db"];
-        }
-    });
-
-    NSString *dirPath = [dbDirectory stringByAppendingPathComponent:scop];
-    NSString *path = [dirPath stringByAppendingPathComponent:SSNDBFileName];
-
-    @autoreleasepool
-    {
-        NSError *error = nil;
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        if (![fileManager fileExistsAtPath:dirPath])
-        {
-            [fileManager createDirectoryAtPath:dirPath withIntermediateDirectories:YES attributes:nil error:&error];
-        }
-
-        if (error)
-        {
-            ssn_log("create db dir for scop %s error:[%s]", [scop UTF8String], [[error description] UTF8String]);
-            return nil;
-        }
-    }
-
-    return path;
+    static NSString *dbdir = @"db";
+    NSString *dirPath = [dbdir stringByAppendingPathComponent:scop];
+    dirPath = [[NSFileManager defaultManager] pathDocumentDirectoryWithPathComponents:dirPath];
+    return [dirPath stringByAppendingPathComponent:SSNDBFileName];
 }
 
 - (instancetype)initWithScop:(NSString *)scop
@@ -67,15 +46,25 @@
 
         //全部转成小写
         NSString *lowerScop = [scop lowercaseString];
-        self.dbpath = [SSNDB pathForScop:lowerScop];
+        _dbpath = [SSNDB pathForScop:lowerScop];
 
         NSAssert(self.dbpath, @"dbpath 无法建立");
+
+        _ioQueue = [[SSNCuteSerialQueue alloc] initWithName:scop];
     }
     return self;
 }
 
 - (void)dealloc
 {
+    dispatch_block_t block = ^{
+        if (sqlite3_close(_database) != SQLITE_OK)
+        {
+            //[self raiseSqliteException:@"Failed to close database with message '%S'."];
+        }
+    };
+
+    [_ioQueue sync:block];
 }
 
 @end

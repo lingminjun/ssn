@@ -23,7 +23,7 @@
 
 - (instancetype)initWithConstructor:(SSNConstructor)constructor
 {
-    NSAssert(constructor, @"SSNRigidDictionary 必须 传入正确的 构造器，不然生产的实力没有意义");
+    NSAssert(constructor, @"SSNRigidDictionary 必须 传入正确的 构造器，不然生产的实例没有意义");
     self = [super init];
     if (self)
     {

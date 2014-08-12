@@ -205,6 +205,9 @@ if (nil == self) { return ;}\
     });
     self.timer = timer;
     dispatch_resume(timer);
+#if !OS_OBJECT_USE_OBJC
+    dispatch_release(timer);
+#endif
 }
 
 - (void)cancelTimerForTag:(NSString *)tag {

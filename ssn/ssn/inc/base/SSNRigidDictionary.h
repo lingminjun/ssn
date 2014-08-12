@@ -11,7 +11,7 @@
 typedef id (^SSNConstructor)(id key, NSDictionary *userInfo);
 
 /**
- * 内部保证单一构造器,key暂时不做邀请
+ * 内部保证单一构造器,key暂时不做要求
  */
 @interface SSNRigidDictionary : NSObject
 

@@ -37,6 +37,8 @@
 		53D16412191A629C00AD4C81 /* ssnTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D16411191A629C00AD4C81 /* ssnTests.m */; };
 		53D4FD82192F1B3B00A934E9 /* SSNDBTableManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D4FD81192F1B3B00A934E9 /* SSNDBTableManager.m */; };
 		53D688C019387BE7008D8DBE /* SSNModelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D688BF19387BE7008D8DBE /* SSNModelManager.m */; };
+		53D6ED46199A03F90029D82F /* SSNCuteSerialQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D6ED45199A03F90029D82F /* SSNCuteSerialQueue.m */; };
+		53D6ED49199A6EC90029D82F /* NSFileManager+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D6ED48199A6EC90029D82F /* NSFileManager+SSN.m */; };
 		53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */; };
 		53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC48194B4BD100BA4F58 /* NiceQueue.m */; };
 		53E512D51998F81C002925E6 /* SSNRigidDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E512D41998F81C002925E6 /* SSNRigidDictionary.m */; };
@@ -116,6 +118,10 @@
 		53D4FD86192FABA200A934E9 /* ssndb1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ssndb1.h; sourceTree = "<group>"; };
 		53D688BC19387BC1008D8DBE /* SSNModelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNModelManager.h; sourceTree = "<group>"; };
 		53D688BF19387BE7008D8DBE /* SSNModelManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNModelManager.m; sourceTree = "<group>"; };
+		53D6ED44199A03F90029D82F /* SSNCuteSerialQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNCuteSerialQueue.h; sourceTree = "<group>"; };
+		53D6ED45199A03F90029D82F /* SSNCuteSerialQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNCuteSerialQueue.m; sourceTree = "<group>"; };
+		53D6ED47199A6EC90029D82F /* NSFileManager+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+SSN.h"; sourceTree = "<group>"; };
+		53D6ED48199A6EC90029D82F /* NSFileManager+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+SSN.m"; sourceTree = "<group>"; };
 		53DDBC40194B4BB700BA4F58 /* SSNNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNNavigationController.h; sourceTree = "<group>"; };
 		53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNNavigationController.m; sourceTree = "<group>"; };
 		53DDBC47194B4BD100BA4F58 /* NiceQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NiceQueue.h; sourceTree = "<group>"; };
@@ -376,6 +382,10 @@
 				53ECB15F191FBB6000BEB29D /* ssnbase.h */,
 				53E512D31998F81C002925E6 /* SSNRigidDictionary.h */,
 				53E512D41998F81C002925E6 /* SSNRigidDictionary.m */,
+				53D6ED44199A03F90029D82F /* SSNCuteSerialQueue.h */,
+				53D6ED45199A03F90029D82F /* SSNCuteSerialQueue.m */,
+				53D6ED47199A6EC90029D82F /* NSFileManager+SSN.h */,
+				53D6ED48199A6EC90029D82F /* NSFileManager+SSN.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -554,8 +564,10 @@
 				53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
 				53ECB16E191FBB6000BEB29D /* SSNModel.m in Sources */,
+				53D6ED49199A6EC90029D82F /* NSFileManager+SSN.m in Sources */,
 				53123F98191D25E10012A900 /* TestModel.m in Sources */,
 				535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */,
+				53D6ED46199A03F90029D82F /* SSNCuteSerialQueue.m in Sources */,
 				533378AE1986431200084428 /* SSNDB.m in Sources */,
 				538E384A19986A560061692E /* DMSessionViewController.m in Sources */,
 				53D4FD82192F1B3B00A934E9 /* SSNDBTableManager.m in Sources */,

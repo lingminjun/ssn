@@ -10,8 +10,9 @@
 
 @interface SSNDB : NSObject
 
-- (instancetype)initWithScop:(NSString *)scop;
+@property (nonatomic, strong, readonly) NSString *dbpath;
 
-- (NSString *)dbpath;
+//数据库已经被open
+- (instancetype)initWithScop:(NSString *)scop;
 
 @end
