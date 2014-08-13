@@ -41,6 +41,11 @@
 
 - (SSNDB *)dbWithScop:(NSString *)scop
 {
+    if (nil == scop)
+    {
+        return nil;
+    }
+
     return [_cache objectForKey:scop];
 }
 
