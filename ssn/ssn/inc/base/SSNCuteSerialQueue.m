@@ -22,8 +22,6 @@
 
 @implementation SSNCuteSerialQueue
 
-@synthesize name = _name;
-
 - (instancetype)initWithName:(NSString *)name
 {
     self = [super init];
