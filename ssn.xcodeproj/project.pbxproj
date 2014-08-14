@@ -508,11 +508,6 @@
 			attributes = {
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = lingminjun;
-				TargetAttributes = {
-					53D16403191A629C00AD4C81 = {
-						TestTargetID = 53D163DF191A629C00AD4C81;
-					};
-				};
 			};
 			buildConfigurationList = 53D163DB191A629C00AD4C81 /* Build configuration list for PBXProject "ssn" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -734,7 +729,6 @@
 		53D16419191A629C00AD4C81 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ssn.app/ssn";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -748,7 +742,6 @@
 				);
 				INFOPLIST_FILE = "ssnTests/ssnTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -756,7 +749,6 @@
 		53D1641A191A629C00AD4C81 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ssn.app/ssn";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -766,7 +758,6 @@
 				GCC_PREFIX_HEADER = "ssn/ssn-Prefix.pch";
 				INFOPLIST_FILE = "ssnTests/ssnTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;

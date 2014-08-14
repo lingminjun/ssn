@@ -47,4 +47,18 @@ typedef enum
 @property (nonatomic, readonly) SSNColumnStyle style;
 @property (nonatomic, readonly) SSNColumnIndexStyle index;
 
+- (instancetype)initWithName:(NSString *)name
+                        type:(SSNColumnType)type
+                       style:(SSNColumnStyle)style
+                       index:(SSNColumnIndexStyle)index
+                        fill:(NSString *)fill
+                     mapping:(NSString *)mapping;
+
++ (instancetype)columnWithName:(NSString *)name
+                          type:(SSNColumnType)type
+                         style:(SSNColumnStyle)style
+                         index:(SSNColumnIndexStyle)index
+                          fill:(NSString *)fill
+                       mapping:(NSString *)mapping;
+
 @end

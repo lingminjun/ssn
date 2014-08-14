@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "SSNRigidDictionary.h"
 
 @interface ssnTests : XCTestCase
 
@@ -29,6 +30,32 @@
 - (void)testExample
 {
     XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+}
+
+- (void)testRigidDictionary
+{
+    SSNRigidDictionary *set = [[SSNRigidDictionary alloc]
+        initWithConstructor:^id(id key, NSDictionary *userInfo) { return [[NSObject alloc] init]; }];
+
+    set.countLimit = 1;
+
+    @autoreleasepool
+    {
+        id obj = [set objectForKey:@"1"];
+        NSLog(@"%@", obj);
+    }
+
+    __weak id o = nil;
+    @autoreleasepool
+    {
+        id obj = [set objectForKey:@"2"];
+        NSLog(@"%@", obj);
+        o = obj;
+    }
+
+    [set removeObjectForKey:@"2"];
+
+    NSLog(@"%@", o);
 }
 
 @end

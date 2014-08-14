@@ -13,6 +13,18 @@ FOUNDATION_EXTERN NSString *SSNDBTableDidMigrateNotification;  //数据迁移结
 FOUNDATION_EXTERN NSString *SSNDBTableDidDropNotification;     //数据表删除 mainThread
 FOUNDATION_EXTERN NSString *SSNDBTableNameKey;                 //数据迁移表格
 
+#ifndef _SSNDBTable_
+#define _SSNDBTable_
+
+typedef enum : NSUInteger
+{
+    SSNDBTableNone,   //表示数据表还不存在
+    SSNDBTableUpdate, //表示数据表待更新
+    SSNDBTableOK,
+} SSNDBTableStatus;
+
+#endif
+
 @class SSNDB, SSNDBColumn;
 
 @interface SSNDBTable : NSObject
@@ -27,8 +39,10 @@ FOUNDATION_EXTERN NSString *SSNDBTableNameKey;                 //数据迁移表
 - (instancetype)initWithDB:(SSNDB *)db tableJSONDescription:(NSData *)tableJSONDescription;
 + (instancetype)tableWithDB:(SSNDB *)db tableJSONDescription:(NSData *)tableJSONDescription;
 
+- (SSNDBTableStatus)status; //根据
+
 // table的状体
-- (BOOL)update; //创建数据表并升级到最新，使用者需要操作某个数据表时，一定要保证此方法已经被执行
+- (void)update; //创建数据表并升级到最新，使用者需要操作某个数据表时，一定要保证此方法已经被执行
 
 - (void)drop; //删除数据表
 

@@ -22,6 +22,6 @@ typedef id (^SSNConstructor)(id key, NSDictionary *userInfo);
 
 - (id)objectForKey:(id<NSCopying>)key;
 - (id)objectForKey:(id<NSCopying>)key userInfo:(NSDictionary *)userInfo;
-- (void)removeObjectForKey:(id<NSCopying>)key;
+- (oneway void)removeObjectForKey:(id<NSCopying>)key;
 
 @end

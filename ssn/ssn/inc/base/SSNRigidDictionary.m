@@ -7,48 +7,27 @@
 //
 
 #import "SSNRigidDictionary.h"
-#import <pthread.h>
+#if TARGET_IPHONE_SIMULATOR
+#import <objc/objc-runtime.h>
+#else
+#import <objc/runtime.h>
+#import <objc/message.h>
+#endif
 
 @interface SSNRigidBox : NSObject
 @property (nonatomic, strong) id<NSCopying> key;
 @property (nonatomic, weak) id obj;
-- (instancetype)initWithObject:(id)obj forKey:(id<NSCopying>)key;
-+ (instancetype)boxWithObject:(id)obj forKey:(id<NSCopying>)key;
-@end
-
-@implementation SSNRigidBox
-
-- (instancetype)initWithObject:(id)obj forKey:(id<NSCopying>)key
-{
-    self = [super init];
-    if (self)
-    {
-        self.key = key;
-        self.obj = obj;
-    }
-    return self;
-}
-
-+ (instancetype)boxWithObject:(id)obj forKey:(id<NSCopying>)key
-{
-    return [[self alloc] initWithObject:obj forKey:key];
-}
-
-#if DEBUG
-- (NSString *)debugDescription
-{
-    return [_obj description];
-}
-#endif
-
+@property (nonatomic, weak) SSNRigidDictionary *dic;
+- (instancetype)initWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidDictionary *)dic;
++ (instancetype)boxWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidDictionary *)dic;
 @end
 
 @interface SSNRigidDictionary ()
 {
     NSCache *_cache;
     NSMutableDictionary *_trace;
-    pthread_mutex_t _mutex;
-
+    NSString *_name;
+    dispatch_queue_t _queue;
     SSNConstructor _constructor;
 }
 
@@ -63,36 +42,26 @@
     if (self)
     {
         _constructor = constructor;
-        pthread_mutex_init(&_mutex, NULL);
+        _name = [NSString stringWithFormat:@"<RigidDictionary:%p", self];
+        _queue = dispatch_queue_create([_name UTF8String], DISPATCH_QUEUE_SERIAL);
+        dispatch_queue_set_specific(_queue, (__bridge const void *)_name, (__bridge void *)_name, NULL);
         _cache = [[NSCache alloc] init];
 
-        _trace = [[NSMutableDictionary alloc] initWithCapacity:1];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(memoryWarning:)
-                                                     name:UIApplicationDidReceiveMemoryWarningNotification
-                                                   object:nil];
+        CFDictionaryValueCallBacks valueCallBacks = {0, NULL, NULL, CFCopyDescription, CFEqual};
+        _trace = (__bridge_transfer NSMutableDictionary *)CFDictionaryCreateMutable(
+            NULL, 0, &kCFTypeDictionaryKeyCallBacks, &valueCallBacks);
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    pthread_mutex_destroy(&_mutex);
-}
-
-- (void)memoryWarning:(NSNotification *)notify
-{
-    __weak typeof(self) w_self = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        __strong typeof(w_self) self = w_self;
-        if (!self)
-        {
-            return;
-        }
-        [self checkTraceObjects];
-    });
+#if !OS_OBJECT_USE_OBJC
+    if (_queue)
+    {
+        dispatch_release(_queue);
+    }
+#endif
 }
 
 - (void)setCountLimit:(NSUInteger)lim
@@ -134,18 +103,14 @@
 
         if (obj)
         {
-            [_cache setObject:obj forKey:key];
+            [_cache setObject:obj forKey:key]; //发生释放
 
-            box = [SSNRigidBox boxWithObject:obj forKey:key];
+            box = [SSNRigidBox boxWithObject:obj forKey:key targetDictionary:self];
             [_trace setObject:box forKey:key];
 
-            if (_cache.countLimit > 0 && [_trace count] > _cache.countLimit + 5)
-            { //肯定存在不合理，limitcout设置存在非合理性，建议使用者修改
-                NSAssert(YES, @"limitcout设置存在非合理性，请使用者修改limitcout");
-
-                //非debug状态，需要对数据进行清理
-                [self checkTraceObjects];
-            }
+            const char *trace_box = '\0';
+            objc_setAssociatedObject(obj, &trace_box, box, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            // objc_getAssociatedObject(obj, &trace_box);
         }
     }
     return obj;
@@ -153,58 +118,78 @@
 
 - (id)objectForKey:(id<NSCopying>)key userInfo:(NSDictionary *)userInfo
 {
-    id obj = [_cache objectForKey:key];
+    __block id obj = [_cache objectForKey:key];
     if (!obj)
     {
-        pthread_mutex_lock(&_mutex);
-        obj = [self constructorObjectWithKey:key userInfo:userInfo];
-        pthread_mutex_unlock(&_mutex);
+        dispatch_block_t block = ^{ obj = [self constructorObjectWithKey:key userInfo:userInfo]; };
+        if (dispatch_get_specific((__bridge const void *)_name))
+        {
+            block();
+        }
+        else
+        {
+            dispatch_sync(_queue, block);
+        }
     }
     return obj;
 }
 
-- (void)removeObjectForKey:(id<NSCopying>)key
+- (oneway void)removeObjectForKey:(id<NSCopying>)key
 {
-    pthread_mutex_lock(&_mutex);
-    [_cache removeObjectForKey:key];
-    pthread_mutex_unlock(&_mutex);
-
-    //延迟释放跟踪数据，便于使用者不必确保当前栈区域是否释放对象本身
-    __weak typeof(self) w_self = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        __strong typeof(w_self) self = w_self;
-        if (!self)
-        {
-            return;
-        }
-        [self removeTraceObjectForKey:key];
-    });
+    dispatch_async(_queue, ^{ [_cache removeObjectForKey:key]; });
 }
 
 - (void)removeTraceObjectForKey:(id<NSCopying>)key
 {
-    pthread_mutex_lock(&_mutex);
-    SSNRigidBox *box = [_trace objectForKey:key];
-    id obj = box.obj;
-    if (!obj)
+    dispatch_block_t block = ^{
+        SSNRigidBox *box = [_trace objectForKey:key];
+        id obj = box.obj;
+        if (!obj)
+        {
+            [_trace removeObjectForKey:key];
+        }
+    };
+    if (dispatch_get_specific((__bridge const void *)_name))
     {
-        [_trace removeObjectForKey:key];
+        block();
     }
-    pthread_mutex_unlock(&_mutex);
+    else
+    {
+        dispatch_sync(_queue, block);
+    }
 }
 
-- (void)checkTraceObjects
+@end
+
+@implementation SSNRigidBox
+
+- (instancetype)initWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidDictionary *)dic
 {
-    NSArray *boxs = [_trace allValues];
-    NSMutableArray *keys = [NSMutableArray arrayWithCapacity:1];
-    for (SSNRigidBox *box in boxs)
+    self = [super init];
+    if (self)
     {
-        if (box.obj)
-        {
-            [keys addObject:box.key];
-        }
+        self.key = key;
+        self.obj = obj;
+        self.dic = dic;
     }
-    [_trace removeObjectsForKeys:keys];
+    return self;
 }
+
++ (instancetype)boxWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidDictionary *)dic
+{
+    return [[self alloc] initWithObject:obj forKey:key targetDictionary:dic];
+}
+
+- (void)dealloc
+{
+    [_dic removeTraceObjectForKey:_key];
+}
+
+#if DEBUG
+- (NSString *)debugDescription
+{
+    return [_obj description];
+}
+#endif
 
 @end
