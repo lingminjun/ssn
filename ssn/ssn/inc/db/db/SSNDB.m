@@ -69,20 +69,6 @@
                 sqlite3_close(_database);
                 [self sqliteException:@"Failed to open database with message '%S'."];
             }
-
-            //            if (_isOpen) {//创建好数据库升级表
-            //                [self createTableVersionLogTable];
-            //                [self createTableTemplateInfoTable];
-            //
-            //                NSUInteger dbvs = [self dataBaseVersion];
-            //                if (dbvs >= _toldVersion) {
-            //                    _currentVersion = dbvs;
-            //                }
-            //                else {
-            //                    _currentVersion = _toldVersion;
-            //                    [self saveDataBaseVersion:_toldVersion];
-            //                }
-            //            }
         };
 
         [_ioQueue sync:block];

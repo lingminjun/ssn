@@ -20,7 +20,7 @@ typedef enum : NSUInteger
 {
     SSNDBTableNone,   //表示数据表还不存在
     SSNDBTableUpdate, //表示数据表待更新
-    SSNDBTableOK,
+    SSNDBTableOK,     //数据表 已经 可以操作
 } SSNDBTableStatus;
 
 #endif
@@ -34,12 +34,35 @@ typedef enum : NSUInteger
 @property (nonatomic, strong, readonly) SSNDB *db; //依赖的数据库
 @property (nonatomic, readonly) NSUInteger currentVersion;
 
-- (NSArray *)columnsForVersion:(NSUInteger)version; //返回某个版本的数据
-
+/*
+ JSON方式 实现table 版本管理
+ json文件定义:与数据SSNDBColumn对应
+ {
+ "tb":"Person",
+ "its":[{
+            "vs":1,
+            "cl":[  {"name":"uid",  "type":1,   "style":0,  "fill":"",  "index":1,  "mapping":""},
+                    {"name":"name", "type":3,   "style":0,  "fill":"",  "index":0,  "mapping":""},
+                    {"name":"age",  "type":1,   "style":0,  "fill":"",  "index":0,  "mapping":""}
+                ]
+        },
+        {
+            "vs":2,
+            "cl":[  {"name":"uid",  "type":1,   "style":0,  "fill":"",  "index":1,  "mapping":""},
+                    {"name":"name", "type":3,   "style":0,  "fill":"",  "index":0,  "mapping":""},
+                    {"name":"age",  "type":1,   "style":0,  "fill":"",  "index":0,  "mapping":""},
+                    {"name":"sex",  "type":1,   "style":0,  "fill":"",  "index":0,  "mapping":""}
+                ]
+        }]
+ }
+ */
 - (instancetype)initWithDB:(SSNDB *)db tableJSONDescription:(NSData *)tableJSONDescription;
 + (instancetype)tableWithDB:(SSNDB *)db tableJSONDescription:(NSData *)tableJSONDescription;
 
-- (SSNDBTableStatus)status; //根据
+- (instancetype)initWithName:(NSString *)name meta:(SSNDBTable *)meta;  //分表名不能与主表名重复
++ (instancetype)tableWithName:(NSString *)name meta:(SSNDBTable *)meta; //分表名不能与主表名重复
+
+- (SSNDBTableStatus)status; //表状态，非常重要的接口
 
 // table的状体
 - (void)update; //创建数据表并升级到最新，使用者需要操作某个数据表时，一定要保证此方法已经被执行
