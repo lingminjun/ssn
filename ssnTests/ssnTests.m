@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "SSNRigidDictionary.h"
+#import "SSNRigidCache.h"
 
 @interface ssnTests : XCTestCase
 
@@ -34,7 +34,7 @@
 
 - (void)testRigidDictionary
 {
-    SSNRigidDictionary *set = [[SSNRigidDictionary alloc]
+    SSNRigidCache *set = [[SSNRigidCache alloc]
         initWithConstructor:^id(id key, NSDictionary *userInfo) { return [[NSObject alloc] init]; }];
 
     set.countLimit = 1;

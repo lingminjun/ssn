@@ -1,5 +1,5 @@
 //
-//  SSNRigidDictionary.h
+//  SSNRigidCache.h
 //  ssn
 //
 //  Created by lingminjun on 14-8-11.
@@ -13,7 +13,7 @@ typedef id (^SSNConstructor)(id key, NSDictionary *userInfo);
 /**
  * 内部保证单一构造器,key暂时不做要求,
  */
-@interface SSNRigidDictionary : NSObject
+@interface SSNRigidCache : NSObject
 
 - (instancetype)initWithConstructor:(SSNConstructor)constructor;
 

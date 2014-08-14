@@ -34,6 +34,6 @@
 #define ssn_time_track_end(t)
 #endif
 
-#import "SSNRigidDictionary.h"
+#import "SSNRigidCache.h"
 
 #endif

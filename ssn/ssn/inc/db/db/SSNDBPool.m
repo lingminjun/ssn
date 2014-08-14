@@ -7,11 +7,11 @@
 //
 
 #import "SSNDBPool.h"
-#import "SSNRigidDictionary.h"
+#import "SSNRigidCache.h"
 
 @interface SSNDBPool ()
 
-@property (nonatomic, strong) SSNRigidDictionary *cache;
+@property (nonatomic, strong) SSNRigidCache *cache;
 
 @end
 
@@ -34,7 +34,7 @@
             NSString *scop = (NSString *)key;
             return [[SSNDB alloc] initWithScop:scop];
         };
-        _cache = [[SSNRigidDictionary alloc] initWithConstructor:constructor];
+        _cache = [[SSNRigidCache alloc] initWithConstructor:constructor];
     }
     return self;
 }

@@ -1,12 +1,12 @@
 //
-//  SSNRigidDictionary.m
+//  SSNRigidCache.m
 //  ssn
 //
 //  Created by lingminjun on 14-8-11.
 //  Copyright (c) 2014年 lingminjun. All rights reserved.
 //
 
-#import "SSNRigidDictionary.h"
+#import "SSNRigidCache.h"
 #if TARGET_IPHONE_SIMULATOR
 #import <objc/objc-runtime.h>
 #else
@@ -17,12 +17,12 @@
 @interface SSNRigidBox : NSObject
 @property (nonatomic, strong) id<NSCopying> key;
 @property (nonatomic, weak) id obj;
-@property (nonatomic, weak) SSNRigidDictionary *dic;
-- (instancetype)initWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidDictionary *)dic;
-+ (instancetype)boxWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidDictionary *)dic;
+@property (nonatomic, weak) SSNRigidCache *dic;
+- (instancetype)initWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidCache *)dic;
++ (instancetype)boxWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidCache *)dic;
 @end
 
-@interface SSNRigidDictionary ()
+@interface SSNRigidCache ()
 {
     NSCache *_cache;
     NSMutableDictionary *_trace;
@@ -33,11 +33,11 @@
 
 @end
 
-@implementation SSNRigidDictionary
+@implementation SSNRigidCache
 
 - (instancetype)initWithConstructor:(SSNConstructor)constructor
 {
-    NSAssert(constructor, @"SSNRigidDictionary 必须 传入正确的 构造器，不然生产的实例没有意义");
+    NSAssert(constructor, @"SSNRigidCache 必须 传入正确的 构造器，不然生产的实例没有意义");
     self = [super init];
     if (self)
     {
@@ -163,7 +163,7 @@
 
 @implementation SSNRigidBox
 
-- (instancetype)initWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidDictionary *)dic
+- (instancetype)initWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidCache *)dic
 {
     self = [super init];
     if (self)
@@ -175,7 +175,7 @@
     return self;
 }
 
-+ (instancetype)boxWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidDictionary *)dic
++ (instancetype)boxWithObject:(id)obj forKey:(id<NSCopying>)key targetDictionary:(SSNRigidCache *)dic
 {
     return [[self alloc] initWithObject:obj forKey:key targetDictionary:dic];
 }
