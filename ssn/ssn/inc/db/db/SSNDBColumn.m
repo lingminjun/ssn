@@ -267,7 +267,7 @@
     return NO;
 }
 
-+ (NSArray *)createSqlsForColumns:(NSArray *)columns forTable:(NSString *)tableName
++ (NSArray *)createTableSqlsWithColumns:(NSArray *)columns forTable:(NSString *)tableName
 {
     //直接创建数据表
     NSMutableString *sql = [[NSMutableString alloc] initWithCapacity:1];
@@ -293,13 +293,6 @@
             isFirst = NO;
         }
         [sql appendString:[column createTableSQLFragmentStringMutablePrimaryKeys:isMutable]];
-
-        //索引sql
-        NSString *indexSql = [column createIndexSQLStringWithTableName:tableName];
-        if ([indexSql length])
-        {
-            [sqls addObject:indexSql];
-        }
     }
 
     //加上联合主键
@@ -313,8 +306,26 @@
     return sqls;
 }
 
++ (NSArray *)createIndexSqlsWithColumns:(NSArray *)columns forTable:(NSString *)tableName
+{
+    NSMutableArray *sqls = [NSMutableArray arrayWithCapacity:1];
+    for (SSNDBColumn *column in columns)
+    {
+        //索引sql
+        NSString *indexSql = [column createIndexSQLStringWithTableName:tableName];
+        if ([indexSql length])
+        {
+            [sqls addObject:indexSql];
+        }
+    }
+    return sqls;
+}
+
 //数据库升级控制
-+ (NSArray *)table:(NSString *)tableName mappingSqlsFromColumns:(NSArray *)fromCols toColumns:(NSArray *)toCols
++ (NSArray *)mappingTable:(NSString *)tableName
+              fromColumns:(NSArray *)fromCols
+                toColumns:(NSArray *)toCols
+                     last:(BOOL)last
 {
 
     NSMutableDictionary *toDic = [NSMutableDictionary dictionaryWithCapacity:0]; //用于无序分析表样式，前后两张表如果
@@ -371,7 +382,7 @@
                                                    [tableName UTF8String]]];
 
     // 2 创建新的表
-    NSArray *createSqls = [self createSqlsForColumns:toCols forTable:tableName];
+    NSArray *createSqls = [self createTableSqlsWithColumns:toCols forTable:tableName];
     [sqls addObjectsFromArray:createSqls];
 
     // 3 导入数据
@@ -396,6 +407,13 @@
 
     // 4 删除临时表
     [sqls addObject:[NSString stringWithUTF8Format:"DROP TABLE __temp__%s", [tableName UTF8String]]];
+
+    // 5 重新创建索引(最后一次创建索引，索引创建消耗比较大)
+    if (last)
+    {
+        NSArray *indexSqls = [self createIndexSqlsWithColumns:toCols forTable:tableName];
+        [sqls addObjectsFromArray:indexSqls];
+    }
 
     /*
      另外，如果遇到复杂的修改操作，比如在修改的同时，需要进行数据的转移，那么可以采取在一个事务中执行如下语句来实现修改表的需求。

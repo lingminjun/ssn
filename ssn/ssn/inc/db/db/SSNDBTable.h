@@ -59,8 +59,12 @@ typedef enum : NSUInteger
 - (instancetype)initWithDB:(SSNDB *)db tableJSONDescriptionFilePath:(NSString *)path;
 + (instancetype)tableWithDB:(SSNDB *)db tableJSONDescriptionFilePath:(NSString *)path;
 
-- (instancetype)initWithName:(NSString *)name meta:(SSNDBTable *)meta;  //分表名不能与主表名重复
-+ (instancetype)tableWithName:(NSString *)name meta:(SSNDBTable *)meta; //分表名不能与主表名重复
+//创建模板表
+- (instancetype)initWithTemplateTableJSONDescriptionFilePath:(NSString *)path;
++ (instancetype)tableWithTemplateTableJSONDescriptionFilePath:(NSString *)path;
+
+- (instancetype)initWithName:(NSString *)name meta:(SSNDBTable *)meta db:(SSNDB *)db; //分表名不能与主表名重复
++ (instancetype)tableWithName:(NSString *)name meta:(SSNDBTable *)meta db:(SSNDB *)db; //分表名不能与主表名重复
 
 - (SSNDBTableStatus)status; //表状态，非常重要的接口
 

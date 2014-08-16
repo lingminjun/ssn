@@ -84,9 +84,12 @@ typedef enum : NSUInteger
 + (NSString *)mutablePrimaryKeysWithColumns:(NSArray *)columns;
 
 //创建数据库语句
-+ (NSArray *)createSqlsForColumns:(NSArray *)columns forTable:(NSString *)tableName;
++ (NSArray *)createTableSqlsWithColumns:(NSArray *)columns forTable:(NSString *)tableName;
+
+//创建索引语句
++ (NSArray *)createIndexSqlsWithColumns:(NSArray *)columns forTable:(NSString *)tableName;
 
 //需要升级，数据表字段有变化都需要升级，升级
-+ (NSArray *)table:(NSString *)tableName mappingSqlsFromColumns:(NSArray *)fromCols toColumns:(NSArray *)toCols;
++ (NSArray *)mappingTable:(NSString *)tableName fromColumns:(NSArray *)fcls toColumns:(NSArray *)tcls last:(BOOL)last;
 
 @end

@@ -74,21 +74,43 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
     return self;
 }
 
+//创建模板表
+- (instancetype)initWithTemplateTableJSONDescriptionFilePath:(NSString *)path
+{
+    NSAssert(path, @"创建模板数据表实例参数非法");
+    self = [super init];
+    if (self)
+    {
+        self.path = [path copy];
+
+        // 1、解析数据表描述
+        self.its = [self parseJSONForFilePath:path];
+        NSAssert([_its count], @"模板表解析不合法! 请修改表描述文件");
+    }
+    return self;
+}
+
++ (instancetype)tableWithTemplateTableJSONDescriptionFilePath:(NSString *)path
+{
+    return [[[self class] alloc] initWithTemplateTableJSONDescriptionFilePath:path];
+}
+
 + (instancetype)tableWithDB:(SSNDB *)db tableJSONDescriptionFilePath:(NSString *)path
 {
     return [[[self class] alloc] initWithDB:db tableJSONDescriptionFilePath:path];
 }
 
-- (instancetype)initWithName:(NSString *)name meta:(SSNDBTable *)meta
+- (instancetype)initWithName:(NSString *)name meta:(SSNDBTable *)meta db:(SSNDB *)db
 {
-    NSAssert([name length] && meta && ![name isEqualToString:meta.name], @"创建数据表子表实例参数非法");
+    NSAssert(db && [name length] && meta && ![name isEqualToString:meta.name], @"创" @"建" @"数"
+                                                                                             @"据表子表实例参数非法");
     self = [super init];
     if (self)
     {
         self.name = [name copy];
         self.meta = meta;
         self.lastVersion = meta.lastVersion; //需要集成的关系
-        self.db = meta.db;
+        self.db = db;
         self.path = meta.path;
         self.its = meta.its;
 
@@ -101,14 +123,16 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
     return self;
 }
 
-+ (instancetype)tableWithName:(NSString *)name meta:(SSNDBTable *)meta
++ (instancetype)tableWithName:(NSString *)name meta:(SSNDBTable *)meta db:(SSNDB *)db
 {
-    return [[[self class] alloc] initWithName:name meta:meta];
+    return [[[self class] alloc] initWithName:name meta:meta db:db];
 }
 
 // table的状体
 - (void)update
 {
+    NSAssert(_db, @"模板表不能执行update方法");
+
     if (_status == SSNDBTableOK)
     {
         return;
@@ -136,13 +160,14 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
             NSInteger start_vs = _currentVersion;
             _currentVersion = _lastVersion;
 
-            NSArray * (^t_block)(NSUInteger version, NSArray * lastAry) = ^(NSUInteger version, NSArray *lastAry) {
+            NSArray * (^t_block)(NSUInteger version, NSArray * precls, BOOL last) =
+                ^(NSUInteger version, NSArray *precls, BOOL last) {
 
                 NSArray *ary = [self columnsForVersion:version];
 
-                if (lastAry)
+                if (precls)
                 {
-                    [self mapingTable:_name fromColumns:lastAry toColumns:ary];
+                    [self mapingTable:_name fromColumns:precls toColumns:ary last:last];
                 }
                 else
                 {
@@ -158,17 +183,17 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 
             if (_status == SSNDBTableNone)
             { //表示没有创建过表，直接从当前版本开始创建表
-                t_block(_lastVersion, nil);
+                t_block(_lastVersion, nil, YES);
             }
             else
             {
-                NSArray *lastCols = nil;
+                NSArray *preCols = [self columnsForVersion:start_vs];
 
-                for (NSUInteger vs = start_vs; vs <= _lastVersion; vs++)
+                for (NSUInteger vs = start_vs + 1; vs <= _lastVersion; vs++)
                 {
                     @autoreleasepool
                     {
-                        lastCols = t_block(vs, lastCols);
+                        preCols = t_block(vs, preCols, vs == _lastVersion);
                     }
                 }
             }
@@ -180,10 +205,13 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
     };
 
     [_db executeTransaction:block sync:YES];
+    _status = SSNDBTableOK;
 }
 
 - (void)drop
 {
+    NSAssert(_db, @"模板表不能drop");
+
     if (_status == SSNDBTableNone)
     {
         return;
@@ -320,11 +348,11 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 }
 
 #pragma mark 表 创建于更新实现
-- (void)mapingTable:(NSString *)tableName fromColumns:(NSArray *)fcolumns toColumns:(NSArray *)tcolumns
+- (void)mapingTable:(NSString *)tableName fromColumns:(NSArray *)fcolumns toColumns:(NSArray *)tcolumns last:(BOOL)last
 {
     @autoreleasepool
     {
-        NSArray *sqls = [SSNDBColumn table:tableName mappingSqlsFromColumns:fcolumns toColumns:tcolumns];
+        NSArray *sqls = [SSNDBColumn mappingTable:tableName fromColumns:fcolumns toColumns:tcolumns last:last];
 
         for (NSString *sql in sqls)
         {
@@ -337,7 +365,12 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 {
     @autoreleasepool
     {
-        NSArray *sqls = [SSNDBColumn createSqlsForColumns:columns forTable:tableName];
+        NSMutableArray *sqls = [NSMutableArray arrayWithCapacity:1];
+        NSArray *createSqls = [SSNDBColumn createTableSqlsWithColumns:columns forTable:tableName];
+        [sqls addObjectsFromArray:createSqls];
+
+        NSArray *indexSqls = [SSNDBColumn createIndexSqlsWithColumns:columns forTable:tableName];
+        [sqls addObjectsFromArray:indexSqls];
 
         for (NSString *sql in sqls)
         {

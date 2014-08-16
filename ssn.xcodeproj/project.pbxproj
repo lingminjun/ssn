@@ -106,6 +106,9 @@
 		53D6ED46199A03F90029D82F /* SSNCuteSerialQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D6ED45199A03F90029D82F /* SSNCuteSerialQueue.m */; };
 		53D6ED49199A6EC90029D82F /* NSFileManager+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D6ED48199A6EC90029D82F /* NSFileManager+SSN.m */; };
 		53D6ED4E199B80550029D82F /* SSNDBColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D6ED4D199B80550029D82F /* SSNDBColumn.m */; };
+		53D78574199F1564004D9D62 /* TestUser.json in Resources */ = {isa = PBXBuildFile; fileRef = 53D78573199F1564004D9D62 /* TestUser.json */; };
+		53D78576199F15A9004D9D62 /* TestUser2.json in Resources */ = {isa = PBXBuildFile; fileRef = 53D78575199F15A9004D9D62 /* TestUser2.json */; };
+		53D78579199F2B29004D9D62 /* SSNDBTable+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */; };
 		53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */; };
 		53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC48194B4BD100BA4F58 /* NiceQueue.m */; };
 		53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E512D41998F81C002925E6 /* SSNRigidCache.m */; };
@@ -191,6 +194,10 @@
 		53D6ED48199A6EC90029D82F /* NSFileManager+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+SSN.m"; sourceTree = "<group>"; };
 		53D6ED4C199B80550029D82F /* SSNDBColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBColumn.h; sourceTree = "<group>"; };
 		53D6ED4D199B80550029D82F /* SSNDBColumn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBColumn.m; sourceTree = "<group>"; };
+		53D78573199F1564004D9D62 /* TestUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestUser.json; sourceTree = "<group>"; };
+		53D78575199F15A9004D9D62 /* TestUser2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestUser2.json; sourceTree = "<group>"; };
+		53D78577199F2B29004D9D62 /* SSNDBTable+Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNDBTable+Factory.h"; sourceTree = "<group>"; };
+		53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SSNDBTable+Factory.m"; sourceTree = "<group>"; };
 		53DDBC40194B4BB700BA4F58 /* SSNNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNNavigationController.h; sourceTree = "<group>"; };
 		53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNNavigationController.m; sourceTree = "<group>"; };
 		53DDBC47194B4BD100BA4F58 /* NiceQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NiceQueue.h; sourceTree = "<group>"; };
@@ -251,6 +258,8 @@
 				533378B31986435B00084428 /* SSNDBTable.m */,
 				53D6ED4C199B80550029D82F /* SSNDBColumn.h */,
 				53D6ED4D199B80550029D82F /* SSNDBColumn.m */,
+				53D78577199F2B29004D9D62 /* SSNDBTable+Factory.h */,
+				53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */,
 			);
 			path = db;
 			sourceTree = "<group>";
@@ -395,6 +404,8 @@
 			children = (
 				53D16411191A629C00AD4C81 /* ssnTests.m */,
 				53D1640C191A629C00AD4C81 /* Supporting Files */,
+				53D78573199F1564004D9D62 /* TestUser.json */,
+				53D78575199F15A9004D9D62 /* TestUser2.json */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -609,6 +620,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53D78574199F1564004D9D62 /* TestUser.json in Resources */,
+				53D78576199F15A9004D9D62 /* TestUser2.json in Resources */,
 				53D16410191A629C00AD4C81 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -647,6 +660,7 @@
 				535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */,
 				53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */,
 				538E384719986A3B0061692E /* DMContactViewController.m in Sources */,
+				53D78579199F2B29004D9D62 /* SSNDBTable+Factory.m in Sources */,
 				538E3841199869E00061692E /* DMSignNavController.m in Sources */,
 				538E3838199869880061692E /* DMContactNavController.m in Sources */,
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,

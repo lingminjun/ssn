@@ -12,6 +12,7 @@
 #import "ssnbase.h"
 #import "SSNDB.h"
 #import "SSNDBPool.h"
+#import "SSNDBTable.h"
 
 @interface ssnTests : XCTestCase
 
@@ -92,6 +93,47 @@
 
     NSArray *vs = [db objects:nil sql:@"SELECT value FROM tst_tb WHERE name = ?", @"2", nil];
     NSLog(@"%@", vs);
+}
+
+- (void)testDBTable0
+{
+    SSNDBPool *pool = [SSNDBPool shareInstance];
+    SSNDB *db = [pool dbWithScop:@"test"];
+    NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/TestUser2.json";
+    SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
+
+    [table update];
+
+    //[db executeSql:@"INSERT INTO user (uid,name,age) VALUES(?,?,?)", @(1), @"xhc", @(25), nil];
+}
+
+- (void)testDBTable1
+{
+    SSNDBPool *pool = [SSNDBPool shareInstance];
+    SSNDB *db = [pool dbWithScop:@"test"];
+    NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/TestUser2.json";
+    SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
+
+    SSNDBTable *stable = [SSNDBTable tableWithName:@"user_ext" meta:table db:db];
+    [stable update];
+
+    //    if (stable.status == SSNDBTableNone)
+    //    {
+    //        NSLog(@"table status = SSNDBTableNone");
+    //    }
+    //
+    //    NSLog(@"tableName = %@", table.name);
+    //
+    //    [stable update];
+    //
+    //    if (stable.status == SSNDBTableOK)
+    //    {
+    //        [db executeSql:@"INSERT INTO user_ext (uid,name,age,sex) VALUES(?,?,?,?)", @(1), @"xhc", @(25), @(1),
+    //        nil];
+    //
+    //        NSArray *objs = [db objects:nil sql:@"SELECT * FROM user_ext WHERE uid = ?", @(1), nil];
+    //        NSLog(@"arg = %@", objs);
+    //    }
 }
 
 @end
