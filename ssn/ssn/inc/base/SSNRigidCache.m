@@ -29,6 +29,7 @@
     NSString *_name;
     dispatch_queue_t _queue;
     SSNConstructor _constructor;
+    const char _trace_tag;
 }
 
 @end
@@ -93,6 +94,7 @@
         obj = box.obj;
         if (obj)
         {
+            [_cache setObject:obj forKey:key]; //发生释放
             return obj;
         }
 
@@ -108,8 +110,7 @@
             box = [SSNRigidBox boxWithObject:obj forKey:key targetDictionary:self];
             [_trace setObject:box forKey:key];
 
-            const char *trace_box = '\0';
-            objc_setAssociatedObject(obj, &trace_box, box, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(obj, &_trace_tag, box, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             // objc_getAssociatedObject(obj, &trace_box);
         }
     }

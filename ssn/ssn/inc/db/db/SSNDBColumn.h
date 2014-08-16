@@ -12,6 +12,18 @@
 #ifndef _SSNDBColumn_
 #define _SSNDBColumn_
 
+/*
+ #define SQLITE_INTEGER  1
+ #define SQLITE_FLOAT    2
+ #define SQLITE_BLOB     4
+ #define SQLITE_NULL     5
+ #ifdef SQLITE_TEXT
+ # undef SQLITE_TEXT
+ #else
+ # define SQLITE_TEXT     3
+ #endif
+ #define SQLITE3_TEXT     3
+ */
 typedef enum : NSUInteger
 {
     SSNDBColumnInt = SQLITE_INTEGER,
@@ -29,7 +41,7 @@ typedef enum : NSUInteger
     SSNDBColumnPrimary = 2, //主键（不允许为空）,多个时默认形成联合组件
 } SSNDBColumnLevel;
 
-typedef enum
+typedef enum : NSUInteger
 {
     SSNDBColumnNotIndex = 0,    //不需要索引
     SSNDBColumnNormalIndex = 1, //索引（不允许为空）

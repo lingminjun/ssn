@@ -41,23 +41,23 @@ typedef enum : NSUInteger
  "tb":"Person",
  "its":[{
             "vs":1,
-            "cl":[  {"name":"uid",  "type":1,   "style":0,  "fill":"",  "index":1,  "mapping":""},
-                    {"name":"name", "type":3,   "style":0,  "fill":"",  "index":0,  "mapping":""},
-                    {"name":"age",  "type":1,   "style":0,  "fill":"",  "index":0,  "mapping":""}
+            "cl":[  {"name":"uid",  "type":1,   "level":2,  "fill":"",  "index":1,  "mapping":""},
+                    {"name":"name", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
+                    {"name":"age",  "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""}
                 ]
         },
         {
             "vs":2,
-            "cl":[  {"name":"uid",  "type":1,   "style":0,  "fill":"",  "index":1,  "mapping":""},
-                    {"name":"name", "type":3,   "style":0,  "fill":"",  "index":0,  "mapping":""},
-                    {"name":"age",  "type":1,   "style":0,  "fill":"",  "index":0,  "mapping":""},
-                    {"name":"sex",  "type":1,   "style":0,  "fill":"",  "index":0,  "mapping":""}
+            "cl":[  {"name":"uid",  "type":1,   "level":2,  "fill":"",  "index":1,  "mapping":""},
+                    {"name":"name", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
+                    {"name":"age",  "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""},
+                    {"name":"sex",  "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""}
                 ]
         }]
  }
  */
-- (instancetype)initWithDB:(SSNDB *)db tableJSONDescription:(NSData *)tableJSONDescription;
-+ (instancetype)tableWithDB:(SSNDB *)db tableJSONDescription:(NSData *)tableJSONDescription;
+- (instancetype)initWithDB:(SSNDB *)db tableJSONDescriptionFilePath:(NSString *)path;
++ (instancetype)tableWithDB:(SSNDB *)db tableJSONDescriptionFilePath:(NSString *)path;
 
 - (instancetype)initWithName:(NSString *)name meta:(SSNDBTable *)meta;  //分表名不能与主表名重复
 + (instancetype)tableWithName:(NSString *)name meta:(SSNDBTable *)meta; //分表名不能与主表名重复

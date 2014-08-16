@@ -9,6 +9,10 @@
 #import <XCTest/XCTest.h>
 #import "SSNRigidCache.h"
 
+#import "ssnbase.h"
+#import "SSNDB.h"
+#import "SSNDBPool.h"
+
 @interface ssnTests : XCTestCase
 
 @end
@@ -56,6 +60,38 @@
     [set removeObjectForKey:@"2"];
 
     NSLog(@"%@", o);
+}
+
+- (void)testDB
+{
+    SSNDBPool *pool = [SSNDBPool shareInstance];
+    SSNDB *db = [pool dbWithScop:@"test"];
+
+    [db executeSql:@"DROP TABLE tst_tb", nil];
+
+    [db executeSql:@"CREATE TABLE IF NOT EXISTS tst_tb (name TEXT, value INTEGER,PRIMARY KEY(name))", nil];
+
+    [db executeSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"1", @(5), nil];
+
+    //[db executeSql:@"INSERT OR REPLACE INTO tst_tb (name,value) VALUES(?,?)", @"1", @(4), nil];
+
+    [db executeTransaction:^(SSNDB *dataBase, BOOL *rollback) {
+        [db executeSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"2", @(0), nil];
+
+        [db executeSql:@"UPDATE tst_tb SET value = ? WHERE name = ?", @(3), @"1", nil];
+        [db executeSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"1", @(3), nil];
+    } sync:YES];
+
+    //    [db executeTransaction:^(SSNDB *dataBase, BOOL *rollback) {
+    //        //        [db executeSql:@"DELETE FROM tst_tb WHERE name = ?", @"1", nil];
+    //        //        [db executeSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"1", @(7), nil];
+    //
+    //        [db executeSql:@"UPDATE tst_tb SET value = ? WHERE name = ?", @(7), @"1", nil];
+    //        [db executeSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"1", @(7), nil];
+    //    } sync:YES];
+
+    NSArray *vs = [db objects:nil sql:@"SELECT value FROM tst_tb WHERE name = ?", @"2", nil];
+    NSLog(@"%@", vs);
 }
 
 @end

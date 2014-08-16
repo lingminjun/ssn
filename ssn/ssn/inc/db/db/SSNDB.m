@@ -392,7 +392,7 @@
         }
         va_end(argumentList);
 
-        if ([arguments count])
+        if ([arguments count] == 0)
         {
             arguments = nil;
         }
@@ -427,7 +427,7 @@
             rowClass = [NSMutableDictionary class];
         }
 
-        if ([arguments count])
+        if ([arguments count] == 0)
         {
             arguments = nil;
         }
@@ -461,7 +461,7 @@
             rowClass = [NSMutableDictionary class];
         }
 
-        if ([arguments count])
+        if ([arguments count] == 0)
         {
             arguments = nil;
         }
