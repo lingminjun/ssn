@@ -73,4 +73,21 @@ typedef enum : NSUInteger
 
 - (void)drop; //删除数据表
 
+//最终表的主键和所有列
+- (NSArray *)currentColums;
+- (NSArray *)currentPrimaryColums;
+
+//接管db操作
+- (void)insertObject:(id)object;
+- (void)insertObjects:(NSArray *)objects;
+
+- (void)updateObject:(id)object;
+- (void)updateObjects:(NSArray *)objects;
+
+- (void)deleteObject:(id)object;
+- (void)deleteObjects:(NSArray *)objects;
+
+- (void)upinsertObject:(id)object;          // update or insert
+- (void)upinsertObjects:(NSArray *)objects; // update or insert
+
 @end

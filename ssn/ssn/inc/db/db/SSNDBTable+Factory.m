@@ -36,6 +36,8 @@
                 return [SSNDBTable tableWithTemplateTableJSONDescriptionFilePath:path];
             }
         }];
+
+        [cache setCountLimit:SSNDBTableCacheCount];
     });
     return cache;
 }

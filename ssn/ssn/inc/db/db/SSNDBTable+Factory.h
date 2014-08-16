@@ -8,6 +8,10 @@
 
 #import "SSNDBTable.h"
 
+#ifndef SSNDBTableCacheCount
+#define SSNDBTableCacheCount 0 //根据固定表个数需要创建，
+#endif
+
 @interface SSNDBTable (Factory)
 
 //按照表名字存储

@@ -22,6 +22,8 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) SSNDB *db; //依赖的数据库
 @property (nonatomic, strong) NSString *path;
+@property (nonatomic, strong) NSArray *colums;
+@property (nonatomic, strong) NSArray *primaries;
 @property (nonatomic) NSUInteger currentVersion;
 @property (nonatomic) NSUInteger lastVersion; //最后的版本
 
@@ -39,6 +41,9 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 
 //解析表
 - (NSDictionary *)parseJSONForFilePath:(NSString *)path;
+
+//存储colums
+- (void)peelColums;
 
 //检查表状态
 - (void)checkTableStatus;
@@ -68,7 +73,10 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
         self.its = [self parseJSONForFilePath:path];
         NSAssert([_its count], @"表解析不合法! 请修改表描述文件");
 
-        // 3、检查表状态
+        // 3、缓存列名
+        [self peelColums];
+
+        // 4、检查表状态
         [self checkTableStatus];
     }
     return self;
@@ -86,6 +94,9 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
         // 1、解析数据表描述
         self.its = [self parseJSONForFilePath:path];
         NSAssert([_its count], @"模板表解析不合法! 请修改表描述文件");
+
+        // 3、缓存列名
+        [self peelColums];
     }
     return self;
 }
@@ -102,8 +113,8 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 
 - (instancetype)initWithName:(NSString *)name meta:(SSNDBTable *)meta db:(SSNDB *)db
 {
-    NSAssert(db && [name length] && meta && ![name isEqualToString:meta.name], @"创" @"建" @"数"
-                                                                                             @"据表子表实例参数非法");
+    NSAssert(db && [name length] && meta && ![name isEqualToString:meta.name],
+             @"创" @"建" @"数" @"据表子表实例参数非法");
     self = [super init];
     if (self)
     {
@@ -113,6 +124,8 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
         self.db = db;
         self.path = meta.path;
         self.its = meta.its;
+        self.colums = meta.colums;
+        self.primaries = meta.primaries;
 
         // 1、检查并创建表日志表
         [self checkCreateTableLog];
@@ -329,6 +342,35 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
     return rslt;
 }
 
+#pragma mark 剥离存储columns
+- (void)peelColums
+{
+    if (!_its)
+    {
+        return;
+    }
+
+    @autoreleasepool
+    {
+        NSArray *cls = [self columnsForVersion:_lastVersion];
+
+        NSMutableArray *clnames = [NSMutableArray arrayWithCapacity:1];
+        NSMutableArray *primaries = [NSMutableArray arrayWithCapacity:1];
+
+        for (SSNDBColumn *cl in cls)
+        {
+            if (cl.level == SSNDBColumnPrimary)
+            {
+                [primaries addObject:cl.name];
+            }
+            [clnames addObject:cl.name];
+        }
+
+        _colums = [clnames copy];
+        _primaries = [primaries copy];
+    }
+}
+
 #pragma mark 检查表状态
 - (void)checkTableStatus
 {
@@ -385,6 +427,120 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 {
     dispatch_async(dispatch_get_main_queue(),
                    ^{ [[NSNotificationCenter defaultCenter] postNotificationName:key object:self userInfo:info]; });
+}
+
+#pragma mark 数据管理
+//最终表的主键和所有列
+- (NSArray *)currentColums
+{
+    return _colums;
+}
+
+- (NSArray *)currentPrimaryColums
+{
+    return _primaries;
+}
+
+//接管db操作
+- (void)insertObjects:(NSArray *)objects
+{
+    for (id obj in objects)
+    {
+        [self insertObject:obj];
+    }
+}
+
+- (void)updateObjects:(NSArray *)objects
+{
+    for (id obj in objects)
+    {
+        [self updateObjects:obj];
+    }
+}
+
+- (void)deleteObjects:(NSArray *)objects
+{
+    for (id obj in objects)
+    {
+        [self deleteObjects:obj];
+    }
+}
+
+- (void)upinsertObjects:(NSArray *)objects
+{
+    for (id obj in objects)
+    {
+        [self upinsertObject:obj];
+    }
+}
+
+- (NSArray *)valuesFormKeys:(NSArray *)keys object:(id)object
+{
+    NSMutableArray *vs = [NSMutableArray arrayWithCapacity:1];
+    for (NSString *key in keys)
+    {
+        id value = [object valueForKey:key];
+        if (value != nil)
+        {
+            [vs addObject:value];
+        }
+        else
+        {
+            [vs addObject:[NSNull null]];
+        }
+    }
+    return vs;
+}
+
+- (void)insertObject:(id)object
+{
+    NSAssert(_db, @"模板表不能操作数据");
+
+    NSString *clnames = [_colums componentsJoinedByString:@","];
+    NSString *format = [NSString stringWithUTF8String:"?" repeat:[_colums count] joinedUTF8String:","];
+    NSString *sql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String],
+                                                   [clnames UTF8String], [format UTF8String]];
+
+    [_db executeSql:sql arguments:[self valuesFormKeys:_colums object:object]];
+}
+
+- (void)updateObject:(id)object
+{
+    NSAssert(_db, @"模板表不能操作数据");
+
+    if ([_primaries count] == 0)
+    {
+        return;
+    }
+
+    NSMutableArray *cls = [NSMutableArray arrayWithArray:_colums];
+    [cls removeObjectsInArray:_primaries];
+    NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
+    NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
+    NSString *sql = [NSString stringWithUTF8Format:"UPDATE %s SET %s WHERE (%s)", [_name UTF8String],
+                                                   [values UTF8String], [wheres UTF8String]];
+
+    [cls addObjectsFromArray:_primaries]; //从新把主键加上
+    [_db executeSql:sql arguments:[self valuesFormKeys:cls object:object]];
+}
+
+- (void)deleteObject:(id)object
+{
+    NSAssert(_db, @"模板表不能操作数据");
+
+    NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
+    NSString *sql =
+        [NSString stringWithUTF8Format:"DELETE FROM %s WHERE (%s)", [_name UTF8String], [wheres UTF8String]];
+
+    [_db executeSql:sql arguments:[self valuesFormKeys:_primaries object:object]];
+}
+
+- (void)upinsertObject:(id)object
+{
+    NSAssert(_db, @"模板表不能操作数据");
+
+    [self updateObject:object];
+    [self insertObject:object];
 }
 
 @end

@@ -397,6 +397,14 @@
             arguments = nil;
         }
 
+        [self executeSql:sql arguments:arguments];
+    }
+}
+
+- (void)executeSql:(NSString *)sql arguments:(NSArray *)arguments
+{
+    @autoreleasepool
+    {
         dispatch_block_t block = ^{ [self executeSql:sql arguments:arguments rowClass:NULL]; };
 
         [_ioQueue sync:block];

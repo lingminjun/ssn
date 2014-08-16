@@ -14,6 +14,16 @@
 #import "SSNDBPool.h"
 #import "SSNDBTable.h"
 
+@interface TSUser : NSObject
+@property (nonatomic) NSInteger uid;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic) NSInteger age;
+@property (nonatomic) BOOL sex;
+@end
+
+@implementation TSUser
+@end
+
 @interface ssnTests : XCTestCase
 
 @end
@@ -104,6 +114,23 @@
 
     [table update];
 
+    TSUser *user = [[TSUser alloc] init];
+    user.uid = 12;
+    user.name = @"凌敏均";
+    user.age = 26;
+    user.sex = 1;
+
+    [table upinsertObject:user];
+
+    NSArray *objs = [db objects:nil sql:@"SELECT * FROM user WHERE uid = ?", @(user.uid), nil];
+
+    NSLog(@"%@", objs);
+
+    [table deleteObject:user];
+
+    objs = [db objects:nil sql:@"SELECT * FROM user WHERE uid = ?", @(user.uid), nil];
+
+    NSLog(@"%@", objs);
     //[db executeSql:@"INSERT INTO user (uid,name,age) VALUES(?,?,?)", @(1), @"xhc", @(25), nil];
 }
 
@@ -116,24 +143,6 @@
 
     SSNDBTable *stable = [SSNDBTable tableWithName:@"user_ext" meta:table db:db];
     [stable update];
-
-    //    if (stable.status == SSNDBTableNone)
-    //    {
-    //        NSLog(@"table status = SSNDBTableNone");
-    //    }
-    //
-    //    NSLog(@"tableName = %@", table.name);
-    //
-    //    [stable update];
-    //
-    //    if (stable.status == SSNDBTableOK)
-    //    {
-    //        [db executeSql:@"INSERT INTO user_ext (uid,name,age,sex) VALUES(?,?,?,?)", @(1), @"xhc", @(25), @(1),
-    //        nil];
-    //
-    //        NSArray *objs = [db objects:nil sql:@"SELECT * FROM user_ext WHERE uid = ?", @(1), nil];
-    //        NSLog(@"arg = %@", objs);
-    //    }
 }
 
 @end

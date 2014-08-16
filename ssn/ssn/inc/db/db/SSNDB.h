@@ -18,6 +18,7 @@
 #pragma sql method
 //执行一条sql命令
 - (void)executeSql:(NSString *)sql, ...;
+- (void)executeSql:(NSString *)sql arguments:(NSArray *)arguments;
 
 // aclass传入NULL时默认用NSDictionary代替，当执行单纯的sql时，忽略aclass，返回值将为nil,为了防止sql注入，请输入参数
 - (NSArray *)objects:(Class)aclass sql:(NSString *)sql, ...; //参数必须传入object对象
