@@ -53,14 +53,10 @@
         _ioQueue = [[SSNCuteSerialQueue alloc] initWithName:scop];
 
         dispatch_block_t block = ^{
-            // config sqlite to work with the same connection on multiple threads
-            if (sqlite3_config(SQLITE_CONFIG_MULTITHREAD) == SQLITE_OK)
+            // 因为数据库单线程操作，直接SINGLETHREAD即可，效率更高
+            if (sqlite3_config(SQLITE_CONFIG_SINGLETHREAD) == SQLITE_OK)
             {
-                // NSLog(@"Can now use sqlite on multiple threads, using the same connection");
-            }
-            else
-            {
-                // NSLog(@"UNABLE to use sqlite on multiple threads, using the same connection");
+                ssn_log("sqlite3 config single thread!\n");
             }
 
             // opens database, creating the file if it does not already exist

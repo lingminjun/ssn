@@ -11,6 +11,7 @@
 		533378AE1986431200084428 /* SSNDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378AD1986431200084428 /* SSNDB.m */; };
 		533378B11986432800084428 /* SSNDBPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B01986432800084428 /* SSNDBPool.m */; };
 		533378B41986435B00084428 /* SSNDBTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B31986435B00084428 /* SSNDBTable.m */; };
+		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
 		535F26651983A21D00C0D7C0 /* db.md in Resources */ = {isa = PBXBuildFile; fileRef = 535F26641983A21D00C0D7C0 /* db.md */; };
 		535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F266C1983F09100C0D7C0 /* SSNRouter.m */; };
 		535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F26731983F7A800C0D7C0 /* NSURL+Router.m */; };
@@ -111,6 +112,23 @@
 		53D78579199F2B29004D9D62 /* SSNDBTable+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */; };
 		53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */; };
 		53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC48194B4BD100BA4F58 /* NiceQueue.m */; };
+		53DFD31419A2181B0095CBBA /* SSNAsyncSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD31219A2181B0095CBBA /* SSNAsyncSocket.cpp */; };
+		53DFD35F19A24DBB0095CBBA /* commutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD33619A24DBB0095CBBA /* commutils.cpp */; };
+		53DFD36019A24DBB0095CBBA /* cow_container in Resources */ = {isa = PBXBuildFile; fileRef = 53DFD33819A24DBB0095CBBA /* cow_container */; };
+		53DFD36119A24DBB0095CBBA /* IMNetCallService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD33B19A24DBB0095CBBA /* IMNetCallService.mm */; };
+		53DFD36219A24DBB0095CBBA /* IMNetService4iOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD33E19A24DBB0095CBBA /* IMNetService4iOS.mm */; };
+		53DFD36319A24DBB0095CBBA /* des.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD34019A24DBB0095CBBA /* des.cpp */; };
+		53DFD36419A24DBB0095CBBA /* inet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD34219A24DBB0095CBBA /* inet.cpp */; };
+		53DFD36519A24DBB0095CBBA /* inetexception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD34419A24DBB0095CBBA /* inetexception.cpp */; };
+		53DFD36619A24DBB0095CBBA /* inetimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD34619A24DBB0095CBBA /* inetimpl.cpp */; };
+		53DFD36719A24DBB0095CBBA /* lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD34919A24DBB0095CBBA /* lock.cpp */; };
+		53DFD36819A24DBB0095CBBA /* memfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD34B19A24DBB0095CBBA /* memfile.cpp */; };
+		53DFD36919A24DBB0095CBBA /* protocmdheader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD34D19A24DBB0095CBBA /* protocmdheader.cpp */; };
+		53DFD36A19A24DBB0095CBBA /* string_tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD35019A24DBB0095CBBA /* string_tool.cpp */; };
+		53DFD36B19A24DBB0095CBBA /* mimsc_pack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD35519A24DBB0095CBBA /* mimsc_pack.cpp */; };
+		53DFD36C19A24DBB0095CBBA /* mpcsc_pack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD35819A24DBB0095CBBA /* mpcsc_pack.cpp */; };
+		53DFD36D19A24DBB0095CBBA /* mpcsstrc_pack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD35A19A24DBB0095CBBA /* mpcsstrc_pack.cpp */; };
+		53DFD36E19A24DBB0095CBBA /* msc_head.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD35C19A24DBB0095CBBA /* msc_head.cpp */; };
 		53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E512D41998F81C002925E6 /* SSNRigidCache.m */; };
 		53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB166191FBB6000BEB29D /* NSString+SSN.m */; };
 		53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB169191FBB6000BEB29D /* SSNMeta.m */; };
@@ -142,6 +160,7 @@
 		533378B01986432800084428 /* SSNDBPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBPool.m; sourceTree = "<group>"; };
 		533378B21986435B00084428 /* SSNDBTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBTable.h; sourceTree = "<group>"; };
 		533378B31986435B00084428 /* SSNDBTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBTable.m; sourceTree = "<group>"; };
+		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		535F26641983A21D00C0D7C0 /* db.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = db.md; sourceTree = "<group>"; };
 		535F266B1983F09100C0D7C0 /* SSNRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRouter.h; sourceTree = "<group>"; };
 		535F266C1983F09100C0D7C0 /* SSNRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRouter.m; sourceTree = "<group>"; };
@@ -202,6 +221,48 @@
 		53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNNavigationController.m; sourceTree = "<group>"; };
 		53DDBC47194B4BD100BA4F58 /* NiceQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NiceQueue.h; sourceTree = "<group>"; };
 		53DDBC48194B4BD100BA4F58 /* NiceQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NiceQueue.m; sourceTree = "<group>"; };
+		53DFD31219A2181B0095CBBA /* SSNAsyncSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SSNAsyncSocket.cpp; sourceTree = "<group>"; };
+		53DFD31319A2181B0095CBBA /* SSNAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNAsyncSocket.h; sourceTree = "<group>"; };
+		53DFD33619A24DBB0095CBBA /* commutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = commutils.cpp; sourceTree = "<group>"; };
+		53DFD33719A24DBB0095CBBA /* commutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commutils.h; sourceTree = "<group>"; };
+		53DFD33819A24DBB0095CBBA /* cow_container */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cow_container; sourceTree = "<group>"; };
+		53DFD33919A24DBB0095CBBA /* datatype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = datatype.h; sourceTree = "<group>"; };
+		53DFD33A19A24DBB0095CBBA /* IMNetCallService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMNetCallService.h; sourceTree = "<group>"; };
+		53DFD33B19A24DBB0095CBBA /* IMNetCallService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IMNetCallService.mm; sourceTree = "<group>"; };
+		53DFD33C19A24DBB0095CBBA /* IMNetService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMNetService.h; sourceTree = "<group>"; };
+		53DFD33D19A24DBB0095CBBA /* IMNetService4iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMNetService4iOS.h; sourceTree = "<group>"; };
+		53DFD33E19A24DBB0095CBBA /* IMNetService4iOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IMNetService4iOS.mm; sourceTree = "<group>"; };
+		53DFD34019A24DBB0095CBBA /* des.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = des.cpp; sourceTree = "<group>"; };
+		53DFD34119A24DBB0095CBBA /* des.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = des.h; sourceTree = "<group>"; };
+		53DFD34219A24DBB0095CBBA /* inet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = inet.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		53DFD34319A24DBB0095CBBA /* inet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inet.h; sourceTree = "<group>"; };
+		53DFD34419A24DBB0095CBBA /* inetexception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inetexception.cpp; sourceTree = "<group>"; };
+		53DFD34519A24DBB0095CBBA /* inetexception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inetexception.h; sourceTree = "<group>"; };
+		53DFD34619A24DBB0095CBBA /* inetimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inetimpl.cpp; sourceTree = "<group>"; };
+		53DFD34719A24DBB0095CBBA /* inetimpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = inetimpl.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		53DFD34819A24DBB0095CBBA /* inetprotocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inetprotocol.h; sourceTree = "<group>"; };
+		53DFD34919A24DBB0095CBBA /* lock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lock.cpp; sourceTree = "<group>"; };
+		53DFD34A19A24DBB0095CBBA /* lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = lock.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		53DFD34B19A24DBB0095CBBA /* memfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memfile.cpp; sourceTree = "<group>"; };
+		53DFD34C19A24DBB0095CBBA /* memfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memfile.h; sourceTree = "<group>"; };
+		53DFD34D19A24DBB0095CBBA /* protocmdheader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = protocmdheader.cpp; sourceTree = "<group>"; };
+		53DFD34E19A24DBB0095CBBA /* protocmdheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = protocmdheader.h; sourceTree = "<group>"; };
+		53DFD34F19A24DBB0095CBBA /* safequeue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = safequeue.h; sourceTree = "<group>"; };
+		53DFD35019A24DBB0095CBBA /* string_tool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = string_tool.cpp; sourceTree = "<group>"; };
+		53DFD35119A24DBB0095CBBA /* string_tool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = string_tool.h; sourceTree = "<group>"; };
+		53DFD35219A24DBB0095CBBA /* mconst_macro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mconst_macro.h; sourceTree = "<group>"; };
+		53DFD35319A24DBB0095CBBA /* mimsc_cmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimsc_cmd.h; sourceTree = "<group>"; };
+		53DFD35419A24DBB0095CBBA /* mimsc_enum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimsc_enum.h; sourceTree = "<group>"; };
+		53DFD35519A24DBB0095CBBA /* mimsc_pack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mimsc_pack.cpp; sourceTree = "<group>"; };
+		53DFD35619A24DBB0095CBBA /* mimsc_pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimsc_pack.h; sourceTree = "<group>"; };
+		53DFD35719A24DBB0095CBBA /* mpcsc_cmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpcsc_cmd.h; sourceTree = "<group>"; };
+		53DFD35819A24DBB0095CBBA /* mpcsc_pack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mpcsc_pack.cpp; sourceTree = "<group>"; };
+		53DFD35919A24DBB0095CBBA /* mpcsc_pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpcsc_pack.h; sourceTree = "<group>"; };
+		53DFD35A19A24DBB0095CBBA /* mpcsstrc_pack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mpcsstrc_pack.cpp; sourceTree = "<group>"; };
+		53DFD35B19A24DBB0095CBBA /* mpcsstrc_pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpcsstrc_pack.h; sourceTree = "<group>"; };
+		53DFD35C19A24DBB0095CBBA /* msc_head.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = msc_head.cpp; sourceTree = "<group>"; };
+		53DFD35D19A24DBB0095CBBA /* msc_head.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = msc_head.h; sourceTree = "<group>"; };
+		53DFD35E19A24DBB0095CBBA /* packdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = packdata.h; sourceTree = "<group>"; };
 		53E512D31998F81C002925E6 /* SSNRigidCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRigidCache.h; sourceTree = "<group>"; };
 		53E512D41998F81C002925E6 /* SSNRigidCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRigidCache.m; sourceTree = "<group>"; };
 		53ECB15E191FBB6000BEB29D /* NSString+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSN.h"; sourceTree = "<group>"; };
@@ -226,6 +287,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */,
 				53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */,
 				53D163E6191A629C00AD4C81 /* CoreGraphics.framework in Frameworks */,
 				53D163E8191A629C00AD4C81 /* UIKit.framework in Frameworks */,
@@ -365,6 +427,7 @@
 		53D163E2191A629C00AD4C81 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				53512E2119A371AC00DACC42 /* libz.dylib */,
 				53ECB175191FC11500BEB29D /* libsqlite3.dylib */,
 				53D163E3191A629C00AD4C81 /* Foundation.framework */,
 				53D163E5191A629C00AD4C81 /* CoreGraphics.framework */,
@@ -447,6 +510,61 @@
 			path = ui;
 			sourceTree = "<group>";
 		};
+		53DFD33519A24DBB0095CBBA /* inet */ = {
+			isa = PBXGroup;
+			children = (
+				53DFD33619A24DBB0095CBBA /* commutils.cpp */,
+				53DFD33719A24DBB0095CBBA /* commutils.h */,
+				53DFD33819A24DBB0095CBBA /* cow_container */,
+				53DFD33919A24DBB0095CBBA /* datatype.h */,
+				53DFD33A19A24DBB0095CBBA /* IMNetCallService.h */,
+				53DFD33B19A24DBB0095CBBA /* IMNetCallService.mm */,
+				53DFD33C19A24DBB0095CBBA /* IMNetService.h */,
+				53DFD33D19A24DBB0095CBBA /* IMNetService4iOS.h */,
+				53DFD33E19A24DBB0095CBBA /* IMNetService4iOS.mm */,
+				53DFD33F19A24DBB0095CBBA /* inetcore */,
+				53DFD35219A24DBB0095CBBA /* mconst_macro.h */,
+				53DFD35319A24DBB0095CBBA /* mimsc_cmd.h */,
+				53DFD35419A24DBB0095CBBA /* mimsc_enum.h */,
+				53DFD35519A24DBB0095CBBA /* mimsc_pack.cpp */,
+				53DFD35619A24DBB0095CBBA /* mimsc_pack.h */,
+				53DFD35719A24DBB0095CBBA /* mpcsc_cmd.h */,
+				53DFD35819A24DBB0095CBBA /* mpcsc_pack.cpp */,
+				53DFD35919A24DBB0095CBBA /* mpcsc_pack.h */,
+				53DFD35A19A24DBB0095CBBA /* mpcsstrc_pack.cpp */,
+				53DFD35B19A24DBB0095CBBA /* mpcsstrc_pack.h */,
+				53DFD35C19A24DBB0095CBBA /* msc_head.cpp */,
+				53DFD35D19A24DBB0095CBBA /* msc_head.h */,
+				53DFD35E19A24DBB0095CBBA /* packdata.h */,
+			);
+			path = inet;
+			sourceTree = "<group>";
+		};
+		53DFD33F19A24DBB0095CBBA /* inetcore */ = {
+			isa = PBXGroup;
+			children = (
+				53DFD34019A24DBB0095CBBA /* des.cpp */,
+				53DFD34119A24DBB0095CBBA /* des.h */,
+				53DFD34219A24DBB0095CBBA /* inet.cpp */,
+				53DFD34319A24DBB0095CBBA /* inet.h */,
+				53DFD34419A24DBB0095CBBA /* inetexception.cpp */,
+				53DFD34519A24DBB0095CBBA /* inetexception.h */,
+				53DFD34619A24DBB0095CBBA /* inetimpl.cpp */,
+				53DFD34719A24DBB0095CBBA /* inetimpl.h */,
+				53DFD34819A24DBB0095CBBA /* inetprotocol.h */,
+				53DFD34919A24DBB0095CBBA /* lock.cpp */,
+				53DFD34A19A24DBB0095CBBA /* lock.h */,
+				53DFD34B19A24DBB0095CBBA /* memfile.cpp */,
+				53DFD34C19A24DBB0095CBBA /* memfile.h */,
+				53DFD34D19A24DBB0095CBBA /* protocmdheader.cpp */,
+				53DFD34E19A24DBB0095CBBA /* protocmdheader.h */,
+				53DFD34F19A24DBB0095CBBA /* safequeue.h */,
+				53DFD35019A24DBB0095CBBA /* string_tool.cpp */,
+				53DFD35119A24DBB0095CBBA /* string_tool.h */,
+			);
+			path = inetcore;
+			sourceTree = "<group>";
+		};
 		53ECB15C191FBB6000BEB29D /* inc */ = {
 			isa = PBXGroup;
 			children = (
@@ -493,6 +611,9 @@
 		53ECB163191FBB6000BEB29D /* net */ = {
 			isa = PBXGroup;
 			children = (
+				53DFD33519A24DBB0095CBBA /* inet */,
+				53DFD31219A2181B0095CBBA /* SSNAsyncSocket.cpp */,
+				53DFD31319A2181B0095CBBA /* SSNAsyncSocket.h */,
 			);
 			path = net;
 			sourceTree = "<group>";
@@ -612,6 +733,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				535F26651983A21D00C0D7C0 /* db.md in Resources */,
+				53DFD36019A24DBB0095CBBA /* cow_container in Resources */,
 				53D163EE191A629C00AD4C81 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -635,17 +757,24 @@
 			files = (
 				53D688C019387BE7008D8DBE /* SSNModelManager.m in Sources */,
 				53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */,
+				53DFD36719A24DBB0095CBBA /* lock.cpp in Sources */,
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
 				53ECB171191FBDE900BEB29D /* SSNDataBase.m in Sources */,
 				53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */,
 				53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */,
 				538E384D19986A700061692E /* DMSettingViewController.m in Sources */,
+				53DFD36619A24DBB0095CBBA /* inetimpl.cpp in Sources */,
 				538E3844199869F90061692E /* DMSignViewController.m in Sources */,
 				53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
+				53DFD36919A24DBB0095CBBA /* protocmdheader.cpp in Sources */,
 				53ECB16E191FBB6000BEB29D /* SSNModel.m in Sources */,
 				53D6ED49199A6EC90029D82F /* NSFileManager+SSN.m in Sources */,
+				53DFD36E19A24DBB0095CBBA /* msc_head.cpp in Sources */,
 				53123F98191D25E10012A900 /* TestModel.m in Sources */,
+				53DFD36A19A24DBB0095CBBA /* string_tool.cpp in Sources */,
+				53DFD36119A24DBB0095CBBA /* IMNetCallService.mm in Sources */,
+				53DFD36B19A24DBB0095CBBA /* mimsc_pack.cpp in Sources */,
 				535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */,
 				53D6ED46199A03F90029D82F /* SSNCuteSerialQueue.m in Sources */,
 				533378AE1986431200084428 /* SSNDB.m in Sources */,
@@ -653,19 +782,28 @@
 				538E384A19986A560061692E /* DMSessionViewController.m in Sources */,
 				53D4FD82192F1B3B00A934E9 /* SSNDBTableManager.m in Sources */,
 				53FAA14B193381FF00CD2596 /* SSNFetchController.m in Sources */,
+				53DFD36819A24DBB0095CBBA /* memfile.cpp in Sources */,
 				535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */,
 				53FF9F491934E188009117AB /* SSNDBSectionImp.m in Sources */,
+				53DFD31419A2181B0095CBBA /* SSNAsyncSocket.cpp in Sources */,
 				533378B41986435B00084428 /* SSNDBTable.m in Sources */,
+				53DFD36D19A24DBB0095CBBA /* mpcsstrc_pack.cpp in Sources */,
+				53DFD36519A24DBB0095CBBA /* inetexception.cpp in Sources */,
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
 				535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */,
+				53DFD36219A24DBB0095CBBA /* IMNetService4iOS.mm in Sources */,
+				53DFD36C19A24DBB0095CBBA /* mpcsc_pack.cpp in Sources */,
 				53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */,
+				53DFD36419A24DBB0095CBBA /* inet.cpp in Sources */,
 				538E384719986A3B0061692E /* DMContactViewController.m in Sources */,
+				53DFD36319A24DBB0095CBBA /* des.cpp in Sources */,
 				53D78579199F2B29004D9D62 /* SSNDBTable+Factory.m in Sources */,
 				538E3841199869E00061692E /* DMSignNavController.m in Sources */,
 				538E3838199869880061692E /* DMContactNavController.m in Sources */,
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
 				533378B11986432800084428 /* SSNDBPool.m in Sources */,
 				538E3835199869430061692E /* DMTabViewController.m in Sources */,
+				53DFD35F19A24DBB0095CBBA /* commutils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
