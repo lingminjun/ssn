@@ -25,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ssn/ssn/inc/db/db/SSNDB.m"
-            timestampString = "429888794.511437"
+            filePath = "ssn/ssn/inc/db/db/SSNDBTable.m"
+            timestampString = "430301816.929622"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
-            landmarkName = "-initWithScop:"
+            startingLineNumber = "405"
+            endingLineNumber = "405"
+            landmarkName = "-mapingTable:fromColumns:toColumns:last:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

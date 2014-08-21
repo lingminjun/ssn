@@ -322,7 +322,7 @@
     return YES;
 }
 
-- (NSArray *)executeSql:sql arguments:arguments rowClass:(Class)aclass
+- (NSArray *)prepareSql:sql arguments:arguments rowClass:(Class)aclass
 {
     NSMutableArray *rows = [NSMutableArray array];
 
@@ -371,8 +371,18 @@
     return rows;
 }
 
+- (void)executeSql:(NSString *)sql
+{
+    @autoreleasepool
+    {
+        dispatch_block_t block = ^{ sqlite3_exec(_database, [sql UTF8String], NULL, 0, NULL); };
+
+        [_ioQueue sync:block];
+    }
+}
+
 //执行一条sql命令
-- (void)executeSql:(NSString *)sql, ...
+- (void)prepareSql:(NSString *)sql, ...
 {
     @autoreleasepool
     {
@@ -393,15 +403,15 @@
             arguments = nil;
         }
 
-        [self executeSql:sql arguments:arguments];
+        [self prepareSql:sql arguments:arguments];
     }
 }
 
-- (void)executeSql:(NSString *)sql arguments:(NSArray *)arguments
+- (void)prepareSql:(NSString *)sql arguments:(NSArray *)arguments
 {
     @autoreleasepool
     {
-        dispatch_block_t block = ^{ [self executeSql:sql arguments:arguments rowClass:NULL]; };
+        dispatch_block_t block = ^{ [self prepareSql:sql arguments:arguments rowClass:NULL]; };
 
         [_ioQueue sync:block];
     }
@@ -436,7 +446,7 @@
             arguments = nil;
         }
 
-        dispatch_block_t block = ^{ result = [self executeSql:sql arguments:arguments rowClass:aclass]; };
+        dispatch_block_t block = ^{ result = [self prepareSql:sql arguments:arguments rowClass:aclass]; };
 
         [_ioQueue sync:block];
     }
@@ -471,7 +481,7 @@
         }
 
         dispatch_block_t block = ^{
-            NSArray *result = [self executeSql:sql arguments:arguments rowClass:aclass];
+            NSArray *result = [self prepareSql:sql arguments:arguments rowClass:aclass];
 
             if (completion)
             {
@@ -495,7 +505,7 @@
             rowClass = [NSMutableDictionary class];
         }
 
-        dispatch_block_t block = ^{ result = [self executeSql:sql arguments:arguments rowClass:aclass]; };
+        dispatch_block_t block = ^{ result = [self prepareSql:sql arguments:arguments rowClass:aclass]; };
 
         [_ioQueue sync:block];
     }
@@ -518,7 +528,7 @@
         }
 
         dispatch_block_t block = ^{
-            NSArray *result = [self executeSql:sql arguments:arguments rowClass:aclass];
+            NSArray *result = [self prepareSql:sql arguments:arguments rowClass:aclass];
 
             if (completion)
             {
@@ -541,17 +551,17 @@
 
     dispatch_block_t in_block = ^{
         BOOL rollback = NO;
-        [self executeSql:@"BEGIN IMMEDIATE TRANSACTION;", nil];
+        [self prepareSql:@"BEGIN IMMEDIATE TRANSACTION;", nil];
 
         block(self, &rollback);
 
         if (rollback)
         {
-            [self executeSql:@"ROLLBACK TRANSACTION;", nil];
+            [self prepareSql:@"ROLLBACK TRANSACTION;", nil];
         }
         else
         {
-            [self executeSql:@"COMMIT TRANSACTION;", nil];
+            [self prepareSql:@"COMMIT TRANSACTION;", nil];
         }
     };
 

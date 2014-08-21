@@ -232,7 +232,7 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 
     NSString *dropsql = [NSString stringWithUTF8Format:"DROP TABLE %s", [_name UTF8String]];
     void (^block)(SSNDB * db, BOOL * rollback) = ^(SSNDB *db, BOOL *rollback) {
-        [db executeSql:dropsql, nil];
+        [db prepareSql:dropsql, nil];
         [self removeVersionForTableName:_name];
 
         NSDictionary *notifyInfo = @{SSNDBTableNameKey : _name};
@@ -246,7 +246,7 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 #pragma mark 日志表操作
 - (void)checkCreateTableLog
 {
-    [_db executeSql:@"CREATE TABLE IF NOT EXISTS ssn_db_tb_log (name TEXT, value INTEGER,PRIMARY KEY(name))", nil];
+    [_db prepareSql:@"CREATE TABLE IF NOT EXISTS ssn_db_tb_log (name TEXT, value INTEGER,PRIMARY KEY(name))", nil];
 }
 
 - (NSUInteger)versionForTableName:(NSString *)tableName
@@ -264,8 +264,8 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
         NSString *sql1 = @"UPDATE ssn_db_tb_log SET value = ? WHERE name = ?";
         NSString *sql2 = @"INSERT INTO ssn_db_tb_log (name,value) VALUES(?,?)";
         [_db executeTransaction:^(SSNDB *dataBase, BOOL *rollback) {
-            [_db executeSql:sql1, @(version), tableName, nil];
-            [_db executeSql:sql2, tableName, @(version), nil];
+            [_db prepareSql:sql1, @(version), tableName, nil];
+            [_db prepareSql:sql2, tableName, @(version), nil];
         } sync:YES];
     }
     else
@@ -277,7 +277,7 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 - (void)removeVersionForTableName:(NSString *)tableName
 {
     NSString *sql = @"DELETE FROM ssn_db_tb_log WHERE name = ?";
-    [_db executeSql:sql, tableName, nil];
+    [_db prepareSql:sql, tableName, nil];
 }
 
 #pragma mark 表描述文件解析
@@ -396,10 +396,12 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
     {
         NSArray *sqls = [SSNDBColumn mappingTable:tableName fromColumns:fcolumns toColumns:tcolumns last:last];
 
+        NSMutableString *sql_assembly = [NSMutableString stringWithCapacity:1];
         for (NSString *sql in sqls)
         {
-            [_db executeSql:sql, nil];
+            [sql_assembly appendFormat:@"%@;", sql];
         }
+        [_db executeSql:sql_assembly];
     }
 }
 
@@ -414,10 +416,14 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
         NSArray *indexSqls = [SSNDBColumn createIndexSqlsWithColumns:columns forTable:tableName];
         [sqls addObjectsFromArray:indexSqls];
 
+        NSMutableString *sql_assembly = [NSMutableString stringWithCapacity:1];
+
         for (NSString *sql in sqls)
         {
-            [_db executeSql:sql, nil];
+            [sql_assembly appendFormat:@"%@;", sql];
         }
+
+        [_db executeSql:sql_assembly];
     }
 }
 
@@ -501,7 +507,7 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
     NSString *sql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String],
                                                    [clnames UTF8String], [format UTF8String]];
 
-    [_db executeSql:sql arguments:[self valuesFormKeys:_colums object:object]];
+    [_db prepareSql:sql arguments:[self valuesFormKeys:_colums object:object]];
 }
 
 - (void)updateObject:(id)object
@@ -521,7 +527,7 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
                                                    [values UTF8String], [wheres UTF8String]];
 
     [cls addObjectsFromArray:_primaries]; //从新把主键加上
-    [_db executeSql:sql arguments:[self valuesFormKeys:cls object:object]];
+    [_db prepareSql:sql arguments:[self valuesFormKeys:cls object:object]];
 }
 
 - (void)deleteObject:(id)object
@@ -532,7 +538,7 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
     NSString *sql =
         [NSString stringWithUTF8Format:"DELETE FROM %s WHERE (%s)", [_name UTF8String], [wheres UTF8String]];
 
-    [_db executeSql:sql arguments:[self valuesFormKeys:_primaries object:object]];
+    [_db prepareSql:sql arguments:[self valuesFormKeys:_primaries object:object]];
 }
 
 - (void)upinsertObject:(id)object

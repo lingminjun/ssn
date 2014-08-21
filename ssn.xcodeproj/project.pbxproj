@@ -12,6 +12,7 @@
 		533378B11986432800084428 /* SSNDBPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B01986432800084428 /* SSNDBPool.m */; };
 		533378B41986435B00084428 /* SSNDBTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B31986435B00084428 /* SSNDBTable.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
+		53512E2619A3959A00DACC42 /* lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53512E2419A3959A00DACC42 /* lock.cpp */; };
 		535F26651983A21D00C0D7C0 /* db.md in Resources */ = {isa = PBXBuildFile; fileRef = 535F26641983A21D00C0D7C0 /* db.md */; };
 		535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F266C1983F09100C0D7C0 /* SSNRouter.m */; };
 		535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F26731983F7A800C0D7C0 /* NSURL+Router.m */; };
@@ -110,9 +111,9 @@
 		53D78574199F1564004D9D62 /* TestUser.json in Resources */ = {isa = PBXBuildFile; fileRef = 53D78573199F1564004D9D62 /* TestUser.json */; };
 		53D78576199F15A9004D9D62 /* TestUser2.json in Resources */ = {isa = PBXBuildFile; fileRef = 53D78575199F15A9004D9D62 /* TestUser2.json */; };
 		53D78579199F2B29004D9D62 /* SSNDBTable+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */; };
+		53D9065919A4E3AB009056F2 /* inet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D9065719A4E3AB009056F2 /* inet.cpp */; };
 		53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */; };
 		53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC48194B4BD100BA4F58 /* NiceQueue.m */; };
-		53DFD31419A2181B0095CBBA /* SSNAsyncSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD31219A2181B0095CBBA /* SSNAsyncSocket.cpp */; };
 		53DFD35F19A24DBB0095CBBA /* commutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD33619A24DBB0095CBBA /* commutils.cpp */; };
 		53DFD36019A24DBB0095CBBA /* cow_container in Resources */ = {isa = PBXBuildFile; fileRef = 53DFD33819A24DBB0095CBBA /* cow_container */; };
 		53DFD36119A24DBB0095CBBA /* IMNetCallService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53DFD33B19A24DBB0095CBBA /* IMNetCallService.mm */; };
@@ -161,6 +162,8 @@
 		533378B21986435B00084428 /* SSNDBTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBTable.h; sourceTree = "<group>"; };
 		533378B31986435B00084428 /* SSNDBTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBTable.m; sourceTree = "<group>"; };
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		53512E2419A3959A00DACC42 /* lock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lock.cpp; sourceTree = "<group>"; };
+		53512E2519A3959A00DACC42 /* lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lock.h; sourceTree = "<group>"; };
 		535F26641983A21D00C0D7C0 /* db.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = db.md; sourceTree = "<group>"; };
 		535F266B1983F09100C0D7C0 /* SSNRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRouter.h; sourceTree = "<group>"; };
 		535F266C1983F09100C0D7C0 /* SSNRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRouter.m; sourceTree = "<group>"; };
@@ -217,12 +220,12 @@
 		53D78575199F15A9004D9D62 /* TestUser2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestUser2.json; sourceTree = "<group>"; };
 		53D78577199F2B29004D9D62 /* SSNDBTable+Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNDBTable+Factory.h"; sourceTree = "<group>"; };
 		53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SSNDBTable+Factory.m"; sourceTree = "<group>"; };
+		53D9065719A4E3AB009056F2 /* inet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inet.cpp; sourceTree = "<group>"; };
+		53D9065819A4E3AB009056F2 /* inet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inet.h; sourceTree = "<group>"; };
 		53DDBC40194B4BB700BA4F58 /* SSNNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNNavigationController.h; sourceTree = "<group>"; };
 		53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNNavigationController.m; sourceTree = "<group>"; };
 		53DDBC47194B4BD100BA4F58 /* NiceQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NiceQueue.h; sourceTree = "<group>"; };
 		53DDBC48194B4BD100BA4F58 /* NiceQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NiceQueue.m; sourceTree = "<group>"; };
-		53DFD31219A2181B0095CBBA /* SSNAsyncSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SSNAsyncSocket.cpp; sourceTree = "<group>"; };
-		53DFD31319A2181B0095CBBA /* SSNAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNAsyncSocket.h; sourceTree = "<group>"; };
 		53DFD33619A24DBB0095CBBA /* commutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = commutils.cpp; sourceTree = "<group>"; };
 		53DFD33719A24DBB0095CBBA /* commutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commutils.h; sourceTree = "<group>"; };
 		53DFD33819A24DBB0095CBBA /* cow_container */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cow_container; sourceTree = "<group>"; };
@@ -324,6 +327,17 @@
 				53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */,
 			);
 			path = db;
+			sourceTree = "<group>";
+		};
+		53512E2319A3957600DACC42 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				53512E2419A3959A00DACC42 /* lock.cpp */,
+				53512E2519A3959A00DACC42 /* lock.h */,
+				53D9065719A4E3AB009056F2 /* inet.cpp */,
+				53D9065819A4E3AB009056F2 /* inet.h */,
+			);
+			path = core;
 			sourceTree = "<group>";
 		};
 		535F266A1983F06300C0D7C0 /* router */ = {
@@ -611,9 +625,8 @@
 		53ECB163191FBB6000BEB29D /* net */ = {
 			isa = PBXGroup;
 			children = (
+				53512E2319A3957600DACC42 /* core */,
 				53DFD33519A24DBB0095CBBA /* inet */,
-				53DFD31219A2181B0095CBBA /* SSNAsyncSocket.cpp */,
-				53DFD31319A2181B0095CBBA /* SSNAsyncSocket.h */,
 			);
 			path = net;
 			sourceTree = "<group>";
@@ -778,6 +791,7 @@
 				535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */,
 				53D6ED46199A03F90029D82F /* SSNCuteSerialQueue.m in Sources */,
 				533378AE1986431200084428 /* SSNDB.m in Sources */,
+				53D9065919A4E3AB009056F2 /* inet.cpp in Sources */,
 				53D6ED4E199B80550029D82F /* SSNDBColumn.m in Sources */,
 				538E384A19986A560061692E /* DMSessionViewController.m in Sources */,
 				53D4FD82192F1B3B00A934E9 /* SSNDBTableManager.m in Sources */,
@@ -785,7 +799,6 @@
 				53DFD36819A24DBB0095CBBA /* memfile.cpp in Sources */,
 				535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */,
 				53FF9F491934E188009117AB /* SSNDBSectionImp.m in Sources */,
-				53DFD31419A2181B0095CBBA /* SSNAsyncSocket.cpp in Sources */,
 				533378B41986435B00084428 /* SSNDBTable.m in Sources */,
 				53DFD36D19A24DBB0095CBBA /* mpcsstrc_pack.cpp in Sources */,
 				53DFD36519A24DBB0095CBBA /* inetexception.cpp in Sources */,
@@ -803,6 +816,7 @@
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
 				533378B11986432800084428 /* SSNDBPool.m in Sources */,
 				538E3835199869430061692E /* DMTabViewController.m in Sources */,
+				53512E2619A3959A00DACC42 /* lock.cpp in Sources */,
 				53DFD35F19A24DBB0095CBBA /* commutils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

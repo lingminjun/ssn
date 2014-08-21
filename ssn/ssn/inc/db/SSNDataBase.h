@@ -17,7 +17,7 @@ FOUNDATION_EXTERN NSString *SSNDBTableNameKey;
 
 /*
  SSNDataBase 仅仅提供 两种DDL方法（-createTable:withDelegate:；-dropTable:），以满足绝大部分业务需要，
- 其他sql的方法（-queryObjects:executeSql:；-executeTransaction:）仅仅支持DML操作。
+ 其他sql的方法（-queryObjects:prepareSql:；-executeTransaction:）仅仅支持DML操作。
  */
 @interface SSNDataBase : NSObject
 

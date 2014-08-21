@@ -146,8 +146,8 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
                           dataBaseVersion:(NSInteger)version; //取出某个版本的数据数据库模型
 
 //私有执行sql的方法
-- (NSArray *)executeSql:(NSString *)sql;
-- (NSArray *)queryObjects:(Class)aclass executeSql:(NSString *)sql arguments:(NSArray *)arguments;
+- (NSArray *)prepareSql:(NSString *)sql;
+- (NSArray *)queryObjects:(Class)aclass prepareSql:(NSString *)sql arguments:(NSArray *)arguments;
 
 //
 //- (void)
@@ -426,7 +426,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
     NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@,%@) VALUES(?,?)", kSSNDBTableVersionLog,
                                                kSSNDBTableName, kSSNDBTableVersion];
     [self queryObjects:NULL
-            executeSql:sql
+            prepareSql:sql
              arguments:[NSArray arrayWithObjects:tableName, [NSNumber numberWithInteger:version], nil]];
 }
 
@@ -434,7 +434,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
 {
     NSString *sql = [NSString
         stringWithFormat:@"SELECT %@ FROM %@ WHERE %@ = ?", kSSNDBTableVersion, kSSNDBTableVersionLog, kSSNDBTableName];
-    NSArray *v = [self queryObjects:NULL executeSql:sql arguments:[NSArray arrayWithObject:tableName]];
+    NSArray *v = [self queryObjects:NULL prepareSql:sql arguments:[NSArray arrayWithObject:tableName]];
     if ([v count])
     {
         return [[[v objectAtIndex:0] objectForKey:kSSNDBTableVersion] integerValue];
@@ -449,7 +449,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
 {
     NSString *sql = [NSString stringWithUTF8Format:"DELETE FROM %s WHERE %s = '%s'", [kSSNDBTableVersionLog UTF8String],
                                                    [kSSNDBTableName UTF8String], [tableName UTF8String]];
-    [self executeSql:sql];
+    [self prepareSql:sql];
 }
 
 - (void)saveDataBaseVersion:(NSUInteger)version
@@ -457,7 +457,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
     NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@,%@) VALUES(?,?)", kSSNDBTableVersionLog,
                                                kSSNDBTableName, kSSNDBTableVersion];
     [self queryObjects:NULL
-            executeSql:sql
+            prepareSql:sql
              arguments:[NSArray arrayWithObjects:kSSNDBVersonKey, [NSNumber numberWithInteger:version], nil]];
 }
 
@@ -465,7 +465,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
 {
     NSString *sql = [NSString
         stringWithFormat:@"SELECT %@ FROM %@ WHERE %@ = ?", kSSNDBTableVersion, kSSNDBTableVersionLog, kSSNDBTableName];
-    NSArray *v = [self queryObjects:NULL executeSql:sql arguments:[NSArray arrayWithObject:kSSNDBVersonKey]];
+    NSArray *v = [self queryObjects:NULL prepareSql:sql arguments:[NSArray arrayWithObject:kSSNDBVersonKey]];
     if ([v count])
     {
         return [[[v objectAtIndex:0] objectForKey:kSSNDBTableVersion] integerValue];
@@ -493,7 +493,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
             for (SSNTableColumnInfo *col in cols)
             {
                 [self queryObjects:NULL
-                        executeSql:sql
+                        prepareSql:sql
                          arguments:[NSArray
                                        arrayWithObjects:v_tbaleName, col.column, [NSNumber numberWithInt:col.type],
                                                         [NSNumber numberWithInt:col.keyType],
@@ -510,7 +510,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
     NSString *sql = [NSString
         stringWithFormat:@"SELECT * FROM %@ WHERE %@ = ?", kSSNDBTableTemplateHistory, kSSNDBTableTemplateName];
     NSString *clNm = [NSString stringWithFormat:@"%ld-%@", version, tableName];
-    NSArray *cols = [self queryObjects:NULL executeSql:sql arguments:[NSArray arrayWithObject:clNm]];
+    NSArray *cols = [self queryObjects:NULL prepareSql:sql arguments:[NSArray arrayWithObject:clNm]];
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:[cols count]];
     for (NSDictionary *row in cols)
     {
@@ -541,7 +541,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
 
         for (NSString *tem_sql in sqls)
         {
-            [self executeSql:tem_sql];
+            [self prepareSql:tem_sql];
         }
     }
 }
@@ -556,7 +556,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
 
         for (NSString *tem_sql in sqls)
         {
-            [self executeSql:tem_sql];
+            [self prepareSql:tem_sql];
         }
     }
 }
@@ -658,7 +658,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
     NSString *sql = [NSString stringWithUTF8Format:"DROP TABLE %s", [tableName UTF8String]];
 
     dispatch_block_t block = ^{
-        [self queryObjects:NULL executeSql:sql arguments:nil];
+        [self queryObjects:NULL prepareSql:sql arguments:nil];
         [self removeVersionForTableName:tableName];
     };
 
@@ -678,7 +678,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
         return;
     }
 
-    dispatch_block_t block = ^{ [self queryObjects:NULL executeSql:sql arguments:nil]; };
+    dispatch_block_t block = ^{ [self queryObjects:NULL prepareSql:sql arguments:nil]; };
 
     [self executeSync:YES withBlock:block];
 }
@@ -935,7 +935,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
     return YES;
 }
 
-- (NSArray *)queryObjects:(Class)aclass executeSql:(NSString *)sql arguments:(NSArray *)arguments
+- (NSArray *)queryObjects:(Class)aclass prepareSql:(NSString *)sql arguments:(NSArray *)arguments
 {
     NSMutableArray *rows = [NSMutableArray array];
 
@@ -1051,7 +1051,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
             arguments = nil;
         }
 
-        dispatch_block_t block = ^{ result = [self queryObjects:rowClass executeSql:sql arguments:arguments]; };
+        dispatch_block_t block = ^{ result = [self queryObjects:rowClass prepareSql:sql arguments:arguments]; };
 
         [self executeSync:YES withBlock:block];
     }
@@ -1095,7 +1095,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
         }
 
         dispatch_block_t block = ^{
-            NSArray *result = [self queryObjects:rowClass executeSql:sql arguments:arguments];
+            NSArray *result = [self queryObjects:rowClass prepareSql:sql arguments:arguments];
 
             completion(result);
         };
@@ -1124,7 +1124,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
             rowClass = [NSMutableDictionary class];
         }
 
-        dispatch_block_t block = ^{ result = [self queryObjects:rowClass executeSql:sql arguments:arguments]; };
+        dispatch_block_t block = ^{ result = [self queryObjects:rowClass prepareSql:sql arguments:arguments]; };
 
         [self executeSync:YES withBlock:block];
     }
@@ -1155,7 +1155,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
         }
 
         dispatch_block_t block = ^{
-            NSArray *result = [self queryObjects:rowClass executeSql:sql arguments:arguments];
+            NSArray *result = [self queryObjects:rowClass prepareSql:sql arguments:arguments];
 
             completion(result);
         };
@@ -1164,9 +1164,9 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
     }
 }
 
-- (NSArray *)executeSql:(NSString *)sql
+- (NSArray *)prepareSql:(NSString *)sql
 {
-    return [self queryObjects:NULL executeSql:sql arguments:nil];
+    return [self queryObjects:NULL prepareSql:sql arguments:nil];
 }
 
 - (void)executeSync:(BOOL)sync inTransaction:(void (^)(SSNDataBase *dataBase, BOOL *rollback))block
@@ -1179,17 +1179,17 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
 
     dispatch_block_t in_block = ^{
         BOOL rollback = NO;
-        [self executeSql:@"BEGIN IMMEDIATE TRANSACTION;"];
+        [self prepareSql:@"BEGIN IMMEDIATE TRANSACTION;"];
 
         block(self, &rollback);
 
         if (rollback)
         {
-            [self executeSql:@"ROLLBACK TRANSACTION;"];
+            [self prepareSql:@"ROLLBACK TRANSACTION;"];
         }
         else
         {
-            [self executeSql:@"COMMIT TRANSACTION;"];
+            [self prepareSql:@"COMMIT TRANSACTION;"];
         }
     };
 
@@ -1201,7 +1201,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
     __block NSArray *results = nil;
     [self
         executeSync:YES
-          withBlock:^{ results = [self executeSql:[NSString stringWithFormat:@"pragma table_info(%@)", tableName]]; }];
+          withBlock:^{ results = [self prepareSql:[NSString stringWithFormat:@"pragma table_info(%@)", tableName]]; }];
     return [results valueForKey:@"name"];
 }
 
@@ -1209,7 +1209,7 @@ NSString *const kSSNDBVersonKey = @"_ssn_db_version";
 {
     __block NSArray *results = nil;
     [self executeSync:YES
-            withBlock:^{ results = [self executeSql:@"SELECT * FROM sqlite_master WHERE type = 'table'"]; }];
+            withBlock:^{ results = [self prepareSql:@"SELECT * FROM sqlite_master WHERE type = 'table'"]; }];
     return results;
 }
 
