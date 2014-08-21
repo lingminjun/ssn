@@ -545,8 +545,11 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
 {
     NSAssert(_db, @"模板表不能操作数据");
 
-    [self updateObject:object];
-    [self insertObject:object];
+    [_db executeTransaction:^(SSNDB *dataBase, BOOL *rollback) {
+        [self updateObject:object];
+        [self insertObject:object];
+    } sync:YES];
+    
 }
 
 @end

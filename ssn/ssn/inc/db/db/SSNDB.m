@@ -551,17 +551,17 @@
 
     dispatch_block_t in_block = ^{
         BOOL rollback = NO;
-        [self prepareSql:@"BEGIN IMMEDIATE TRANSACTION;", nil];
+        [self executeSql:@"BEGIN IMMEDIATE TRANSACTION;"];
 
         block(self, &rollback);
 
         if (rollback)
         {
-            [self prepareSql:@"ROLLBACK TRANSACTION;", nil];
+            [self executeSql:@"ROLLBACK TRANSACTION;"];
         }
         else
         {
-            [self prepareSql:@"COMMIT TRANSACTION;", nil];
+            [self executeSql:@"COMMIT TRANSACTION;"];
         }
     };
 
