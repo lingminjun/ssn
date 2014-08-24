@@ -36,7 +36,7 @@
 		53D16407191A629C00AD4C81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E3191A629C00AD4C81 /* Foundation.framework */; };
 		53D16408191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
 		53D16410191A629C00AD4C81 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53D1640E191A629C00AD4C81 /* InfoPlist.strings */; };
-		53D16412191A629C00AD4C81 /* ssnTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D16411191A629C00AD4C81 /* ssnTests.m */; };
+		53D16412191A629C00AD4C81 /* ssnTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53D16411191A629C00AD4C81 /* ssnTests.mm */; };
 		53D24635199C83B400EFDF29 /* DMTabViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E3833199869430061692E /* DMTabViewController.h */; };
 		53D24636199C83B400EFDF29 /* DMTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3834199869430061692E /* DMTabViewController.m */; };
 		53D24637199C83B400EFDF29 /* DMContactNavController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E3836199869880061692E /* DMContactNavController.h */; };
@@ -111,6 +111,14 @@
 		53D78574199F1564004D9D62 /* TestUser.json in Resources */ = {isa = PBXBuildFile; fileRef = 53D78573199F1564004D9D62 /* TestUser.json */; };
 		53D78576199F15A9004D9D62 /* TestUser2.json in Resources */ = {isa = PBXBuildFile; fileRef = 53D78575199F15A9004D9D62 /* TestUser2.json */; };
 		53D78579199F2B29004D9D62 /* SSNDBTable+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */; };
+		53D7D0B319A857220025A2E2 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D7D0B119A857220025A2E2 /* buffer.cpp */; };
+		53D7D0BC19A8F40D0025A2E2 /* lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53512E2419A3959A00DACC42 /* lock.cpp */; };
+		53D7D0BD19A8F40D0025A2E2 /* lock.h in Sources */ = {isa = PBXBuildFile; fileRef = 53512E2519A3959A00DACC42 /* lock.h */; };
+		53D7D0BE19A8F40D0025A2E2 /* inet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D9065719A4E3AB009056F2 /* inet.cpp */; };
+		53D7D0BF19A8F40D0025A2E2 /* inet.h in Sources */ = {isa = PBXBuildFile; fileRef = 53D9065819A4E3AB009056F2 /* inet.h */; };
+		53D7D0C019A8F40D0025A2E2 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D7D0B119A857220025A2E2 /* buffer.cpp */; };
+		53D7D0C119A8F40D0025A2E2 /* buffer.h in Sources */ = {isa = PBXBuildFile; fileRef = 53D7D0B219A857220025A2E2 /* buffer.h */; };
+		53D7D0C319A8F5A90025A2E2 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D7D0C219A8F5A90025A2E2 /* libstdc++.dylib */; };
 		53D9065919A4E3AB009056F2 /* inet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D9065719A4E3AB009056F2 /* inet.cpp */; };
 		53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */; };
 		53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC48194B4BD100BA4F58 /* NiceQueue.m */; };
@@ -204,7 +212,7 @@
 		53D16405191A629C00AD4C81 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		53D1640D191A629C00AD4C81 /* ssnTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ssnTests-Info.plist"; sourceTree = "<group>"; };
 		53D1640F191A629C00AD4C81 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		53D16411191A629C00AD4C81 /* ssnTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ssnTests.m; sourceTree = "<group>"; };
+		53D16411191A629C00AD4C81 /* ssnTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ssnTests.mm; sourceTree = "<group>"; };
 		53D4FD7E192F1AE700A934E9 /* SSNDBTableManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBTableManager.h; sourceTree = "<group>"; };
 		53D4FD81192F1B3B00A934E9 /* SSNDBTableManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBTableManager.m; sourceTree = "<group>"; };
 		53D4FD86192FABA200A934E9 /* ssndb1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ssndb1.h; sourceTree = "<group>"; };
@@ -220,6 +228,9 @@
 		53D78575199F15A9004D9D62 /* TestUser2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestUser2.json; sourceTree = "<group>"; };
 		53D78577199F2B29004D9D62 /* SSNDBTable+Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNDBTable+Factory.h"; sourceTree = "<group>"; };
 		53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SSNDBTable+Factory.m"; sourceTree = "<group>"; };
+		53D7D0B119A857220025A2E2 /* buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buffer.cpp; sourceTree = "<group>"; };
+		53D7D0B219A857220025A2E2 /* buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
+		53D7D0C219A8F5A90025A2E2 /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		53D9065719A4E3AB009056F2 /* inet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inet.cpp; sourceTree = "<group>"; };
 		53D9065819A4E3AB009056F2 /* inet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inet.h; sourceTree = "<group>"; };
 		53DDBC40194B4BB700BA4F58 /* SSNNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNNavigationController.h; sourceTree = "<group>"; };
@@ -302,6 +313,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53D7D0C319A8F5A90025A2E2 /* libstdc++.dylib in Frameworks */,
 				53D24676199C83EC00EFDF29 /* libsqlite3.dylib in Frameworks */,
 				53D16406191A629C00AD4C81 /* XCTest.framework in Frameworks */,
 				53D16408191A629C00AD4C81 /* UIKit.framework in Frameworks */,
@@ -336,6 +348,8 @@
 				53512E2519A3959A00DACC42 /* lock.h */,
 				53D9065719A4E3AB009056F2 /* inet.cpp */,
 				53D9065819A4E3AB009056F2 /* inet.h */,
+				53D7D0B119A857220025A2E2 /* buffer.cpp */,
+				53D7D0B219A857220025A2E2 /* buffer.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
@@ -441,6 +455,7 @@
 		53D163E2191A629C00AD4C81 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				53D7D0C219A8F5A90025A2E2 /* libstdc++.dylib */,
 				53512E2119A371AC00DACC42 /* libz.dylib */,
 				53ECB175191FC11500BEB29D /* libsqlite3.dylib */,
 				53D163E3191A629C00AD4C81 /* Foundation.framework */,
@@ -479,7 +494,7 @@
 		53D1640B191A629C00AD4C81 /* ssnTests */ = {
 			isa = PBXGroup;
 			children = (
-				53D16411191A629C00AD4C81 /* ssnTests.m */,
+				53D16411191A629C00AD4C81 /* ssnTests.mm */,
 				53D1640C191A629C00AD4C81 /* Supporting Files */,
 				53D78573199F1564004D9D62 /* TestUser.json */,
 				53D78575199F15A9004D9D62 /* TestUser2.json */,
@@ -777,6 +792,7 @@
 				53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */,
 				538E384D19986A700061692E /* DMSettingViewController.m in Sources */,
 				53DFD36619A24DBB0095CBBA /* inetimpl.cpp in Sources */,
+				53D7D0B319A857220025A2E2 /* buffer.cpp in Sources */,
 				538E3844199869F90061692E /* DMSignViewController.m in Sources */,
 				53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
@@ -825,6 +841,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53D7D0BC19A8F40D0025A2E2 /* lock.cpp in Sources */,
+				53D7D0BD19A8F40D0025A2E2 /* lock.h in Sources */,
+				53D7D0BE19A8F40D0025A2E2 /* inet.cpp in Sources */,
+				53D7D0BF19A8F40D0025A2E2 /* inet.h in Sources */,
+				53D7D0C019A8F40D0025A2E2 /* buffer.cpp in Sources */,
+				53D7D0C119A8F40D0025A2E2 /* buffer.h in Sources */,
 				53D24635199C83B400EFDF29 /* DMTabViewController.h in Sources */,
 				53D24636199C83B400EFDF29 /* DMTabViewController.m in Sources */,
 				53D24637199C83B400EFDF29 /* DMContactNavController.h in Sources */,
@@ -890,7 +912,7 @@
 				53D24673199C83B500EFDF29 /* SSNDBSectionImp.h in Sources */,
 				53D24674199C83B500EFDF29 /* SSNDBSectionImp.m in Sources */,
 				53D24675199C83B500EFDF29 /* SSNModelPrivate.h in Sources */,
-				53D16412191A629C00AD4C81 /* ssnTests.m in Sources */,
+				53D16412191A629C00AD4C81 /* ssnTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,6 +14,8 @@
 #import "SSNDBPool.h"
 #import "SSNDBTable.h"
 
+#import "inet.h"
+
 @interface TSUser : NSObject
 @property (nonatomic) NSInteger uid;
 @property (nonatomic, strong) NSString *name;
@@ -115,12 +117,12 @@
     [table update];
 
     TSUser *user = [[TSUser alloc] init];
-    user.uid = 12;
-    user.name = @"凌敏均";
+    user.uid = 11;
+    user.name = @"肖海长";
     user.age = 26;
     user.sex = 1;
 
-    //[table upinsertObject:user];
+    [table upinsertObject:user];
 
     NSArray *objs = [db objects:nil sql:@"SELECT * FROM user WHERE uid = ?", @(user.uid), nil];
 
@@ -143,6 +145,51 @@
 
     SSNDBTable *stable = [SSNDBTable tableWithName:@"user_ext" meta:table db:db];
     [stable update];
+}
+
+static CFRunLoopRef runloop;
+
+void read_inet(ssn::inet &inet, const unsigned char *bytes, const unsigned long &size, const unsigned int &tag)
+{
+    NSLog(@"%s", bytes);
+    CFRunLoopStop(runloop);
+}
+
+- (void)testIentTest
+{
+
+    char *str =
+        "GET /imlogingw/tcp60login?loginId=cnhhupanlmj_test&ostype=&osver=IPHONE_7.1&ver=2.8.6_IPHONE_wangxin_WW "
+        "HTTP/1.0\nAccept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/x-shockwave-flash, "
+        "application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, application/x-ms-application, "
+        "application/x-ms-xbap, application/vnd.ms-xpsdocument, application/xaml+xml, */* \nAccept-Language: "
+        "zh-cn\nUser-Agent: Mozilla/4.0\nHost:allot.im.hupan.com\nConnection: Keep-Alive\n\r\n\r\n";
+
+    // char buf[4096];
+
+    ssn::inet iet("allot.im.hupan.com", 443);
+
+    iet.set_read_callback(read_inet);
+
+    iet.start_connect();
+
+    sleep(1);
+
+    iet.async_write((unsigned char *)str, strlen(str), 1);
+
+    runloop = CFRunLoopGetCurrent();
+
+    CFRunLoopRun();
+
+    iet.stop_connect();
+
+    sleep(1);
+
+    //    char *rut = "HTTP/1.1 200 OK\r\nDate: Sun, 24 Aug 2014 08:24:53 GMT\r\nServer: Apache/2.2.9 "
+    //                "(Unix)\r\nCache-Control: no-cache\r\nContent-Length: 85\r\nConnection: close\r\nContent-Type: "
+    //                "text/"
+    //                "html;charset=utf-8\r\n\r\n42.156.153.19:80,42.156.153.27:443,42.156.153.21:80,42.156.153.1:443,42.156."
+    //                "153.32:80";
 }
 
 @end

@@ -19,7 +19,7 @@ void unlock_glock(void *pArg)
 
 void delay_time_spec(const uint64_t &delay_misc, struct timespec &ts)
 {
-    timeval now;
+    struct timeval now;
     gettimeofday(&now, NULL);
 
     ts.tv_sec = now.tv_sec;
