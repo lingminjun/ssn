@@ -177,7 +177,7 @@ void read_inet(ssn::inet &inet, const unsigned char *bytes, const unsigned long 
 
     sleep(1);
 
-    iet.async_read(0, 1111, 1);
+    // iet.async_read(0, 1111, 1);
 
     iet.async_write((unsigned char *)str, strlen(str), 1);
 

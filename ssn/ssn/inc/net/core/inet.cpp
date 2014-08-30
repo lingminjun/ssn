@@ -173,10 +173,17 @@ bool inet_set_address(const char *hname, const char *sname, struct sockaddr_in *
     return true;
 }
 
-void inet_close_socket(int &socket)
+void inet_close_socket(int &socket, struct pollfd *pollfd)
 {
     close(socket);
     socket = -1;
+
+    if (pollfd)
+    {
+        pollfd->events = 0;
+        pollfd->revents = 0;
+        pollfd->fd = -1;
+    }
     inet_log("close socket!\n");
 }
 
@@ -337,7 +344,7 @@ int inet_create_socket(const std::string &host, const unsigned short &port, stru
     if (setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &rcvBuffSize, sizeof(rcvBuffSize)))
     {
         inet_log("set receive buff size error!\n");
-        inet_close_socket(fd);
+        inet_close_socket(fd, NULL);
         return fd;
     }
 
@@ -345,7 +352,7 @@ int inet_create_socket(const std::string &host, const unsigned short &port, stru
     if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &sendBuffSize, sizeof(sendBuffSize)))
     {
         inet_log("set send buff size error!\n");
-        inet_close_socket(fd);
+        inet_close_socket(fd, NULL);
         return fd;
     }
 
@@ -356,7 +363,7 @@ int inet_create_socket(const std::string &host, const unsigned short &port, stru
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuseOn, sizeof(reuseOn)))
     {
         inet_log("set SO_REUSEADDR error!\n");
-        inet_close_socket(fd);
+        inet_close_socket(fd, NULL);
         return fd;
     }
 
@@ -365,7 +372,7 @@ int inet_create_socket(const std::string &host, const unsigned short &port, stru
     //    if (result != 0)
     //    {
     //        inet_log("set bind address error!\n");
-    //        inet_close_socket(fd);
+    //        inet_close_socket(fd,NULL);
     //        return fd;
     //    }
 
@@ -373,7 +380,7 @@ int inet_create_socket(const std::string &host, const unsigned short &port, stru
     if (setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe, sizeof(nosigpipe)))
     {
         inet_log("set SO_NOSIGPIPE error!\n");
-        inet_close_socket(fd);
+        inet_close_socket(fd, NULL);
         return fd;
     }
 
@@ -435,10 +442,7 @@ void *inet_thread_main(void *arg)
                     inet->_reset_addr = false;
                     if (inet->_socket != -1)
                     {
-                        inet_close_socket(inet->_socket);
-                        inet->_pollfd[0].events = 0;
-                        inet->_pollfd[0].revents = 0;
-                        inet->_pollfd[0].fd = -1;
+                        inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                     }
 
                     inet->_socket = inet_create_socket(inet->_host, inet->_port, &peer);
@@ -479,10 +483,7 @@ void *inet_thread_main(void *arg)
                     if (inet->_state == inet_noconnect)
                     { // state has changed
                         inet_call_connect_callback(inet, inet->_state);
-                        inet_close_socket(inet->_socket);
-                        inet->_pollfd[0].events = 0;
-                        inet->_pollfd[0].revents = 0;
-                        inet->_pollfd[0].fd = -1;
+                        inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                         break;
                     }
 
@@ -524,10 +525,7 @@ void *inet_thread_main(void *arg)
                 scopedlock<recursivelock> tmplock(inet->_lock);
                 inet->_state = inet_noconnect;
                 inet_call_connect_callback(inet, inet->_state);
-                inet_close_socket(inet->_socket);
-                inet->_pollfd[0].events = 0;
-                inet->_pollfd[0].revents = 0;
-                inet->_pollfd[0].fd = -1;
+                inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                 inet_log("stop connecting !\n");
             }
         }
@@ -570,21 +568,15 @@ void *inet_thread_main(void *arg)
                         if (inet->_state == inet_noconnect)
                         { // state has changed
                             inet_call_connect_callback(inet, inet->_state);
-                            inet_close_socket(inet->_socket);
-                            inet->_pollfd[0].events = 0;
-                            inet->_pollfd[0].revents = 0;
-                            inet->_pollfd[0].fd = -1;
+                            inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                             run_flag = false;
                             break;
                         }
                     }
 
                     retevts = poll(inet->_pollfd, 1, timeout_msec);
-#ifdef DEBUG
-                    struct timeval t_b_tv;
-                    gettimeofday(&t_b_tv, NULL);
-                    inet_log("%lld poll fd result = %d\n", t_b_tv.tv_sec * 1000000ll + t_b_tv.tv_usec, retevts);
-#endif
+
+                    inet_log("%lld poll fd result = %d\n", inet_now_usec(0), retevts);
                 } while (-1 == retevts && EINTR == errno);
 
                 if (retevts < 0)
@@ -609,10 +601,7 @@ void *inet_thread_main(void *arg)
                         if (inet->_state == inet_noconnect)
                         { // state has changed
                             inet_call_connect_callback(inet, inet->_state);
-                            inet_close_socket(inet->_socket);
-                            inet->_pollfd[0].events = 0;
-                            inet->_pollfd[0].revents = 0;
-                            inet->_pollfd[0].fd = -1;
+                            inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                             run_flag = false;
                             break;
                         }
@@ -653,10 +642,7 @@ void *inet_thread_main(void *arg)
                         if (inet->_state == inet_noconnect)
                         { // state has changed
                             inet_call_connect_callback(inet, inet->_state);
-                            inet_close_socket(inet->_socket);
-                            inet->_pollfd[0].events = 0;
-                            inet->_pollfd[0].revents = 0;
-                            inet->_pollfd[0].fd = -1;
+                            inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                             run_flag = false;
                             break;
                         }
