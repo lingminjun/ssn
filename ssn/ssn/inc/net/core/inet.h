@@ -205,9 +205,18 @@ class inet
     recursivelock _lock;
     std::string _host; // The host may be a domain name (e.g. "deusty.com") or an IP address string (e.g.
                        // "192.168.0.2").
-    buffer _write_buffer;
-    std::vector<unsigned int> _write_tags;
-    std::vector<unsigned int> _read_tags;
+
+    // does not support deep copy,please use the pointer
+    typedef struct
+    {
+        long long timeout;
+        unsigned int tag;
+        unsigned long size;
+        buffer buffer;
+    } event;
+
+    std::vector<event *> _write_events;
+    std::vector<event *> _read_events;
 };
 }
 

@@ -41,7 +41,7 @@
 namespace ssn
 {
 
-void inet_sleep(unsigned int sec, unsigned int ms)
+void inet_sleep(const unsigned int &sec, const unsigned int &ms)
 {
     usleep(sec * 1000000 + ms * 1000);
 }
@@ -53,6 +53,14 @@ void inet_a_nap()
     tvs.tv_usec = 1000 * 100;
     select(0, NULL, NULL, NULL, &tvs);
     inet_log("inet_a_nap\n");
+}
+
+long long inet_now_usec(const long long &timeval_usec)
+{
+    struct timeval tem_timeval;
+    gettimeofday(&tem_timeval, NULL);
+    long long tem_usec = tem_timeval.tv_sec * 1000000 + tem_timeval.tv_usec + timeval_usec;
+    return tem_usec;
 }
 
 bool inet_connect(int &sockfd, struct sockaddr *address, socklen_t address_len, int timeout)
@@ -186,6 +194,12 @@ void inet_close_socket(int &socket)
 
 #define inet_call_read_callback(t, b, s, g)                                                                            \
     if (t->_read_callback)                                                                                             \
+    {                                                                                                                  \
+        t->_read_callback(*(t), b, s, g);                                                                              \
+    }
+
+#define inet_call_read_timeout(t, b, s, g)                                                                             \
+    if (t->_read_timeout)                                                                                              \
     {                                                                                                                  \
         t->_read_callback(*(t), b, s, g);                                                                              \
     }
@@ -389,6 +403,8 @@ void *inet_thread_main(void *arg)
 {
     ssn::inet *inet = (ssn::inet *)arg;
     inet_log("enter inet thread!\n");
+    pthread_setname_np("inet_thread_main");
+
     while (true)
     {
         // loop
@@ -446,13 +462,11 @@ void *inet_thread_main(void *arg)
                 connect_timeout = inet->_connect_timeout;
                 connect_interval = inet->_connect_interval;
             }
-            struct timeval tem_timeval;
-            gettimeofday(&tem_timeval, NULL);
 
             // connecting
-            long long now_usec = tem_timeval.tv_sec * 1000000 + tem_timeval.tv_usec;
-            long long interval_usec = (tem_timeval.tv_sec + connect_interval) * 1000000 + tem_timeval.tv_usec;
-            long long timeout_usec = (tem_timeval.tv_sec + connect_timeout) * 1000000 + tem_timeval.tv_usec;
+            long long now_usec = inet_now_usec(0);
+            long long interval_usec = now_usec + connect_interval * 1000000;
+            long long timeout_usec = now_usec + connect_timeout * 1000000;
 
             bool is_connencted = false;
             bool try_connect = true;
@@ -496,11 +510,10 @@ void *inet_thread_main(void *arg)
                 }
 
                 inet_a_nap();
-                gettimeofday(&tem_timeval, NULL);
-                now_usec = tem_timeval.tv_sec * 1000000 + tem_timeval.tv_usec;
+                now_usec = inet_now_usec(0);
                 if (try_connect)
                 {
-                    interval_usec = (tem_timeval.tv_sec + connect_interval) * 1000000 + tem_timeval.tv_usec;
+                    interval_usec = now_usec + connect_interval * 1000000;
                 }
                 try_connect = inet_check_time(now_usec, interval_usec, 10);
             } while (now_usec < timeout_usec);
@@ -521,32 +534,35 @@ void *inet_thread_main(void *arg)
         break;
         case inet_connected:
         {
-            /*
-            //struct pollfd pfd[1];
-             inet->_pollfd[0].events = 0
-            inet->_pollfd[0].revents = 0;
-
-
-            {
-                scopedlock<recursivelock> tmplock(inet->_lock);
-                if (inet->_state == inet_noconnect)
-                { // state has changed
-                    inet_call_connect_callback(inet, inet->_state);
-                    inet_close_socket(inet->_socket);
-                    break;
-                }
-
-                // set attention event
-                pfd[0].fd = inet->_socket;
-                inet_set_pollfd_event(inet->_pollfd[0], true, true);
-            }
-            */
-            int retevts = -1;
-            int timeout_msec = 100; // 100ms
-
             bool run_flag = true;
             do
             {
+                // checkout timeout event
+                {
+                    scopedlock<recursivelock> tmplock(inet->_lock);
+                    long long now_usec = inet_now_usec(0);
+                    std::vector<inet::event *>::iterator iter = inet->_read_events.begin();
+                    while (iter != inet->_read_events.end())
+                    {
+                        inet::event *pevt = (*iter);
+                        long long timeout = pevt->timeout;
+                        if (timeout > 0 && timeout <= now_usec)
+                        { // time out
+                            iter = inet->_read_events.erase(iter);
+                            inet_log("inet tag = %d read event time out !\n", pevt->tag);
+                            inet_call_read_timeout(inet, NULL, pevt->size, pevt->tag);
+                            delete pevt;
+                        }
+                        else
+                        {
+                            iter++;
+                        }
+                    }
+                }
+
+                int retevts = -1;
+                int timeout_msec = 100; // 100ms
+
                 do
                 {
                     {
@@ -564,7 +580,11 @@ void *inet_thread_main(void *arg)
                     }
 
                     retevts = poll(inet->_pollfd, 1, timeout_msec);
-                    inet_log("poll fd result = %d\n", retevts);
+#ifdef DEBUG
+                    struct timeval t_b_tv;
+                    gettimeofday(&t_b_tv, NULL);
+                    inet_log("%lld poll fd result = %d\n", t_b_tv.tv_sec * 1000000ll + t_b_tv.tv_usec, retevts);
+#endif
                 } while (-1 == retevts && EINTR == errno);
 
                 if (retevts < 0)
@@ -597,28 +617,30 @@ void *inet_thread_main(void *arg)
                             break;
                         }
 
-                        if (inet->_write_buffer.size() > 0)
+                        if (!inet->_write_events.empty())
                         {
+                            unsigned int tag = 0;
+
+                            inet::event *pevt = inet->_write_events.back();
+                            inet->_write_events.pop_back();
+                            tag = pevt->tag;
+
                             unsigned long buffsize = 0;
-                            const unsigned char *outbuffer = inet->_write_buffer.read_data(buffsize);
+                            const unsigned char *outbuffer = pevt->buffer.read_data(buffsize);
+
                             long wlen = inet_tcp_send(inet->_socket, outbuffer, buffsize);
                             inet_log("inet_tcp_send %ld,data, fd=%d , error=%d\n", wlen, inet->_socket, errno);
 
                             if (wlen > 0)
                             {
-                                unsigned int tag = 0;
-                                if (!inet->_read_tags.empty())
-                                {
-                                    tag = inet->_read_tags.back();
-                                    inet->_read_tags.pop_back();
-                                }
-                                inet->_write_buffer.writed_size(wlen);
                                 inet_call_write_callback(inet, outbuffer, wlen, tag);
                             }
                             else if (wlen == 0)
                             {
                                 inet_set_pollfd_event(inet->_pollfd[0], true, false);
                             }
+
+                            delete pevt;
                         }
                     }
                 }
@@ -627,9 +649,6 @@ void *inet_thread_main(void *arg)
                 {
                     inet_log("the socket will read data\n");
                     {
-                        const int buffsize = 128 * 1024;
-                        unsigned char *tmpreadbuff = new unsigned char[buffsize];
-
                         scopedlock<recursivelock> tmplock(inet->_lock);
                         if (inet->_state == inet_noconnect)
                         { // state has changed
@@ -642,18 +661,64 @@ void *inet_thread_main(void *arg)
                             break;
                         }
 
-                        long rlen = inet_tcp_recv(inet->_socket, tmpreadbuff, buffsize);
-                        printf("inet_tcp_recv %ld, fd=%d, error=%d\n", rlen, inet->_socket, errno);
-                        if (rlen > 0)
+                        inet::event *pevt = NULL;
+                        if (!inet->_read_events.empty())
                         {
-                            unsigned int tag = 0;
-                            if (!inet->_write_tags.empty())
-                            {
-                                tag = inet->_write_tags.back();
-                                inet->_write_tags.pop_back();
-                            }
-                            inet_call_read_callback(inet, tmpreadbuff, rlen, tag);
+                            pevt = inet->_read_events.back();
+                            inet->_read_events.pop_back();
                         }
+                        else
+                        { // If there is no read event, will always stay reading matters
+                            pevt = new inet::event;
+                            pevt->tag = 0;
+                            pevt->timeout = 0;
+                            pevt->size = 0;
+                        }
+
+                        unsigned long buffsize = 128 * 1024; // default read buffer
+                        if (pevt->size > 0)
+                        {
+                            buffsize = pevt->size;
+                        }
+
+                        long rlen = 0;
+                        do
+                        {
+                            unsigned char *tmpreadbuff = new unsigned char[buffsize];
+                            memset(tmpreadbuff, '\0', buffsize);
+
+                            rlen = inet_tcp_recv(inet->_socket, tmpreadbuff, buffsize);
+                            inet_log("inet_tcp_recv %ld, fd=%d, error=%d\n", rlen, inet->_socket, errno);
+
+                            delete tmpreadbuff;
+                            if (rlen > 0)
+                            {
+
+                                pevt->buffer.append(tmpreadbuff, rlen);
+
+                                if (pevt->size > 0)
+                                {
+                                    buffsize -= rlen;
+                                }
+                                else
+                                { // There are no limit to read about the length of the
+                                    buffsize = 0;
+                                }
+                            }
+                            else
+                            {
+                                buffsize = rlen;
+                            }
+                        } while (buffsize > 0);
+
+                        if (pevt->buffer.size() > 0)
+                        {
+                            unsigned long tsize = 0;
+                            const unsigned char *read_buff = pevt->buffer.read_data(tsize);
+                            inet_call_read_callback(inet, read_buff, tsize, pevt->tag);
+                        }
+
+                        delete pevt;
                     }
                 }
 
@@ -713,6 +778,11 @@ int inet::stop_connect()
 
 int inet::async_write(const unsigned char *bytes, const unsigned long &size, const unsigned int &tag)
 {
+    if (size <= 0)
+    {
+        return SSN_INET_ERROR;
+    }
+
     {
         scopedlock<recursivelock> tmplock(_lock);
         if (_state != inet_connected)
@@ -721,8 +791,12 @@ int inet::async_write(const unsigned char *bytes, const unsigned long &size, con
             return SSN_INET_ERROR;
         }
 
-        _write_buffer.append(bytes, size);
-        _write_tags.insert(_write_tags.begin(), tag);
+        event *pevt = new event; //
+        pevt->buffer.append(bytes, size);
+        pevt->size = size;
+        pevt->timeout = 0; // the write operation don't need a timeout
+        pevt->tag = tag;
+        _write_events.insert(_write_events.begin(), pevt);
 
         // change zhe socket
         inet_set_pollfd_event(_pollfd[0], true, true);
@@ -735,13 +809,24 @@ int inet::async_read(const unsigned long &size, const unsigned int &tag, const l
 {
     {
         scopedlock<recursivelock> tmplock(_lock);
-        if (_state != inet_connected)
+        if (_state == inet_noconnect)
         {
-            inet_log("Current state is not inet_connected! read data will ignore\n");
+            inet_log("Current state is inet_noconnect! read data will ignore\n");
             return SSN_INET_ERROR;
         }
 
-        _read_tags.insert(_read_tags.begin(), tag);
+        event *pevt = new event; //
+        if (timeout_sec > 0)
+        {
+            pevt->timeout = inet_now_usec(timeout_sec * 1000000);
+        }
+        else
+        {
+            pevt->timeout = 0;
+        }
+        pevt->tag = tag;
+        pevt->size = size;
+        _read_events.insert(_read_events.begin(), pevt);
     }
 
     return SSN_INET_OK;

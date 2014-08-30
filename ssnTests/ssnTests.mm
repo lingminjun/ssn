@@ -151,14 +151,49 @@ static CFRunLoopRef runloop;
 
 void read_inet(ssn::inet &inet, const unsigned char *bytes, const unsigned long &size, const unsigned int &tag)
 {
-    NSLog(@"%s", bytes);
+    NSLog(@"\n===========================================\n%d\n%s\n===========================================\n", tag,
+          bytes);
     CFRunLoopStop(runloop);
+}
+
+- (void)testIent_TimeOut
+{
+    const char *str = "GET "
+                      "/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26%3Bt%3Dgif/sign=02aac2af0824ab18f41be96554938da8/"
+                      "c75c10385343fbf2e2dd81aab17eca8064388f41.jpg\n"
+                      "HTTP/1.1\n"
+                      "Host: a.hiphotos.baidu.com\n"
+                      "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\n"
+                      "Connection: Keep-Alive\n"
+                      "Accept-Language: zh-cn\n"
+                      "User-Agent: Mozilla/4.0\n"
+                      "\r\n\r\n";
+
+    ssn::inet iet("a.hiphotos.baidu.com", 80);
+
+    iet.set_read_callback(read_inet);
+
+    iet.start_connect();
+
+    sleep(1);
+
+    iet.async_read(0, 1111, 1);
+
+    iet.async_write((unsigned char *)str, strlen(str), 1);
+
+    runloop = CFRunLoopGetCurrent();
+
+    CFRunLoopRun();
+
+    iet.stop_connect();
+
+    sleep(1);
 }
 
 - (void)testIentTest
 {
 
-    char *str =
+    const char *str =
         "GET /imlogingw/tcp60login?loginId=cnhhupanlmj_test&ostype=&osver=IPHONE_7.1&ver=2.8.6_IPHONE_wangxin_WW "
         "HTTP/1.0\nAccept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/x-shockwave-flash, "
         "application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, application/x-ms-application, "
@@ -190,6 +225,74 @@ void read_inet(ssn::inet &inet, const unsigned char *bytes, const unsigned long 
     //                "text/"
     //                "html;charset=utf-8\r\n\r\n42.156.153.19:80,42.156.153.27:443,42.156.153.21:80,42.156.153.1:443,42.156."
     //                "153.32:80";
+
+    /*
+     1408890591299565 poll fd result = 1
+     the socket will write data
+     1408890591299600 poll fd result = 1
+     the socket will write data
+     1408890591299609 poll fd result = 1
+     the socket will write data
+     1408890591299617 poll fd result = 1
+     the socket will write data
+     1408890591299627 poll fd result = 1
+     the socket will write data
+     1408890591299641 poll fd result = 1
+     the socket will write data
+     1408890591299651 poll fd result = 1
+
+     the socket will write data
+     1408891272558131 poll fd result = 1
+     the socket will write data
+     1408891272558136 poll fd result = 1
+     the socket will write data
+     1408891272558142 poll fd result = 1
+     the socket will write data
+     1408891272558147 poll fd result = 1
+
+     //旺信
+     ==============================
+     1408890828737976<><><><><><><><><>
+     ==============================
+     1408890828838155<><><><><><><><><>
+     ==============================
+     1408890828939262<><><><><><><><><>
+     ==============================
+     1408890829040421<><><><><><><><><>
+     ==============================
+     1408890829141611<><><><><><><><><>
+     ==============================
+     1408890829242767<><><><><><><><><>
+
+     //async
+     1408894073672575<><><><><><><><><>
+     1408894073672596<><><><><><><><><>
+     1408894073672616<><><><><><><><><>
+     1408894073672637<><><><><><><><><>
+     1408894073672658<><><><><><><><><>
+     1408894073672679<><><><><><><><><>
+     1408894073672699<><><><><><><><><>
+     1408894073672720<><><><><><><><><>
+     1408894073672740<><><><><><><><><>
+     1408894073672761<><><><><><><><><>
+     1408894073672782<><><><><><><><><>
+     1408894073672802<><><><><><><><><>
+     1408894073672823<><><><><><><><><>
+     1408894073672844<><><><><><><><><>
+     1408894073672864<><><><><><><><><>
+     1408894073672885<><><><><><><><><>
+     1408894073672905<><><><><><><><><>
+     1408894073672925<><><><><><><><><>
+     1408894073672946<><><><><><><><><>
+     1408894073672967<><><><><><><><><>
+     1408894073672987<><><><><><><><><>
+     1408894073673007<><><><><><><><><>
+     1408894073673028<><><><><><><><><>
+     1408894073673049<><><><><><><><><>
+     1408894073673069<><><><><><><><><>
+     1408894073676077<><><><><><><><><>
+
+     */
 }
 
 @end
