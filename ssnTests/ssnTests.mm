@@ -16,6 +16,8 @@
 
 #import "inet.h"
 
+#import "SSNCuteSerialQueue.h"
+
 @interface TSUser : NSObject
 @property (nonatomic) NSInteger uid;
 @property (nonatomic, strong) NSString *name;
@@ -47,6 +49,48 @@
 - (void)testExample
 {
     XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+}
+
+static long long all_waited_time = 0ll;
+
+- (void)testCuteSerialQueue
+{
+
+    SSNCuteSerialQueue *cuteQueue = [[SSNCuteSerialQueue alloc] initWithName:@"test"];
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_group_t group = dispatch_group_create();
+
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(25);
+
+    ssn_ntime_track_begin(all);
+    for (int i = 0; i < 1000; i++)
+    {
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        if (i % 10 == 0)
+        {
+            dispatch_group_async(group, queue, ^{
+                ssn_ntime_track_begin(t);
+                [cuteQueue sync:^{
+                    printf("sync =====%d\n", i);
+                    ssn_ntime_track_balance(t, all_waited_time);
+                }];
+                dispatch_semaphore_signal(semaphore);
+            });
+        }
+        else
+        {
+            dispatch_group_async(group, queue, ^{
+                [cuteQueue async:^{ printf("async =====%d\n", i); }];
+                dispatch_semaphore_signal(semaphore);
+            });
+        }
+    }
+
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    printf("\nwaited_time = %lld(us)\n", all_waited_time);
+    ssn_ntime_track_end(all);
+
+    // sleep(5);
 }
 
 - (void)testRigidDictionary

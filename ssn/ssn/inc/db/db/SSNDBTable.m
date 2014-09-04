@@ -11,10 +11,10 @@
 #import "SSNDB.h"
 #import "ssnbase.h"
 
-NSString *SSNDBTableWillMigrateNotification = @"SSNDBTableWillMigrateNotification"; //数据准备迁移 mainThread
-NSString *SSNDBTableDidMigrateNotification = @"SSNDBTableDidMigrateNotification";   //数据迁移结束 mainThread
-NSString *SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification";
-NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
+NSString const *SSNDBTableWillMigrateNotification = @"SSNDBTableWillMigrateNotification"; //数据准备迁移 mainThread
+NSString const *SSNDBTableDidMigrateNotification = @"SSNDBTableDidMigrateNotification"; //数据迁移结束 mainThread
+NSString const *SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification";
+NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
 
 @interface SSNDBTable ()
 
@@ -549,7 +549,6 @@ NSString *SSNDBTableNameKey = @"SSNDBTableNameKey";
         [self updateObject:object];
         [self insertObject:object];
     } sync:YES];
-    
 }
 
 @end

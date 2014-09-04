@@ -25,22 +25,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ssn/ssn/inc/db/db/SSNDBTable.m"
-            timestampString = "430318404.687523"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "404"
-            endingLineNumber = "404"
-            landmarkName = "-mapingTable:fromColumns:toColumns:last:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "ssn/ssn/inc/net/inet/inetcore/inet.cpp"
             timestampString = "430560517.174521"
             startingColumnNumber = "9223372036854775807"
@@ -70,15 +54,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ssnTests/ssnTests.mm"
-            timestampString = "431079903.308948"
+            timestampString = "431447611.75157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
+            startingLineNumber = "198"
+            endingLineNumber = "198"
             landmarkName = "read_inet(ssn::inet &amp;inet, const unsigned char *bytes, const unsigned long &amp;size, const unsigned int &amp;tag)"
             landmarkType = "7">
          </BreakpointContent>

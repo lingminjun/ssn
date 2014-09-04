@@ -9,10 +9,15 @@
 #import "SSNCuteSerialQueue.h"
 #import <pthread.h>
 
+// static NSMutableArray *_asyncBlocks;
+// static dispatch_queue_t _queue;
+// static pthread_mutex_t _mutex;
+// static BOOL _hasAsynBlocks;
+
 @interface SSNCuteSerialQueue ()
 {
     NSString *_name;
-    NSMutableArray *_asynBlocks;
+    NSMutableArray *_asyncBlocks;
     dispatch_queue_t _queue;
     pthread_mutex_t _mutex;
     BOOL _hasAsynBlocks;
@@ -74,6 +79,7 @@
     {
         if (dispatch_get_specific((__bridge const void *)_name))
         {
+
             if (block)
             {
                 block();
@@ -82,46 +88,49 @@
         else
         {
 
-            dispatch_sync(_queue, block);
-
             //断开asyn_block的继续提交，导致此次同步一直等待
             if (_hasAsynBlocks)
             {
                 pthread_mutex_lock(&_mutex);
-                _hasAsynBlocks = NO; //不清除 _asynBlocks
+                _hasAsynBlocks = NO; //不清除 _asyncBlocks
                 pthread_mutex_unlock(&_mutex);
             }
+
+            dispatch_sync(_queue, block);
         }
     }
     else
     {
+
+        __block NSMutableArray *t_lists = nil; //生产临时变量
+
         dispatch_block_t a_block = ^{ // aysn_blocks的数组 处理 的block
-            NSMutableArray *s_ary = nil;
+            NSArray *s_ary = nil;
 
             pthread_mutex_lock(&_mutex);
-            s_ary = _asynBlocks;
-            _asynBlocks = nil; //提前结束掉
+            s_ary = t_lists;
+            _asyncBlocks = nil;
             _hasAsynBlocks = NO;
             pthread_mutex_unlock(&_mutex);
 
+            //执行所有block
             for (dispatch_block_t ablock in s_ary)
-            { //执行所有block
+            {
                 ablock();
             }
         };
 
-        //判断是否已经提交 asyn_block
+        NSMutableArray *t_new = [NSMutableArray arrayWithCapacity:60]; //先产生实例，避免在锁内操作，以空间换时间
+
         pthread_mutex_lock(&_mutex);
         if (!_hasAsynBlocks)
         {
+            _asyncBlocks = t_new;
             _hasAsynBlocks = YES;
-            _asynBlocks = [NSMutableArray arrayWithCapacity:1];
-
-            //提交处理 aysn_blocks的数组
             dispatch_async(_queue, a_block);
         }
-
-        [_asynBlocks addObject:block]; //加入block到处理数组
+        t_lists = _asyncBlocks;
+        [t_lists addObject:block]; //加入block到处理数组
 
         pthread_mutex_unlock(&_mutex);
     }

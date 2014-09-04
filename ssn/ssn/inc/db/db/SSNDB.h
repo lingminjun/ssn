@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+FOUNDATION_EXTERN NSString const *SSNDBUpdatedNotification;  //数据库更新 dbthread
+FOUNDATION_EXTERN NSString const *SSNDBRollbackNotification; //数据库回滚 dbthread
+
 @interface SSNDB : NSObject
 
 @property (nonatomic, strong, readonly) NSString *dbpath;
@@ -34,9 +37,5 @@
 #pragma Transaction method
 //执行事务，在arc中请注意传入strong参数，确保操作完成，防止循环引用
 - (void)executeTransaction:(void (^)(SSNDB *dataBase, BOOL *rollback))block sync:(BOOL)sync;
-
-#pragma Other API
-//- (NSArray *)columnsForTableName:(NSString *)tableName;
-//- (NSArray *)tableNames;
 
 @end

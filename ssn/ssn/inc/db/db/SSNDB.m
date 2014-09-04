@@ -12,6 +12,9 @@
 #import "SSNCuteSerialQueue.h"
 #import "NSFileManager+SSN.h"
 
+NSString const *SSNDBUpdatedNotification = @"SSNDBUpdatedNotification";   //数据准备迁移
+NSString const *SSNDBRollbackNotification = @"SSNDBRollbackNotification"; //数据迁移结束
+
 #define SSNDBFileName @"db.sqlite"
 
 @interface SSNDB ()
@@ -65,6 +68,11 @@
                 sqlite3_close(_database);
                 [self sqliteException:@"Failed to open database with message '%S'."];
             }
+
+            // add hook
+            // add hook
+            sqlite3_update_hook(_database, &ssn_sqlite_update, (__bridge void *)(self));
+            sqlite3_rollback_hook(_database, &ssndb_sqlite_rollback, (__bridge void *)(self));
         };
 
         [_ioQueue sync:block];
@@ -75,6 +83,9 @@
 - (void)dealloc
 {
     dispatch_block_t block = ^{
+        sqlite3_update_hook(_database, NULL, NULL);
+        sqlite3_rollback_hook(_database, NULL, NULL);
+
         if (sqlite3_close(_database) != SQLITE_OK)
         {
             [self sqliteException:@"Failed to close database with message '%S'."];
@@ -82,6 +93,61 @@
     };
 
     [_ioQueue sync:block];
+}
+
+#pragma mark - Hook
+
+static void ssn_sqlite_update(void *user_data, int operation, char const *database_name, char const *table_name,
+                              sqlite_int64 row_id)
+{
+
+    /*
+    char * oper_str = NULL;
+    LWSQLiteOperationType optType = LWSQLiteOperationUnknown;
+
+    if (operation == SQLITE_INSERT)
+    {
+        oper_str = "SQLITE_INSERT";
+        optType = LWSQLiteOperationInsert;
+    }
+    else if (operation == SQLITE_UPDATE)
+    {
+        oper_str = "SQLITE_UPDATE";
+        optType = LWSQLiteOperationUpdate;
+    }
+    else if (operation == SQLITE_DELETE)
+    {
+        oper_str = "SQLITE_DELETE";
+        optType = LWSQLiteOperationDelete;
+    }
+
+    LWLogVerbose(@"__sqlite_update_hook operation=%s, db=%s, table=%s, rowId=%lld", oper_str, database_name, table_name,
+    row_id);
+
+    if (!user_data) {
+        return;
+    }
+
+    LWSQLiteHook * hook = (__bridge LWSQLiteHook *)(user_data);
+
+    [hook handleOperation:optType
+                    table:[NSString stringWithUTF8String:table_name]
+                    rowId:row_id];
+     */
+}
+
+static void ssndb_sqlite_rollback(void *user_data)
+{
+    /*
+    LWLogVerbose(@"__sqlite_rollback_hook");
+
+    if (!user_data) {
+        return;
+    }
+
+    LWSQLiteHook * hook = (__bridge LWSQLiteHook *)(user_data);
+    [hook handleOperation:LWSQLiteOperationRollback table:nil rowId:-1];
+     */
 }
 
 #pragma mark error
