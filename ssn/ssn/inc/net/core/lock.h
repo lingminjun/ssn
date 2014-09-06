@@ -11,7 +11,8 @@
 
 #include <pthread.h>
 #include <sys/time.h>
-#include <memory>
+#include <memory> //C11
+//#include <tr1/memory>//C99
 
 namespace ssn
 {
@@ -237,6 +238,7 @@ class waitobject
     volatile bool _signaled;
 };
 
+// typedef std::tr1::shared_ptr<waitobject> waitobject_ptr;
 typedef std::shared_ptr<waitobject> waitobject_ptr;
 }
 

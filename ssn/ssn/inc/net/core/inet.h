@@ -43,13 +43,13 @@ typedef enum
 
 class inet;
 
-typedef void (*connect_callback_function)(inet &inet, const inet_connect_state state);
+typedef void (*connect_callback_function)(inet &inet, const inet_connect_state state, void *context);
 typedef void (*read_callback_function)(inet &inet, const unsigned char *bytes, const unsigned long &size,
-                                       const unsigned int &tag);
+                                       const unsigned int &tag, void *context);
 typedef void (*write_callback_function)(inet &inet, const unsigned char *bytes, const unsigned long &size,
-                                        const unsigned int &tag);
+                                        const unsigned int &tag, void *context);
 typedef void (*read_timeout_function)(inet &inet, const unsigned char *bytes, const unsigned long &size,
-                                      const unsigned int &tag);
+                                      const unsigned int &tag, void *context);
 
 /**
  asyn socket implementation.
@@ -63,40 +63,8 @@ class inet
      construction
      the host may be a domain name (e.g. "deusty.com") or an IP address string (e.g. "192.168.0.2").
      */
-    inet() : _lock()
-    {
-        _isIPv6 = false; // isIPv6 == true AF_INET6
-        _socket = -1;
-        _connect_timeout = 0;
-        _connect_interval = 5;
-        _state = inet_noconnect;
-        _thread = NULL;
-        _reset_addr = true;
-
-        _connect_callback = NULL;
-        _read_callback = NULL;
-        _write_callback = NULL;
-        _read_timeout = NULL;
-
-        pthread_create(&_thread, NULL, &inet_thread_main, this);
-    }
-    inet(const std::string &host, const unsigned short port = 443) : _lock(), _host(host), _port(port)
-    {
-        _isIPv6 = false; // isIPv6 == true AF_INET6
-        _socket = -1;
-        _connect_timeout = 0;
-        _connect_interval = 5;
-        _state = inet_noconnect;
-        _thread = NULL;
-        _reset_addr = true;
-
-        _connect_callback = NULL;
-        _read_callback = NULL;
-        _write_callback = NULL;
-        _read_timeout = NULL;
-
-        pthread_create(&_thread, NULL, &inet_thread_main, this);
-    }
+    inet();
+    inet(const std::string &host, const unsigned short port = 443);
 
     /**
      set the host and port,not change connecting state,Until finally the connect access to take effect.
@@ -126,23 +94,7 @@ class inet
     /**
      destory
      */
-    ~inet()
-    {
-        // stop connect
-        stop_connect();
-
-        void *retval = NULL;
-        if (_thread != NULL && pthread_kill(_thread, 0) == 0)
-        {
-#ifdef ANDROID_OS_DEBUG
-            pthread_kill(_thread, SIGALRM);
-#else
-            pthread_cancel(_thread);
-#endif
-            pthread_join(_thread, &retval);
-            inet_log("exit inet thread code:%d\n", retval);
-        }
-    }
+    ~inet();
 
     /**
      sync write data to socket.
@@ -154,6 +106,41 @@ class inet
      time out will diconnect.
      */
     int async_read(const unsigned long &size, const unsigned int &tag, const long long &timeout_sec);
+
+    /**
+     inet connect state
+     */
+    inet_connect_state connect_state(void)
+    {
+        return _state;
+    }
+
+    /**
+     inet port
+     */
+    unsigned short port()
+    {
+        scopedlock<recursivelock> tmplock(_lock);
+        return _port;
+    }
+
+    /**
+     inet host
+     */
+    std::string host()
+    {
+        scopedlock<recursivelock> tmplock(_lock);
+        return _host;
+    }
+
+    /**
+     using call back context
+     */
+    void set_callback_context(void *context)
+    {
+        scopedlock<recursivelock> tmplock(_lock);
+        _context = context;
+    }
 
   public:
     void set_connect_callback(connect_callback_function connect_callback)
@@ -205,6 +192,8 @@ class inet
     recursivelock _lock;
     std::string _host; // The host may be a domain name (e.g. "deusty.com") or an IP address string (e.g.
                        // "192.168.0.2").
+
+    void *_context;
 
     // does not support deep copy,please use the pointer
     typedef struct

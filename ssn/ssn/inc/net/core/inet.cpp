@@ -187,28 +187,28 @@ void inet_close_socket(int &socket, struct pollfd *pollfd)
     inet_log("close socket!\n");
 }
 
-#define inet_call_connect_callback(t, s)                                                                               \
+#define inet_call_connect_callback(t, s, c)                                                                            \
     if (t->_connect_callback)                                                                                          \
     {                                                                                                                  \
-        t->_connect_callback(*(t), s);                                                                                 \
+        t->_connect_callback(*(t), s, c);                                                                              \
     }
 
-#define inet_call_write_callback(t, b, s, g)                                                                           \
+#define inet_call_write_callback(t, b, s, g, c)                                                                        \
     if (t->_write_callback)                                                                                            \
     {                                                                                                                  \
-        t->_write_callback(*(t), b, s, g);                                                                             \
+        t->_write_callback(*(t), b, s, g, c);                                                                          \
     }
 
-#define inet_call_read_callback(t, b, s, g)                                                                            \
+#define inet_call_read_callback(t, b, s, g, c)                                                                         \
     if (t->_read_callback)                                                                                             \
     {                                                                                                                  \
-        t->_read_callback(*(t), b, s, g);                                                                              \
+        t->_read_callback(*(t), b, s, g, c);                                                                           \
     }
 
-#define inet_call_read_timeout(t, b, s, g)                                                                             \
+#define inet_call_read_timeout(t, b, s, g, c)                                                                          \
     if (t->_read_timeout)                                                                                              \
     {                                                                                                                  \
-        t->_read_callback(*(t), b, s, g);                                                                              \
+        t->_read_callback(*(t), b, s, g, c);                                                                           \
     }
 
 void inet_set_socket_nonblocking(int &socket)
@@ -410,7 +410,9 @@ void *inet_thread_main(void *arg)
 {
     ssn::inet *inet = (ssn::inet *)arg;
     inet_log("enter inet thread!\n");
-    pthread_setname_np("inet_thread_main");
+    char thread_name[30] = {'\0'};
+    sprintf(thread_name, "inet_%p_thread_main", arg);
+    pthread_setname_np(thread_name);
 
     while (true)
     {
@@ -433,7 +435,7 @@ void *inet_thread_main(void *arg)
             // socket init
             {
                 scopedlock<recursivelock> tmplock(inet->_lock);
-                inet_call_connect_callback(inet, state);
+                inet_call_connect_callback(inet, state, inet->_context);
 
                 // host to addr ip
                 if (inet->_reset_addr)
@@ -452,7 +454,7 @@ void *inet_thread_main(void *arg)
                     {
                         inet->_state = inet_noconnect;
                         inet->_reset_addr = true;
-                        inet_call_connect_callback(inet, inet_noconnect);
+                        inet_call_connect_callback(inet, inet_noconnect, inet->_context);
                         break;
                     }
                 }
@@ -482,7 +484,7 @@ void *inet_thread_main(void *arg)
                     scopedlock<recursivelock> tmplock(inet->_lock);
                     if (inet->_state == inet_noconnect)
                     { // state has changed
-                        inet_call_connect_callback(inet, inet->_state);
+                        inet_call_connect_callback(inet, inet->_state, inet->_context);
                         inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                         break;
                     }
@@ -499,14 +501,14 @@ void *inet_thread_main(void *arg)
                         inet->_pollfd[0].fd = inet->_socket;
                         inet_set_pollfd_event(inet->_pollfd[0], true, true);
 
-                        inet_call_connect_callback(inet, inet->_state);
+                        inet_call_connect_callback(inet, inet->_state, inet->_context);
 
                         break;
                     }
                     else
                     {
                         inet_log("ient connecting ...\n");
-                        inet_call_connect_callback(inet, inet->_state);
+                        inet_call_connect_callback(inet, inet->_state, inet->_context);
                     }
                 }
 
@@ -524,7 +526,7 @@ void *inet_thread_main(void *arg)
             {
                 scopedlock<recursivelock> tmplock(inet->_lock);
                 inet->_state = inet_noconnect;
-                inet_call_connect_callback(inet, inet->_state);
+                inet_call_connect_callback(inet, inet->_state, inet->_context);
                 inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                 inet_log("stop connecting !\n");
             }
@@ -548,7 +550,7 @@ void *inet_thread_main(void *arg)
                         { // time out
                             iter = inet->_read_events.erase(iter);
                             inet_log("inet tag = %d read event time out !\n", pevt->tag);
-                            inet_call_read_timeout(inet, NULL, pevt->size, pevt->tag);
+                            inet_call_read_timeout(inet, NULL, pevt->size, pevt->tag, inet->_context);
                             delete pevt;
                         }
                         else
@@ -567,16 +569,15 @@ void *inet_thread_main(void *arg)
                         scopedlock<recursivelock> tmplock(inet->_lock);
                         if (inet->_state == inet_noconnect)
                         { // state has changed
-                            inet_call_connect_callback(inet, inet->_state);
+                            inet_call_connect_callback(inet, inet->_state, inet->_context);
                             inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                             run_flag = false;
                             break;
                         }
+
+                        retevts = poll(inet->_pollfd, 1, timeout_msec);
+                        inet_log("%lld poll fd result = %d\n", inet_now_usec(0), retevts);
                     }
-
-                    retevts = poll(inet->_pollfd, 1, timeout_msec);
-
-                    inet_log("%lld poll fd result = %d\n", inet_now_usec(0), retevts);
                 } while (-1 == retevts && EINTR == errno);
 
                 if (retevts < 0)
@@ -600,7 +601,7 @@ void *inet_thread_main(void *arg)
                         scopedlock<recursivelock> tmplock(inet->_lock);
                         if (inet->_state == inet_noconnect)
                         { // state has changed
-                            inet_call_connect_callback(inet, inet->_state);
+                            inet_call_connect_callback(inet, inet->_state, inet->_context);
                             inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                             run_flag = false;
                             break;
@@ -622,14 +623,27 @@ void *inet_thread_main(void *arg)
 
                             if (wlen > 0)
                             {
-                                inet_call_write_callback(inet, outbuffer, wlen, tag);
+                                inet_call_write_callback(inet, outbuffer, wlen, tag, inet->_context);
                             }
                             else if (wlen == 0)
                             {
+                                inet_log("set the socket no writed data\n");
                                 inet_set_pollfd_event(inet->_pollfd[0], true, false);
+                            }
+                            else
+                            {
+                                inet_log("inet send data error, close the socket = %d\n", inet->_socket);
+                                inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
+                                run_flag = false;
+                                break;
                             }
 
                             delete pevt;
+                        }
+                        else
+                        {
+                            inet_log("set the socket no writed data.\n");
+                            inet_set_pollfd_event(inet->_pollfd[0], true, false);
                         }
                     }
                 }
@@ -641,7 +655,7 @@ void *inet_thread_main(void *arg)
                         scopedlock<recursivelock> tmplock(inet->_lock);
                         if (inet->_state == inet_noconnect)
                         { // state has changed
-                            inet_call_connect_callback(inet, inet->_state);
+                            inet_call_connect_callback(inet, inet->_state, inet->_context);
                             inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                             run_flag = false;
                             break;
@@ -691,9 +705,16 @@ void *inet_thread_main(void *arg)
                                     buffsize = 0;
                                 }
                             }
-                            else
+                            else if (rlen == 0)
                             {
                                 buffsize = rlen;
+                            }
+                            else
+                            {
+                                inet_log("inet read data error, close the socket = %d\n", inet->_socket);
+                                inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
+                                run_flag = false;
+                                break;
                             }
                         } while (buffsize > 0);
 
@@ -701,7 +722,7 @@ void *inet_thread_main(void *arg)
                         {
                             unsigned long tsize = 0;
                             const unsigned char *read_buff = pevt->buffer.read_data(tsize);
-                            inet_call_read_callback(inet, read_buff, tsize, pevt->tag);
+                            inet_call_read_callback(inet, read_buff, tsize, pevt->tag, inet->_context);
                         }
 
                         delete pevt;
@@ -719,6 +740,68 @@ void *inet_thread_main(void *arg)
         }
     }
     return NULL;
+}
+
+inet::inet() : _lock()
+{
+    _isIPv6 = false; // isIPv6 == true AF_INET6
+    _socket = -1;
+    _connect_timeout = 0;
+    _connect_interval = 5;
+    _state = inet_noconnect;
+    _thread = NULL;
+    _reset_addr = true;
+
+    _connect_callback = NULL;
+    _read_callback = NULL;
+    _write_callback = NULL;
+    _read_timeout = NULL;
+
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    pthread_create(&_thread, NULL, &inet_thread_main, this);
+    pthread_attr_destroy(&attr);
+}
+
+inet::inet(const std::string &host, const unsigned short port) : _lock(), _host(host), _port(port)
+{
+    _isIPv6 = false; // isIPv6 == true AF_INET6
+    _socket = -1;
+    _connect_timeout = 0;
+    _connect_interval = 5;
+    _state = inet_noconnect;
+    _thread = NULL;
+    _reset_addr = true;
+
+    _connect_callback = NULL;
+    _read_callback = NULL;
+    _write_callback = NULL;
+    _read_timeout = NULL;
+
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    pthread_create(&_thread, NULL, &inet_thread_main, this);
+    pthread_attr_destroy(&attr);
+}
+
+inet::~inet()
+{
+    // stop connect
+    stop_connect();
+
+    void *retval = NULL;
+    if (_thread != NULL && pthread_kill(_thread, 0) == 0)
+    {
+#ifdef ANDROID_OS_DEBUG
+        pthread_kill(_thread, SIGALRM);
+#else
+        pthread_cancel(_thread);
+#endif
+        pthread_join(_thread, &retval);
+        inet_log("exit inet thread code:%d\n", *((int *)retval));
+    }
 }
 
 int inet::start_connect(const long interval_sec, const long timeout_sec)
