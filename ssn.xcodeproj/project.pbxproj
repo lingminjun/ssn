@@ -11,6 +11,7 @@
 		533378AE1986431200084428 /* SSNDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378AD1986431200084428 /* SSNDB.m */; };
 		533378B11986432800084428 /* SSNDBPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B01986432800084428 /* SSNDBPool.m */; };
 		533378B41986435B00084428 /* SSNDBTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B31986435B00084428 /* SSNDBTable.m */; };
+		534B4AA919C04E4B00698137 /* KKObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B4AA819C04E4B00698137 /* KKObj.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
 		53512E2619A3959A00DACC42 /* lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53512E2419A3959A00DACC42 /* lock.cpp */; };
 		535F26651983A21D00C0D7C0 /* db.md in Resources */ = {isa = PBXBuildFile; fileRef = 535F26641983A21D00C0D7C0 /* db.md */; };
@@ -155,6 +156,8 @@
 		533378B01986432800084428 /* SSNDBPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBPool.m; sourceTree = "<group>"; };
 		533378B21986435B00084428 /* SSNDBTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBTable.h; sourceTree = "<group>"; };
 		533378B31986435B00084428 /* SSNDBTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBTable.m; sourceTree = "<group>"; };
+		534B4AA719C04E4B00698137 /* KKObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKObj.h; sourceTree = "<group>"; };
+		534B4AA819C04E4B00698137 /* KKObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKObj.m; sourceTree = "<group>"; };
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		53512E2419A3959A00DACC42 /* lock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lock.cpp; sourceTree = "<group>"; };
 		53512E2519A3959A00DACC42 /* lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lock.h; sourceTree = "<group>"; };
@@ -444,6 +447,8 @@
 				53D1640C191A629C00AD4C81 /* Supporting Files */,
 				53D78573199F1564004D9D62 /* TestUser.json */,
 				53D78575199F15A9004D9D62 /* TestUser2.json */,
+				534B4AA719C04E4B00698137 /* KKObj.h */,
+				534B4AA819C04E4B00698137 /* KKObj.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -757,6 +762,7 @@
 				53D24654199C83B400EFDF29 /* SSNCuteSerialQueue.m in Sources */,
 				53D24655199C83B400EFDF29 /* NSFileManager+SSN.h in Sources */,
 				53D24656199C83B400EFDF29 /* NSFileManager+SSN.m in Sources */,
+				534B4AA919C04E4B00698137 /* KKObj.m in Sources */,
 				53D24657199C83B400EFDF29 /* SSNDB.h in Sources */,
 				53D24658199C83B400EFDF29 /* SSNDB.m in Sources */,
 				53D24659199C83B400EFDF29 /* SSNDBPool.h in Sources */,

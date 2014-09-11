@@ -9,6 +9,8 @@
 #include "buffer.h"
 #include <assert.h>
 
+#define ssn_memory_buffer_max_capacity 4096
+
 namespace ssn
 {
 void buffer::append(const unsigned char *buffer, const unsigned long &size)
@@ -26,19 +28,19 @@ void buffer::append(const ustring &data)
     append(data.c_str(), data.size());
 }
 
-void buffer::writed_size(unsigned long size)
+void buffer::cut_front_size(unsigned long cut_size)
 {
     unsigned long tmpsize = _buffer.size();
-    assert(size + _begin <= tmpsize);
-    _begin += size;
+    assert(cut_size + _begin <= tmpsize);
+    _begin += cut_size;
     unsigned long leftsize = _buffer.size() - _begin;
-    if ((_begin > 4096) && (_begin > leftsize))
+    if ((_begin > ssn_memory_buffer_max_capacity) && (_begin > leftsize))
     {
         _buffer.replace(0, leftsize, _buffer.data() + _begin, leftsize);
         _buffer.resize(leftsize);
         _begin = 0;
     }
-    _size -= size;
+    _size -= cut_size;
     if (_size == 0 && _begin > 1024)
     {
         _buffer.resize(0);

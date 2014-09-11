@@ -26,7 +26,7 @@ class buffer
     }
     void append(const unsigned char *buffer, const unsigned long &size);
     void append(const ustring &data);
-    void writed_size(unsigned long wsize);
+    void cut_front_size(unsigned long cut_size);//cut_size don't allow more than buffer size
     const unsigned char *read_data(unsigned long &size);
     void clear()
     {

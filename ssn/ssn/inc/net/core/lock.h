@@ -164,25 +164,6 @@ template <class T> class scopedlock
     T &_lock;
 };
 
-#ifdef using_simply_scope_mutex_lock
-class scopedmutexlock
-{
-  public:
-    scopedmutexlock(mutexlock &lock) : _lock(lock)
-    {
-        _lock.lock();
-    }
-    ~scopedmutexlock()
-    {
-        _lock.unlock();
-    }
-
-  private:
-    mutexlock &_lock;
-};
-//此处似乎没有意义
-#endif
-
 class waitobject
 {
   public:
@@ -194,11 +175,7 @@ class waitobject
   public:
     int wait(int64_t timeoutms = -1)
     {
-#ifdef using_simply_scope_mutex_lock
-        scopedmutexlock tmplock(_mutex);
-#else
         scopedlock<mutexlock> tmplock(_mutex);
-#endif
         if (_signaled)
         {
             return 0;
@@ -207,22 +184,14 @@ class waitobject
     }
     int signal()
     {
-#ifdef using_simply_scope_mutex_lock
-        scopedmutexlock tmplock(_mutex);
-#else
         scopedlock<mutexlock> tmplock(_mutex);
-#endif
         _signaled = true;
         return _cond.signal();
     }
     int broadcast()
     {
         {
-#ifdef using_simply_scope_mutex_lock
-            scopedmutexlock tmplock(_mutex);
-#else
             scopedlock<mutexlock> tmplock(_mutex);
-#endif
             _signaled = true;
         }
         return _cond.broadcast();

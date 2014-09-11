@@ -18,6 +18,30 @@
 
 #import "SSNCuteSerialQueue.h"
 
+#import <objc/runtime.h>
+
+#import "KKObj.h"
+
+@interface TSLObj : NSObject
+{
+    NSString *_name;
+}
+@property (nonatomic, strong, readonly) NSString *name;
+@property (nonatomic, strong, readonly) NSString *desp;
+@end
+
+@implementation TSLObj
+
+@synthesize desp = _desp;
+
+@dynamic name;
+- (NSString *)name
+{
+    return _name;
+}
+
+@end
+
 @interface TSUser : NSObject
 @property (nonatomic) NSInteger uid;
 @property (nonatomic, strong) NSString *name;
@@ -49,6 +73,30 @@
 - (void)testExample
 {
     XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+}
+
+- (void)test_kkobj
+{
+
+    KKDerive *obj = [[KKDerive alloc] init];
+    [obj setTestStr:@"base str value"];
+    [obj setTest1Str:@"derive str value"];
+
+    NSLog(@"%ld", class_getInstanceSize([KKDerive class]));
+
+    NSLog(@"%@", obj.str);
+    NSLog(@"%@", [obj baseStr]);
+}
+
+- (void)test_kvc_property
+{
+
+    TSLObj *obj = [[TSLObj alloc] init];
+    [obj setValue:@"凌敏均" forKey:@"name"];
+    [obj setValue:@"呵呵呵" forKey:@"desp"];
+
+    NSLog(@"%@", obj.name);
+    NSLog(@"%@", obj.desp);
 }
 
 static long long all_waited_time = 0ll;
@@ -180,6 +228,32 @@ static long long all_waited_time = 0ll;
     //[db prepareSql:@"INSERT INTO user (uid,name,age) VALUES(?,?,?)", @(1), @"xhc", @(25), nil];
 }
 
+static pthread_t _thread;
+
+void *inet_thread_main(void *arg)
+{
+    dispatch_queue_t callbackQueue = dispatch_get_current_queue();
+
+    if (callbackQueue)
+    {
+        NSLog(@"hfjsdfdjfhjkda dhsjfsdhjf ");
+    }
+    else
+    {
+        NSLog(@"hfjsdfdjfhjkda dhsjfsdhjf ");
+    }
+
+    return NULL;
+}
+
+- (void)test_dipatch_queue
+{
+
+    pthread_create(&_thread, NULL, &inet_thread_main, NULL);
+
+    sleep(100);
+}
+
 - (void)testDBTable1
 {
     SSNDBPool *pool = [SSNDBPool shareInstance];
@@ -193,7 +267,8 @@ static long long all_waited_time = 0ll;
 
 static CFRunLoopRef runloop;
 
-void read_inet(ssn::inet &inet, const unsigned char *bytes, const unsigned long &size, const unsigned int &tag)
+void read_inet(ssn::inet &inet, const unsigned char *bytes, const unsigned long &size, const unsigned int &tag,
+               void *context)
 {
     NSLog(@"\n===========================================\n%d\n%s\n===========================================\n", tag,
           bytes);

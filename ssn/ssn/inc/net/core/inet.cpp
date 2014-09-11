@@ -760,7 +760,7 @@ inet::inet() : _lock()
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-    pthread_create(&_thread, NULL, &inet_thread_main, this);
+    pthread_create(&_thread, &attr, &inet_thread_main, this);
     pthread_attr_destroy(&attr);
 }
 
@@ -782,7 +782,7 @@ inet::inet(const std::string &host, const unsigned short port) : _lock(), _host(
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-    pthread_create(&_thread, NULL, &inet_thread_main, this);
+    pthread_create(&_thread, &attr, &inet_thread_main, this);
     pthread_attr_destroy(&attr);
 }
 
