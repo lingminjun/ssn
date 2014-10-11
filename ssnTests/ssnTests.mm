@@ -52,7 +52,41 @@
 @implementation TSUser
 @end
 
+@interface KVOModel : NSObject {
+    NSString *_name;
+    int64_t _uid;
+}
+
+@property (nonatomic,strong) NSString *name;
+@property (nonatomic) int64_t uid;
+
+
+@end
+
+@implementation KVOModel
+
+- (NSUInteger)hash
+{
+    return (NSUInteger)self.uid;
+}
+
+- (BOOL)isEqual:(KVOModel *)object {
+    if (self == object) {
+        return YES;
+    }
+    
+    if ([object isKindOfClass:[NSNull class]]) {
+        return NO;
+    }
+    
+    return self.uid == object.uid;
+}
+
+@end
+
 @interface ssnTests : XCTestCase
+
+@property (nonatomic,strong) NSString *function_name;
 
 @end
 
@@ -73,6 +107,39 @@
 - (void)testExample
 {
     XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+}
+
+- (void)setFunction_name:(NSString *)function_name {
+    _function_name = function_name;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    NSLog(@"%@",change);
+}
+
+- (void)test_function_name {
+    
+    KVOModel *model0 = [[KVOModel alloc] init];
+    model0.uid = 10;
+    model0.name = @"10ddddd";
+    KVOModel *model1 = [[KVOModel alloc] init];
+    model1.uid = 11;
+    model1.name = @"10dsddd";
+    KVOModel *model2 = [[KVOModel alloc] init];
+    model2.uid = 12;
+    model2.name = @"10dxddd";
+    KVOModel *model3 = [[KVOModel alloc] init];
+    model3.uid = 13;
+    model3.name = @"10ddghdd";
+    
+    NSMutableArray *ary = [NSMutableArray arrayWithObjects:model0,model1,model2,model3, nil];
+    KVOModel *model4 = [[KVOModel alloc] init];
+    model4.uid = 12;
+    model4.name = @"10dgddd";
+    [ary removeObjectsInArray:@[model4]];
+    
+    NSLog(@"%@",ary);
+    
 }
 
 - (void)test_kkobj

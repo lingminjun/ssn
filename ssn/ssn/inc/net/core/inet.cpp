@@ -635,7 +635,7 @@ void *inet_thread_main(void *arg)
                                 inet_log("inet send data error, close the socket = %d\n", inet->_socket);
                                 inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
                                 run_flag = false;
-                                break;
+                                // break;
                             }
 
                             delete pevt;
@@ -680,17 +680,17 @@ void *inet_thread_main(void *arg)
                         {
                             buffsize = pevt->size;
                         }
+                        unsigned char *tmpreadbuff = new unsigned char[buffsize];
 
                         long rlen = 0;
+                        unsigned long target_read_length = buffsize;
                         do
                         {
-                            unsigned char *tmpreadbuff = new unsigned char[buffsize];
-                            memset(tmpreadbuff, '\0', buffsize);
+                            memset(tmpreadbuff, 0, buffsize);
 
-                            rlen = inet_tcp_recv(inet->_socket, tmpreadbuff, buffsize);
+                            rlen = inet_tcp_recv(inet->_socket, tmpreadbuff, target_read_length);
                             inet_log("inet_tcp_recv %ld, fd=%d, error=%d\n", rlen, inet->_socket, errno);
 
-                            delete tmpreadbuff;
                             if (rlen > 0)
                             {
 
@@ -698,25 +698,33 @@ void *inet_thread_main(void *arg)
 
                                 if (pevt->size > 0)
                                 {
-                                    buffsize -= rlen;
+                                    target_read_length -= rlen;
                                 }
                                 else
                                 { // There are no limit to read about the length of the
-                                    buffsize = 0;
+                                    target_read_length = 0;
                                 }
                             }
                             else if (rlen == 0)
                             {
-                                buffsize = rlen;
+                                if (pevt->size > 0)
+                                {
+                                    inet_log("continue try read data, socket = %d\n", inet->_socket);
+                                }
+                                else
+                                {
+                                    target_read_length = 0;
+                                }
                             }
                             else
                             {
-                                inet_log("inet read data error, close the socket = %d\n", inet->_socket);
-                                inet_close_socket(inet->_socket, &(inet->_pollfd[0]));
-                                run_flag = false;
-                                break;
+                                target_read_length = 0; // break to loop
+                                inet_log("inet read data error, set the socket = %d no read\n", inet->_socket);
+                                inet_set_pollfd_event(inet->_pollfd[0], false, true);
                             }
-                        } while (buffsize > 0);
+                        } while (target_read_length > 0);
+
+                        delete tmpreadbuff;
 
                         if (pevt->buffer.size() > 0)
                         {
