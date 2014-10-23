@@ -17,19 +17,7 @@
 
 #import "ssnbase.h"
 
-struct SSNArgumentInfo
-{ // internal Info about layout of arguments. Extended from the original OpenStep version - no longer available in OSX
-    const char *type;				// type (pointer to first type character)
-    int offset;						// can be negative (!)
-    unsigned size;					// size
-    unsigned align;					// alignment
-    unsigned qual;					// qualifier (oneway, byref, bycopy, in, inout, out)
-    unsigned index;					// argument index (to decode return=0, self=1, and _cmd=2)
-    BOOL isReg;						// is passed in a register (+)
-    BOOL byRef;						// argument is not passed by value but by pointer (i.e. structs)
-    BOOL floatAsDouble;				// its a float value that is passed as double
-    // ffi type
-};
+#define ssn_alignof_type_size(t) (sizeof(int) * (int)((sizeof(t) + sizeof(int) - 1)/sizeof(int)))
 
 
 void ssn_method_swizzle(Class c,SEL origSEL,SEL overrideSEL)
@@ -70,28 +58,60 @@ NSString *ssn_objc_forwarding_method_name(SEL selector)
     return [NSString stringWithFormat:@"ssn_forwarding_$%@", NSStringFromSelector(selector)];
 }
 
-//所有跟踪消息转发
-id ssn_objc_forwarding_method_imp(id self,SEL _cmd,...)
+NSInvocation *ssn_objc_invocation(id target, NSMethodSignature* signature, SEL selector, va_list argumentList)
 {
-    NSString *rep_cmd = ssn_objc_forwarding_method_name(_cmd);
-    SEL rep_sel = NSSelectorFromString(rep_cmd);
+    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
+    [invocation retainArguments];
     
-    NSMethodSignature *methodSignature = [[self class] instanceMethodSignatureForSelector:rep_sel];
-    NSUInteger arg_num = [methodSignature numberOfArguments];
+    [invocation setTarget:target];
+    [invocation setSelector:selector];
     
-    NSInvocation *rep_invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-    rep_invocation.target = self;
-    rep_invocation.selector = rep_sel;
+    for (int index = 2; index < [signature numberOfArguments]; index++) {
+        const char *type = [signature getArgumentTypeAtIndex:index];
+        
+        //double和float需要特殊处理
+        if (type[0] == _C_FLT || type[0] == _C_DBL) {
+            double value = va_arg(argumentList, double);
+            [invocation setArgument:&value atIndex:index];
+        }
+        else {
+            NSUInteger size = 0;
+            NSGetSizeAndAlignment(type, &size, NULL);
+            NSUInteger alignof_size = ssn_alignof_type_size(size);
+#if (__GNUC__ > 2)
+            char *p_area = argumentList->reg_save_area;
+            p_area += argumentList->gp_offset;
+            
+            [invocation setArgument:p_area atIndex:index];
+            
+            argumentList->gp_offset += alignof_size;
+#else
+            [invocation setArgument:args atIndex:index];
+            args += alignof_size;
+#endif
+        }
+    }
+    
+    return invocation;
+}
+
+NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SEL selector, va_list argumentList)
+{
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+    [invocation retainArguments];
+    
+    [invocation setTarget:target];
+    [invocation setSelector:selector];
     
     NSInteger arg_index = 2;
     
-    if (arg_num > arg_index) {
-        va_list argumentList;
-        va_start(argumentList, _cmd);
+    NSUInteger arg_num = [signature numberOfArguments];
+    
+    if (arg_num > arg_index) {//必须具备起始值
         
         while (arg_num > arg_index) {
             
-            const char* argType = [methodSignature getArgumentTypeAtIndex:arg_index];
+            const char* argType = [signature getArgumentTypeAtIndex:arg_index];
             while(strchr("rnNoORV", argType[0]) != NULL)
                 argType += 1;
             
@@ -135,13 +155,13 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd,...)
                 case _C_CLASS:
                 {
                     id argument = va_arg(argumentList, id);
-                    [rep_invocation setArgument:&argument atIndex:arg_index];
+                    [invocation setArgument:&argument atIndex:arg_index];
                     break;
                 }
                 case _C_SEL:
                 {
                     SEL s = va_arg(argumentList, SEL);
-                    [rep_invocation setArgument:&s atIndex:arg_index];
+                    [invocation setArgument:&s atIndex:arg_index];
                     break;
                 }
                 case _C_BOOL://bool size小于int的都用int取值
@@ -152,122 +172,124 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd,...)
                 case _C_INT:
                 {
                     int value = va_arg(argumentList, int);
-                    [rep_invocation setArgument:&value atIndex:arg_index];
+                    [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_UINT:
                 {
                     unsigned int value = va_arg(argumentList, unsigned int);
-                    [rep_invocation setArgument:&value atIndex:arg_index];
+                    [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_LNG:
                 {
                     long value = va_arg(argumentList, long);
-                    [rep_invocation setArgument:&value atIndex:arg_index];
+                    [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_ULNG:
                 {
                     unsigned long value = va_arg(argumentList, unsigned long);
-                    [rep_invocation setArgument:&value atIndex:arg_index];
+                    [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_LNG_LNG:
                 {
                     long long value = va_arg(argumentList, long long);
-                    [rep_invocation setArgument:&value atIndex:arg_index];
+                    [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_ULNG_LNG:
                 {
                     unsigned long long value = va_arg(argumentList, unsigned long long);
-                    [rep_invocation setArgument:&value atIndex:arg_index];
+                    [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
-                case _C_FLT://浮点型都用double取值，不同操作系统可能存在影响
+                case _C_FLT://浮点型都用double取值，__alignof__(float) == __alignof__(double) 不同操作系统可能存在影响
                 case _C_DBL:
                 {
                     double value = va_arg(argumentList, double);
-                    [rep_invocation setArgument:&value atIndex:arg_index];
+                    [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_PTR:
                 {
                     void *value = va_arg(argumentList, void *);
-                    [rep_invocation setArgument:&value atIndex:arg_index];
+                    [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_STRUCT_B:
                 {
-                    /*
-                     const char* typePtr = argType;
-                     struct SSNArgumentInfo local;
-                     //	struct { int x; double y; } fooalign;
-                     struct { unsigned char x; } fooalign;
-                     int acc_size = 0;
-                     int acc_align = __alignof__(fooalign);
-                     
-                     while (*typePtr != _C_STRUCT_E)			// Skip "<name>=" stuff.
-                     if (*typePtr++ == '=')
-                     break;
-                     // Base structure alignment
-                     if (*typePtr != _C_STRUCT_E)			// on first element.
-                     {
-                     typePtr = mframe_next_arg(typePtr, &local);
-                     if (!typePtr)
-                     return typePtr;						// error
-                     
-                     acc_size = ROUND(acc_size, local.align);
-                     acc_size += local.size;
-                     acc_align = MAX(local.align, __alignof__(fooalign));
-                     }
-                     // Continue accumulating
-                     while (*typePtr != _C_STRUCT_E)			// structure size.
-                     {
-                     typePtr = mframe_next_arg(typePtr, &local);
-                     if (!typePtr)
-                     return typePtr;						// error
-                     
-                     acc_size = ROUND(acc_size, local.align);
-                     acc_size += local.size;
-                     }
-                     info->size = acc_size;
-                     info->align = acc_align;
-                     //printf("_C_STRUCT_B  size %d align %d\n",info->size,info->align);
-                     typePtr++;								// Skip end-of-struct
-                     */
-                    void *value = va_arg(argumentList, void *);
+                    NSUInteger size = 0;
+                    NSGetSizeAndAlignment(argType, &size, NULL);
+                    NSUInteger alignof_size = ssn_alignof_type_size(size);
+#if (__GNUC__ > 2)
+                    char *p_area = argumentList->reg_save_area;
+                    p_area += argumentList->gp_offset;
+                    
+                    [invocation setArgument:p_area atIndex:arg_index];
+                    
+                    argumentList->gp_offset += alignof_size;
+#else
+                    [invocation setArgument:argumentList atIndex:arg_index];
+                    argumentList += alignof_size;
+#endif
+                    const char *type_point = &(argType[1]);
+                    while (*type_point != _C_STRUCT_E) {			// Skip "<name>=" stuff.
+                        char c = *type_point++;
+                        if (c == '=')
+                        {
+                            break;
+                        }
+                        
+                        //拷贝类型，用于日志
+                    }
                     break;
                 }
                     
                 case _C_UNION_B: {
-                    /*
-                     struct SSNArgumentInfo local;
-                     int	max_size = 0;
-                     int	max_align = 0;
-                     
-                     while (*typePtr != _C_UNION_E)			// Skip "<name>=" stuff.
-                     if (*typePtr++ == '=')
-                     break;
-                     
-                     while (*typePtr != _C_UNION_E)
-                     {
-                     typePtr = mframe_next_arg(typePtr, &local);
-                     if (!typePtr)
-                     return typePtr;						// error
-                     max_size = MAX(max_size, local.size);
-                     max_align = MAX(max_align, local.align);
-                     }
-                     info->size = max_size;
-                     info->align = max_align;
-                     typePtr++;								// Skip end-of-union
-                     */
-                    void *value = va_arg(argumentList, void *);
+                    NSUInteger size = 0;
+                    NSGetSizeAndAlignment(argType, &size, NULL);
+                    NSUInteger alignof_size = ssn_alignof_type_size(size);
+#if (__GNUC__ > 2)
+                    char *p_area = argumentList->reg_save_area;
+                    p_area += argumentList->gp_offset;
+                    
+                    [invocation setArgument:p_area atIndex:arg_index];
+                    
+                    argumentList->gp_offset += alignof_size;
+#else
+                    [invocation setArgument:argumentList atIndex:arg_index];
+                    argumentList += alignof_size;
+#endif
+                    
+                    const char *type_point = &(argType[1]);
+                    while (*type_point != _C_STRUCT_E) {			// Skip "<name>=" stuff.
+                        char c = *type_point++;
+                        if (c == '=')
+                        {
+                            break;
+                        }
+                        
+                        //拷贝类型，用于日志
+                    }
                     break;
                 }
                 default:{
-                    void *value = va_arg(argumentList, void *);
+                    NSUInteger size = 0;
+                    NSGetSizeAndAlignment(argType, &size, NULL);
+                    NSUInteger alignof_size = ssn_alignof_type_size(size);
+#if (__GNUC__ > 2)
+                    char *p_area = argumentList->reg_save_area;
+                    p_area += argumentList->gp_offset;
+                    
+                    [invocation setArgument:p_area atIndex:arg_index];
+                    
+                    argumentList->gp_offset += alignof_size;
+#else
+                    [invocation setArgument:argumentList atIndex:arg_index];
+                    argumentList += alignof_size;
+#endif
                 }break;
                     
             }
@@ -275,12 +297,48 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd,...)
             arg_index++;
         }
         
-        va_end(argumentList);
     }
     
-    [rep_invocation retainArguments];
+    return invocation;
+}
+
+//所有跟踪消息转发
+id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
+{
+    NSString *rep_cmd = ssn_objc_forwarding_method_name(_cmd);
+    SEL rep_sel = NSSelectorFromString(rep_cmd);
     
+    NSMethodSignature *methodSignature = [[self class] instanceMethodSignatureForSelector:rep_sel];
+    
+    va_list argumentList;
+    va_start(argumentList, _cmd);
+    NSInvocation *rep_invocation = ssn_objc_invocation(self, methodSignature, rep_sel, argumentList);
+    va_end(argumentList);
+
+    struct timeval t_b_tv,t_e_tv;
+    gettimeofday(&t_b_tv, NULL);
     [rep_invocation invoke];
+    gettimeofday(&t_e_tv, NULL);
+    long long t_cost = (t_e_tv.tv_sec - t_b_tv.tv_sec) * 1000000ll + (t_e_tv.tv_usec - t_b_tv.tv_usec);
+    ssn_log("\n%s call -%s cost = %lld(ms)\n",[NSStringFromClass([self class]) UTF8String],[NSStringFromSelector(_cmd) UTF8String],t_cost);
+    
+    
+//    NSValue    * ret_val  = nil;
+//    NSUInteger   ret_size = [methodSignature methodReturnLength];
+//    
+//    if(ret_size > 0)
+//    {
+//        
+//        void * ret_buffer = malloc( ret_size );
+//        
+//        [rep_invocation getReturnValue:ret_buffer];
+//        
+//        ret_val = [NSValue valueWithBytes:ret_buffer objCType:[methodSignature methodReturnType]];
+//        
+//        free(ret_buffer);
+//    }
+//    
+//    return ret_val;
     
     return nil;
 }
@@ -303,7 +361,9 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd,...)
  *  跟踪clazz类实例的selector方法，当这个方法被调用时将会被记录，记录会自动收集预置参数
  *
  *  @param  clazz       跟踪的类
- *  @param  selector    跟踪类实例的方法，方法返回值仅仅支持id，和void类型，其他类型还不支持
+ *  @param  selector    跟踪类实例的方法，方法返回值仅仅支持id，和void类型，其他类型还不支持，方法参数不支持可变参数和联合参数，
+ *                      内部采用NSInvocation转发调用，所以自然依赖“NSInvocation does not support invocations of methods
+ *                      with either variable numbers of arguments or union arguments.”
  */
 + (void)ssn_tracking_class:(Class)clazz selector:(SEL)selector
 {
@@ -315,7 +375,9 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd,...)
  *  跟踪clazz类实例的selector方法，当这个方法被调用时将会被记录，记录会自动收集预置参数
  *
  *  @param  clazz       跟踪的类
- *  @param  selector    跟踪类实例的方法，方法返回值仅仅支持id，和void类型，其他类型还不支持
+ *  @param  selector    跟踪类实例的方法，方法返回值仅仅支持id，和void类型，其他类型还不支持，方法参数不支持可变参数和联合参数，
+ *                      内部采用NSInvocation转发调用，所以自然依赖“NSInvocation does not support invocations of methods
+ *                      with either variable numbers of arguments or union arguments.”
  *  @param  ivarList    需要采集的当前实例属性值（若实例找不到属性将异常）
  */
 + (void)ssn_tracking_class:(Class)clazz selector:(SEL)selector collectIvarList:(NSArray *)ivarList
@@ -329,7 +391,7 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd,...)
     //2、记录需要采集的参数
     //TODO : 
     
-    printf("\n ssn tracking class:%s selector:%s\n",[NSStringFromClass(clazz) UTF8String],[NSStringFromSelector(selector) UTF8String]);
+    ssn_log("\n ssn tracking class:%s selector:%s\n",[NSStringFromClass(clazz) UTF8String],[NSStringFromSelector(selector) UTF8String]);
     
     //3、再为此类添加转发方法
     SEL forwarding_sel = NSSelectorFromString(ssn_objc_forwarding_method_name(selector));
@@ -344,11 +406,12 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd,...)
     //4、替换原来方法名字下的实现
     if (class_addMethod(clazz, selector, (IMP)ssn_objc_forwarding_method_imp, method_type))
     {
-        //
+        ssn_log("\n ssn tracking add selector:%s\n",[NSStringFromSelector(selector) UTF8String]);
     }
     else
     {
         class_replaceMethod(clazz,selector,(IMP)ssn_objc_forwarding_method_imp, method_type);
+        ssn_log("\n ssn tracking rewrite selector:%s\n",[NSStringFromSelector(selector) UTF8String]);
     }
     
 }

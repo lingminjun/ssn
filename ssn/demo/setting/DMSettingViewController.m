@@ -29,12 +29,18 @@
     [super viewDidLoad];
 
     self.title = @"Setting";
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"退出" style:UIBarButtonItemStyleDone target:self action:@selector(logout)];
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
 
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+
+- (void)logout {
+    [[self router] openURL:[NSURL URLWithString:@"app://login"]];
 }
 
 - (BOOL)canRespondURL:(NSURL *)url query:(NSDictionary *)query

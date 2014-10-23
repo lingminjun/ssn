@@ -8,20 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
-typedef id (^SSNConstructor)(id key, NSDictionary *userInfo);
+typedef id (^SSNConstructor)(id key, NSDictionary *userInfo);//通用构造器定义
 
 /**
- * 内部保证单一构造器,key暂时不做要求,
+ * 内部保证构造器调用线程安全,key暂时不做要求,
  */
 @interface SSNRigidCache : NSObject
 
 - (instancetype)initWithConstructor:(SSNConstructor)constructor;
 
-- (void)setCountLimit:(NSUInteger)lim; // lim设置一定要符合构造器产生实例个数峰值为好
+- (void)setCountLimit:(NSUInteger)lim; // lim设置建议要符合构造器产生实例个数峰值
 - (NSUInteger)countLimit;
 
 - (id)objectForKey:(id<NSCopying>)key;
 - (id)objectForKey:(id<NSCopying>)key userInfo:(NSDictionary *)userInfo;
-- (oneway void)removeObjectForKey:(id<NSCopying>)key;
+
+- (oneway void)removeObjectForKey:(id<NSCopying>)key;//
 
 @end

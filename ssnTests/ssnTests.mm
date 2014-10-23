@@ -208,6 +208,13 @@ static long long all_waited_time = 0ll;
     // sleep(5);
 }
 
+- (void)testRigidDictionary1
+{
+    SSNRigidCache *set = [[SSNRigidCache alloc] initWithConstructor:^id(id key, NSDictionary *userInfo) {
+        return [[NSObject alloc] init];
+    }];
+}
+
 - (void)testRigidDictionary
 {
     SSNRigidCache *set = [[SSNRigidCache alloc]

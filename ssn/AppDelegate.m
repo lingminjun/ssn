@@ -96,6 +96,11 @@
     // applicationDidEnterBackground:.
 }
 
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotatio {
+    
+    return [self.router openURL:url];
+}
+
 #pragma mark open url delegate
 - (NSURL *)router:(SSNRouter *)router redirectURL:(NSURL *)url query:(NSDictionary *)query
 {
