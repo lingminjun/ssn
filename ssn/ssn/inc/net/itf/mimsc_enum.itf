@@ -1,0 +1,279 @@
+#pragma      ENUM
+#version     2
+#module      MIMSC
+
+enum ALI_IM_P2P_MSG_TYPE
+{
+    ALI_IM_TEXT   = 0x0, //! 即时聊天消息
+    ALI_IM_BUZZ   = 0x1, //! 震动
+    ALI_IM_P2P    = 0x2, //!P2P模块相关的IMS信息交互消息
+    ALI_IM_AUTO_REPLY  = 0x3, //! 自动回复
+    ALI_IM_MSG_ACK   = 0x4, //! 消息接收确认
+    ALI_IM_CONTACT   = 0x5, //! 添加联系人相关
+    ALI_IM_TYPING_NOTIFY   = 0x6, //! 通知消息,比如对方正在输入消息
+    ALI_IM_GROUP_BROADCAST = 0x7, //! 收到的群发消息(注意此消息只能被用于接收不能发送)
+};
+
+
+enum IM_SERVER_NOTIFY_TYPE
+{
+	IM_NOTIFY_OFFMSG = 0x00, // 有未读离线消息
+	IM_NOTIFY_CONTACT	= 0x01,	// 好友操作
+	IM_NOTIFY_PLUGIN	= 0x2,//插件通知
+	IM_NOTIFY_FRIEND_RECOMMEND = 0x3//好友推荐助手通知
+}
+
+
+enum IM_SERVER_NOTIFY_SUB_TYPE
+{
+	IM_VERIFY_ADD_CONTACT_REQUEST  = 0x01, 
+	IM_VERIFY_ADD_CONTACT_RESPONSE = 0x02,
+}
+
+enum  P2P_MSG_TYPE
+{
+	MSG_RICHTEXT 	= 0x00,
+	MSG_INPUTSTATUS = 0x01, 
+	MSG_ACK			= 0x02,
+	MSG_CONTACT     = 0x03,
+    MSG_PLUGINNTF   = 0x04,
+    MSG_OPERATION_NTF = 0x05,
+    MSG_NOTIFY   	= 0x06,
+    MSG_ACK_NEW 	= 0x12,
+	MSG_VOIP_INVITE = 0x13,
+};
+
+enum   SUB_MSG_TYPE
+{
+	IM_TEXT  =  0x00,
+	IM_IMAGE = 0x01,
+	IM_VIDEO = 0x02,
+	IM_AUDIO = 0x03
+};
+
+enum CONTACT_OPERATE
+{
+	CHGNICK_NAME = 0x01,
+	MOVE_CONTACT = 0x02,
+	CHG_IMPORTANCE = 0x04,
+};
+
+enum CONTACT_ADD_TYPE
+{
+    NOMAL_ADD                   = 0,
+    VERIFY_ADD                  = 0x1,
+    CHATED_ADD                  = 0x2,
+    QUESTION_ADD                = 0x10,
+}; 
+
+enum IMAddContactResult_T
+{
+	IMADDCONTACTRESULT_SUCCESS				= 0x00,	// 成功
+	IMADDCONTACTRESULT_ADDED				= 0x01, //0x01 联系人已经添加过
+	IMADDCONTACTRESULT_NOID					= 0x02, //x02 联系人ID不存在
+	IMADDCONTACTRESULT_FULL					= 0x03, //0x03 联系人数目已满
+	IMADDCONTACTRESULT_FULLTODAY			= 0x04, //0x04 今日添加联系人数目已满
+	IMADDCONTACTRESULT_NEEDAUTH				= 0x05, //0x05 对方需要验证
+	IMADDCONTACTRESULT_NORIGHT				= 0x06, //0x06 权限不够
+	IMADDCONTACTRESULT_NOTACTIVEID			= 0x07, //0x07 对方未激活(ADDED)
+	IMADDCONTACTRESULT_WAITAUTH				= 0x08, //0x08 对方未确认
+	IMADDCONTACTRESULT_DENYALL				= 0x09, //0x09 对方不允许任何人添加
+	IMADDCONTACTRESULT_HIGHFRENQ			= 0x0A,   //0x0A 添加频率过快
+	IMADDCONTACTRESULT_ESERVICETEAMMATE		= 0x0C, //0x0C E客服子帐号之间互相添加
+	IMADDCONTACTRESULT_WRONGANSWER			= 0x20, //0x20 校验问题答案错误
+	IMADDCONTACTRESULT_FILTMSG				= 0x21, //0x21 添加好友时，输入框内的信息有违禁词
+    IMADDCONTACTRESULT_NEEDANSWER           = 0x22, //0x22 需要回答问题.
+	IMADDCONTACTRESULT_OTHERERROR			= 0xff, //0xff 其他错误
+};
+
+enum CLIENT_DEVICE_TYPE
+{
+	CLIENT_DEVICE_TYPE_IPHONE = 0x01,
+	CLIENT_DEVICE_TYPE_ANDRIODPHONE = 0x02,
+	CLIENT_DEVICE_TYPE_SYMBIAN	= 0x03,
+	CLIENT_DEVICE_TYPE_IPAD = 0x04,
+	CLIENT_DEVICE_TYPE_IPHONE_WANGWANG = 0x07,
+       	CLIENT_DEVICE_TYPE_ANDRIODPHONE_WANGWANG = 0x08,
+};
+
+enum MSG_STATUS
+{
+	SEND_OK = 0x01,
+	RECV_OK	= 0x02,
+	READ_Ok	= 0x04,
+};
+
+enum CONTACT_OPERATE_MSG_TYPE
+{
+	VERIFY_ADD_REQUEST = 0x01,
+	ACCEPT_VERIFY_REQUEST = 0x02,
+	DENY_VERIFY_REQUEST = 0x03,
+	NOTIFY_ADD_OK	= 0x04,
+	NOTIFY_SERVER_ADD = 0x05,	// 服务器添加的联系人
+	NOTIFY_SUGGEST_ADD = 0x06, // 服务器推荐可能认识的人
+	NOTIFY_CONTACT_NEED_SYNC = 0x07,
+	NOTIFY_BLACKLIST_ADD = 0x08,  //黑名单添加通知 
+    NOTIFY_BLACKLIST_DEL = 0x09,  //黑名单删除通知
+	NOTIFY_ACCEPT_OK = 0x0a,      //pc accept 接收
+    NOTIFY_ACCEPT_DENY = 0x0b,  //pc accept 拒绝
+	NOTIFY_SYNC_ADD_OK = 0x0c,  //pc端添加成功后通知到旺信终端
+};
+
+
+enum VERIFY_FLAG
+{
+	ADDCNT_OK           = 0x00,		// 不需要验证
+	ADDCNT_VERIFY       = 0x01,		// 需要验证
+	ADDCNT_DENY         = 0x02,		// 拒绝任何添加
+	ADDCNT_NOUID        = 0x03,		// 用户不存在
+	ADDCNT_UNKNOWN      = 0x04,		// 未知错误
+	ADDCNT_QUESTION     = 0x10,     // 需要回答问题
+};
+
+enum LOGONTYPE
+{       
+	LOGON_OK,
+	LOGON_FAIL_INVALIDUSER=1,              //用户不存在
+	LOGON_FAIL_INVALIDPWD=2,               //密码错误
+	LOGON_FAIL_SYSBLOCK=3,                 //被系统禁止。目前已经替换为7和8具体两项。
+	LOGON_FAIL_NOAUTHORITY=4,              
+	LOGON_FAIL_TOOMANYID=5,
+	LOGON_FAIL_INVALIDSERVER=6,             //无效登陆服务器，应该换成别的登陆服务器
+	LOGON_FAIL_WANGHAO_PROHIBITED=7,        //旺号被禁止
+	LOGON_FAIL_LONGID_PROHIBITED=8,         //长ID被禁止
+	LOGON_FAIL_INVALID_WANGHAO=9,           //找不到旺号
+	LOGON_FAIL_NOT_SUPPORT=10,              //该网站不支持
+	LOGON_FAIL_LONGID_NOTBIND=11,           //该长ID　没有绑定旺号
+	LOGON_FAIL_OTHER_BINDED=12,             //已经被别的旺号绑定
+	LOGON_FAIL_OTHER_ADDEDLIST=13,          //已经被别的旺号做了免登录设置. 
+	LOGON_FAIL_MOBILE_NOTACTIVE=14,          //手机旺旺未激活
+	LOGON_FAIL_MOBILE_NOTBIND=15,            //手机未绑定
+	LOGON_FAIL_ENUID_DISABLED=16,          //国际站用户被封
+
+	LOGON_FAIL_CHILD_ACCOUNT_EXPIRED=21,   //子帐号过期
+	LOGON_FAIL_CHILD_ACCOUNT_STOPED=22,            //子帐号未开通
+	LOGON_FAIL_CHILD_ACCOUNT_PAUSED=23,     //子帐号被暂停
+	LOGIN_FAIL_RID=24,						// rid 注册不成功
+
+	LOGON_FAIL_CTU_PROHIBITED=31,			//ctu临时限制登录。
+	LOGON_FAIL_NEEDAUTHCHECK=32,            //需要验证码
+	LOGON_FAIL_NEED2NDAUTH=33,              //需要二次认证
+
+	LOGON_FAIL_OLD_VERSION = 34,
+	LOGON_FAIL_NO_TB_PHONE = 35,
+	LOGON_FAIL_TB_PHONE_USED = 36,
+	LOGON_FAIL_NOT_FIT_SERVER = 37,
+	LOGIN_FAIL_NEED_AUTH	= 38,
+	LOGIN_FAIL_WRONG_AUTH  = 39,
+
+	LOGON_FAIL_SSOTOKEN_INVALID_PARAMETER = 128,  //淘宝ssoToken登陆extraData数据有误
+
+
+	LOGIN_FAIL_MULTIPLE_ACCOUNT=244,        //多帐号的未知错误
+	LOGOFF_OK=250,
+	LOGON_FAIL_UNKNOWN=254,
+	LOGOFF_FAIL_UNKNOWN=255,
+};
+
+
+enum OFFMSG_DB_TYPE
+{
+	OFFMSG_P2P			 = 0x00,
+	OFFMSG_CONTACT		 = 0x01,
+	OFFMSG_MPC			 = 0x02,
+	OFFMSG_SERVER_NOTIFY = 0x03,
+	OFFMSG_PLUGIN   = 0x04,  
+    	OFFMSG_FRIEND_RECOMMEND = 0x05,
+  OFFMSG_TRIBE_SYSMSG	= 0x06,
+	OFFMSG_OPERATION_MSG  = 0x08,
+  OFFMSG_SYNC_SCREEM = 0x11,  //PC联动离线消息.
+       OFFMSG_VOIP_CALL            = 0x13,
+}
+
+enum DEL_OFFMSG_RESULT_TYPE
+{
+	OFFMSG_DEL_OK		= 0x00,
+	OFFMSG_IMS_ERROR	= 0x01,
+	OFFMSG_OFFSRV_ERROR	= 0x02
+}
+
+enum GET_CONTACT_RESULT_TYPE
+{
+	CONTACT_GET_DATA_OK		= 0x00,
+	CONTACT_CLIENT_DATA_OK	= 0x01,
+	CONTACT_SERVER_ERROR	= 0x02
+}
+
+enum SEARCH_LATENT_CONTACT_TYPE
+{
+	SEARCH_SNS_CONTACT		= 0x00,
+	SEARCH_LBS_NEIGHBOUR	= 0x01,
+	SEARCH_LBS_ONEKEY_ADD	= 0x02,
+	CLEAR_GPS_DATA			= 0x03,
+	SEARCH_LBS_ONEKEY_ADD_FAKE = 0x04,
+    TB_SEARCH_SNS_CONTACT   = 0x08,
+    TB_SEARCH_LBS_NEIGHBOUR = 0x09,
+    TB_SEARCH_LBS_ONEKEY_ADD= 0x0a,
+    TB_SEARCH_LBS_ONEKEY_ADD_FAKE = 0x0c,
+}
+
+enum MSG_LAYER_SECURITY_REQ_TYPE
+{
+	CLIENT_HELLO		= 0x00,
+	CLIENT_KEY_EXCHANGE	= 0x01,
+}
+
+enum MSG_LAYER_SECURITY_RSP_TYPE
+{
+	SERVER_HELLO		= 0x00,
+	SERVER_KEY_EXCHANGE	= 0x01,
+}
+
+enum INPUT_STATUS
+{
+	INPUT_STATUS_STOP = 0x00,
+	INPUT_STATUS_TEXT = 0x01,
+	INPUT_STATUS_AUDIO = 0x02,
+	INPUT_STATUS_PICTURE = 0x04
+}
+
+enum MSG_RECEIVER_FLAG
+{
+	RECEIVER_WANGXING = 0x1;
+	RECEIVER_PC	= 0x2;
+	RECEIVER_QIANNIU = 0x4;
+	RECEIVER_ALL = 0xFFFF;
+}
+
+enum APPLICATION_TYPE
+{
+    APP_TYPE_DEFAULT = 0,   // 默认应用
+    APP_TYPE_QIANNIU = 1,   // 千牛
+    APP_TYPE_WANGXIN = 2,   // 旺信
+    APP_TYPE_MOBILE_TB = 3, // 淘宝
+    APP_TYPE_IOS_ENT = 5,   // IOS 企业版
+    APP_TYPE_PC = 6,        // Pc旺旺
+}
+
+enum LOGON_STATUS
+{
+    LOGON_STATUS_OFFLINE = 0,   // 离线
+    LOGON_STATUS_ONLINE = 1,    // 在线
+    LOGON_STATUS_INVISIBLE = 2, // 隐身
+}
+
+
+enum BizID {
+	Biz_DEFAULT = 0,  
+    Biz_WW_P2P = 1, //旺旺单聊消息：包含文本、图片，语音、交易焦点、宝贝焦点
+    Biz_BG_P2P = 2, //表哥
+    Biz_WX_P2P = 3, //除旺旺单聊以外的单聊消息，目前有地理位置，贺卡
+    Biz_Other = -1, //
+    //--------------------以下的待定--------------------
+
+    Biz_VOIP = 4, //
+    Biz_PAMsg = 5, //公众帐号私信
+    Biz_Tribe = 7, //旺旺群
+    Biz_MPC = 8, //多人聊天
+    Biz_SysMsg = 9
+}

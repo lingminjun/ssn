@@ -1,0 +1,775 @@
+#pragma      PACK
+#version     2
+#module MIMSC 1
+#include     "mconst.itf"
+#include     "mimsc_cmd.itf"
+#include     "mimsc_enum.itf"
+
+#define STATUSDEF_LENGTH      64
+
+pack IM_REQ_OFFLINEMSG
+{
+	string operation;
+	string req_data;
+}
+
+pack IM_RSP_OFFLINEMSG
+{
+	uint32_t retcode;
+	string operations;
+	string rsp_data;
+}
+
+pack IM_HELTH_CHECK
+{
+}
+
+pack IM_REQ_CHECKVERSION
+{
+    string[VERSION_LENGTH]  version;            //版本号
+}
+
+pack IM_RSP_CHECKVERSION
+{
+    uint32_t                 retcode;            //返回码
+    string[REMARK_LENGTH]   remark;             //备注信息
+    bytes		    pubkey;             //deskey
+}
+
+pack IM_REQ_GET_TOKEN
+{
+    uint8_t type;   //1:表示一次性有效；
+    string clientUseData;
+};
+
+pack IM_RSP_GET_TOKEN
+{
+    uint32_t retcode;
+    uint8_t type;
+    string token;
+    string clientUseData;
+};
+
+pack IM_REQ_MLS
+{
+    uint32_t msgType;
+    bytes msg;
+}
+
+pack IM_RSP_MLS
+{
+	uint32_t retcode;
+	uint32_t msgType;
+	bytes msg;
+}
+
+struct client_hello 
+{
+	string protocol_version;
+} 
+
+struct inputstatus 
+{
+	uint8_t input_status;
+}
+
+struct server_hello 
+{
+	string protocol_version;
+	bytes pub_key;
+} 
+
+struct client_key_exchange
+{
+	bytes pre_master_key;
+}
+
+struct server_key_exchange
+{
+	bytes master_key;
+}
+
+struct  card_msg
+{
+	string card_id;		//贺卡ID号
+	string message;		//文字留言
+	string head_url;	//贺卡头像URL
+	string audio_url;	//声音URL
+	uint32_t audio_time;//声音时长
+	string image_url;	//图片url
+}
+
+pack IM_REQ_LOGIN
+{
+    uint8_t		token_flag;           //0== rawpw, 1== tokenpw
+    string[PWD_LENGTH]      password;           // 密码,明文
+    string[VERSION_LENGTH]  version;            // 版本号
+    uint32_t     	    language;           // 语言ID
+    string                  authCode;           // 校验码
+    string 		    deviceId;		// push uuid
+    uint8_t			devtype;        // mimsc_enum.itf enum  CLIENT_DEVICE_TYPE
+    string                  devver;             //4.3.3
+	double					longitude = 0;			// gps information
+	double					latitude = 0;			// 
+	string				authcodeurl = "";
+	uint32_t                app_id = 0;         //0：default；1: 卖家版
+	string			extraData = "";       //附加字段，目前用于淘宝ssoToken免等.
+}
+
+
+pack IM_RSP_LOGIN
+{
+	uint32_t                 retcode;            //返回码
+	uint32_t                client_ip;          //客户端IP
+	uint32_t                server_time;        //服务器时间 GMT
+	bytes					work_key;          	 //加密密钥
+	string 			pwtoken;					//auto logon use it
+	string[REMARKEX_LENGTH]   remark;             //备注信息
+	string                  webmd5pw;           //网站md5密码
+	uint32_t                last_clientip;      //上次登陆的客户端IP
+	string                  bindid;				//绑定的IMID
+	string					new_version;		// 最新版本号
+	string					new_version_url;	// 新版本下载路径
+	string					version_info;		// 版本描述信息
+	string					user_id;			// 用户id
+	string					nick_name;			// 显示ID
+	string					authcodeurl = "";
+	string					session_id="";		//快速登录使用的sessionid
+}
+
+//插件或者运营消息的ACK
+struct notify_plugin_ack
+{
+    uint32_t  pluginID;
+    string    itemID;
+    string[UID_LENGTH] uid;
+}
+
+//新的消息ack结构
+struct msg_ack 
+{    
+    uint8_t type;
+    bytes message;
+    uint8_t ack_result=0;//0:客户端已处理  1：客户端无法处理
+}
+
+pack IM_REQ_LOGOFF
+{
+    string    uid;
+	uint32_t  isCancle= 0;
+}
+
+pack IM_RSP_LOGOFF
+{
+    uint32_t                 retcode;             //返回码
+    string[REMARK_LENGTH]   remark;              //备注信息
+}
+
+pack IM_NTF_FORCEDISCONNECT
+{
+    uint8_t                  type;               //0－被别的用户踢下线 1－被系统踢下线
+    string[REMARK_LENGTH]    remark;             //备注信息
+    string 			ip;		 //remote ip
+    string          uuid;                   //uuid is from logincmd
+}
+
+pack IM_REQ_SENDIMMESSAGE
+{
+    string[UID_LENGTH]      target_id;           // 目的用户号
+    uint8_t                 type;                // 0x00存数据库 0x01不存数据库
+    uint8_t                 msg_type;            // 0x00 富文本消息, 0x01--输入状态, 0x02-消息确认通知
+	int64_t				    msg_id;				 // 客户端生成的唯一msg_id
+	string					nick_name;			// 用户显示名
+    bytes                   message;            // 消息体，内容格式由二级协议确定
+    uint32_t                app_id = 0;            //0：default；卖家版：1；
+    uint8_t                 devtype = 0;
+}
+
+pack IM_RSP_SENDIMMESSAGE
+{
+	uint32_t 				retcode = 0;
+    string 					rspdata = "";
+}
+
+// msg_type = 0x01时, message的结构为type_status
+struct type_status
+{
+	uint8_t type;		// 0x00 正在输入, 0x01--取消输入
+}
+
+struct msg_status
+{
+	uint32_t status;
+}
+
+pack IM_REQ_SENDMULIMMESSAGE
+{   
+    vector<string[UID_LENGTH]>    targetid_list;  //目的用户列表
+    uint8_t                 type;                 //0x00存数据库 0x01不存数据库
+    uint8_t                 msg_type;             //0x00 富文本消息, 0x01--输入状态, 0x02-消息确认通知
+    int64_t                 msg_id;   
+    string                  nick_name;   
+    bytes                   message;              //消息体，内容格式由二级协议确定
+    uint32_t                app_id = 0;         //0：default；1: 卖家版
+    uint8_t                 devtype = 0;
+}
+
+//群发RSP
+pack IM_RSP_SENDMULIMMESSAGE
+{   
+    int64_t                 msg_id;   
+	uint8_t                 retcode;
+	string                  errinfo;
+}
+
+struct  msg_item
+{
+	uint8_t	sub_type;		// 0x00--文本, 0x01--图片, 0x02-视频, 0x03--音频
+	bytes data;
+	string url;				// 数据文件存放url
+	uint32_t file_size;		// 文件大小
+	uint32_t play_time;		// 播放时间
+	uint32_t receiver_flag = 0xffff;//消息接收者标识
+    string cli_ext_data = "";   // 客户端自定义
+    string srv_ext_data = ""; //服务端定义  
+}
+
+struct  message_body
+{
+	vector<msg_item> message_list;
+}
+
+pack IM_NTF_IMMESSAGE
+{
+    string[UID_LENGTH]       send_id;            //发送用户号
+    uint32_t                 send_time;          //发送时间
+    uint8_t                 msg_type;            //0x00 富文本消息, 0x01--输入状态, 0x02-消息确认通知
+	int64_t				msg_id;
+    bytes                  message;            //消息体，内容格式由二级协议确定
+	string					nick_name;			// 用户显示名
+}
+
+pack IM_NTF_OPERATIONTIP
+{
+	string[UID_LENGTH]		send_id;
+    uint32_t                send_time;          //发送时间
+    uint8_t                 msg_type;   		// IM_SERVER_NOTIFY_TYPE
+    bytes                   message;            // 消息体，内容格式由二级协议确定
+}
+
+struct notify_offMsg_item
+{
+	uint32_t 	count;				// 离线消息条数
+	uint32_t	size;				// 离线消息下载包大小
+}
+
+struct notify_contact_operate
+{
+	uint8_t			opType;//see CONTACT_OPERATE_MSG_TYPE
+	string[UID_LENGTH]	peer_id;
+	string		peer_Name;
+	string		message;
+}
+
+pack IM_REQ_DELOFFLINEMSG
+{
+	uint32_t                last_time;		// 最后一条离线消息时间
+	uint32_t 				count;			// 离线消息条数
+}
+
+pack IM_RSP_DELOFFLINEMSG
+{
+	uint32_t	retcode;			// enum DEL_OFFMSG_RESULT_TYPE
+}
+
+struct contact_add_notify
+{
+	uint32_t	action;			// enum CONTACT_OPERATE_MSG_TYPE
+	string		message;	 	// if action = NOTIFY_SERVER_ADD message is contact_info
+}
+
+struct chg_contact_info
+{
+	int64_t					mask;
+    string[UID_LENGTH]      contact_id;          // 联系人ID
+    string[NICKNAME_LENGTH] nick_name;           // 显示名
+    string					importance;          // 附加信息, mobile端暂时不用
+    int64_t                group_id;            // 组id, mobile端暂时不用
+}
+
+struct contact_info
+{
+    string[UID_LENGTH]      contact_id;          // 联系人ID
+    string[NICKNAME_LENGTH] nick_name;           // 显示名
+	string					md5_phone;			 // md5后的手机号码
+    string					importance;          // 推荐原因
+    int64_t                 group_id;            // 组ID
+}
+
+
+struct user_status
+{
+    string[UID_LENGTH]       user_id;            // 用户ID
+    uint8_t                  basic_status;       // 在线状态
+    uint8_t                  predef_status;      //
+}
+
+pack im_ntf_status
+{
+    vector<user_status>      user_status_list;   //通知状态
+}
+
+pack IM_REQ_SUBSCRIBE_INFO                       
+{
+    vector<string[UID_LENGTH]>  target_list;     // 订阅用户状态
+}
+
+pack IM_RSP_SUBSCRIBE_INFO
+{
+	uint32_t                 retcode;             
+	vector<user_status>     status_list;         //
+} 
+
+pack IM_REQ_USERUDBPROFILE 
+{
+    string uid;
+}
+
+pack IM_RSP_USERUDBPROFILE
+{
+	uint32_t retcode;
+    string uid;
+    map<string,string> profilelist;
+}
+
+pack IM_REQ_SEARCH_LATENT_CONTACT
+{
+	uint32_t	action;					// see SEARCH_LATENT_CONTACT_TYPE
+	double		longitude = 0;			// gps information
+	double		latitude = 0;			// 
+}
+
+struct latent_contact
+{
+    string[UID_LENGTH]      contact_id;          // 联系人ID
+    string[NICKNAME_LENGTH] nick_name;           // 显示名
+	string					md5_phone;			 // md5后的手机号码
+    string					reason;          	// 推荐原因
+    int32_t                 distance;            // 地理位置距离
+	int32_t					gender;			// 0x00 female, 0x01 male
+	string					avatarurl;			// portait url 
+	string					signature;			//
+}
+
+
+struct friend_recommend_item
+{
+        string[UID_LENGTH]      contact_id;             //id
+        string[NICKNAME_LENGTH] nick_name;              //淘宝昵称
+        string                  phone_md5;              //手机md5
+        uint32_t                relation_type;          //推荐关系类型(0-好友，1-可能认识的人)
+        string                  reason;                 //推荐原因
+        string                  recommend_index;        //推荐指数
+        string                  avatar;                 //头像url
+};
+
+struct friend_recommend_list
+{
+        vector<friend_recommend_item> items;
+};
+
+pack IM_RSP_SEARCH_LATENT_CONTACT
+{
+    uint32_t                 retcode;            		// 返回码, 0x00成功
+    vector<latent_contact>    contact_list;   			// 
+}
+
+
+
+
+pack IM_REQ_CHECK_AUTHCODE
+{
+	string   session_id;
+	string   auth_code;
+	uint8_t  mode = 0;
+};
+
+pack IM_RSP_CHECK_AUTHCODE
+{
+	uint8_t  retcode;         
+	string   session_id;
+	string   auth_code;
+        string   new_session_id; //若失败，返回新的session_id.
+};
+
+struct notify_plugin
+{
+	uint32_t    pluginID;
+	string        itemID;
+    string[UID_LENGTH] uid;
+	uint32_t    notify_time;
+	uint32_t    expire_time;
+    uint32_t    notify_type;
+    string      title;
+    string      imageurl;
+	string      msgbody;
+	string      detailurl;
+	string      click_param = "";
+	uint32_t    click_type = 0;
+	uint32_t    extra_flag = 0;  //0: normal; 1: exception; 2: just offline no push.
+}
+
+pack IM_NTF_NEED_AUTHCODE
+{
+	string   check_img_url;
+	string   orig_packet;     		// 客户端原始包文
+};
+
+struct user_group
+{
+    int64_t                group_id;            //组ID
+    int64_t                parent_id;           //父组ID
+    string                  group_name;          //组名称
+}
+
+
+pack IM_REQ_CHGSTATUS
+{
+    uint8_t                 basic_status;        //基本状态, 0x00-不在线, 0x01-在线,0x02-隐身
+	uint8_t                 predef_status;       //预定义状态,0x01-IOS 后台在线, 0x02-IOS前台在线
+}
+
+//获取联系人状态码
+pack IM_REQ_GET_CONTACTS_FLAG
+{
+    vector<string>  contact_list; 
+    uint32_t type;  // 0: 获取登录过旺信的用户列表, 1:获取没有登录过旺信的用户列表.
+}
+
+pack IM_RSP_GET_CONTACTS_FLAG
+{
+    uint32_t       retcode;         //返回码
+    vector<string> contact_list;    // 根据type,获取相应的联系人列表. 
+}
+pack IM_REQ_TRIBE
+{
+    string operation;
+    string req_data;
+    string cli_data;
+};
+
+pack IM_RSP_TRIBE
+{
+    uint32_t retcode;                   // 返回码, 0x00成功
+    string operation;
+    string rsp_data;
+    string cli_data;
+};
+
+
+pack IM_NTF_TRIBE
+{
+    string operation;
+    string data;
+};
+
+
+
+pack CNT_REQ_GET_CONTACT 
+{
+	uint32_t                timestamp;           //时间戳
+	uint32_t                count;   
+	uint32_t                flag=0;              //新增字段,  0:获取本域好友列表  1: 获取所有域好友列表	
+}
+
+pack CNT_RSP_GET_CONTACT
+{
+    uint32_t                 retcode;             //返回码
+    vector<contact_info>    contact_list;        //联系人列表
+    uint32_t                timestamp;           //时间戳
+}
+
+pack CNT_REQ_CHG_CONTACT
+{
+    vector<chg_contact_info>    contact_list;        //联系人信息
+}
+
+pack CNT_RSP_CHG_CONTACT
+{
+    uint32_t                 retcode;             //返回码
+    vector<chg_contact_info >    contact_list;        //联系人信息
+    uint32_t                timestamp;           //时间戳
+}
+
+pack CNT_REQ_DEL_CONTACT
+{
+    vector<string[UID_LENGTH]> contact_list;     //联系人列表
+}
+
+pack CNT_RSP_DEL_CONTACT
+{
+    uint32_t                 retcode;             //返回码
+    vector<string[UID_LENGTH]> contact_list;     //联系人列表
+    uint32_t                timestamp;           //时间戳
+}
+pack CNT_REQ_ADD_CONTACT
+{   
+    contact_info            contact;             //联系人信息
+    uint8_t                 type;         //验证类型
+    string                  message;        //附加验证信息,当type为回答问题时，校验好友的答案公用此字段
+	uint32_t				support_flag = 0;	//见SUPPORT_FLAG,与位操作
+}   
+
+pack CNT_RSP_ADD_CONTACT
+{   
+    uint32_t                retcode;             //返回码
+    uint8_t                 type;         //验证类型
+    contact_info            contact;             //联系人信息
+    uint32_t                timestamp;           //时间戳
+    string                  companyname;         //公司名
+	string					question = "";		//添加好友的校验问题
+	string					answer = "";		//答案
+}   
+
+pack CNT_REQ_ACK_CONTACT
+{   
+    uint8_t                 opcode;              //操作码： 0: 同意；1：拒绝；
+    string[UID_LENGTH]      contact_id;          //联系人ID
+    int64_t                 group_id;            //对方加我的组Id
+    string                  nick_name;           //昵称
+    string                  message;             //附加通知信息
+}
+
+pack CNT_RSP_ACK_CONTACT
+{   
+    uint32_t                retcode;             //返回码
+    uint8_t                 opcode;              //操作码： 0: 同意；1：拒绝；
+    int64_t                 group_id;           // 组id
+    uint32_t                timestamp;           //时间戳
+    string[UID_LENGTH]      contact_id;          //联系人ID
+}   
+
+pack CNT_REQ_GET_GROUP             
+{
+    uint32_t                timestamp;           //时间戳
+}
+
+pack CNT_RSP_GET_GROUP
+{
+    uint32_t                 retcode;             //返回码
+    vector<user_group>      group_list;          //组列表
+    uint32_t                timestamp;           //时间戳
+}
+
+struct read_times
+{
+    string    contact;
+    uint32_t  timestamp;
+	uint32_t  msg_count; //新增未读消息条数
+	int64_t   lastmsg_time;  //新增最后一条消息的发送时间
+    bytes     last_message;  //新增最后一条消息内容
+	uint64_t  msgId = 0;
+}
+
+pack IM_REQ_READ_TIMES
+{
+    uint32_t                max_records = 20;  //获取的最大条数，默认20条
+	uint32_t 				flag = 0;
+}
+
+pack IM_RSP_READ_TIMES
+{
+    uint32_t                retcode;  //返回码, 0x00全集, 0x01部份未读
+    vector<read_times>      read_times_list;  //已读标志列表
+}
+
+pack IM_REQ_MESSAGE_READ
+{
+    read_times      read_times;  //已读标志列表
+    uint32_t                flag=0;   // flag =0, 默认处理, flag=2: 合并子账号.   新增字段
+}
+
+pack IM_REQ_BATCH_MESSAGE_READ
+{
+    vector<read_times>      read_times_list;  //已读标志列表
+}
+
+pack IM_NTF_MESSAGE_READ
+{
+    read_times              read_times;  //已读标志, contact为空表示全部已读
+}
+
+pack CNT_REQ_GETBLACK
+{
+    uint32_t                timestamp;           //时间戳
+    uint32_t                count;               //暂时无用
+    uint32_t                req_count=100;       //获取黑名单列表最大数目.
+    uint32_t                version=1;          // 0: 老版本不返回黑名单. 1:按要求返回黑名单
+}
+ 
+pack CNT_RSP_GETBLACK
+{
+    uint32_t                 retcode;             //返回码
+    vector<string[UID_LENGTH]> black_list;       //黑名单列表
+    uint32_t                timestamp;           //时间戳
+    uint32_t                total_count=0;         //黑名单总数
+}
+ 
+pack CNT_REQ_ADDBLACK
+{
+    string[UID_LENGTH]      black_id;            //黑名单用户号
+    uint8_t                 flag = 0;            //标志。
+    string                  msg = "";            //附加消息
+}
+ 
+pack CNT_RSP_ADDBLACK
+{
+    uint32_t                 retcode;              //返回码
+    string[UID_LENGTH]      black_id;            //黑名单用户号
+    uint32_t                timestamp;           //时间戳
+}
+ 
+pack CNT_REQ_DELBLACK
+{
+    string[UID_LENGTH]      black_id;            //黑名单用户号
+    uint32_t                flag = 0;            //标志. 第0位: 0=删除后加入好友, 1=成为陌生人.
+    string                  msg = "";            //附加消息
+}
+ 
+pack CNT_RSP_DELBLACK
+{
+    uint32_t                retcode;   
+    string[UID_LENGTH]      black_id;            //黑名单用户号
+    uint32_t                timestamp;  
+}
+
+pack CNT_REQ_SEARCH_LATENT_CONTACT
+{   
+    uint32_t    action;                 // see SEARCH_LATENT_CONTACT_TYPE
+    double      longitude = 0;          // gps information
+    double      latitude = 0;          
+}   
+ 
+pack  CNT_RSP_SEARCH_LATENT_CONTACT
+{   
+    uint32_t                 retcode;                   //  
+    vector<latent_contact>    contact_list;            //  
+} 
+
+// 多点登录Session信息.
+struct logon_session_info
+{
+     uint8_t  app_id;     // 旺信, 千牛
+     uint8_t  devtype;    // 设备id: ios, android, win8
+     uint8_t  status;     // 登录状态, 在线,离线...
+     uint8_t  extra_flag;    // 额外的标志位
+     string   version;    //版本号
+     string  remark;     // 该session的唯一标识
+}
+
+//获取该用户id的相关登录信息.
+pack IM_REQ_GET_LOGON_INFO
+{
+}
+
+pack IM_RSP_GET_LOGON_INFO
+{
+  uint8_t  retcode;
+  vector<logon_session_info> session_list; //各种登录状态信息.
+}
+
+//VOIP项目新增
+pack IM_REPORT_NETWORK_STATUS
+{
+	string[UID_LENGTH] uid;
+	uint8_t devtype;
+	string status;
+}
+
+struct voip_message_body
+{
+	map<string,string> sip_msg;
+}
+
+pack IM_REQ_FWD_MSG
+{
+    string[UID_LENGTH] fromid;
+    string[UID_LENGTH] toid;
+    int64_t            msgid;
+    uint8_t            type;
+    string             message;
+};
+
+pack IM_RSP_FWD_MSG
+{
+    string[UID_LENGTH] fromid;
+    string[UID_LENGTH] toid;
+    int64_t            msgid;
+};
+
+pack IM_NTF_FWD_MSG
+{
+    string[UID_LENGTH] fromid;
+    string[UID_LENGTH] toid;
+    int64_t            msgid;
+    uint8_t            type;
+    string             message;
+};
+
+//2013/5/7 增加快速登录协议，并在IM_RSP_LOGIN中增加一个session_id字段
+pack IM_REQ_RENEWAL
+{
+	string user_id;
+}
+
+pack IM_RSP_RENEWAL
+{
+	uint32_t	retcode;
+}
+
+//订阅业务，2013-06-04，订阅类似"表哥"业务
+pack IM_REQ_SUB_BIZ
+{
+    vector<uint32_t> biz_ids;
+    string version;
+}
+
+pack IM_RSP_SUB_BIZ
+{
+    uint32_t retcode;
+}
+
+//退订业务，2013-06-04，退订类似"表哥"业务
+pack IM_REQ_UNSUB_BIZ
+{
+    vector<uint32_t> biz_ids;
+}
+
+pack IM_RSP_UNSUB_BIZ
+{
+    uint32_t retcode;
+}
+
+
+struct sc_user_info
+{
+    string              user_id = "";
+    uint32_t            from_app = -1; //详见：http://confluence.taobao.ali.com:8080/pages/viewpage.action?pageId=199961424
+    uint32_t            biz_id = -1;   //见上面bizid的定义
+    uint32_t            notify_app_id = -1;   //需要提醒的客户端app，非0：收到该条消息的app与notify_app相同时提醒
+    uint64_t            uuid = -1; //
+}
+
+pack IM_NTF_COMMON
+{
+    string operation;         -- 操作名称. ‘need_auth_check'  - 需要验证码 ;  ‘message_filter’ :  消息被过滤. 
+    string data;                  -- 具体操作使用的参数.
+    string orig_packet;     -- 相关联的原数据包. 验证码通知可填入IM_REQ_SENDIMMESSAGE原包. message_filter可以不填.
+}
+
+//订单改价通知 --add by 风恒
+struct notify_message
+{
+    uint8_t type;  
+    string message;
+}

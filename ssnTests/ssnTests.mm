@@ -22,6 +22,9 @@
 
 #import "KKObj.h"
 
+#import "SSNRouter.h"
+#import "NSURL+Router.h"
+
 @interface TSLObj : NSObject
 {
     NSString *_name;
@@ -487,5 +490,27 @@ void read_inet(ssn::inet &inet, const unsigned char *bytes, const unsigned long 
 
      */
 }
+
+- (void)test_RouterTest
+{
+    NSURL *url = [NSURL URLWithString:@"app://a/b/c?d=ggg"];
+    
+    NSArray *ary = @[@"fd",@"uu",@"kk"];
+    NSURL *url1 = [url ssn_relativeURLWithComponents:ary];
+    NSLog(@"%@",url1);
+    
+    ary = @[@"..",@"fd",@"uu",@"kk"];
+    url1 = [url ssn_relativeURLWithComponents:ary];
+    NSLog(@"%@",url1);
+    
+    ary = @[@"..",@"..",@"fd",@"uu",@"kk"];
+    url1 = [url ssn_relativeURLWithComponents:ary];
+    NSLog(@"%@",url1);
+    
+    ary = @[@"~",@"fd",@"uu",@"kk"];
+    url1 = [url ssn_relativeURLWithComponents:ary];
+    NSLog(@"%@",url1);
+}
+
 
 @end

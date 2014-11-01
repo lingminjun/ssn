@@ -1,0 +1,44 @@
+#pragma MACRO
+#module MCONST
+
+#define  VERSION_LENGTH     128
+#define  LANG_LENGTH        32
+#define  REMARK_LENGTH      256
+#define  REMARKEX_LENGTH    2048
+#define  UID_LENGTH         64
+#define  PWD_LENGTH         48
+#define  KEY_LENGTH         16
+#define  NICKNAME_LENGTH    32
+#define  MAXSEQID_LENGTH    20
+#define  VERIFY_LENGTH      256
+#define  SIGN_LENGTH        1024
+#define  IP_LENGTH          15
+#define  FILENAME_LENGTH    256
+#define  SESSION_LENGTH     64
+#define  CONTENT_LENGTH     4000
+#define  UID_PREFIX_LENGTH  8
+
+#define TID_LENGTH      20
+#define TBS_NAME_LENGTH 64 
+#define TBS_MSG_LENGTH  512
+#define TBS_DATE_LEN    20
+#define TBS_PASS_LEN    20
+#define TBS_VALID_LEN   32
+#define TBS_KEYWORD_LEN 64
+#define TBS_EXTSIGN_LEN 64
+
+#define SC_PROTOCOL_STARTER  0x88
+#define SS_PROTOCOL_STARTER 0xDA
+#define SS_HEAD_CMD_POS		0x08
+#define SS_HEAD_LEN_POS		0x10
+
+#define MOBILE_LENGTH       	 	16
+#define SMS_VALICODE_LENGTH  		8
+#define SMS_ACCOUNT_LENGTH   		64
+#define SMS_PASSWORD_LENGTH  		16
+#define SMS_TRANSACTION_ID_LENGTH 	32
+#define TIME_MAX_LENGTH      		20
+#define DISCOUNT_LENGTH      		4
+#define PASSWORD_LENGTH      		48
+
+#define SMS_ERR_LENGTH			128

@@ -23,14 +23,18 @@
 
 // open url接口，与app不符的scheme将提交给Application打开
 - (BOOL)openURL:(NSURL *)url; //如果url query中没有animated，默认有动画
+- (BOOL)openURL:(NSURL *)url query:(NSDictionary *)query;//如果url query中没有animated，默认有动画
 - (BOOL)openURL:(NSURL *)url query:(NSDictionary *)query animated:(BOOL)animated;
 
 //返回
 - (void)back;
 
-/*url中path都已经被注册过且仅仅最后一个路径元素没有被找到实例的，都将返回yes*/
+/** url中path都已经被注册过且仅仅最后一个路径元素没有被找到实例的，都将返回yes */
 - (BOOL)canOpenURL:(NSURL *)url;
 - (BOOL)canOpenURL:(NSURL *)url query:(NSDictionary *)query;
+
+//与url对应的page发送消息
+- (BOOL)noticeURL:(NSURL *)url query:(NSDictionary *)query;
 
 //返回对应的实例
 - (id<SSNPage>)pageWithURL:(NSURL *)url query:(NSDictionary *)query;
@@ -46,36 +50,28 @@
 
 @interface NSObject (SSNRouter) //弱协议实现
 
-- (SSNRouter *)router;
+- (SSNRouter *)ssn_router;
 
-- (id<SSNParentPage>)parentPage;
+- (id<SSNParentPage>)ssn_parentPage;
 
-- (NSURL *)currentURLPath; //当前url路径,注册进入的实例才会找到
+- (NSURL *)ssn_currentURLPath; //当前url路径,注册进入的实例才会找到
 
-@end
+//从当前目录打开url，path格式定义如：“/component1/component2”，你也可以使用NSURLComponents方法生产
+- (BOOL)openRelativePath:(NSString *)path query:(NSDictionary *)query;
+- (BOOL)openRelativePath:(NSString *)path query:(NSDictionary *)query animated:(BOOL)animated;
 
-//事件响应类
-typedef void (^SSNEventBlock)(NSURL *url, NSDictionary *query);
-typedef BOOL (^SSNFilterBlock)(NSURL *url, NSDictionary *query);
-
-@interface SSNEventHandler : NSObject<SSNPage>
-
-- (id)initWithEventBlock:(SSNEventBlock)event;
-- (id)initWithEventBlock:(SSNEventBlock)event filter:(SSNFilterBlock)filter;
-
-+ (instancetype)eventBlock:(SSNEventBlock)event;
-+ (instancetype)eventBlock:(SSNEventBlock)event filter:(SSNFilterBlock)filter;
+//从当前目录通知url，path格式定义如：“/component1/component2”，你也可以使用NSURLComponents方法生产
+- (BOOL)noticeRelativePath:(NSString *)path query:(NSDictionary *)query;
 
 @end
+
 
 // open 流程控制
 @protocol SSNRouterDelegate<NSObject>
 
 @optional
 //重定向url,返回需要重定向的url，如果返回nil表示不跳转
-- (NSURL *)router:(SSNRouter *)router redirectURL:(NSURL *)url query:(NSDictionary *)query;
+- (NSURL *)ssn_router:(SSNRouter *)router redirectURL:(NSURL *)url query:(NSDictionary *)query;
 
-//重定向url,返回需要重定向的url，如果返回nil表示不跳转
-- (BOOL)router:(SSNRouter *)router canOpenURL:(NSURL *)url query:(NSDictionary *)query;
 
 @end

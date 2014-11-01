@@ -10,8 +10,11 @@
 
 @interface NSURL (SSNRouter)
 
-- (NSArray *)routerPaths;
+- (NSArray *)ssn_routerPaths;
 
-- (NSDictionary *)queryInfo;
+- (NSDictionary *)ssn_queryInfo;//queryString + user/password (value被解码)
+
+//components都是NSString，其中“..”表示上级目录，“.”表示当前目录，“~”表示根目录
+- (NSURL *)ssn_relativeURLWithComponents:(NSArray *)components;//
 
 @end

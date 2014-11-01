@@ -19,6 +19,9 @@
 #import "DMSettingNavController.h"
 #import "DMSettingViewController.h"
 
+#import "DMChatViewController.h"
+#import "DMProfileViewController.h"
+
 @interface AppDelegate ()<SSNRouterDelegate>
 @end
 
@@ -27,33 +30,36 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 
-    [self.router setScheme:@"app"];
+    [self.ssn_router setScheme:@"app"];
 
-    [self.router addComponent:@"sign" pageClass:[DMSignNavController class]];
-    [self.router addComponent:@"signin" pageClass:[DMSignViewController class]];
-    [self.router addComponent:@"main" pageClass:[DMTabViewController class]];
-    [self.router addComponent:@"session" pageClass:[DMContactNavController class]];
-    [self.router addComponent:@"chat" pageClass:[DMContactViewController class]];
-    [self.router addComponent:@"contact" pageClass:[DMSessionNavController class]];
-    [self.router addComponent:@"friend" pageClass:[DMSessionViewController class]];
-    [self.router addComponent:@"confige" pageClass:[DMSettingNavController class]];
-    [self.router addComponent:@"setting" pageClass:[DMSettingViewController class]];
+    [self.ssn_router addComponent:@"sign" pageClass:[DMSignNavController class]];
+    [self.ssn_router addComponent:@"signin" pageClass:[DMSignViewController class]];
+    [self.ssn_router addComponent:@"main" pageClass:[DMTabViewController class]];
+    [self.ssn_router addComponent:@"contact_tab" pageClass:[DMContactNavController class]];
+    [self.ssn_router addComponent:@"friend" pageClass:[DMContactViewController class]];
+    [self.ssn_router addComponent:@"session_tab" pageClass:[DMSessionNavController class]];
+    [self.ssn_router addComponent:@"session" pageClass:[DMSessionViewController class]];
+    [self.ssn_router addComponent:@"confige_tab" pageClass:[DMSettingNavController class]];
+    [self.ssn_router addComponent:@"setting" pageClass:[DMSettingViewController class]];
+    
+    [self.ssn_router addComponent:@"chat" pageClass:[DMChatViewController class]];
+    [self.ssn_router addComponent:@"profile" pageClass:[DMProfileViewController class]];
 
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
 
-    [self router].delegate = self;
-    [self router].window = self.window;
+    [self ssn_router].delegate = self;
+    [self ssn_router].window = self.window;
 
     BOOL isSingin = NO;
     if (isSingin)
     {
-        [self.router openURL:[NSURL URLWithString:@"app://default"]]; //转到重定向中加载ui
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://default"]]; //转到重定向中加载ui
     }
     else
     {
-        [self.router openURL:[NSURL URLWithString:@"app://login"]]; //转到重定向中加载ui
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://login"]]; //转到重定向中加载ui
     }
 
     [self.window makeKeyAndVisible];
@@ -98,33 +104,33 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotatio {
     
-    return [self.router openURL:url];
+    return [self.ssn_router openURL:url];
 }
 
 #pragma mark open url delegate
-- (NSURL *)router:(SSNRouter *)router redirectURL:(NSURL *)url query:(NSDictionary *)query
+- (NSURL *)ssn_router:(SSNRouter *)router redirectURL:(NSURL *)url query:(NSDictionary *)query
 {
     if ([url.absoluteString isEqualToString:@"app://login"])
     {
-        [self.router openURL:[NSURL URLWithString:@"app://sign"]];
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://sign"]];
 
         return [NSURL URLWithString:@"app://sign/signin"];
     }
     else if ([url.absoluteString isEqualToString:@"app://default"])
     {
         //不能按照路径创建目录，必须一级一级创建
-        [self.router openURL:[NSURL URLWithString:@"app://main"]];
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://main"]];
 
-        [self.router openURL:[NSURL URLWithString:@"app://main/session"]];
-        [self.router openURL:[NSURL URLWithString:@"app://main/session/chat"]];
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://main/session_tab"]];
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://main/session_tab/session"]];
 
-        [self.router openURL:[NSURL URLWithString:@"app://main/contact"]];
-        [self.router openURL:[NSURL URLWithString:@"app://main/contact/friend"]];
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://main/contact_tab"]];
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://main/contact_tab/friend"]];
 
-        [self.router openURL:[NSURL URLWithString:@"app://main/confige"]];
-        [self.router openURL:[NSURL URLWithString:@"app://main/confige/setting"]];
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://main/confige_tab"]];
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://main/confige_tab/setting"]];
 
-        return [NSURL URLWithString:@"app://main/session/chat"];
+        return [NSURL URLWithString:@"app://main/session_tab/session"];
     }
     return nil;
 }

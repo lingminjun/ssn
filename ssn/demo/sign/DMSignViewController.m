@@ -39,7 +39,7 @@
 
 - (void)doneAction:(id)sender
 {
-    [self.router openURL:[NSURL URLWithString:@"app://default"]];
+    [self.ssn_router openURL:[NSURL URLWithString:@"app://default"]];
 }
 
 - (void)didReceiveMemoryWarning

@@ -18,6 +18,8 @@
 		535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F266C1983F09100C0D7C0 /* SSNRouter.m */; };
 		535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F26731983F7A800C0D7C0 /* NSURL+Router.m */; };
 		535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F267619841ED800C0D7C0 /* SSNVC+Router.m */; };
+		5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C5961A0498290072C3F9 /* DMProfileViewController.m */; };
+		5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C59A1A0499B90072C3F9 /* DMChatViewController.m */; };
 		538E3835199869430061692E /* DMTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3834199869430061692E /* DMTabViewController.m */; };
 		538E3838199869880061692E /* DMContactNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3837199869880061692E /* DMContactNavController.m */; };
 		538E383B199869A20061692E /* DMSessionNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E383A199869A20061692E /* DMSessionNavController.m */; };
@@ -166,13 +168,17 @@
 		53512E2419A3959A00DACC42 /* lock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lock.cpp; sourceTree = "<group>"; };
 		53512E2519A3959A00DACC42 /* lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lock.h; sourceTree = "<group>"; };
 		535F26641983A21D00C0D7C0 /* db.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = db.md; sourceTree = "<group>"; };
-		535F266B1983F09100C0D7C0 /* SSNRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRouter.h; sourceTree = "<group>"; };
-		535F266C1983F09100C0D7C0 /* SSNRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRouter.m; sourceTree = "<group>"; };
+		535F266B1983F09100C0D7C0 /* SSNRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SSNRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		535F266C1983F09100C0D7C0 /* SSNRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SSNRouter.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		535F266E1983F22200C0D7C0 /* SSNPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSNPage.h; sourceTree = "<group>"; };
 		535F26721983F7A800C0D7C0 /* NSURL+Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Router.h"; sourceTree = "<group>"; };
 		535F26731983F7A800C0D7C0 /* NSURL+Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Router.m"; sourceTree = "<group>"; };
 		535F267519841ED800C0D7C0 /* SSNVC+Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNVC+Router.h"; sourceTree = "<group>"; };
 		535F267619841ED800C0D7C0 /* SSNVC+Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SSNVC+Router.m"; sourceTree = "<group>"; };
+		5388C5951A0498290072C3F9 /* DMProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProfileViewController.h; sourceTree = "<group>"; };
+		5388C5961A0498290072C3F9 /* DMProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProfileViewController.m; sourceTree = "<group>"; };
+		5388C5991A0499B90072C3F9 /* DMChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMChatViewController.h; sourceTree = "<group>"; };
+		5388C59A1A0499B90072C3F9 /* DMChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMChatViewController.m; sourceTree = "<group>"; };
 		538E3833199869430061692E /* DMTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMTabViewController.h; sourceTree = "<group>"; };
 		538E3834199869430061692E /* DMTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMTabViewController.m; sourceTree = "<group>"; };
 		538E3836199869880061692E /* DMContactNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMContactNavController.h; sourceTree = "<group>"; };
@@ -184,13 +190,13 @@
 		538E383F199869E00061692E /* DMSignNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSignNavController.h; sourceTree = "<group>"; };
 		538E3840199869E00061692E /* DMSignNavController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSignNavController.m; sourceTree = "<group>"; };
 		538E3842199869F90061692E /* DMSignViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSignViewController.h; sourceTree = "<group>"; };
-		538E3843199869F90061692E /* DMSignViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSignViewController.m; sourceTree = "<group>"; };
+		538E3843199869F90061692E /* DMSignViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DMSignViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		538E384519986A3B0061692E /* DMContactViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMContactViewController.h; sourceTree = "<group>"; };
 		538E384619986A3B0061692E /* DMContactViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMContactViewController.m; sourceTree = "<group>"; };
 		538E384819986A560061692E /* DMSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSessionViewController.h; sourceTree = "<group>"; };
 		538E384919986A560061692E /* DMSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSessionViewController.m; sourceTree = "<group>"; };
 		538E384B19986A700061692E /* DMSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSettingViewController.h; sourceTree = "<group>"; };
-		538E384C19986A700061692E /* DMSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSettingViewController.m; sourceTree = "<group>"; };
+		538E384C19986A700061692E /* DMSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DMSettingViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		53D163E0191A629C00AD4C81 /* ssn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ssn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D163E3191A629C00AD4C81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		53D163E5191A629C00AD4C81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -200,7 +206,7 @@
 		53D163EF191A629C00AD4C81 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		53D163F1191A629C00AD4C81 /* ssn-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ssn-Prefix.pch"; sourceTree = "<group>"; };
 		53D163F2191A629C00AD4C81 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		53D163F3191A629C00AD4C81 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		53D163F3191A629C00AD4C81 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		53D16404191A629C00AD4C81 /* ssnTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ssnTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D16405191A629C00AD4C81 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		53D1640D191A629C00AD4C81 /* ssnTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ssnTests-Info.plist"; sourceTree = "<group>"; };
@@ -324,9 +330,29 @@
 			path = router;
 			sourceTree = "<group>";
 		};
+		5388C5941A0497FF0072C3F9 /* profile */ = {
+			isa = PBXGroup;
+			children = (
+				5388C5951A0498290072C3F9 /* DMProfileViewController.h */,
+				5388C5961A0498290072C3F9 /* DMProfileViewController.m */,
+			);
+			path = profile;
+			sourceTree = "<group>";
+		};
+		5388C5981A0499AA0072C3F9 /* chat */ = {
+			isa = PBXGroup;
+			children = (
+				5388C5991A0499B90072C3F9 /* DMChatViewController.h */,
+				5388C59A1A0499B90072C3F9 /* DMChatViewController.m */,
+			);
+			path = chat;
+			sourceTree = "<group>";
+		};
 		538E382D199868710061692E /* demo */ = {
 			isa = PBXGroup;
 			children = (
+				5388C5981A0499AA0072C3F9 /* chat */,
+				5388C5941A0497FF0072C3F9 /* profile */,
 				538E3832199869080061692E /* tab */,
 				538E382E199868E10061692E /* contact */,
 				538E382F199868E10061692E /* session */,
@@ -700,6 +726,7 @@
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
 				53ECB171191FBDE900BEB29D /* SSNDataBase.m in Sources */,
 				53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */,
+				5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */,
 				53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */,
 				538E384D19986A700061692E /* DMSettingViewController.m in Sources */,
 				53D7D0B319A857220025A2E2 /* buffer.cpp in Sources */,
@@ -722,6 +749,7 @@
 				53FF9F491934E188009117AB /* SSNDBSectionImp.m in Sources */,
 				533378B41986435B00084428 /* SSNDBTable.m in Sources */,
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
+				5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */,
 				535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */,
 				53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */,
 				538E384719986A3B0061692E /* DMContactViewController.m in Sources */,

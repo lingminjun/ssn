@@ -37,7 +37,7 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
-- (BOOL)canRespondURL:(NSURL *)url query:(NSDictionary *)query
+- (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query
 {
     return YES;
 }

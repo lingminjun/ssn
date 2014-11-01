@@ -10,6 +10,8 @@
 
 @interface DMContactViewController ()
 
+@property (nonatomic,strong) NSArray *friends;
+
 @end
 
 @implementation DMContactViewController
@@ -29,6 +31,8 @@
     [super viewDidLoad];
 
     self.title = @"Contact";
+    
+    self.friends = @[@"肖海长",@"杨世亮",@"凌敏均"];
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -37,7 +41,7 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
-- (BOOL)canRespondURL:(NSURL *)url query:(NSDictionary *)query
+- (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query
 {
     return YES;
 }
@@ -52,28 +56,37 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
+//#warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
+//#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    return [self.friends count];
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-
+    NSString *cellId = @"cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
     // Configure the cell...
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+    }
+    
+    cell.textLabel.text = [self.friends objectAtIndex:indexPath.row];
 
     return cell;
 }
-*/
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [self openRelativePath:@"../profile" query:@{@"nickname":[self.friends objectAtIndex:indexPath.row]}];
+}
 
 /*
 // Override to support conditional editing of the table view.

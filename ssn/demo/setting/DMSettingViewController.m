@@ -40,10 +40,10 @@
 }
 
 - (void)logout {
-    [[self router] openURL:[NSURL URLWithString:@"app://login"]];
+    [[self ssn_router] openURL:[NSURL URLWithString:@"app://login"]];
 }
 
-- (BOOL)canRespondURL:(NSURL *)url query:(NSDictionary *)query
+- (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query
 {
     return YES;
 }

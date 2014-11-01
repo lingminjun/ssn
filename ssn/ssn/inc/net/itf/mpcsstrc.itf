@@ -1,0 +1,42 @@
+#pragma      PACK
+#version     2
+#module MPCSSTRC 1
+
+struct mpcs_message
+{
+    string             from_id;
+    uint8_t            type;
+    bytes              message;
+    int64_t            send_time;
+    uint64_t           msg_id = 0;
+}
+
+struct mpcs_offmsg_times
+{
+    string             room_id;
+    int64_t            msg_times;
+}
+
+struct mpcs_offmsg_count
+{
+    string             room_id;
+    uint32_t           count;
+}
+
+struct room_user_info
+{
+    string             user_id;
+    string             nick_name;
+}
+
+struct room_info
+{
+    string                 room_name;
+    string                 password;
+    int64_t                member_times;
+    vector<room_user_info> member_list;
+    int64_t                last_msg_times;
+    vector<mpcs_message>   messages;
+    int64_t                msg_times = 0;
+}
+

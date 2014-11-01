@@ -12,7 +12,7 @@
 
 @interface SSNSearchResult : NSObject
 
-@property (nonatomic,strong) id<SSNParentPage> parentPage;
+@property (nonatomic,strong) id<SSNParentPage> theParentPage;
 @property (nonatomic,strong) NSString *lastPath;
 @property (nonatomic,strong) id<SSNPage> targetPage;//不一定有值
 
@@ -92,8 +92,28 @@
     BOOL animated = YES;
     
     //对参数简单支持
-    NSDictionary *query = [url queryInfo];
+    NSDictionary *query = [url ssn_queryInfo];
     NSString *an = [query objectForKey:@"animated"];
+    if ([an isEqualToString:@"NO"] || [an isEqualToString:@"false"]) {
+        animated = [an boolValue];
+    }
+    
+    return [self openURL:url query:query animated:animated];
+}
+
+- (BOOL)openURL:(NSURL *)url query:(NSDictionary *)query {
+    if (nil == url) {
+        return NO;
+    }
+    
+    BOOL animated = YES;
+    
+    //对参数简单支持
+    NSString *an = [query objectForKey:@"animated"];
+    if (!an) {
+        NSDictionary *url_query = [url ssn_queryInfo];
+        an = [url_query objectForKey:@"animated"];
+    }
     if ([an isEqualToString:@"NO"] || [an isEqualToString:@"false"]) {
         animated = [an boolValue];
     }
@@ -106,14 +126,14 @@
         return NO;
     }
     
-    NSDictionary *query = [url queryInfo];
+    NSDictionary *query = [url ssn_queryInfo];
     
     return [self canOpenURL:url query:query];
 }
 
 - (void)back {
-    if ([self.window respondsToSelector:@selector(pageBack)]) {
-        return [(id<SSNParentPage>)self.window pageBack];
+    if ([self.window respondsToSelector:@selector(ssn_pageBack)]) {
+        return [(id<SSNParentPage>)self.window ssn_pageBack];
     }
 }
 
@@ -122,19 +142,10 @@
     NSURL *url = aurl;
     
     //让委托有控制权
-    if ([self.delegate respondsToSelector:@selector(router:redirectURL:query:)]) {
-        NSURL *rurl = [self.delegate router:self redirectURL:aurl query:query];
+    if ([self.delegate respondsToSelector:@selector(ssn_router:redirectURL:query:)]) {
+        NSURL *rurl = [self.delegate ssn_router:self redirectURL:aurl query:query];
         if (rurl) {
             url = rurl;
-        }
-    }
-    else {
-        if ([self.delegate respondsToSelector:@selector(router:canOpenURL:query:)]) {
-            BOOL canOpen = [self.delegate router:self canOpenURL:aurl query:query];
-            
-            if (!canOpen) {
-                url = nil;
-            }
         }
     }
     
@@ -159,24 +170,20 @@
         return [[UIApplication sharedApplication] openURL:url];
     }
     
+    //找到目标url
     SSNSearchResult *result = [self loadPageWithURL:url query:query];
     if (nil == result) {
         return NO;
     }
     
-    //如果目标是一个事件，则不继续询问打开
-    if ([result.targetPage isKindOfClass:[SSNEventHandler class]]) {
-        return YES;
-    }
-    
     BOOL openSuccess = NO;
     
     //递归打开界面
-    id<SSNParentPage> parent_page = result.parentPage;
+    id<SSNParentPage> parent_page = result.theParentPage;
     id<SSNPage>current_page = result.targetPage;
     while (parent_page) {
-        if ([parent_page respondsToSelector:@selector(openPage:query:animated:)]) {
-            openSuccess = [parent_page openPage:current_page query:query animated:animated];
+        if ([parent_page respondsToSelector:@selector(ssn_openPage:query:animated:)]) {
+            openSuccess = [parent_page ssn_openPage:current_page query:query animated:animated];
         }
         
         if (!openSuccess) {
@@ -188,7 +195,7 @@
             parent_page = self.window;
         }
         else {
-            parent_page = [parent_page parentPage];
+            parent_page = [parent_page ssn_parentPage];
         }
     }
     
@@ -219,23 +226,32 @@
     return NO;
 }
 
-- (BOOL)page:(id <SSNPage>)page targetClass:(Class)targetClass respondURL:(NSURL *)url query:(NSDictionary *)query {
-    if (![page isKindOfClass:targetClass]) {
+//与url对应的page发送消息
+- (BOOL)noticeURL:(NSURL *)url query:(NSDictionary *)query {
+    if (nil == url) {
         return NO;
     }
     
-    SEL sel = @selector(canRespondURL:query:);
-    
-    if (![page respondsToSelector:sel]) {
+    NSString *urlscheme = [url scheme];
+    if (![urlscheme isEqualToString:self.scheme]) {
         return NO;
     }
     
-    if (![page canRespondURL:url query:query]) {
+    //找到对应的对象
+    SSNSearchResult *result = [self searchPageWithURL:url query:query];
+    if (nil == result.targetPage) {
         return NO;
     }
     
-    return YES;
+    //notice该对象
+    if ([result.targetPage respondsToSelector:@selector(ssn_handleNoticeURL:query:)]) {
+        [result.targetPage ssn_handleNoticeURL:url query:query];
+        return YES;
+    }
+    
+    return NO;
 }
+
 
 - (SSNSearchResult *)searchPathWithURL:(NSURL *)url
                                  query:(NSDictionary *)query
@@ -244,44 +260,38 @@
                                  paths:(NSArray *)paths {
     
     //防越界
-    if (index >= [paths count]) {
+    const NSInteger path_count = [paths count];
+    if (index >= path_count) {
         return nil;
     }
     
+    //当前path对应的对象类型
     NSString *path = [paths objectAtIndex:index];
     id class_type = [self.pmap objectForKey:path];
-    
-    //特殊的handler，不需要注册
-    if ([path isEqualToString:@"handler"]) {
-        class_type = [SSNEventHandler class];
-    }
-    
     if (nil == class_type) {
         return nil;
     }
     
     //看父控制器是否能打开
     BOOL canOpen = NO;
-    if ([parent respondsToSelector:@selector(canRespondURL:query:)]) {
-        canOpen = [parent canRespondURL:url query:query];
+    if ([parent respondsToSelector:@selector(ssn_canRespondURL:query:)]) {
+        canOpen = [parent ssn_canRespondURL:url query:query];
     }
-    
     if (!canOpen) {//父节点无法打开
         return nil;
     }
     
     //父节点打开后先找已经存在的
     NSArray *pages = nil;
-    if ([parent respondsToSelector:@selector(containedPages)]) {
-        pages = [parent containedPages];
+    if ([parent respondsToSelector:@selector(ssn_containedPages)]) {
+        pages = [parent ssn_containedPages];
     }
     
-    SSNSearchResult *rt = nil;
     //需要分是不是最后一个来处理
-    if (index + 1 == [paths count]) {
+    if (index + 1 == path_count) {//已经到了path末端，构建Result，只需要确定末端节点对象是否已经存在与否
         
-        rt = [[SSNSearchResult alloc] init];
-        rt.parentPage = parent;
+        SSNSearchResult *rt = [[SSNSearchResult alloc] init];
+        rt.theParentPage = parent;
         rt.lastPath = path;
         
         for (id<SSNPage> page in pages) {
@@ -289,35 +299,39 @@
             if (![page isKindOfClass:class_type]) {
                 continue ;
             }
-                
+            
+            //可能存在，需要校验是否能响应
             BOOL canRespond = NO;
-            if ([page respondsToSelector:@selector(canRespondURL:query:)]) {
-                canRespond = [page canRespondURL:url query:query];
+            if ([page respondsToSelector:@selector(ssn_canRespondURL:query:)]) {
+                canRespond = [page ssn_canRespondURL:url query:query];
             }
             
+            //第一个找到后就退出
             if (canRespond) {
                 rt.targetPage = page;
                 break ;
             }
         }
         
+        return rt;
     }
-    else {
-        for (id<SSNPage> page in pages) {
-            
-            if (![page isKindOfClass:class_type]) {
-                continue ;
-            }
-            
-            rt = [self searchPathWithURL:url
-                                   query:query
-                                  parent:(id<SSNParentPage>)page
-                                   index:index + 1
-                                   paths:paths];
-            
-            if (rt) {
-                break;
-            }
+    
+    //非末端节点需要递归寻找
+    SSNSearchResult *rt = nil;
+    for (id<SSNPage> page in pages) {
+        
+        if (![page isKindOfClass:class_type]) {
+            continue ;
+        }
+        
+        rt = [self searchPathWithURL:url
+                               query:query
+                              parent:(id<SSNParentPage>)page
+                               index:index + 1
+                               paths:paths];
+        //一旦找到就跳出
+        if (rt) {
+            break;
         }
     }
 
@@ -326,7 +340,7 @@
 
 - (SSNSearchResult *)searchPageWithURL:(NSURL *)url query:(NSDictionary *)query {
     
-    NSArray *paths = [url routerPaths];
+    NSArray *paths = [url ssn_routerPaths];
     
     id<SSNParentPage> parent_page = self.window;
     
@@ -354,8 +368,8 @@
         
         result.targetPage = [[class alloc] init];
         
-        if ([result.targetPage respondsToSelector:@selector(handleURL:query:)]) {
-            [result.targetPage handleURL:url query:query];
+        if ([result.targetPage respondsToSelector:@selector(ssn_handleOpenURL:query:)]) {
+            [result.targetPage ssn_handleOpenURL:url query:query];
         }
     }
     
@@ -389,7 +403,7 @@
 #pragma mark 反向寻找路径
 
 - (void)findParent:(id<SSNPage>)page inArrary:(NSMutableArray *)array {
-    id<SSNParentPage> parent = [page parentPage];
+    id<SSNParentPage> parent = [page ssn_parentPage];
     if (parent) {
         [self findParent:parent inArrary:array];
         [array addObject:parent];
@@ -454,17 +468,17 @@
 
 @implementation NSObject (SSNRouter)
 
-- (SSNRouter *)router {
+- (SSNRouter *)ssn_router {
     return [SSNRouter shareInstance];
 }
 
-- (id <SSNParentPage>)parentPage {
+- (id <SSNParentPage>)ssn_parentPage {
     return nil;
 }
 
-- (NSURL *)currentURLPath {
+- (NSURL *)ssn_currentURLPath {
     
-    if (self.parentPage == nil) {
+    if (self.ssn_parentPage == nil) {
         return nil;
     }
     
@@ -472,62 +486,40 @@
         return nil;
     }
     
-    return [self.router searchURLWithPage:(id<SSNPage>)self];
+    return [self.ssn_router searchURLWithPage:(id<SSNPage>)self];
 }
 
-@end
 
-
-//事件响应类
-@interface SSNEventHandler ()
-@property (nonatomic,copy) void (^handlerBlock)(NSURL *url,NSDictionary *query);
-@property (nonatomic,copy) BOOL (^filterBlock)(NSURL *url,NSDictionary *query);
-@end
-
-@implementation SSNEventHandler
-@synthesize handlerBlock = _handlerBlock;
-@synthesize filterBlock = _filterBlock;
-
-- (id)initWithEventBlock:(SSNEventBlock)event {
-    return [self initWithEventBlock:event filter:nil];
-}
-
-+ (instancetype)eventBlock:(SSNEventBlock)event {
-    return [[[self class] alloc] initWithEventBlock:event filter:nil];
-}
-
-- (id)initWithEventBlock:(SSNEventBlock)event filter:(SSNFilterBlock)filter {
-    self = [super init];
-    if (self) {
-        self.handlerBlock = event;
-        self.filterBlock = filter;
-    }
-    return self;
-}
-
-+ (instancetype)eventBlock:(SSNEventBlock)event filter:(SSNFilterBlock)filter {
-    return [[[self class] alloc] initWithEventBlock:event filter:filter];
-}
-
-- (id <SSNParentPage>)parentPage {
-    return nil;
-}
-
-- (BOOL)canRespondURL:(NSURL *)url query:(NSDictionary *)query {
-    BOOL canRespond = YES;
-    if (self.filterBlock) {
-        canRespond = self.filterBlock(url,query);
+//从当前目录打开url，path格式定义如：“/component1/component2”，你也可以使用NSURLComponents方法生产
+- (BOOL)openRelativePath:(NSString *)path query:(NSDictionary *)query {
+    BOOL animated = YES;
+    
+    //对参数简单支持
+    NSString *an = [query objectForKey:@"animated"];
+    if ([an isEqualToString:@"NO"] || [an isEqualToString:@"false"]) {
+        animated = [an boolValue];
     }
     
-    if (canRespond) {
-        if (self.handlerBlock) {
-            self.handlerBlock(url,query);
-        }
-    }
-    
-    return canRespond;
+    return [self openRelativePath:path query:query animated:animated];
 }
 
+- (BOOL)openRelativePath:(NSString *)path query:(NSDictionary *)query animated:(BOOL)animated {
+    
+    NSURL *url = [self ssn_currentURLPath];
+    NSArray *comps = [path pathComponents];
+    NSURL *target_url = [url ssn_relativeURLWithComponents:comps];
+    
+    return [[self ssn_router] openURL:target_url query:query animated:animated];
+}
+
+- (BOOL)noticeRelativePath:(NSString *)path query:(NSDictionary *)query {
+    
+    NSURL *url = [self ssn_currentURLPath];
+    NSArray *comps = [path pathComponents];
+    NSURL *target_url = [url ssn_relativeURLWithComponents:comps];
+    
+    return [[self ssn_router] noticeURL:target_url query:query];
+}
 
 @end
 
