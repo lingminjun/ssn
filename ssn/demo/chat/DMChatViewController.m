@@ -54,6 +54,7 @@
     // Pass the selected object to the new view controller.
 }
 */
+
 #pragma mark SSNPage
 //是否可以响应，默认返回NO，已存在界面如果可以响应，将重新被打开
 - (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query {

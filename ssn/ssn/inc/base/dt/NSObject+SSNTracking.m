@@ -15,50 +15,82 @@
 #import <objc/message.h>
 #endif
 
+#import <pthread.h>
+
 #import "ssnbase.h"
 
 #define ssn_alignof_type_size(t) (sizeof(int) * (int)((sizeof(t) + sizeof(int) - 1)/sizeof(int)))
 
-
-void ssn_method_swizzle(Class c,SEL origSEL,SEL overrideSEL)
-{
-    Method origMethod = class_getInstanceMethod(c, origSEL);
-    Method overrideMethod= class_getInstanceMethod(c, overrideSEL);
-    
-    /*
-     周全起见，有两种情况要考虑一下。
-     第一种情况是要复写的方法(overridden)并没有在目标类中实现(notimplemented)，而是在其父类中实现了。
-     第二种情况是这个方法已经存在于目标类中(does existin the class itself)。
-     
-     这两种情况要区别对待。
-     (译注: 这个地方有点要明确一下，它的目的是为了使用一个重写的方法替换掉原来的方法。但重写的方法可能是在父类中重写的，也可能是在子类中重写的。)
-     
-     对于第一种情况，应当先在目标类增加一个新的实现方法(override)，然后将复写的方法替换为原先(的实现(original one)。*/
-    
-    //运行时函数class_addMethod 如果发现方法已经存在，会失败返回，也可以用来做检查用:
-    if(class_addMethod(c, origSEL, method_getImplementation(overrideMethod),method_getTypeEncoding(overrideMethod)))
-    {
-        
-        //如果添加成功(在父类中重写的方法)，再把目标类中的方法替换为旧有的实现:
-        class_replaceMethod(c,overrideSEL, method_getImplementation(origMethod), method_getTypeEncoding(origMethod));
-    }
-    /*
-     (译注:addMethod会让目标类的方法指向新的实现，使用replaceMethod再将新的方法指向原先的实现，这样就完成了交换操作。)
-     
-     如果添加失败了，就是第二情况(在目标类重写的方法)。这时可以通过method_exchangeImplementations来完成交换:
-     */
-    else
-    {
-        method_exchangeImplementations(origMethod,overrideMethod);
-    }
-}
-
+//转发消息名
 NSString *ssn_objc_forwarding_method_name(SEL selector)
 {
     return [NSString stringWithFormat:@"ssn_forwarding_$%@", NSStringFromSelector(selector)];
 }
 
-NSInvocation *ssn_objc_invocation(id target, NSMethodSignature* signature, SEL selector, va_list argumentList)
+//记录预置参数日志
+NSString *ssn_get_save_preset(NSString *value, NSString *key) {
+    static NSMutableDictionary *_ssn_track_values = nil;
+    static dispatch_once_t onceToken;
+    static pthread_mutex_t mutex;
+    dispatch_once(&onceToken, ^{
+        _ssn_track_values = [[NSMutableDictionary alloc] init];
+        pthread_mutex_init(&mutex, NULL);
+    });
+    
+    static NSString *log = nil;
+    if (key) {
+        @autoreleasepool {
+            NSDictionary *dic = nil;
+            
+            @synchronized(_ssn_track_values) {
+                [_ssn_track_values setValue:value forKey:key];
+                dic = [NSDictionary dictionaryWithDictionary:_ssn_track_values];
+            }
+            
+            NSArray *keys = [[dic allKeys] sortedArrayUsingSelector:@selector(compare:)];
+            NSMutableString *rt = [NSMutableString string];
+            for (NSString *key in keys) {
+                NSString *value = [dic objectForKey:key];
+                [rt appendFormat:@"%@=%@&",key,value];
+            }
+            pthread_mutex_lock(&mutex);
+            log = [NSString stringWithString:rt];
+            pthread_mutex_unlock(&mutex);
+        }
+    }
+    
+    pthread_mutex_lock(&mutex);
+    NSString *rt = [log copy];
+    pthread_mutex_unlock(&mutex);
+    return rt;
+}
+
+//记录需要收集的属性列表
+NSArray *ssn_get_save_class_method_collect_ivar(Class clazz, SEL sel, NSArray *ivar, BOOL get) {
+    static dispatch_once_t onceToken;
+    static NSCache *_ssn_track_ivar = nil;
+    dispatch_once(&onceToken, ^{
+        _ssn_track_ivar = [[NSCache alloc] init];
+    });
+    
+    NSString *key = [NSString stringWithFormat:@"%@-%@",NSStringFromClass(clazz),NSStringFromSelector(sel)];
+    if (get) {
+        return [_ssn_track_ivar objectForKey:key];
+    }
+    else {
+        if (ivar) {
+            NSArray *ivar_cop = [ivar copy];
+            [_ssn_track_ivar setObject:ivar_cop forKey:key];
+        }
+        else {
+            [_ssn_track_ivar removeObjectForKey:key];
+        }
+    }
+    return nil;
+}
+
+
+NSInvocation *ssn_objc_invocation_v1(id target, NSMethodSignature* signature, SEL selector, va_list argumentList, NSMutableString *log)
 {
     NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
     [invocation retainArguments];
@@ -95,7 +127,40 @@ NSInvocation *ssn_objc_invocation(id target, NSMethodSignature* signature, SEL s
     return invocation;
 }
 
-NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SEL selector, va_list argumentList)
+/**
+ *  参数解析并生产NSInvocation
+ #define _C_ID       '@'
+ #define _C_CLASS    '#'
+ #define _C_SEL      ':'
+ #define _C_CHR      'c'
+ #define _C_UCHR     'C'
+ #define _C_SHT      's'
+ #define _C_USHT     'S'
+ #define _C_INT      'i'
+ #define _C_UINT     'I'
+ #define _C_LNG      'l'
+ #define _C_ULNG     'L'
+ #define _C_LNG_LNG  'q'
+ #define _C_ULNG_LNG 'Q'
+ #define _C_FLT      'f'
+ #define _C_DBL      'd'
+ #define _C_BFLD     'b'
+ #define _C_BOOL     'B'
+ #define _C_VOID     'v'
+ #define _C_UNDEF    '?'
+ #define _C_PTR      '^'
+ #define _C_CHARPTR  '*'
+ #define _C_ATOM     '%'
+ #define _C_ARY_B    '['
+ #define _C_ARY_E    ']'
+ #define _C_UNION_B  '('
+ #define _C_UNION_E  ')'
+ #define _C_STRUCT_B '{'
+ #define _C_STRUCT_E '}'
+ #define _C_VECTOR   '!'
+ #define _C_CONST    'r'
+ */
+NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SEL selector, va_list argumentList, NSMutableString *log)
 {
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
     [invocation retainArguments];
@@ -112,55 +177,27 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
         while (arg_num > arg_index) {
             
             const char* argType = [signature getArgumentTypeAtIndex:arg_index];
-            while(strchr("rnNoORV", argType[0]) != NULL)
+            while(strchr("rnNoORV", argType[0]) != NULL) {
                 argType += 1;
+            }
             
-            if((strlen(argType) > 1) && (strchr("{^", argType[0]) == NULL))
+            if((strlen(argType) > 1) && (strchr("{^", argType[0]) == NULL)) {
                 [NSException raise:NSInvalidArgumentException format:@"Cannot handle argument type '%s'.", argType];
-            /*
-             #define _C_ID       '@'
-             #define _C_CLASS    '#'
-             #define _C_SEL      ':'
-             #define _C_CHR      'c'
-             #define _C_UCHR     'C'
-             #define _C_SHT      's'
-             #define _C_USHT     'S'
-             #define _C_INT      'i'
-             #define _C_UINT     'I'
-             #define _C_LNG      'l'
-             #define _C_ULNG     'L'
-             #define _C_LNG_LNG  'q'
-             #define _C_ULNG_LNG 'Q'
-             #define _C_FLT      'f'
-             #define _C_DBL      'd'
-             #define _C_BFLD     'b'
-             #define _C_BOOL     'B'
-             #define _C_VOID     'v'
-             #define _C_UNDEF    '?'
-             #define _C_PTR      '^'
-             #define _C_CHARPTR  '*'
-             #define _C_ATOM     '%'
-             #define _C_ARY_B    '['
-             #define _C_ARY_E    ']'
-             #define _C_UNION_B  '('
-             #define _C_UNION_E  ')'
-             #define _C_STRUCT_B '{'
-             #define _C_STRUCT_E '}'
-             #define _C_VECTOR   '!'
-             #define _C_CONST    'r'
-             */
-            switch (argType[0])
-            {
+            }
+            
+            switch (argType[0]) {
                 case _C_ID:
                 case _C_CLASS:
                 {
-                    id argument = va_arg(argumentList, id);
-                    [invocation setArgument:&argument atIndex:arg_index];
+                    id obj = va_arg(argumentList, id);
+                    [log appendFormat:@"%ld=%@%p&",arg_index,NSStringFromClass([obj class]),obj];
+                    [invocation setArgument:&obj atIndex:arg_index];
                     break;
                 }
                 case _C_SEL:
                 {
                     SEL s = va_arg(argumentList, SEL);
+                    [log appendFormat:@"%ld=%@&",arg_index,NSStringFromSelector(s)];
                     [invocation setArgument:&s atIndex:arg_index];
                     break;
                 }
@@ -172,36 +209,42 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                 case _C_INT:
                 {
                     int value = va_arg(argumentList, int);
+                    [log appendFormat:@"%ld=%i&",arg_index,value];
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_UINT:
                 {
                     unsigned int value = va_arg(argumentList, unsigned int);
+                    [log appendFormat:@"%ld=%u&",arg_index,value];
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_LNG:
                 {
                     long value = va_arg(argumentList, long);
+                    [log appendFormat:@"%ld=%ld&",arg_index,value];
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_ULNG:
                 {
                     unsigned long value = va_arg(argumentList, unsigned long);
+                    [log appendFormat:@"%ld=%lu&",arg_index,value];
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_LNG_LNG:
                 {
                     long long value = va_arg(argumentList, long long);
+                    [log appendFormat:@"%ld=%lld&",arg_index,value];
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_ULNG_LNG:
                 {
                     unsigned long long value = va_arg(argumentList, unsigned long long);
+                    [log appendFormat:@"%ld=%llu&",arg_index,value];
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
@@ -209,12 +252,14 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                 case _C_DBL:
                 {
                     double value = va_arg(argumentList, double);
+                    [log appendFormat:@"%ld=%f&",arg_index,value];
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_PTR:
                 {
                     void *value = va_arg(argumentList, void *);
+                    [log appendFormat:@"%ld=%p&",arg_index,value];
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
@@ -223,17 +268,22 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                     NSUInteger size = 0;
                     NSGetSizeAndAlignment(argType, &size, NULL);
                     NSUInteger alignof_size = ssn_alignof_type_size(size);
+                    char *point = NULL;
 #if (__GNUC__ > 2)
                     char *p_area = argumentList->reg_save_area;
                     p_area += argumentList->gp_offset;
                     
+                    point = p_area;
                     [invocation setArgument:p_area atIndex:arg_index];
                     
                     argumentList->gp_offset += alignof_size;
 #else
+                    point = argumentList;
                     [invocation setArgument:argumentList atIndex:arg_index];
                     argumentList += alignof_size;
 #endif
+                    char struct_name[250] = {'\0'};
+                    char *name_point = struct_name;
                     const char *type_point = &(argType[1]);
                     while (*type_point != _C_STRUCT_E) {			// Skip "<name>=" stuff.
                         char c = *type_point++;
@@ -242,8 +292,12 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                             break;
                         }
                         
-                        //拷贝类型，用于日志
+                        *name_point = c;
+                        name_point++;
                     }
+                    
+                    [log appendFormat:@"%ld={%s:%p}&",arg_index,struct_name,point];
+                    
                     break;
                 }
                     
@@ -251,18 +305,23 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                     NSUInteger size = 0;
                     NSGetSizeAndAlignment(argType, &size, NULL);
                     NSUInteger alignof_size = ssn_alignof_type_size(size);
+                    
+                    char *point = NULL;
 #if (__GNUC__ > 2)
                     char *p_area = argumentList->reg_save_area;
                     p_area += argumentList->gp_offset;
                     
+                    point = p_area;
                     [invocation setArgument:p_area atIndex:arg_index];
                     
                     argumentList->gp_offset += alignof_size;
 #else
+                    point = argumentList;
                     [invocation setArgument:argumentList atIndex:arg_index];
                     argumentList += alignof_size;
 #endif
-                    
+                    char struct_name[250] = {'\0'};
+                    char *name_point = struct_name;
                     const char *type_point = &(argType[1]);
                     while (*type_point != _C_STRUCT_E) {			// Skip "<name>=" stuff.
                         char c = *type_point++;
@@ -272,23 +331,34 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                         }
                         
                         //拷贝类型，用于日志
+                        *name_point = c;
+                        name_point++;
                     }
+                    
+                    [log appendFormat:@"%ld={%s:%p}&",arg_index,struct_name,point];
+                    
                     break;
                 }
                 default:{
                     NSUInteger size = 0;
                     NSGetSizeAndAlignment(argType, &size, NULL);
                     NSUInteger alignof_size = ssn_alignof_type_size(size);
+                    
+                    char *point = NULL;
 #if (__GNUC__ > 2)
                     char *p_area = argumentList->reg_save_area;
                     p_area += argumentList->gp_offset;
                     
+                    point = p_area;
                     [invocation setArgument:p_area atIndex:arg_index];
                     
                     argumentList->gp_offset += alignof_size;
 #else
+                    point = argumentList;
                     [invocation setArgument:argumentList atIndex:arg_index];
                     argumentList += alignof_size;
+                    
+                    [log appendFormat:@"%ld={%p}&",arg_index,point];
 #endif
                 }break;
                     
@@ -296,10 +366,49 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
             
             arg_index++;
         }
-        
     }
     
     return invocation;
+}
+
+//跟踪记录实现日志函数
+void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const long long t_cost, NSString *param_log)
+{
+    static dispatch_queue_t log_queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        log_queue = dispatch_queue_create("ssn_log_queue", DISPATCH_QUEUE_SERIAL);
+    });
+    
+    dispatch_async(log_queue, ^{
+        @autoreleasepool {
+            NSMutableString *logString = [NSMutableString string];
+            //收集系统参数
+            NSString *presetlog = ssn_get_save_preset(nil, nil);
+            if (presetlog) {
+                [logString appendString:presetlog];
+            }
+            
+            //取参数
+            NSArray *keys = ssn_get_save_class_method_collect_ivar([self class], _cmd, nil, YES);
+            for (NSString *key in keys) {
+                id v = [self valueForKey:key];
+                [logString appendFormat:@"%@=%@&",key,v];
+            }
+            
+            //参数直接key设定为index（解析分析时，只需要从后往前依次取数字key直到取到0为止）
+            [logString appendFormat:@"0=%@:%p&1=%@&",NSStringFromClass([self class]),self,NSStringFromSelector(_cmd)];
+            
+            if ([param_log length]) {
+                [logString appendString:param_log];
+            }
+            
+            //call_at与call_cost对应的key被简写
+            [logString appendFormat:@"c_a=%lld&c_c=%lld",t_callat,t_cost];
+            
+            ssn_log("\nssn_track_log【%s】\n",[logString UTF8String]);
+        }
+    });
 }
 
 //所有跟踪消息转发
@@ -310,41 +419,35 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     
     NSMethodSignature *methodSignature = [[self class] instanceMethodSignatureForSelector:rep_sel];
     
+    NSMutableString *paramlog = [NSMutableString string];
+    
     va_list argumentList;
     va_start(argumentList, _cmd);
-    NSInvocation *rep_invocation = ssn_objc_invocation(self, methodSignature, rep_sel, argumentList);
+    NSInvocation *rep_invocation = ssn_objc_invocation_v2(self, methodSignature, rep_sel, argumentList, paramlog);
     va_end(argumentList);
-
+    
     struct timeval t_b_tv,t_e_tv;
     gettimeofday(&t_b_tv, NULL);
     [rep_invocation invoke];
     gettimeofday(&t_e_tv, NULL);
+    long long t_bengin = t_b_tv.tv_sec * 1000000ll + t_b_tv.tv_usec;
     long long t_cost = (t_e_tv.tv_sec - t_b_tv.tv_sec) * 1000000ll + (t_e_tv.tv_usec - t_b_tv.tv_usec);
-    ssn_log("\n%s call -%s cost = %lld(ms)\n",[NSStringFromClass([self class]) UTF8String],[NSStringFromSelector(_cmd) UTF8String],t_cost);
     
+    //返回值
+    id ret_val  = nil;
+    NSUInteger ret_size = [methodSignature methodReturnLength];
+    if(ret_size > 0) {
+        [rep_invocation getReturnValue:&ret_val];
+        [paramlog appendFormat:@"result=%@&",ret_val];
+    }
     
-//    NSValue    * ret_val  = nil;
-//    NSUInteger   ret_size = [methodSignature methodReturnLength];
-//    
-//    if(ret_size > 0)
-//    {
-//        
-//        void * ret_buffer = malloc( ret_size );
-//        
-//        [rep_invocation getReturnValue:ret_buffer];
-//        
-//        ret_val = [NSValue valueWithBytes:ret_buffer objCType:[methodSignature methodReturnType]];
-//        
-//        free(ret_buffer);
-//    }
-//    
-//    return ret_val;
+    //记录跟踪
+    ssn_log_track_method(self,_cmd,t_bengin,t_cost,paramlog);
     
-    return nil;
+    return ret_val;
 }
 
 @implementation NSObject (SSNTracking)
-
 
 /**
  *  设置需要采集的预置信息，将在每次打点发生时去用
@@ -352,8 +455,9 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
  *  @param  value       预置参数值
  *  @param  key         预置参数键值
  */
-+ (void)setPresetValue:(NSString *)value forKey:(NSString *)key
++ (void)ssn_savePresetValue:(NSString *)value forKey:(NSString *)key
 {
+    ssn_get_save_preset(value, key);
 }
 
 
@@ -389,15 +493,15 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     NSAssert(method, @"请确保要跟踪的类能响应此方法");
     
     //2、记录需要采集的参数
-    //TODO : 
+    if (ivarList) {
+        ssn_get_save_class_method_collect_ivar(clazz, selector, ivarList, NO);
+    }
     
     ssn_log("\n ssn tracking class:%s selector:%s\n",[NSStringFromClass(clazz) UTF8String],[NSStringFromSelector(selector) UTF8String]);
     
     //3、再为此类添加转发方法
     SEL forwarding_sel = NSSelectorFromString(ssn_objc_forwarding_method_name(selector));
-    
     const char *method_type = method_getTypeEncoding(method);
-    
     if (class_addMethod(clazz, forwarding_sel, method_getImplementation(method), method_type))
     {
         //
@@ -415,7 +519,5 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     }
     
 }
-
-
 
 @end

@@ -17,7 +17,7 @@
  *  @param  value       预置参数值
  *  @param  key         预置参数键值
  */
-+ (void)setPresetValue:(NSString *)value forKey:(NSString *)key;
++ (void)ssn_savePresetValue:(NSString *)value forKey:(NSString *)key;
 
 
 /**

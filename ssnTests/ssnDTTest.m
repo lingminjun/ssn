@@ -42,7 +42,13 @@ typedef struct value_list_ {
 @end
 
 
-@interface DTDeriveObject : DTBaseObject
+@interface DTDeriveObject : DTBaseObject {
+    NSString *myname;
+    int length;
+}
+
+@property (nonatomic,strong) NSString *myname;
+@property (nonatomic) int length;
 
 @end
 
@@ -94,9 +100,10 @@ typedef struct value_list_ {
     NSLog(@"struct{%c,%d}====%ld",one.aaa,one.bbb,two);
 }
 
-- (void)twoDoubleParam:(double)one two:(double)two
+- (NSString *)twoDoubleParam:(double)one two:(double)two
 {
     NSLog(@"%f===%f",one,two);
+    return [NSString stringWithFormat:@"%f===%f",one,two];
 }
 
 - (id)variableParam:(id)obj, ... NS_REQUIRES_NIL_TERMINATION
@@ -241,6 +248,9 @@ typedef struct value_list_ {
  */
 
 - (void)testExample {
+    
+    [NSObject ssn_savePresetValue:@"22222" forKey:@"id"];
+    [NSObject ssn_savePresetValue:@"ios" forKey:@"ut"];
    
     [NSObject ssn_tracking_class:[DTDeriveObject class] selector:@selector(oneObjParam:)];
     [NSObject ssn_tracking_class:[DTDeriveObject class] selector:@selector(oneIntParam:)];
@@ -251,9 +261,11 @@ typedef struct value_list_ {
     [NSObject ssn_tracking_class:[DTDeriveObject class] selector:@selector(twoIntParam:two:)];
     [NSObject ssn_tracking_class:[DTDeriveObject class] selector:@selector(twoDoubleParam:two:)];
     [NSObject ssn_tracking_class:[DTDeriveObject class] selector:@selector(twoCharParam:two:)];
-    [NSObject ssn_tracking_class:[DTDeriveObject class] selector:@selector(twoStructParam:two:)];
+    [NSObject ssn_tracking_class:[DTDeriveObject class] selector:@selector(twoStructParam:two:) collectIvarList:@[@"myname",@"length"]];
     
     DTDeriveObject *obj = [[DTDeriveObject alloc] init];
+    obj.myname = @"xxxxx";
+    obj.length = 120;
     
     [obj oneObjParam:@"abcdefg"];
     [obj oneIntParam:test_number];
@@ -264,7 +276,8 @@ typedef struct value_list_ {
     [obj twoIntParam:test_number two:test_number];
     [obj twoObjParam:@"12345" two:@"abcdefg"];
     [obj twoCharParam:(char)(test_number) two:(char)(test_number)];
-    [obj twoDoubleParam:1.010101 two:1.010101];
+    NSString *str = [obj twoDoubleParam:1.010101 two:1.010101];
+    NSLog(@"<<<%@>>>",str);
     
     value_list va_lst = {'*',test_number};
     [obj twoStructParam:va_lst two:test_number];
