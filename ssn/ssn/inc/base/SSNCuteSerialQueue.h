@@ -21,4 +21,7 @@
 
 - (void)sync:(dispatch_block_t)block;
 
+//工程共享的serialQueue
++ (instancetype)defaultSerialQueue;
+
 @end

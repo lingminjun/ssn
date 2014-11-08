@@ -18,7 +18,7 @@ typedef id (^SSNConstructor)(id key, NSDictionary *userInfo);//通用构造器�
 - (instancetype)initWithConstructor:(SSNConstructor)constructor;
 
 - (void)setCountLimit:(NSUInteger)lim; // lim设置建议要符合构造器产生实例个数峰值
-- (NSUInteger)countLimit;
+- (NSUInteger)countLimit;//限制不是精准的，凡是没有释放的对象都将被记录
 
 - (id)objectForKey:(id<NSCopying>)key;
 - (id)objectForKey:(id<NSCopying>)key userInfo:(NSDictionary *)userInfo;

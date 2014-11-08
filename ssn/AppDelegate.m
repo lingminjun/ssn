@@ -33,6 +33,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     //跟踪用户行为
+    [NSObject ssn_tracking_class:[UIViewController class] selector:@selector(viewDidLoad)];
     [NSObject ssn_tracking_class:[UIViewController class] selector:@selector(viewWillAppear:)];
 
     [self.ssn_router setScheme:@"app"];

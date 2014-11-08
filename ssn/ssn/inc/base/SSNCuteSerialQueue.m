@@ -9,10 +9,6 @@
 #import "SSNCuteSerialQueue.h"
 #import <pthread.h>
 
-// static NSMutableArray *_asyncBlocks;
-// static dispatch_queue_t _queue;
-// static pthread_mutex_t _mutex;
-// static BOOL _hasAsynBlocks;
 
 @interface SSNCuteSerialQueue ()
 {
@@ -134,6 +130,16 @@
 
         pthread_mutex_unlock(&_mutex);
     }
+}
+
+//工程共享的serialQueue
++ (instancetype)defaultSerialQueue {
+    static SSNCuteSerialQueue *_default_queue = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _default_queue = [[SSNCuteSerialQueue alloc] initWithName:@"shared_default_queue"];
+    });
+    return _default_queue;
 }
 
 @end
