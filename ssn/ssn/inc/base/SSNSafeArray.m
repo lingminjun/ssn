@@ -404,7 +404,7 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
     
     unsigned long arr_count = [_arr count];
     
-    NSInteger count = 0;
+    NSUInteger count = 0;
     if (arr_count <= state->state) //数组在遍历过程中发生改变
     {
         //if (arr_count > state->state) { NSLog(@"SSNSafeArray:%p在遍历过程中发生了改变！",self); }
