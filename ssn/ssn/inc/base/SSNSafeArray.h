@@ -61,7 +61,6 @@
 - (void)replaceObjectsInRange:(NSRange)range withObjectsFromArray:(NSArray *)otherArray range:(NSRange)otherRange;
 - (void)replaceObjectsInRange:(NSRange)range withObjectsFromArray:(NSArray *)otherArray;
 - (void)setArray:(NSArray *)otherArray;
-- (NSArray *)array;
 
 - (void)insertObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes;
 - (void)removeObjectsAtIndexes:(NSIndexSet *)indexes;
@@ -79,9 +78,34 @@
 - (void)enumerateObjectsWithOptions:(NSEnumerationOptions)opts usingBlock:(void (^)(id obj, NSUInteger idx, BOOL *stop))block;
 - (void)enumerateObjectsAtIndexes:(NSIndexSet *)s options:(NSEnumerationOptions)opts usingBlock:(void (^)(id obj, NSUInteger idx, BOOL *stop))block;
 
+#pragma mark filter
+- (NSIndexSet *)indexesOfObjectsPassingTest:(BOOL (^)(id obj, NSUInteger idx, BOOL *stop))predicate;
+- (NSIndexSet *)indexesOfObjectsWithOptions:(NSEnumerationOptions)opts passingTest:(BOOL (^)(id obj, NSUInteger idx, BOOL *stop))predicate;
+- (NSIndexSet *)indexesOfObjectsAtIndexes:(NSIndexSet *)s options:(NSEnumerationOptions)opts passingTest:(BOOL (^)(id obj, NSUInteger idx, BOOL *stop))predicate;
+
 #pragma mark factory
 + (instancetype)array;
 + (instancetype)arrayWithCapacity:(NSUInteger)numItems;
 + (instancetype)arrayWithArray:(NSArray *)array;
+
+
+#pragma mark expand api
+/**
+ * copy new array
+ */
+- (NSArray *)array;
+
+/**
+ *  添加数组中不包含对象
+ *  如果你有类似下面的逻辑：
+ *  if (NO == [array containsObject:obj]) {
+ *      [array addObject:obj]
+ *  }
+ *  又需要确保加入到array中的元素不会重复，建议你使用-addObjectDoesNotContain:方法替换，此操作是原子行为，但是性能有所降低
+ *
+ *  @param  anObject，可能要添加的对象
+ *  @return 返回yes表示成功加入对象，返回no表示早已包含此对象
+ */
+- (BOOL)addObjectDoesNotContain:(id)anObject;
 
 @end

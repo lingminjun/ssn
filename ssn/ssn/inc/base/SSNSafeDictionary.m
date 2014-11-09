@@ -210,6 +210,23 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
 }
 
 
+#pragma mark filter
+- (NSSet *)keysOfEntriesPassingTest:(BOOL (^)(id key, id obj, BOOL *stop))predicate {
+    ssn_read_lock
+    NSSet *set =[_dic keysOfEntriesPassingTest:predicate];
+    ssn_unlock
+    return set;
+}
+
+
+- (NSSet *)keysOfEntriesWithOptions:(NSEnumerationOptions)opts passingTest:(BOOL (^)(id key, id obj, BOOL *stop))predicate {
+    ssn_read_lock
+    NSSet *set =[_dic keysOfEntriesWithOptions:opts passingTest:predicate];
+    ssn_unlock
+    return set;
+}
+
+
 #pragma mark factory
 + (instancetype)dictionary {
     return [[[self class] alloc] init];
@@ -238,6 +255,8 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
         [_cache setObject:objs forKey:cache_key];
     }
     
+    [objs removeAllObjects];//释放上一批缓存数据
+    
     ssn_read_lock
     
     NSUInteger dic_count = [_dic count];
@@ -264,7 +283,6 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
             
             [_dic getObjects:NULL andKeys:keys];//
             
-            //0,1,2,3,4,5,6,7,8,9
             for (unsigned long i = 0, p = state->state; i < count; i++, p++) {
                 buffer[i] = keys[p];
                 
@@ -283,5 +301,22 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
     
     return count;
 }
+
+
+#pragma mark KVC
+- (id)valueForKey:(NSString *)key {
+    ssn_read_lock
+    id obj =[_dic valueForKey:key];
+    ssn_unlock
+    return obj;
+}
+
+
+- (void)setValue:(id)value forKey:(NSString *)key {
+    ssn_write_lock
+    [_dic setValue:value forKey:key];
+    ssn_unlock
+}
+
 
 @end

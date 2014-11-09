@@ -22,28 +22,28 @@
 int err = pthread_rwlock_rdlock(&_rwlock);\
 if (EDEADLK == err)\
 {\
-[NSException raise:@"SSNSafeDictionary" format: @"failed to dead read lock rwlock!"];\
+[NSException raise:@"SSNSafeArray" format: @"failed to dead read lock rwlock!"];\
 }\
 else if (err != 0)\
 {\
-[NSException raise:@"SSNSafeDictionary" format: @"failed to read lock rwlock!"];\
+[NSException raise:@"SSNSafeArray" format: @"failed to read lock rwlock!"];\
 }\
 
 #define	ssn_write_lock \
 int err = pthread_rwlock_wrlock(&_rwlock);\
 if (EDEADLK == err)\
 {\
-[NSException raise:@"SSNSafeDictionary" format: @"failed to dead write lock rwlock!"];\
+[NSException raise:@"SSNSafeArray" format: @"failed to dead write lock rwlock!"];\
 }\
 else if (err != 0)\
 {\
-[NSException raise:@"SSNSafeDictionary" format: @"failed to write lock rwlock!"];\
+[NSException raise:@"SSNSafeArray" format: @"failed to write lock rwlock!"];\
 }\
 
 #define	ssn_unlock  \
 if (0 != pthread_rwlock_unlock(&_rwlock))\
 {\
-[NSException raise:@"SSNSafeDictionary" format: @"failed to unlock rwlock"];\
+[NSException raise:@"SSNSafeArray" format: @"failed to unlock rwlock"];\
 }\
 
 
@@ -372,6 +372,32 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
     [_arr enumerateObjectsAtIndexes:s options:opts usingBlock:block];
 }
 
+
+#pragma mark filter
+- (NSIndexSet *)indexesOfObjectsPassingTest:(BOOL (^)(id obj, NSUInteger idx, BOOL *stop))predicate {
+    ssn_read_lock
+    NSIndexSet *set = [_arr indexesOfObjectsPassingTest:predicate];
+    ssn_unlock
+    return set;
+}
+
+
+- (NSIndexSet *)indexesOfObjectsWithOptions:(NSEnumerationOptions)opts passingTest:(BOOL (^)(id obj, NSUInteger idx, BOOL *stop))predicate {
+    ssn_read_lock
+    NSIndexSet *set = [_arr indexesOfObjectsWithOptions:opts passingTest:predicate];
+    ssn_unlock
+    return set;
+}
+
+
+- (NSIndexSet *)indexesOfObjectsAtIndexes:(NSIndexSet *)s options:(NSEnumerationOptions)opts passingTest:(BOOL (^)(id obj, NSUInteger idx, BOOL *stop))predicate {
+    ssn_read_lock
+    NSIndexSet *set = [_arr indexesOfObjectsAtIndexes:s options:opts passingTest:predicate];
+    ssn_unlock
+    return set;
+}
+
+
 #pragma mark factory
 + (instancetype)array {
     return [[[self class] alloc] init];
@@ -388,6 +414,18 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
 }
 
 
+#pragma mark expand api
+- (BOOL)addObjectDoesNotContain:(id)anObject {
+    ssn_write_lock
+    BOOL notContain = ![_arr containsObject:anObject];
+    if (notContain) {
+        [_arr addObject:anObject];
+    }
+    ssn_unlock
+    return notContain;
+}
+
+
 #pragma mark NSFastEnumeration
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id __unsafe_unretained [])buffer count:(NSUInteger)len {
     
@@ -399,6 +437,8 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
         objs = [[NSMutableArray alloc] init];
         [_cache setObject:objs forKey:cache_key];
     }
+    
+    [objs removeAllObjects];//释放上一批数据
     
     ssn_read_lock
     
@@ -438,5 +478,21 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
     
     return count;
 }
+
+#pragma mark KVC
+- (id)valueForKey:(NSString *)key {
+    ssn_read_lock
+    id obj =[_arr valueForKey:key];
+    ssn_unlock
+    return obj;
+}
+
+
+- (void)setValue:(id)value forKey:(NSString *)key {
+    ssn_write_lock
+    [_arr setValue:value forKey:key];
+    ssn_unlock
+}
+
 
 @end

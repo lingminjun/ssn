@@ -44,15 +44,23 @@
 - (void)setDictionary:(NSDictionary *)otherDictionary;
 - (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key;
 
-- (NSDictionary *)dictionary;
-
 #pragma mark enumerate
 - (void)enumerateKeysAndObjectsUsingBlock:(void (^)(id key, id obj, BOOL *stop))block;
 - (void)enumerateKeysAndObjectsWithOptions:(NSEnumerationOptions)opts usingBlock:(void (^)(id key, id obj, BOOL *stop))block;
+
+#pragma mark filter
+- (NSSet *)keysOfEntriesPassingTest:(BOOL (^)(id key, id obj, BOOL *stop))predicate;
+- (NSSet *)keysOfEntriesWithOptions:(NSEnumerationOptions)opts passingTest:(BOOL (^)(id key, id obj, BOOL *stop))predicate;
 
 #pragma mark factory
 + (instancetype)dictionary;
 + (instancetype)dictionaryWithCapacity:(NSUInteger)numItems;
 + (instancetype)dictionaryWithDictionary:(NSDictionary *)otherDictionary;
+
+#pragma mark expand api
+/**
+ * copy to dictionary
+ */
+- (NSDictionary *)dictionary;
 
 @end
