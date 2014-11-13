@@ -61,14 +61,14 @@ class inet
   public:
     /**
      construction
-     the host may be a domain name (e.g. "deusty.com") or an IP address string (e.g. "192.168.0.2").
+     the host may be a domain name (e.g. "soulshan.com") or an IP address string (e.g. "192.168.0.2").
      */
     inet();
     inet(const std::string &host, const unsigned short port = 443);
 
     /**
      set the host and port,not change connecting state,Until finally the connect access to take effect.
-     the host may be a domain name (e.g. "deusty.com") or an IP address string (e.g. "192.168.0.2").
+     the host may be a domain name (e.g. "soulshan.com") or an IP address string (e.g. "192.168.0.2").
      */
     void set_server_address(const std::string &host, const unsigned short port = 443)
     {
@@ -190,7 +190,7 @@ class inet
     unsigned short _port;
     pthread_t _thread;
     recursivelock _lock;
-    std::string _host; // The host may be a domain name (e.g. "deusty.com") or an IP address string (e.g.
+    std::string _host; // The host may be a domain name (e.g. "soulshan.com") or an IP address string (e.g.
                        // "192.168.0.2").
 
     void *_context;

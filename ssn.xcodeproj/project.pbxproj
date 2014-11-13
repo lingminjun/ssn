@@ -29,6 +29,7 @@
 		538E384719986A3B0061692E /* DMContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384619986A3B0061692E /* DMContactViewController.m */; };
 		538E384A19986A560061692E /* DMSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384919986A560061692E /* DMSessionViewController.m */; };
 		538E384D19986A700061692E /* DMSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384C19986A700061692E /* DMSettingViewController.m */; };
+		53BB50C01A1441F50070B67D /* ssn_json_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BB50BF1A1441F50070B67D /* ssn_json_test.m */; };
 		53D12DBE19B623B9004D09F4 /* SSNDBTable+Factory.h in Sources */ = {isa = PBXBuildFile; fileRef = 53D78577199F2B29004D9D62 /* SSNDBTable+Factory.h */; };
 		53D12DBF19B623B9004D09F4 /* SSNDBTable+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */; };
 		53D163E4191A629C00AD4C81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E3191A629C00AD4C81 /* Foundation.framework */; };
@@ -143,6 +144,8 @@
 		53DBD62A19EA642900728F96 /* NSObject+SSNTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FAA61819E8F5F3006EBBE3 /* NSObject+SSNTracking.m */; };
 		53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */; };
 		53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC48194B4BD100BA4F58 /* NiceQueue.m */; };
+		53DFE9C01A104C3E00944E51 /* SSNJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DFE9BF1A104C3E00944E51 /* SSNJson.m */; };
+		53DFE9C11A104C3E00944E51 /* SSNJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DFE9BF1A104C3E00944E51 /* SSNJson.m */; };
 		53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E512D41998F81C002925E6 /* SSNRigidCache.m */; };
 		53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB166191FBB6000BEB29D /* NSString+SSN.m */; };
 		53ECB16D191FBB6000BEB29D /* SSNMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB169191FBB6000BEB29D /* SSNMeta.m */; };
@@ -210,6 +213,7 @@
 		538E384919986A560061692E /* DMSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSessionViewController.m; sourceTree = "<group>"; };
 		538E384B19986A700061692E /* DMSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSettingViewController.h; sourceTree = "<group>"; };
 		538E384C19986A700061692E /* DMSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DMSettingViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		53BB50BF1A1441F50070B67D /* ssn_json_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_json_test.m; sourceTree = "<group>"; };
 		53D163E0191A629C00AD4C81 /* ssn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ssn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D163E3191A629C00AD4C81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		53D163E5191A629C00AD4C81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -263,6 +267,8 @@
 		53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNNavigationController.m; sourceTree = "<group>"; };
 		53DDBC47194B4BD100BA4F58 /* NiceQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NiceQueue.h; sourceTree = "<group>"; };
 		53DDBC48194B4BD100BA4F58 /* NiceQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NiceQueue.m; sourceTree = "<group>"; };
+		53DFE9BE1A104C3E00944E51 /* SSNJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNJson.h; sourceTree = "<group>"; };
+		53DFE9BF1A104C3E00944E51 /* SSNJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNJson.m; sourceTree = "<group>"; };
 		53E512D31998F81C002925E6 /* SSNRigidCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRigidCache.h; sourceTree = "<group>"; };
 		53E512D41998F81C002925E6 /* SSNRigidCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRigidCache.m; sourceTree = "<group>"; };
 		53ECB15E191FBB6000BEB29D /* NSString+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSN.h"; sourceTree = "<group>"; };
@@ -523,6 +529,7 @@
 				53D6626A1A0BC50D008D2296 /* ssnDictionaryTest.m */,
 				53D898E61A0F12DE00CE63E0 /* ssn_safe_array_test.m */,
 				53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */,
+				53BB50BF1A1441F50070B67D /* ssn_json_test.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -564,9 +571,19 @@
 			path = ui;
 			sourceTree = "<group>";
 		};
+		53DFE9BD1A104BCE00944E51 /* jsoncode */ = {
+			isa = PBXGroup;
+			children = (
+				53DFE9BE1A104C3E00944E51 /* SSNJson.h */,
+				53DFE9BF1A104C3E00944E51 /* SSNJson.m */,
+			);
+			path = jsoncode;
+			sourceTree = "<group>";
+		};
 		53ECB15C191FBB6000BEB29D /* inc */ = {
 			isa = PBXGroup;
 			children = (
+				53DFE9BD1A104BCE00944E51 /* jsoncode */,
 				53B47F3E1A0632A800B33FC2 /* hosting */,
 				53DDBC3F194B4BB700BA4F58 /* ui */,
 				53ECB15D191FBB6000BEB29D /* base */,
@@ -810,6 +827,7 @@
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
 				533378B11986432800084428 /* SSNDBPool.m in Sources */,
 				538E3835199869430061692E /* DMTabViewController.m in Sources */,
+				53DFE9C01A104C3E00944E51 /* SSNJson.m in Sources */,
 				53D898E41A0E670C00CE63E0 /* SSNSafeSet.m in Sources */,
 				53512E2619A3959A00DACC42 /* lock.cpp in Sources */,
 			);
@@ -825,6 +843,7 @@
 				53DBD62A19EA642900728F96 /* NSObject+SSNTracking.m in Sources */,
 				53D12DBE19B623B9004D09F4 /* SSNDBTable+Factory.h in Sources */,
 				53D12DBF19B623B9004D09F4 /* SSNDBTable+Factory.m in Sources */,
+				53BB50C01A1441F50070B67D /* ssn_json_test.m in Sources */,
 				53D7D0BC19A8F40D0025A2E2 /* lock.cpp in Sources */,
 				53D7D0BD19A8F40D0025A2E2 /* lock.h in Sources */,
 				53D7D0BE19A8F40D0025A2E2 /* inet.cpp in Sources */,
@@ -834,6 +853,7 @@
 				53D898E91A0FA0C800CE63E0 /* ssn_safe_set_test.m in Sources */,
 				53D24635199C83B400EFDF29 /* DMTabViewController.h in Sources */,
 				53D24636199C83B400EFDF29 /* DMTabViewController.m in Sources */,
+				53DFE9C11A104C3E00944E51 /* SSNJson.m in Sources */,
 				53D24637199C83B400EFDF29 /* DMContactNavController.h in Sources */,
 				53D24638199C83B400EFDF29 /* DMContactNavController.m in Sources */,
 				53D24639199C83B400EFDF29 /* DMContactViewController.h in Sources */,

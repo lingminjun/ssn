@@ -32,7 +32,7 @@ typedef NS_ENUM(NSUInteger, SSNHostingTaskStatus) {
 @property (nonatomic,readonly) NSUInteger times;//当前次数
 
 /**
- *  通知切换到指定状态，
+ *  记录任务切换到指定某种状态，
  *      状态切换要求：
  *          SSNHostingTaskReady to SSNHostingTaskProcess|SSNHostingTaskFailure|SSNHostingTaskSuccess
  *          SSNHostingTaskProcess to SSNHostingTaskFailure|SSNHostingTaskSuccess
@@ -41,6 +41,6 @@ typedef NS_ENUM(NSUInteger, SSNHostingTaskStatus) {
  *  @param status 将要切换到的状态
  *  @return 本次切换状态操作是否成功
  */
-- (BOOL)noticeToStatus:(SSNHostingTaskStatus)status;
+- (BOOL)logTaskToStatus:(SSNHostingTaskStatus)status;
 
 @end

@@ -137,21 +137,6 @@ typedef SSNSafeArray TestArray;
     CFRunLoopRunInMode(kCFRunLoopDefaultMode, 3, false);
 }
 
-- (void)test_dic_getKeys
-{
-    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
-    for (int i = 0; i < 100; i++) {
-        NSString *key = [NSString stringWithFormat:@"%d", i];
-        [dic setObject:key forKey:key];
-    }
-    
-    id __unsafe_unretained *akeys = (id __unsafe_unretained *)malloc(100 * sizeof(id __unsafe_unretained));
-    //id __unsafe_unretained *values = (id __unsafe_unretained *)malloc(100 * sizeof(id __unsafe_unretained));
-    
-    [dic getObjects:NULL andKeys:akeys];
-    
-    CFRunLoopRunInMode(kCFRunLoopDefaultMode, 100, false);
-}
 
 
 - (void)test_dic_enum {
