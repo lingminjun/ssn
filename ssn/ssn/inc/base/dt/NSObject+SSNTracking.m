@@ -21,6 +21,37 @@
 
 #define ssn_alignof_type_size(t) (sizeof(int) * (int)((sizeof(t) + sizeof(int) - 1)/sizeof(int)))
 
+#if (__GNUC__ > 2)
+
+//重新定义va_list，因为va_list没有开放
+typedef struct {
+    unsigned int gp_offset;
+    unsigned int fp_offset;
+    void *overflow_arg_area;
+    void *reg_save_area;
+} ssn_va_list_t[1];
+
+typedef union {
+    va_list override;
+    ssn_va_list_t va;
+} ssn_va_list;
+
+#ifndef va_copy
+#define va_copy(dst, src)   memcpy(&(dst), &(src), sizeof(va_list))
+#endif
+
+#define ssn_va_arg(size, point) \
+    ssn_va_list var; va_copy(var.override, argumentList); /*先将数据拷贝到临时操作对象中*/\
+    point = var.va->reg_save_area; point += var.va->gp_offset; /*取出对应数据块*/\
+    var.va->gp_offset += (size); va_copy(argumentList, var.override);/*偏移修改并还原到原来数据*/
+
+#else
+
+#define ssn_va_arg(size, point) \
+    point = argumentList;argumentList += (size);/*本来就定义成一段数据*/
+
+#endif
+
 //转发消息名
 NSString *ssn_objc_forwarding_method_name(SEL selector)
 {
@@ -110,17 +141,11 @@ NSInvocation *ssn_objc_invocation_v1(id target, NSMethodSignature* signature, SE
             NSUInteger size = 0;
             NSGetSizeAndAlignment(type, &size, NULL);
             NSUInteger alignof_size = ssn_alignof_type_size(size);
-#if (__GNUC__ > 2)
-            char *p_area = argumentList->reg_save_area;
-            p_area += argumentList->gp_offset;
             
+            char *p_area = NULL;
+            ssn_va_arg(alignof_size,p_area);
             [invocation setArgument:p_area atIndex:index];
-            
-            argumentList->gp_offset += alignof_size;
-#else
-            [invocation setArgument:args atIndex:index];
-            args += alignof_size;
-#endif
+
         }
     }
     
@@ -168,7 +193,7 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
     [invocation setTarget:target];
     [invocation setSelector:selector];
     
-    NSInteger arg_index = 2;
+    long arg_index = 2;
     
     NSUInteger arg_num = [signature numberOfArguments];
     
@@ -190,7 +215,7 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                 case _C_CLASS:
                 {
                     id obj = va_arg(argumentList, id);
-                    [log appendFormat:@"%ld=%@%p&",arg_index,NSStringFromClass([obj class]),obj];
+                    [log appendFormat:@"%ld=%@:%p&",arg_index,NSStringFromClass([obj class]),obj];
                     [invocation setArgument:&obj atIndex:arg_index];
                     break;
                 }
@@ -268,20 +293,11 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                     NSUInteger size = 0;
                     NSGetSizeAndAlignment(argType, &size, NULL);
                     NSUInteger alignof_size = ssn_alignof_type_size(size);
+                    
                     char *point = NULL;
-#if (__GNUC__ > 2)
-                    char *p_area = argumentList->reg_save_area;
-                    p_area += argumentList->gp_offset;
-                    
-                    point = p_area;
-                    [invocation setArgument:p_area atIndex:arg_index];
-                    
-                    argumentList->gp_offset += alignof_size;
-#else
-                    point = argumentList;
-                    [invocation setArgument:argumentList atIndex:arg_index];
-                    argumentList += alignof_size;
-#endif
+                    ssn_va_arg(alignof_size, point);
+                    [invocation setArgument:point atIndex:arg_index];
+
                     char struct_name[250] = {'\0'};
                     char *name_point = struct_name;
                     const char *type_point = &(argType[1]);
@@ -307,19 +323,9 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                     NSUInteger alignof_size = ssn_alignof_type_size(size);
                     
                     char *point = NULL;
-#if (__GNUC__ > 2)
-                    char *p_area = argumentList->reg_save_area;
-                    p_area += argumentList->gp_offset;
+                    ssn_va_arg(alignof_size, point);
+                    [invocation setArgument:point atIndex:arg_index];
                     
-                    point = p_area;
-                    [invocation setArgument:p_area atIndex:arg_index];
-                    
-                    argumentList->gp_offset += alignof_size;
-#else
-                    point = argumentList;
-                    [invocation setArgument:argumentList atIndex:arg_index];
-                    argumentList += alignof_size;
-#endif
                     char struct_name[250] = {'\0'};
                     char *name_point = struct_name;
                     const char *type_point = &(argType[1]);
@@ -339,27 +345,17 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                     
                     break;
                 }
-                default:{
+                default: {
                     NSUInteger size = 0;
                     NSGetSizeAndAlignment(argType, &size, NULL);
                     NSUInteger alignof_size = ssn_alignof_type_size(size);
                     
                     char *point = NULL;
-#if (__GNUC__ > 2)
-                    char *p_area = argumentList->reg_save_area;
-                    p_area += argumentList->gp_offset;
-                    
-                    point = p_area;
-                    [invocation setArgument:p_area atIndex:arg_index];
-                    
-                    argumentList->gp_offset += alignof_size;
-#else
-                    point = argumentList;
-                    [invocation setArgument:argumentList atIndex:arg_index];
-                    argumentList += alignof_size;
+                    ssn_va_arg(alignof_size, point);
+                    [invocation setArgument:point atIndex:arg_index];
                     
                     [log appendFormat:@"%ld={%p}&",arg_index,point];
-#endif
+                    
                 }break;
                     
             }

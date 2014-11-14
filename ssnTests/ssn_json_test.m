@@ -10,12 +10,53 @@
 #import <XCTest/XCTest.h>
 #import "SSNJson.h"
 
-@interface SSNJsonModel : NSObject
+typedef struct __attribute__((packed)) {
+    BOOL flag;
+    int x;
+} Foo;
+
+typedef struct _MYTStruct {
+    int x;
+    BOOL flag;
+} MYTStruct;
+
+typedef struct {
+    float x, y, z;
+} ThreeFloats;
+
+@interface MyTTClass : NSObject {
+    ThreeFloats _three;
+}
+//- (void)setThreeFloats:(ThreeFloats)threeFloats;
+//- (ThreeFloats)threeFloats;
+
+@property (nonatomic) ThreeFloats threeFloats;
+
+@end
+
+@implementation MyTTClass
+@synthesize threeFloats = _three;
+//- (void)setThreeFloats:(ThreeFloats)threeFloats {
+//    _three = threeFloats;
+//}
+//- (ThreeFloats)threeFloats {
+//    return _three;
+//}
+
+@end
+
+@interface SSNJsonModel : NSObject{
+    MYTStruct _stt;
+    Foo _foo;
+}
 
 @property (nonatomic,strong) NSString *nickname;
 @property (nonatomic) NSUInteger age;
 
 //@property (nonatomic) char *tempname;
+@property (nonatomic) MYTStruct stt;
+@property (nonatomic) Foo foo;
+
 
 @property (nonatomic ) CGPoint point;
 @property (nonatomic ) CGRect rect;
@@ -25,7 +66,11 @@
 
 @implementation SSNJsonModel
 
+@synthesize stt = _stt;
+@synthesize foo = _foo;
+
 @end
+
 
 
 @interface ssn_json_test : XCTestCase
@@ -44,6 +89,17 @@
     [super tearDown];
 }
 
+- (void)test_encode_struct {
+    ThreeFloats tt = {1,2,3};
+    
+    MyTTClass *model = [[MyTTClass alloc] init];
+    model.threeFloats = tt;
+
+    id obj = [model valueForKey:@"threeFloats"];
+    
+    //NSLog(@"rect(point(%f,%f),size(%f,%f))",m.rect.origin.x,m.rect.origin.y,m.rect.size.width,m.rect.size.height);
+}
+
 - (void)test_encode_test {
     CGPoint p = CGPointMake(13, 11);
     CGRect r = CGRectMake(1, 2, 13, 11);
@@ -53,12 +109,18 @@
     model.age = 26;
     model.point = p;
     model.rect = r;
-    model.tempname = "xxxxxxx";
+    //model.tempname = "xxxxxxx";
     
-    NSLog(@"model tempname%s",model.tempname);
-    id value = nil;
-    BOOL rt = [model  validateValue:&value forKey:@"tempname" error:NULL];
-    NSLog(@"model tempname%@",value);
+    Foo fo = {YES,13};
+    model.foo = fo;
+    
+    MYTStruct st = {NO,11};
+    model.stt = st;
+    
+    NSLog(@"model foo %i,%i",model.foo.flag,model.foo.x);
+    NSLog(@"model stt %i,%i",model.stt.flag,model.stt.x);
+    id obj = [model valueForKey:@"foo"];
+    id obj1 = [model valueForKey:@"stt"];
     
     NSString *json = [model ssn_toJsonString];
     NSLog(@"[%@]",json);

@@ -346,22 +346,6 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ssn/ssn/inc/jsoncode/SSNJson.m"
-            timestampString = "437588881.323035"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "567"
-            endingLineNumber = "567"
-            landmarkName = "-encodeValue:forKey:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ssn/ssn/inc/jsoncode/SSNJson.m"
             timestampString = "437588976.971486"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
@@ -394,12 +378,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ssnTests/ssn_json_test.m"
-            timestampString = "437589446.131959"
+            timestampString = "437625775.236296"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "60"
-            endingLineNumber = "60"
-            landmarkName = "-test_encode_test"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "-test_encode_struct"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
