@@ -329,7 +329,7 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                     char struct_name[250] = {'\0'};
                     char *name_point = struct_name;
                     const char *type_point = &(argType[1]);
-                    while (*type_point != _C_STRUCT_E) {			// Skip "<name>=" stuff.
+                    while (*type_point != _C_UNION_E) {			// Skip "<name>=" stuff.
                         char c = *type_point++;
                         if (c == '=')
                         {
