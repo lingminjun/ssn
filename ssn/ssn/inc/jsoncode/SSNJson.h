@@ -29,7 +29,7 @@
 /**
  *  默认实现支持，NSObject 默认实现了一套encodeWithJsonCoder和decodeWithJsonCoder，并提供通用方法来获取最终值
  *  NSObject的默认实现是code所有属性，key为属性名
- *  注意：若属性值类型若能识别将转换成NSNumber，其中NSNumber为类对象('#')、方法(':')、指针('^')以及结构枚举共用体的复杂值类型将被当做bit encode
+ *  注意：若对象属性类型被KVC转换成NSNumber，其中NSNumber为类对象('#')、方法(':')、指针('^')以及结构枚举共用体的复杂值类型将被当做bit encode
  *       对象的属性读写都是采用KVC方式，若你的属性中定义了指针（'*'）、自定义结构（'{'）请务必重载-valueForUndefinedKey:方法
  */
 @interface NSObject (SSNJson) <SSNJsonCoding>
@@ -58,7 +58,7 @@
 /**
  *  encode对象类型
  *  @param objv 被encode的对象，如果你能明确encode的值或者对象类型，请务必调用对应类型的encode接口，否则无法正确decode出数据
- *          注意：objv尽量不要传入NSData，NSDate，String以及NSNumber或者NSValue对象基本类型，基本类型请使用下面的接口
+ *          注意：objv不要传入NSData，NSDate，String以及NSNumber或者NSValue对象基本类型，基本类型请使用下面对应的接口，如果随意使用，将无法正确解析
  *  @param key encode 值对应的key
  */
 - (void)encodeObject:(id)objv forKey:(NSString *)key;
@@ -69,6 +69,7 @@
 
 /**
  *  encode NSValue以及NSNumber复杂值类型
+ *          若要encode自定义struct，可以采用NSValue包装，如[NSValue valueWithBytes:&struct objCType:"struct_name=ifB"]
  *  @param value 本转入的NSValue或者NSNumber类型
  *  @param key encode 值对应的key
  */
@@ -81,14 +82,17 @@
 - (void)encodeFloat:(float)realv forKey:(NSString *)key;
 - (void)encodeDouble:(double)realv forKey:(NSString *)key;
 
+
 #pragma mark decode extend
 /**
- *  找到对应key的decode对象
+ *  找到对应key的decode出class实例对象
+ *  @param clazz 要解析出来的实例对象，因为json解析对象后一般不保留原对象类型，所以需要给定目标对象，可以传入nil
  *  @param key encode 值对应的key
  *  @return 返回对应encodeObject:forKey:进入的对象，
  *   注意，encode时传入基本类型将造成无法正常解析出对象
  */
-- (id)decodeObjectForKey:(NSString *)key;
+- (id)decodeObjectClass:(Class)clazz forKey:(NSString *)key;
+- (id)decodeObjectForKey:(NSString *)key;//尽量使用-decodeObjectClass:forKey:代替，明确返回类型
 
 - (NSData *)decodeDataForKey:(NSString *)key;
 - (NSDate *)decodeDateForKey:(NSString *)key;

@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  函数调用情况跟踪，只支持对象方法，且不支持可变参数
+ */
 @interface NSObject (SSNTracking)
 
 

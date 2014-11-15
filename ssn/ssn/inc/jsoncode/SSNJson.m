@@ -634,8 +634,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
     [[self rootDictionary] setValue:@(realv) forKey:key];
 }
 
-
-- (id)decodeObjectForKey:(NSString *)key {
+- (id)decodeObjectClass:(Class)clazz forKey:(NSString *)key {
     NSAssert([key length] > 0, @"SSNJsonCoder：传入正确参数");
     
     //step 1 从code中取出数据，检查是否为容器类型（字典或者数组，需要进一步处理）
@@ -645,6 +644,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
     if ([objv isKindOfClass:[NSDictionary class]] || [objv isKindOfClass:[NSArray class]])//是对象
     {
         SSNJsonCoder *coder = [SSNJsonCoder coderWithRootObject:objv];
+        coder.targetClass = clazz;
         id obj = [NSObject ssn_objectFromJsonCoder:coder];
         if (obj) {
             return obj;
@@ -653,8 +653,13 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
         //将其转换成可变返回，能适应跟多场景
         return [objv mutableCopy];
     }
-
+    
     return objv;
+}
+
+- (id)decodeObjectForKey:(NSString *)key {
+    NSAssert([key length] > 0, @"SSNJsonCoder：传入正确参数");
+    return [self decodeObjectClass:nil forKey:key];
 }
 
 - (NSData *)decodeDataForKey:(NSString *)key {
