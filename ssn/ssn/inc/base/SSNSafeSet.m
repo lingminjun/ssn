@@ -92,6 +92,10 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
     return self;
 }
 
+- (void)dealloc {
+    pthread_rwlock_destroy(&_rwlock);
+}
+
 
 #pragma mark factory
 + (instancetype)set {

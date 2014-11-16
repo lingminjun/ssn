@@ -110,6 +110,9 @@
 		53D24675199C83B500EFDF29 /* SSNModelPrivate.h in Sources */ = {isa = PBXBuildFile; fileRef = 5310FF4C19396ED500FF9896 /* SSNModelPrivate.h */; };
 		53D24676199C83EC00EFDF29 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
 		53D4FD82192F1B3B00A934E9 /* SSNDBTableManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D4FD81192F1B3B00A934E9 /* SSNDBTableManager.m */; };
+		53D576F71A187403007155B1 /* SSNQuantum.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D576F61A187403007155B1 /* SSNQuantum.m */; };
+		53D576F81A187403007155B1 /* SSNQuantum.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D576F61A187403007155B1 /* SSNQuantum.m */; };
+		53D576FA1A18EC3F007155B1 /* QuantaTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D576F91A18EC3F007155B1 /* QuantaTest.m */; };
 		53D6626B1A0BC50D008D2296 /* ssnDictionaryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D6626A1A0BC50D008D2296 /* ssnDictionaryTest.m */; };
 		53D6626C1A0BC521008D2296 /* SSNSafeDictionary.h in Sources */ = {isa = PBXBuildFile; fileRef = 53D6938E1A0BAC820051B6DF /* SSNSafeDictionary.h */; };
 		53D6626D1A0BC521008D2296 /* SSNSafeDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D6938F1A0BAC820051B6DF /* SSNSafeDictionary.m */; };
@@ -232,6 +235,9 @@
 		53D4FD7E192F1AE700A934E9 /* SSNDBTableManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBTableManager.h; sourceTree = "<group>"; };
 		53D4FD81192F1B3B00A934E9 /* SSNDBTableManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBTableManager.m; sourceTree = "<group>"; };
 		53D4FD86192FABA200A934E9 /* ssndb1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ssndb1.h; sourceTree = "<group>"; };
+		53D576F51A187403007155B1 /* SSNQuantum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNQuantum.h; sourceTree = "<group>"; };
+		53D576F61A187403007155B1 /* SSNQuantum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNQuantum.m; sourceTree = "<group>"; };
+		53D576F91A18EC3F007155B1 /* QuantaTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuantaTest.m; sourceTree = "<group>"; };
 		53D6626A1A0BC50D008D2296 /* ssnDictionaryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssnDictionaryTest.m; sourceTree = "<group>"; };
 		53D6626E1A0BC910008D2296 /* SSNHostingTaskTail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNHostingTaskTail.h; sourceTree = "<group>"; };
 		53D6626F1A0BC910008D2296 /* SSNHostingTaskTail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNHostingTaskTail.m; sourceTree = "<group>"; };
@@ -530,6 +536,7 @@
 				53D898E61A0F12DE00CE63E0 /* ssn_safe_array_test.m */,
 				53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */,
 				53BB50BF1A1441F50070B67D /* ssn_json_test.m */,
+				53D576F91A18EC3F007155B1 /* QuantaTest.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -550,6 +557,15 @@
 				53ECB164191FBB6000BEB29D /* src */,
 			);
 			path = ssn;
+			sourceTree = "<group>";
+		};
+		53D576F41A1870D3007155B1 /* quantum */ = {
+			isa = PBXGroup;
+			children = (
+				53D576F51A187403007155B1 /* SSNQuantum.h */,
+				53D576F61A187403007155B1 /* SSNQuantum.m */,
+			);
+			path = quantum;
 			sourceTree = "<group>";
 		};
 		53DDBC3F194B4BB700BA4F58 /* ui */ = {
@@ -583,6 +599,7 @@
 		53ECB15C191FBB6000BEB29D /* inc */ = {
 			isa = PBXGroup;
 			children = (
+				53D576F41A1870D3007155B1 /* quantum */,
 				53DFE9BD1A104BCE00944E51 /* jsoncode */,
 				53B47F3E1A0632A800B33FC2 /* hosting */,
 				53DDBC3F194B4BB700BA4F58 /* ui */,
@@ -787,6 +804,7 @@
 			files = (
 				53D688C019387BE7008D8DBE /* SSNModelManager.m in Sources */,
 				53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */,
+				53D576F71A187403007155B1 /* SSNQuantum.m in Sources */,
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
 				53ECB171191FBDE900BEB29D /* SSNDataBase.m in Sources */,
 				53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */,
@@ -878,6 +896,7 @@
 				53D2464B199C83B400EFDF29 /* NSURL+Router.m in Sources */,
 				53D898E71A0F12DE00CE63E0 /* ssn_safe_array_test.m in Sources */,
 				53D2464C199C83B400EFDF29 /* SSNVC+Router.h in Sources */,
+				53D576F81A187403007155B1 /* SSNQuantum.m in Sources */,
 				53D2464D199C83B400EFDF29 /* SSNVC+Router.m in Sources */,
 				53D2464E199C83B400EFDF29 /* SSNNavigationController.h in Sources */,
 				53D2464F199C83B400EFDF29 /* NSString+SSN.h in Sources */,
@@ -893,6 +912,7 @@
 				53D24658199C83B400EFDF29 /* SSNDB.m in Sources */,
 				53D24659199C83B400EFDF29 /* SSNDBPool.h in Sources */,
 				53D2465A199C83B400EFDF29 /* SSNDBPool.m in Sources */,
+				53D576FA1A18EC3F007155B1 /* QuantaTest.m in Sources */,
 				53D2465B199C83B400EFDF29 /* SSNDBTable.h in Sources */,
 				53D2465C199C83B400EFDF29 /* SSNDBTable.m in Sources */,
 				53D2465D199C83B400EFDF29 /* SSNDBColumn.h in Sources */,
