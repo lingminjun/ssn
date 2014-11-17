@@ -20,16 +20,12 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
     dispatch_source_t _timer;
 }
 
-@property (nonatomic) pthread_mutex_t mutex;
-
 @property (nonatomic) NSTimeInterval interval;//间隔时间
 @property (nonatomic) NSUInteger maxCount;//最大播发量
 
 @end
 
 @implementation SSNQuantum
-
-@synthesize mutex = _mutex;
 
 - (instancetype)initWithInterval:(NSTimeInterval)interval maxCount:(NSUInteger)count {
     self = [super init];
@@ -96,15 +92,7 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
         }
         else {
             _arr = t_lists;//记录放到block中数组
-            __weak typeof(self) w_self = self;
-            [self addTimer:_interval handler:^{
-                __strong typeof(w_self) self = w_self; if (!self) { return ; }
-                
-                NSArray *temArray = [NSArray arrayWithArray:t_lists];
-                
-                NSLog(@"time out express %@",temArray);
-                [self processorWithObjects:temArray];
-            }];
+            [self scheduledProcessorWithInterval:_interval objects:t_lists];//注入__block array，实际是可变的__block值
         }
     }
     
@@ -144,32 +132,29 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
 
 
 
-- (void)addTimer:(NSTimeInterval)timeOut handler:(dispatch_block_t)handler {
-    //pthread_mutex_lock(&_mutex);
+- (void)scheduledProcessorWithInterval:(NSTimeInterval)timeOut objects:(NSArray *)objects {
     
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
     dispatch_time_t del = dispatch_time(DISPATCH_TIME_NOW, timeOut * NSEC_PER_SEC);
     dispatch_source_set_timer(timer, del, timeOut * NSEC_PER_SEC, 1ull * NSEC_PER_USEC);
     __weak typeof(self) w_self = self;
     dispatch_source_set_event_handler(timer, ^{ __strong typeof(w_self) self = w_self; if (!self) {return ;}
-        handler();
+        NSLog(@"time out express %@",objects);
+        [self processorWithObjects:objects];
         [self cancelTimer];
     });
     _timer = timer;
+    
     dispatch_resume(timer);
     
-    //pthread_mutex_unlock(&_mutex);
 }
 
 - (void)cancelTimer {
-    //pthread_mutex_lock(&_mutex);
-    
+
     if (_timer) {
         dispatch_source_cancel(_timer);
         _timer = nil;
     }
-    
-    //pthread_mutex_unlock(&_mutex);
 }
 
 @end

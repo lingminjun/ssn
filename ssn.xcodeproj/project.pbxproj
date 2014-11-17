@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		53050E0B1A1A1BC600F5EA39 /* SSNPerformance.c in Sources */ = {isa = PBXBuildFile; fileRef = 53050E0A1A1A1BC600F5EA39 /* SSNPerformance.c */; };
+		53050E0C1A1A1BC600F5EA39 /* SSNPerformance.c in Sources */ = {isa = PBXBuildFile; fileRef = 53050E0A1A1A1BC600F5EA39 /* SSNPerformance.c */; };
 		53123F98191D25E10012A900 /* TestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53123F97191D25E10012A900 /* TestModel.m */; };
 		533378AE1986431200084428 /* SSNDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378AD1986431200084428 /* SSNDB.m */; };
 		533378B11986432800084428 /* SSNDBPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B01986432800084428 /* SSNDBPool.m */; };
@@ -171,6 +173,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		53050E091A1A1BC600F5EA39 /* SSNPerformance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNPerformance.h; sourceTree = "<group>"; };
+		53050E0A1A1A1BC600F5EA39 /* SSNPerformance.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SSNPerformance.c; sourceTree = "<group>"; };
 		5310FF4C19396ED500FF9896 /* SSNModelPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSNModelPrivate.h; sourceTree = "<group>"; };
 		53123F96191D25E10012A900 /* TestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestModel.h; sourceTree = "<group>"; };
 		53123F97191D25E10012A900 /* TestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
@@ -705,6 +709,8 @@
 			children = (
 				53FAA61719E8F5F3006EBBE3 /* NSObject+SSNTracking.h */,
 				53FAA61819E8F5F3006EBBE3 /* NSObject+SSNTracking.m */,
+				53050E091A1A1BC600F5EA39 /* SSNPerformance.h */,
+				53050E0A1A1A1BC600F5EA39 /* SSNPerformance.c */,
 			);
 			path = dt;
 			sourceTree = "<group>";
@@ -845,6 +851,7 @@
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
 				533378B11986432800084428 /* SSNDBPool.m in Sources */,
 				538E3835199869430061692E /* DMTabViewController.m in Sources */,
+				53050E0B1A1A1BC600F5EA39 /* SSNPerformance.c in Sources */,
 				53DFE9C01A104C3E00944E51 /* SSNJson.m in Sources */,
 				53D898E41A0E670C00CE63E0 /* SSNSafeSet.m in Sources */,
 				53512E2619A3959A00DACC42 /* lock.cpp in Sources */,
@@ -904,6 +911,7 @@
 				53D24651199C83B400EFDF29 /* SSNRigidCache.h in Sources */,
 				53D24652199C83B400EFDF29 /* SSNRigidCache.m in Sources */,
 				53D24653199C83B400EFDF29 /* SSNCuteSerialQueue.h in Sources */,
+				53050E0C1A1A1BC600F5EA39 /* SSNPerformance.c in Sources */,
 				53D24654199C83B400EFDF29 /* SSNCuteSerialQueue.m in Sources */,
 				53D24655199C83B400EFDF29 /* NSFileManager+SSN.h in Sources */,
 				53D24656199C83B400EFDF29 /* NSFileManager+SSN.m in Sources */,

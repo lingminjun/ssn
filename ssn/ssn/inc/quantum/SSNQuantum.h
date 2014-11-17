@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+FOUNDATION_EXTERN NSString *const SSNQuantumProcessorNotification;//delegate不设置情况将以通知形式
+FOUNDATION_EXTERN NSString *const SSNQuantumObjectsKey;
+
+
 @protocol SSNQuantumDelegate;
 
 @interface SSNQuantum : NSObject

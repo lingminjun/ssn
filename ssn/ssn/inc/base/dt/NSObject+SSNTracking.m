@@ -19,6 +19,8 @@
 
 #import "ssnbase.h"
 
+#import "SSNPerformance.h"
+
 #define ssn_alignof_type_size(t) (sizeof(int) * (int)((sizeof(t) + sizeof(int) - 1)/sizeof(int)))
 
 #if (__GNUC__ > 2)
@@ -51,6 +53,7 @@ typedef union {
     point = argumentList;argumentList += (size);/*本来就定义成一段数据*/
 
 #endif
+
 
 //转发消息名
 NSString *ssn_objc_forwarding_method_name(SEL selector)
@@ -368,7 +371,7 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
 }
 
 //跟踪记录实现日志函数
-void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const long long t_cost, NSString *param_log)
+void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const long long t_cost, double cpu_usage, NSString *param_log)
 {
     static dispatch_queue_t log_queue;
     static dispatch_once_t onceToken;
@@ -400,7 +403,7 @@ void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const lon
             }
             
             //call_at与call_cost对应的key被简写
-            [logString appendFormat:@"c_a=%lld&c_c=%lld",t_callat,t_cost];
+            [logString appendFormat:@"c_a=%lld&c_c=%lld&c_u=%f",t_callat,t_cost,cpu_usage];
             
             ssn_log("\nssn_track_log【%s】\n",[logString UTF8String]);
         }
@@ -425,6 +428,7 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     struct timeval t_b_tv,t_e_tv;
     gettimeofday(&t_b_tv, NULL);
     [rep_invocation invoke];
+    double cpu_usage = ssn_current_thread_cpu_usage();
     gettimeofday(&t_e_tv, NULL);
     long long t_bengin = t_b_tv.tv_sec * 1000000ll + t_b_tv.tv_usec;
     long long t_cost = (t_e_tv.tv_sec - t_b_tv.tv_sec) * 1000000ll + (t_e_tv.tv_usec - t_b_tv.tv_usec);
@@ -438,7 +442,7 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     }
     
     //记录跟踪
-    ssn_log_track_method(self,_cmd,t_bengin,t_cost,paramlog);
+    ssn_log_track_method(self,_cmd,t_bengin,t_cost,cpu_usage,paramlog);
     
     return ret_val;
 }

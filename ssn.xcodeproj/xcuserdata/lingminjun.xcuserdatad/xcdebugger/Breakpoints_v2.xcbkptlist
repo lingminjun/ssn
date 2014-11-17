@@ -282,12 +282,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ssn/ssn/inc/base/dt/NSObject+SSNTracking.m"
-            timestampString = "437709864.98834"
+            timestampString = "437933130.66639"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
-            landmarkName = "ssn_objc_invocation_v2()"
+            startingLineNumber = "445"
+            endingLineNumber = "445"
+            landmarkName = "ssn_objc_forwarding_method_imp()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ssn/ssn/inc/base/dt/SSNPerformance.c"
+            timestampString = "437933156.721386"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "97"
+            endingLineNumber = "97"
+            landmarkName = "ssn_current_thread_cpu_usage()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
