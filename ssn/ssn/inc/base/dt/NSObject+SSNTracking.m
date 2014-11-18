@@ -15,11 +15,16 @@
 #import <objc/message.h>
 #endif
 
-#import <pthread.h>
+//#include <mach/mach.h>
+//#include <mach/kern_return.h>
+//#include <assert.h>
+#import <pthread/pthread.h>
 
 #import "ssnbase.h"
 
 #import "SSNPerformance.h"
+
+#define ssn_used_string_utf8_format 0
 
 #define ssn_alignof_type_size(t) (sizeof(int) * (int)((sizeof(t) + sizeof(int) - 1)/sizeof(int)))
 
@@ -58,7 +63,11 @@ typedef union {
 //转发消息名
 NSString *ssn_objc_forwarding_method_name(SEL selector)
 {
+#if ssn_used_string_utf8_format
+    return [NSString stringWithUTF8Format:"ssn_forwarding_$%s",[NSStringFromSelector(selector) UTF8String]];
+#else
     return [NSString stringWithFormat:@"ssn_forwarding_$%@", NSStringFromSelector(selector)];
+#endif
 }
 
 //记录预置参数日志
@@ -85,7 +94,11 @@ NSString *ssn_get_save_preset(NSString *value, NSString *key) {
             NSMutableString *rt = [NSMutableString string];
             for (NSString *key in keys) {
                 NSString *value = [dic objectForKey:key];
+#if ssn_used_string_utf8_format
+                [rt appendString:[NSString stringWithUTF8Format:"%s=%s&",[key UTF8String],[value UTF8String]]];
+#else
                 [rt appendFormat:@"%@=%@&",key,value];
+#endif
             }
             pthread_mutex_lock(&mutex);
             log = [NSString stringWithString:rt];
@@ -107,7 +120,11 @@ NSArray *ssn_get_save_class_method_collect_ivar(Class clazz, SEL sel, NSArray *i
         _ssn_track_ivar = [[NSCache alloc] init];
     });
     
+#if ssn_used_string_utf8_format
+    NSString *key = [NSString stringWithUTF8Format:"%s-%s",[NSStringFromClass(clazz) UTF8String],[NSStringFromSelector(sel) UTF8String]];
+#else
     NSString *key = [NSString stringWithFormat:@"%@-%@",NSStringFromClass(clazz),NSStringFromSelector(sel)];
+#endif
     if (get) {
         return [_ssn_track_ivar objectForKey:key];
     }
@@ -218,14 +235,22 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                 case _C_CLASS:
                 {
                     id obj = va_arg(argumentList, id);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%s:%p&",arg_index,[NSStringFromClass([obj class]) UTF8String],obj]];
+#else
                     [log appendFormat:@"%ld=%@:%p&",arg_index,NSStringFromClass([obj class]),obj];
+#endif
                     [invocation setArgument:&obj atIndex:arg_index];
                     break;
                 }
                 case _C_SEL:
                 {
                     SEL s = va_arg(argumentList, SEL);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%s&",arg_index,[NSStringFromSelector(s) UTF8String]]];
+#else
                     [log appendFormat:@"%ld=%@&",arg_index,NSStringFromSelector(s)];
+#endif
                     [invocation setArgument:&s atIndex:arg_index];
                     break;
                 }
@@ -237,42 +262,66 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                 case _C_INT:
                 {
                     int value = va_arg(argumentList, int);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%i&",arg_index,value]];
+#else
                     [log appendFormat:@"%ld=%i&",arg_index,value];
+#endif
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_UINT:
                 {
                     unsigned int value = va_arg(argumentList, unsigned int);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%u&",arg_index,value]];
+#else
                     [log appendFormat:@"%ld=%u&",arg_index,value];
+#endif
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_LNG:
                 {
                     long value = va_arg(argumentList, long);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%ld&",arg_index,value]];
+#else
                     [log appendFormat:@"%ld=%ld&",arg_index,value];
+#endif
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_ULNG:
                 {
                     unsigned long value = va_arg(argumentList, unsigned long);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%lu&",arg_index,value]];
+#else
                     [log appendFormat:@"%ld=%lu&",arg_index,value];
+#endif
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_LNG_LNG:
                 {
                     long long value = va_arg(argumentList, long long);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%lld&",arg_index,value]];
+#else
                     [log appendFormat:@"%ld=%lld&",arg_index,value];
+#endif
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_ULNG_LNG:
                 {
                     unsigned long long value = va_arg(argumentList, unsigned long long);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%llu&",arg_index,value]];
+#else
                     [log appendFormat:@"%ld=%llu&",arg_index,value];
+#endif
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
@@ -280,14 +329,22 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                 case _C_DBL:
                 {
                     double value = va_arg(argumentList, double);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%f&",arg_index,value]];
+#else
                     [log appendFormat:@"%ld=%f&",arg_index,value];
+#endif
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
                 case _C_PTR:
                 {
                     void *value = va_arg(argumentList, void *);
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld=%p&",arg_index,value]];
+#else
                     [log appendFormat:@"%ld=%p&",arg_index,value];
+#endif
                     [invocation setArgument:&value atIndex:arg_index];
                     break;
                 }
@@ -315,7 +372,11 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                         name_point++;
                     }
                     
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld={%s:%p}&",arg_index,struct_name,point]];
+#else
                     [log appendFormat:@"%ld={%s:%p}&",arg_index,struct_name,point];
+#endif
                     
                     break;
                 }
@@ -344,7 +405,11 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                         name_point++;
                     }
                     
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld={%s:%p}&",arg_index,struct_name,point]];
+#else
                     [log appendFormat:@"%ld={%s:%p}&",arg_index,struct_name,point];
+#endif
                     
                     break;
                 }
@@ -357,7 +422,11 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                     ssn_va_arg(alignof_size, point);
                     [invocation setArgument:point atIndex:arg_index];
                     
+#if ssn_used_string_utf8_format
+                    [log appendString:[NSString stringWithUTF8Format:"%ld={%p}&",arg_index,point]];
+#else
                     [log appendFormat:@"%ld={%p}&",arg_index,point];
+#endif
                     
                 }break;
                     
@@ -371,7 +440,7 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
 }
 
 //跟踪记录实现日志函数
-void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const long long t_cost, double cpu_usage, NSString *param_log)
+void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const long long u_cost,const long long s_cost, double cpu_usage, NSString *param_log)
 {
     static dispatch_queue_t log_queue;
     static dispatch_once_t onceToken;
@@ -392,18 +461,30 @@ void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const lon
             NSArray *keys = ssn_get_save_class_method_collect_ivar([self class], _cmd, nil, YES);
             for (NSString *key in keys) {
                 id v = [self valueForKey:key];
+#if ssn_used_string_utf8_format
+                [logString appendString:[NSString stringWithUTF8Format:"%s=%s&",[key UTF8String],[[v description] UTF8String]]];
+#else
                 [logString appendFormat:@"%@=%@&",key,v];
+#endif
             }
             
             //参数直接key设定为index（解析分析时，只需要从后往前依次取数字key直到取到0为止）
+#if ssn_used_string_utf8_format
+            [logString appendString:[NSString stringWithUTF8Format:"0=%@:%p&1=%@&",[NSStringFromClass([self class]) UTF8String],self,[NSStringFromSelector(_cmd) UTF8String]]];
+#else
             [logString appendFormat:@"0=%@:%p&1=%@&",NSStringFromClass([self class]),self,NSStringFromSelector(_cmd)];
+#endif
             
             if ([param_log length]) {
                 [logString appendString:param_log];
             }
             
             //call_at与call_cost对应的key被简写
-            [logString appendFormat:@"c_a=%lld&c_c=%lld&c_u=%f",t_callat,t_cost,cpu_usage];
+#if ssn_used_string_utf8_format
+            [logString appendString:[NSString stringWithUTF8Format:"c_a=%lld&u_t=%lld&s_t=%lld&c_u=%f",t_callat,u_cost,s_cost,cpu_usage]];
+#else
+            [logString appendFormat:@"c_a=%lld&u_t=%lld&s_t=%lld&c_u=%f",t_callat,u_cost,s_cost,cpu_usage];
+#endif
             
             ssn_log("\nssn_track_log【%s】\n",[logString UTF8String]);
         }
@@ -425,13 +506,15 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     NSInvocation *rep_invocation = ssn_objc_invocation_v2(self, methodSignature, rep_sel, argumentList, paramlog);
     va_end(argumentList);
     
-    struct timeval t_b_tv,t_e_tv;
+    struct timeval t_b_tv;
     gettimeofday(&t_b_tv, NULL);
+    long long t_bengin = t_b_tv.tv_sec * USEC_PER_SEC + t_b_tv.tv_usec;
+    
     [rep_invocation invoke];
-    double cpu_usage = ssn_current_thread_cpu_usage();
-    gettimeofday(&t_e_tv, NULL);
-    long long t_bengin = t_b_tv.tv_sec * 1000000ll + t_b_tv.tv_usec;
-    long long t_cost = (t_e_tv.tv_sec - t_b_tv.tv_sec) * 1000000ll + (t_e_tv.tv_usec - t_b_tv.tv_usec);
+    ssn_performance_info_t performance_info = ssn_current_performance_info();
+//    SEL sel_invoke = @selector(invoke);
+//    IMP imp = class_getMethodImplementation([rep_invocation class], sel_invoke);
+//    ssn_performance_info_t performance_info = ssn_performance_info_imp_called((__bridge void *)(rep_invocation), (void *)sel_invoke, (void (*)(void *,void *))imp);
     
     //返回值
     id ret_val  = nil;
@@ -442,7 +525,7 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     }
     
     //记录跟踪
-    ssn_log_track_method(self,_cmd,t_bengin,t_cost,cpu_usage,paramlog);
+    ssn_log_track_method(self,_cmd,t_bengin,performance_info.user_time,performance_info.system_time,performance_info.cpu_usage,paramlog);
     
     return ret_val;
 }

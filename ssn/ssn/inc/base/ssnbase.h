@@ -28,13 +28,13 @@
 #define ssn_time_track_end(t)                                                                                          \
     struct timeval t##_e_tv;                                                                                           \
     gettimeofday(&t##_e_tv, NULL);                                                                                     \
-    long long t##_time = (t##_e_tv.tv_sec - t##_b_tv.tv_sec) * 1000000ll + (t##_e_tv.tv_usec - t##_b_tv.tv_usec);      \
+    long long t##_time = (t##_e_tv.tv_sec - t##_b_tv.tv_sec) * USEC_PER_SEC + (t##_e_tv.tv_usec - t##_b_tv.tv_usec);      \
     ssn_log("\n%s lost time is:\t%lld(us)\n", #t, t##_time);
 
 #define ssn_time_track_balance(t, in)                                                                                  \
     struct timeval t##_e_tv;                                                                                           \
     gettimeofday(&t##_e_tv, NULL);                                                                                     \
-    long long t##_time = (t##_e_tv.tv_sec - t##_b_tv.tv_sec) * 1000000ll + (t##_e_tv.tv_usec - t##_b_tv.tv_usec);      \
+    long long t##_time = (t##_e_tv.tv_sec - t##_b_tv.tv_sec) * USEC_PER_SEC + (t##_e_tv.tv_usec - t##_b_tv.tv_usec);      \
     in += t##_time;                                                                                                    \
     ssn_log("\n%s lost time is:\t%lld(us)\n", #t, t##_time);
 
@@ -67,12 +67,12 @@ static struct timespec ssn_orwl_gettime(void)
 
 #define ssn_ntime_track_end(t)                                                                                         \
     struct timespec t##_e_tv = ssn_orwl_gettime();                                                                     \
-    long long t##_time = (t##_e_tv.tv_sec - t##_b_tv.tv_sec) * 1000000000ll + (t##_e_tv.tv_nsec - t##_b_tv.tv_nsec);   \
+    long long t##_time = (t##_e_tv.tv_sec - t##_b_tv.tv_sec) * NSEC_PER_SEC + (t##_e_tv.tv_nsec - t##_b_tv.tv_nsec);   \
     ssn_log("\n%s lost time is:\t%lld(ns)\n", #t, t##_time);
 
 #define ssn_ntime_track_balance(t, in)                                                                                 \
     struct timespec t##_e_tv = ssn_orwl_gettime();                                                                     \
-    long long t##_time = (t##_e_tv.tv_sec - t##_b_tv.tv_sec) * 1000000000ll + (t##_e_tv.tv_nsec - t##_b_tv.tv_nsec);   \
+    long long t##_time = (t##_e_tv.tv_sec - t##_b_tv.tv_sec) * NSEC_PER_SEC + (t##_e_tv.tv_nsec - t##_b_tv.tv_nsec);   \
     in += t##_time;                                                                                                    \
     ssn_log("\n%s lost time is:\t%lld(ns)\n", #t, t##_time);
 

@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 
 #import "NSObject+SSNTracking.h"
+#import "ssnbase.h"
 
 #define test_number 42//101010
 
@@ -267,6 +268,7 @@ typedef struct value_list_ {
     obj.myname = @"xxxxx";
     obj.length = 120;
     
+    ssn_time_track_begin(t);
     [obj oneObjParam:@"abcdefg"];
     [obj oneIntParam:test_number];
     [obj oneLongParam:test_number];
@@ -277,6 +279,9 @@ typedef struct value_list_ {
     [obj twoObjParam:@"12345" two:@"abcdefg"];
     [obj twoCharParam:(char)(test_number) two:(char)(test_number)];
     NSString *str = [obj twoDoubleParam:1.010101 two:1.010101];
+    
+    ssn_time_track_end(t);
+    
     NSLog(@"<<<%@>>>",str);
     
     value_list va_lst = {'*',test_number};

@@ -107,6 +107,66 @@ double ssn_current_thread_cpu_usage(void)
     return tot_cpu;
 }
 
+SSN_C_EXTERN ssn_performance_info_t ssn_current_performance_info(void) {
+    kern_return_t kr;
+    
+    pthread_t current_thread = pthread_self();
+    mach_port_t current_port = pthread_mach_thread_np(current_thread);
+    
+    thread_info_data_t     thinfo;
+    mach_msg_type_number_t thread_info_count = THREAD_INFO_MAX;
+    
+    thread_basic_info_t basic_info_th;
+    
+    ssn_performance_info_t performance_info = {0,0,0.0};
+    
+    kr = thread_info(current_port, THREAD_BASIC_INFO, (thread_info_t)thinfo, &thread_info_count);
+    if (kr == KERN_SUCCESS) {
+        basic_info_th = (thread_basic_info_t)thinfo;
+        
+        if (!(basic_info_th->flags & TH_FLAGS_IDLE)) {
+            performance_info.user_time = (basic_info_th->user_time.seconds * 1000000ull) + basic_info_th->user_time.microseconds;
+            performance_info.system_time = (basic_info_th->system_time.seconds * 1000000ull) + basic_info_th->system_time.microseconds;
+            performance_info.cpu_usage = basic_info_th->cpu_usage / (double)TH_USAGE_SCALE * 100.0;
+        }
+    }
+    
+    return performance_info;
+}
+
+ssn_performance_info_t ssn_performance_info_imp_called(void *obj,void *cmd,void (*imp)(void *,void *)) {
+    kern_return_t kr;
+    
+    pthread_t current_thread = pthread_self();
+    mach_port_t current_port = pthread_mach_thread_np(current_thread);
+    
+    thread_info_data_t     thinfo;
+    mach_msg_type_number_t thread_info_count = THREAD_INFO_MAX;
+    
+    thread_basic_info_t basic_info_th;
+    
+    ssn_performance_info_t performance_info = {0,0,0.0};
+    
+    //函数imp调用
+    if(imp) {
+        imp(obj,cmd);
+    }
+    
+    
+    kr = thread_info(current_port, THREAD_BASIC_INFO, (thread_info_t)thinfo, &thread_info_count);
+    if (kr == KERN_SUCCESS) {
+        basic_info_th = (thread_basic_info_t)thinfo;
+        
+        if (!(basic_info_th->flags & TH_FLAGS_IDLE)) {
+            performance_info.user_time = (basic_info_th->user_time.seconds * 1000000ull) + basic_info_th->user_time.microseconds;
+            performance_info.system_time = (basic_info_th->system_time.seconds * 1000000ull) + basic_info_th->system_time.microseconds;
+            performance_info.cpu_usage = basic_info_th->cpu_usage / (double)TH_USAGE_SCALE * 100.0;
+        }
+    }
+    
+    return performance_info;
+}
+
 double ssn_current_thread_memory_usage(void)
 {
     // pages belonging to a (shared) memory mapped file (e.g. a library) will count as resident pages for the task
