@@ -9,6 +9,8 @@
 #ifndef ssn_ssnbase_h
 #define ssn_ssnbase_h
 
+#import <Foundation/Foundation.h>
+
 #import "NSString+SSN.h"
 
 #import <sys/time.h>
@@ -39,29 +41,11 @@
     ssn_log("\n%s lost time is:\t%lld(us)\n", #t, t##_time);
 
 #include <mach/mach_time.h>
-#define ORWL_NANO (+1.0E-9)
-#define ORWL_GIGA UINT64_C(1000000000)
 
-static double ssn_orwl_timebase = 0.0;
-static uint64_t ssn_orwl_timestart = 0;
+FOUNDATION_EXPORT double ssn_orwl_timebase;
+FOUNDATION_EXPORT uint64_t ssn_orwl_timestart;
 
-static struct timespec ssn_orwl_gettime(void)
-{
-    // be more careful in a multithreaded environement
-    if (!ssn_orwl_timestart)
-    {
-        mach_timebase_info_data_t tb = {0};
-        mach_timebase_info(&tb);
-        ssn_orwl_timebase = tb.numer;
-        ssn_orwl_timebase /= tb.denom;
-        ssn_orwl_timestart = mach_absolute_time();
-    }
-    struct timespec t;
-    double diff = (mach_absolute_time() - ssn_orwl_timestart) * ssn_orwl_timebase;
-    t.tv_sec = diff * ORWL_NANO;
-    t.tv_nsec = diff - (t.tv_sec * ORWL_GIGA);
-    return t;
-}
+FOUNDATION_EXTERN struct timespec ssn_orwl_gettime(void);
 
 #define ssn_ntime_track_begin(t) struct timespec t##_b_tv = ssn_orwl_gettime();
 

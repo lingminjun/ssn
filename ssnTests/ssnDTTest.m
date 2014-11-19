@@ -104,6 +104,7 @@ typedef struct value_list_ {
 - (NSString *)twoDoubleParam:(double)one two:(double)two
 {
     NSLog(@"%f===%f",one,two);
+    //CFRunLoopRunInMode(kCFRunLoopDefaultMode, 12, false);
     return [NSString stringWithFormat:@"%f===%f",one,two];
 }
 
@@ -248,7 +249,7 @@ typedef struct value_list_ {
  - (id)variableParam:(id)obj, ... NS_REQUIRES_NIL_TERMINATION;
  */
 
-- (void)testExample {
+- (void)testExample { 
     
     [NSObject ssn_savePresetValue:@"22222" forKey:@"id"];
     [NSObject ssn_savePresetValue:@"ios" forKey:@"ut"];
@@ -268,19 +269,20 @@ typedef struct value_list_ {
     obj.myname = @"xxxxx";
     obj.length = 120;
     
-    ssn_time_track_begin(t);
+    //ssn_time_track_begin(t);
+    
     [obj oneObjParam:@"abcdefg"];
     [obj oneIntParam:test_number];
     [obj oneLongParam:test_number];
-    [obj oneFloatParam:1.010101];
+    [obj oneFloatParam:1.010101f];
     [obj oneCharParam:(char)(test_number)];
     
     [obj twoIntParam:test_number two:test_number];
     [obj twoObjParam:@"12345" two:@"abcdefg"];
     [obj twoCharParam:(char)(test_number) two:(char)(test_number)];
-    NSString *str = [obj twoDoubleParam:1.010101 two:1.010101];
+    NSString *str = [obj twoDoubleParam:1.010101f two:1.010101f];
     
-    ssn_time_track_end(t);
+    //ssn_time_track_end(t);
     
     NSLog(@"<<<%@>>>",str);
     

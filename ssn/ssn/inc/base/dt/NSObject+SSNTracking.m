@@ -470,7 +470,7 @@ void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const lon
             
             //参数直接key设定为index（解析分析时，只需要从后往前依次取数字key直到取到0为止）
 #if ssn_used_string_utf8_format
-            [logString appendString:[NSString stringWithUTF8Format:"0=%@:%p&1=%@&",[NSStringFromClass([self class]) UTF8String],self,[NSStringFromSelector(_cmd) UTF8String]]];
+            [logString appendString:[NSString stringWithUTF8Format:"0=%s:%p&1=%s&",[NSStringFromClass([self class]) UTF8String],self,[NSStringFromSelector(_cmd) UTF8String]]];
 #else
             [logString appendFormat:@"0=%@:%p&1=%@&",NSStringFromClass([self class]),self,NSStringFromSelector(_cmd)];
 #endif
@@ -489,6 +489,10 @@ void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const lon
             ssn_log("\nssn_track_log【%s】\n",[logString UTF8String]);
         }
     });
+}
+
+void ssn_inline_imp(void *context) {
+    [(__bridge NSInvocation *)context invoke];
 }
 
 //所有跟踪消息转发
@@ -510,11 +514,9 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     gettimeofday(&t_b_tv, NULL);
     long long t_bengin = t_b_tv.tv_sec * USEC_PER_SEC + t_b_tv.tv_usec;
     
-    [rep_invocation invoke];
-    ssn_performance_info_t performance_info = ssn_current_performance_info();
-//    SEL sel_invoke = @selector(invoke);
-//    IMP imp = class_getMethodImplementation([rep_invocation class], sel_invoke);
-//    ssn_performance_info_t performance_info = ssn_performance_info_imp_called((__bridge void *)(rep_invocation), (void *)sel_invoke, (void (*)(void *,void *))imp);
+    //[rep_invocation invoke];
+    //ssn_performance_info_t performance_info = ssn_current_performance_info();
+    ssn_performance_info_t performance_info = ssn_performance_info_imp_called(ssn_inline_imp,(__bridge void *)(rep_invocation));
     
     //返回值
     id ret_val  = nil;
@@ -525,6 +527,7 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     }
     
     //记录跟踪
+    //ssn_log_track_method(self,_cmd,t_bengin,0,0,0.0,paramlog);
     ssn_log_track_method(self,_cmd,t_bengin,performance_info.user_time,performance_info.system_time,performance_info.cpu_usage,paramlog);
     
     return ret_val;
