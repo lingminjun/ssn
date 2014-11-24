@@ -31,22 +31,22 @@
     if (self)
     {
         SSNConstructor constructor = ^id(id key, NSDictionary *userInfo) {
-            NSString *scop = (NSString *)key;
-            return [[SSNDB alloc] initWithScop:scop];
+            NSString *scope = (NSString *)key;
+            return [[SSNDB alloc] initWithScope:scope];
         };
         _cache = [[SSNRigidCache alloc] initWithConstructor:constructor];
     }
     return self;
 }
 
-- (SSNDB *)dbWithScop:(NSString *)scop
+- (SSNDB *)dbWithScope:(NSString *)scope
 {
-    if (nil == scop)
+    if (nil == scope)
     {
         return nil;
     }
 
-    return [_cache objectForKey:scop];
+    return [_cache objectForKey:scope];
 }
 
 @end

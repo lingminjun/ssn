@@ -247,7 +247,7 @@ static long long all_waited_time = 0ll;
 - (void)testDB
 {
     SSNDBPool *pool = [SSNDBPool shareInstance];
-    SSNDB *db = [pool dbWithScop:@"test"];
+    SSNDB *db = [pool dbWithScope:@"test"];
 
     [db prepareSql:@"DROP TABLE tst_tb", nil];
 
@@ -279,7 +279,7 @@ static long long all_waited_time = 0ll;
 - (void)testDBTable0
 {
     SSNDBPool *pool = [SSNDBPool shareInstance];
-    SSNDB *db = [pool dbWithScop:@"test"];
+    SSNDB *db = [pool dbWithScope:@"test"];
     NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/TestUser2.json";
     SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
 
@@ -334,7 +334,7 @@ void *inet_thread_main(void *arg)
 - (void)testDBTable1
 {
     SSNDBPool *pool = [SSNDBPool shareInstance];
-    SSNDB *db = [pool dbWithScop:@"test"];
+    SSNDB *db = [pool dbWithScope:@"test"];
     NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/TestUser2.json";
     SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
 

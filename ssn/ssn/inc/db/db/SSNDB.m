@@ -28,32 +28,32 @@ NSString const *SSNDBRollbackNotification = @"SSNDBRollbackNotification"; //数�
 
 @implementation SSNDB
 
-+ (NSString *)pathForScop:(NSString *)scop
++ (NSString *)pathForScope:(NSString *)scope
 {
     static NSString *dbdir = @"db";
-    NSString *dirPath = [dbdir stringByAppendingPathComponent:scop];
+    NSString *dirPath = [dbdir stringByAppendingPathComponent:scope];
     dirPath = [[NSFileManager defaultManager] pathDocumentDirectoryWithPathComponents:dirPath];
     return [dirPath stringByAppendingPathComponent:SSNDBFileName];
 }
 
-- (instancetype)initWithScop:(NSString *)scop
+- (instancetype)initWithScope:(NSString *)scope
 {
-    NSAssert(scop, @"scop 参数");
+    NSAssert(scope, @"scope 参数");
     self = [super init];
     if (self)
     {
-        if (nil == scop)
+        if (nil == scope)
         { //效率考虑，空字符串也是可以的
             return nil;
         }
 
         //全部转成小写
-        NSString *lowerScop = [scop lowercaseString];
-        _dbpath = [SSNDB pathForScop:lowerScop];
+        NSString *lowerScope = [scope lowercaseString];
+        _dbpath = [SSNDB pathForScope:lowerScope];
 
         NSAssert(self.dbpath, @"dbpath 无法建立");
 
-        _ioQueue = [[SSNCuteSerialQueue alloc] initWithName:scop];
+        _ioQueue = [[SSNCuteSerialQueue alloc] initWithName:scope];
 
         dispatch_block_t block = ^{
             // 因为数据库单线程操作，直接SINGLETHREAD即可，效率更高

@@ -722,7 +722,7 @@ void *inet_thread_main(void *arg)
                                 inet_log("inet read data error, set the socket = %d no read\n", inet->_socket);
                                 inet_set_pollfd_event(inet->_pollfd[0], false, true);
                             }
-                        } while (target_read_length > 0);
+                        } while (target_read_length > 0);//continue waiting read target_read_length
 
                         delete tmpreadbuff;
 

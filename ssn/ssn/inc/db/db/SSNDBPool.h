@@ -13,6 +13,6 @@
 
 + (instancetype)shareInstance;
 
-- (SSNDB *)dbWithScop:(NSString *)scop;
+- (SSNDB *)dbWithScope:(NSString *)scope;
 
 @end

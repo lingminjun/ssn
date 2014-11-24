@@ -102,7 +102,8 @@ class inet
     int async_write(const unsigned char *bytes, const unsigned long &size, const unsigned int &tag);
 
     /**
-     async read data. if the socket has data to read will call back read_callback.
+     async read data. If size is 0, as long as there is data on the socket will trigger read_callback callback;
+     otherwise, only when the socket is read to the specified size length data will trigger read_callback after callback.
      time out will diconnect.
      */
     int async_read(const unsigned long &size, const unsigned int &tag, const long long &timeout_sec);

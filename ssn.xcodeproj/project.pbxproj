@@ -159,6 +159,8 @@
 		53ECB16E191FBB6000BEB29D /* SSNModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB16A191FBB6000BEB29D /* SSNModel.m */; };
 		53ECB171191FBDE900BEB29D /* SSNDataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB16F191FBDE900BEB29D /* SSNDataBase.m */; };
 		53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
+		53F74FD71A1EDB8800FB36B2 /* stt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F74FD51A1EDB8800FB36B2 /* stt.cpp */; };
+		53F74FD81A1EDB8800FB36B2 /* stt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F74FD51A1EDB8800FB36B2 /* stt.cpp */; };
 		53FAA14B193381FF00CD2596 /* SSNFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FAA14A193381FF00CD2596 /* SSNFetchController.m */; };
 		53FAA61919E8F5F3006EBBE3 /* NSObject+SSNTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FAA61819E8F5F3006EBBE3 /* NSObject+SSNTracking.m */; };
 		53FF9F491934E188009117AB /* SSNDBSectionImp.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FF9F481934E188009117AB /* SSNDBSectionImp.m */; };
@@ -295,6 +297,8 @@
 		53ECB16F191FBDE900BEB29D /* SSNDataBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SSNDataBase.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		53ECB173191FBDF300BEB29D /* SSNDataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDataBase.h; sourceTree = "<group>"; };
 		53ECB175191FC11500BEB29D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		53F74FD51A1EDB8800FB36B2 /* stt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stt.cpp; sourceTree = "<group>"; };
+		53F74FD61A1EDB8800FB36B2 /* stt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stt.h; sourceTree = "<group>"; };
 		53FAA147193381DD00CD2596 /* SSNFetchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNFetchController.h; sourceTree = "<group>"; };
 		53FAA14A193381FF00CD2596 /* SSNFetchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNFetchController.m; sourceTree = "<group>"; };
 		53FAA61719E8F5F3006EBBE3 /* NSObject+SSNTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SSNTracking.h"; sourceTree = "<group>"; };
@@ -660,6 +664,7 @@
 		53ECB163191FBB6000BEB29D /* net */ = {
 			isa = PBXGroup;
 			children = (
+				53F74FD41A1EDB7800FB36B2 /* stt */,
 				53512E2319A3957600DACC42 /* core */,
 			);
 			path = net;
@@ -706,6 +711,15 @@
 			children = (
 			);
 			path = net;
+			sourceTree = "<group>";
+		};
+		53F74FD41A1EDB7800FB36B2 /* stt */ = {
+			isa = PBXGroup;
+			children = (
+				53F74FD51A1EDB8800FB36B2 /* stt.cpp */,
+				53F74FD61A1EDB8800FB36B2 /* stt.h */,
+			);
+			path = stt;
 			sourceTree = "<group>";
 		};
 		53FAA61519E8F4EE006EBBE3 /* dt */ = {
@@ -832,6 +846,7 @@
 				53D6ED46199A03F90029D82F /* SSNCuteSerialQueue.m in Sources */,
 				533378AE1986431200084428 /* SSNDB.m in Sources */,
 				53FAA61919E8F5F3006EBBE3 /* NSObject+SSNTracking.m in Sources */,
+				53F74FD71A1EDB8800FB36B2 /* stt.cpp in Sources */,
 				53D9065919A4E3AB009056F2 /* inet.cpp in Sources */,
 				53D693901A0BAC820051B6DF /* SSNSafeDictionary.m in Sources */,
 				53D662741A0BD51D008D2296 /* SSNSafeArray.m in Sources */,
@@ -870,6 +885,7 @@
 				53D6626C1A0BC521008D2296 /* SSNSafeDictionary.h in Sources */,
 				53D6626D1A0BC521008D2296 /* SSNSafeDictionary.m in Sources */,
 				53DBD62919EA642900728F96 /* NSObject+SSNTracking.h in Sources */,
+				53F74FD81A1EDB8800FB36B2 /* stt.cpp in Sources */,
 				53DBD62A19EA642900728F96 /* NSObject+SSNTracking.m in Sources */,
 				53D12DBE19B623B9004D09F4 /* SSNDBTable+Factory.h in Sources */,
 				53D12DBF19B623B9004D09F4 /* SSNDBTable+Factory.m in Sources */,

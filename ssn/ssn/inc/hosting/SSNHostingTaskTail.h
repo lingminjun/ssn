@@ -25,11 +25,17 @@ typedef NS_ENUM(NSUInteger, SSNHostingTaskStatus) {
 
 @property (nonatomic,strong,readonly) NSString *taskId;//任务唯一id
 
+@property (nonatomic,strong,readonly) NSString *dataType;//数据的类型
+
+@property (nonatomic,strong,readonly) NSString *dataKey;//数据的主键
+
 @property (nonatomic,readonly) SSNHostingTaskStatus status;//当前状态
 
 @property (nonatomic,readonly) NSUInteger retryTimes;//可重试次数
 
 @property (nonatomic,readonly) NSUInteger times;//当前次数
+
+@property (nonatomic,copy) NSDictionary *userInfo;//用户数据
 
 /**
  *  记录任务切换到指定某种状态，
