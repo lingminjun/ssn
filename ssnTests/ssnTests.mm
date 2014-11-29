@@ -46,7 +46,7 @@
 @end
 
 @interface TSUser : NSObject
-@property (nonatomic) NSInteger uid;
+@property (nonatomic, strong) NSString *uid;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic) NSInteger age;
 @property (nonatomic) BOOL sex;
@@ -211,12 +211,6 @@ static long long all_waited_time = 0ll;
     // sleep(5);
 }
 
-- (void)testRigidDictionary1
-{
-    SSNRigidCache *set = [[SSNRigidCache alloc] initWithConstructor:^id(id key, NSDictionary *userInfo) {
-        return [[NSObject alloc] init];
-    }];
-}
 
 - (void)testRigidDictionary
 {
@@ -286,14 +280,14 @@ static long long all_waited_time = 0ll;
     [table update];
 
     TSUser *user = [[TSUser alloc] init];
-    user.uid = 11;
+    user.uid = @"11";
     user.name = @"肖海长";
     user.age = 26;
     user.sex = 1;
 
     [table upinsertObject:user];
 
-    NSArray *objs = [db objects:nil sql:@"SELECT * FROM user WHERE uid = ?", @(user.uid), nil];
+    NSArray *objs = [db objects:nil sql:@"SELECT * FROM user WHERE uid = ?", user.uid, nil];
 
     NSLog(@"%@", objs);
 
@@ -304,6 +298,47 @@ static long long all_waited_time = 0ll;
     //    NSLog(@"%@", objs);
     //[db prepareSql:@"INSERT INTO user (uid,name,age) VALUES(?,?,?)", @(1), @"xhc", @(25), nil];
 }
+
+
+- (void)test_addcloumn_DBTable
+{
+    SSNDBPool *pool = [SSNDBPool shareInstance];
+    SSNDB *db = [pool dbWithScope:@"test1"];
+    NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/TestUser2.json";
+    SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
+    
+    [table update];
+    
+    TSUser *user = [[TSUser alloc] init];
+    user.uid = @"no11";
+    user.name = @"no肖海长";
+    user.age = 26;
+    user.sex = 1;
+    
+    TSUser *user1 = [[TSUser alloc] init];
+    user1.uid = @"no12";
+    user1.name = @"no凌敏均";
+    user1.age = 26;
+    user1.sex = 0;
+    
+    [table upinsertObject:user];
+    [table upinsertObject:user1];
+    
+    //[table inreplaceObject:user1];
+    
+    NSArray *objs = [db objects:nil sql:@"SELECT * FROM user WHERE uid = ?", user.uid, nil];
+    
+    NSLog(@"%@", objs);
+    
+    //    [table deleteObject:user];
+    //
+    //    objs = [db objects:nil sql:@"SELECT * FROM user WHERE uid = ?", @(user.uid), nil];
+    //
+    //    NSLog(@"%@", objs);
+    //[db prepareSql:@"INSERT INTO user (uid,name,age) VALUES(?,?,?)", @(1), @"xhc", @(25), nil];
+}
+
+
 
 static pthread_t _thread;
 

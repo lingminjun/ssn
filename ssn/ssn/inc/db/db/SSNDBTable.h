@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-FOUNDATION_EXTERN NSString const *SSNDBTableWillMigrateNotification; //数据准备迁移 mainThread
-FOUNDATION_EXTERN NSString const *SSNDBTableDidMigrateNotification;  //数据迁移结束 mainThread
-FOUNDATION_EXTERN NSString const *SSNDBTableDidDropNotification;     //数据表删除 mainThread
-FOUNDATION_EXTERN NSString const *SSNDBTableNameKey;                 //数据迁移表格
+FOUNDATION_EXTERN NSString *const SSNDBTableWillMigrateNotification; //数据准备迁移 mainThread
+FOUNDATION_EXTERN NSString *const SSNDBTableDidMigrateNotification;  //数据迁移结束 mainThread
+FOUNDATION_EXTERN NSString *const SSNDBTableDidDropNotification;     //数据表删除 mainThread
+FOUNDATION_EXTERN NSString *const SSNDBTableNameKey;                 //数据迁移表格
 
 #ifndef _SSNDBTable_
 #define _SSNDBTable_
@@ -89,5 +89,8 @@ typedef enum : NSUInteger
 
 - (void)upinsertObject:(id)object;          // update or insert
 - (void)upinsertObjects:(NSArray *)objects; // update or insert
+
+- (void)inreplaceObject:(id)object;          // insert or replace
+- (void)inreplaceObjects:(NSArray *)objects; // insert or replace
 
 @end

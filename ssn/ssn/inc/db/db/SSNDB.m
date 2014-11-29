@@ -12,8 +12,12 @@
 #import "SSNCuteSerialQueue.h"
 #import "NSFileManager+SSN.h"
 
-NSString const *SSNDBUpdatedNotification = @"SSNDBUpdatedNotification";   //数据准备迁移
-NSString const *SSNDBRollbackNotification = @"SSNDBRollbackNotification"; //数据迁移结束
+NSString *const SSNDBUpdatedNotification = @"SSNDBUpdatedNotification";   //数据准备迁移
+NSString *const SSNDBRollbackNotification = @"SSNDBRollbackNotification"; //数据迁移结束
+
+NSString *const SSNDBTableNameUserInfoKey = @"SSNDBTableNameUserInfoKey";  //table name(NSString)
+NSString *const SSNDBOperationUserInfoKey = @"SSNDBOperationUserInfoKey";  //operation(NSNumber<int>) eg. SQLITE_INSERT
+NSString *const SSNDBRowIdUserInfoKey     = @"SSNDBRowIdUserInfoKey";      //row_id(NSNumber<int64>)
 
 #define SSNDBFileName @"db.sqlite"
 
@@ -52,7 +56,8 @@ NSString const *SSNDBRollbackNotification = @"SSNDBRollbackNotification"; //数�
         _dbpath = [SSNDB pathForScope:lowerScope];
 
         NSAssert(self.dbpath, @"dbpath 无法建立");
-
+        ssn_log("\ndbpath=%s\n",[_dbpath UTF8String]);
+        
         _ioQueue = [[SSNCuteSerialQueue alloc] initWithName:scope];
 
         dispatch_block_t block = ^{
@@ -69,7 +74,6 @@ NSString const *SSNDBRollbackNotification = @"SSNDBRollbackNotification"; //数�
                 [self sqliteException:@"Failed to open database with message '%S'."];
             }
 
-            // add hook
             // add hook
             sqlite3_update_hook(_database, &ssn_sqlite_update, (__bridge void *)(self));
             sqlite3_rollback_hook(_database, &ssndb_sqlite_rollback, (__bridge void *)(self));
@@ -97,57 +101,54 @@ NSString const *SSNDBRollbackNotification = @"SSNDBRollbackNotification"; //数�
 
 #pragma mark - Hook
 
-static void ssn_sqlite_update(void *user_data, int operation, char const *database_name, char const *table_name,
-                              sqlite_int64 row_id)
+static void ssn_sqlite_update(void *user_data, int operation, char const *database_name, char const *table_name, sqlite_int64 row_id)
 {
-
-    /*
-    char * oper_str = NULL;
-    LWSQLiteOperationType optType = LWSQLiteOperationUnknown;
-
-    if (operation == SQLITE_INSERT)
-    {
-        oper_str = "SQLITE_INSERT";
-        optType = LWSQLiteOperationInsert;
+    //并非我们关心的回调
+    if (user_data == NULL) {
+        return ;
     }
-    else if (operation == SQLITE_UPDATE)
-    {
-        oper_str = "SQLITE_UPDATE";
-        optType = LWSQLiteOperationUpdate;
+    
+    @autoreleasepool {
+        ssn_log("\nssn_sqlite_update operation = %d, table_name = %s, row_id = %lld\n",operation ,table_name, row_id);
+        
+        SSNDB *db = (__bridge SSNDB *)(user_data);
+        
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:3];
+        if (table_name) {
+            [userInfo setObject:[NSString stringWithUTF8String:table_name] forKey:SSNDBTableNameUserInfoKey];
+        }
+        
+        if (operation > 0) {
+            [userInfo setObject:@(operation) forKey:SSNDBOperationUserInfoKey];
+        }
+        
+        if (row_id > 0) {
+            [userInfo setObject:@(row_id) forKey:SSNDBRowIdUserInfoKey];
+        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:SSNDBUpdatedNotification
+                                                            object:db
+                                                          userInfo:userInfo];
+
     }
-    else if (operation == SQLITE_DELETE)
-    {
-        oper_str = "SQLITE_DELETE";
-        optType = LWSQLiteOperationDelete;
-    }
-
-    LWLogVerbose(@"__sqlite_update_hook operation=%s, db=%s, table=%s, rowId=%lld", oper_str, database_name, table_name,
-    row_id);
-
-    if (!user_data) {
-        return;
-    }
-
-    LWSQLiteHook * hook = (__bridge LWSQLiteHook *)(user_data);
-
-    [hook handleOperation:optType
-                    table:[NSString stringWithUTF8String:table_name]
-                    rowId:row_id];
-     */
+    
 }
 
 static void ssndb_sqlite_rollback(void *user_data)
 {
-    /*
-    LWLogVerbose(@"__sqlite_rollback_hook");
-
-    if (!user_data) {
-        return;
+    //并非我们关心的回调
+    if (user_data == NULL) {
+        return ;
     }
-
-    LWSQLiteHook * hook = (__bridge LWSQLiteHook *)(user_data);
-    [hook handleOperation:LWSQLiteOperationRollback table:nil rowId:-1];
-     */
+    
+    @autoreleasepool {
+        ssn_log("\nssndb_sqlite_rollback\n");
+        
+        SSNDB *db = (__bridge SSNDB *)(user_data);
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:SSNDBRollbackNotification object:db];
+        
+    }
 }
 
 #pragma mark error
@@ -447,6 +448,26 @@ static void ssndb_sqlite_rollback(void *user_data)
     }
 }
 
+- (void)executeSql:(NSString *)sql error:(NSError **)error
+{
+    @autoreleasepool
+    {
+        dispatch_block_t block = ^{
+            char *err = NULL;
+            if (sqlite3_exec(_database, [sql UTF8String], NULL, 0, &err) != SQLITE_OK) {
+                NSString *err_str = [NSString stringWithFormat:@"%s",err];
+                sqlite3_free(err);
+                
+                if (error) {
+                    *error = [NSError errorWithDomain:@"SSNDB" code:1 userInfo:@{NSLocalizedFailureReasonErrorKey:err_str}];
+                }
+            }
+        };
+        
+        [_ioQueue sync:block];
+    }
+}
+
 //执行一条sql命令
 - (void)prepareSql:(NSString *)sql, ...
 {
@@ -579,28 +600,24 @@ static void ssndb_sqlite_rollback(void *user_data)
     return result;
 }
 
-- (void)objects:(Class)aclass
-            sql:(NSString *)sql
-      arguments:(NSArray *)arguments
-     completion:(void (^)(NSArray *results))completion
+- (void)objects:(Class)aclass sql:(NSString *)sql arguments:(NSArray *)arguments completion:(void (^)(NSArray *results))completion
 {
-    @autoreleasepool
-    {
-
+    @autoreleasepool {
+        
         Class rowClass = aclass;
         if (!rowClass)
         {
             rowClass = [NSMutableDictionary class];
         }
 
-        dispatch_block_t block = ^{
+        dispatch_block_t block = ^{ @autoreleasepool {
             NSArray *result = [self prepareSql:sql arguments:arguments rowClass:aclass];
 
             if (completion)
             {
                 completion(result);
             }
-        };
+        }};
 
         [_ioQueue async:block];
     }
@@ -614,8 +631,8 @@ static void ssndb_sqlite_rollback(void *user_data)
     {
         return;
     }
-
-    dispatch_block_t in_block = ^{
+    
+    dispatch_block_t in_block = ^{ @autoreleasepool {
         BOOL rollback = NO;
         [self executeSql:@"BEGIN IMMEDIATE TRANSACTION;"];
 
@@ -629,7 +646,7 @@ static void ssndb_sqlite_rollback(void *user_data)
         {
             [self executeSql:@"COMMIT TRANSACTION;"];
         }
-    };
+    }};
 
     if (sync)
     {

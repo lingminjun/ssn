@@ -11,10 +11,10 @@
 #import "SSNDB.h"
 #import "ssnbase.h"
 
-NSString const *SSNDBTableWillMigrateNotification = @"SSNDBTableWillMigrateNotification"; //数据准备迁移 mainThread
-NSString const *SSNDBTableDidMigrateNotification = @"SSNDBTableDidMigrateNotification"; //数据迁移结束 mainThread
-NSString const *SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification";
-NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
+NSString *const SSNDBTableWillMigrateNotification = @"SSNDBTableWillMigrateNotification"; //数据准备迁移 mainThread
+NSString *const SSNDBTableDidMigrateNotification = @"SSNDBTableDidMigrateNotification"; //数据迁移结束 mainThread
+NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification";
+NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
 
 @interface SSNDBTable ()
 
@@ -151,16 +151,16 @@ NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
         return;
     }
 
-    //继续判断是否表数据是否在内存
+    //继续判断表数据是否在内存
     if (!_its)
     {
         if (!_meta)
         {
-            self.its = _meta.its;
+            _its = _meta.its;
         }
         else
         {
-            self.its = [self parseJSONForFilePath:_path];
+            _its = [self parseJSONForFilePath:_path];
         }
     }
 
@@ -213,7 +213,7 @@ NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
 
             [self postMainThreadNotification:SSNDBTableDidMigrateNotification info:notifyInfo];
 
-            self.its = nil; //可以释放内存，减少没必要开销
+            //self.its = nil; //可以释放内存，减少没必要开销
         }
     };
 
@@ -232,7 +232,7 @@ NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
 
     NSString *dropsql = [NSString stringWithUTF8Format:"DROP TABLE %s", [_name UTF8String]];
     void (^block)(SSNDB * db, BOOL * rollback) = ^(SSNDB *db, BOOL *rollback) {
-        [db prepareSql:dropsql, nil];
+        [db prepareSql:dropsql arguments:nil];
         [self removeVersionForTableName:_name];
 
         NSDictionary *notifyInfo = @{SSNDBTableNameKey : _name};
@@ -246,7 +246,7 @@ NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
 #pragma mark 日志表操作
 - (void)checkCreateTableLog
 {
-    [_db prepareSql:@"CREATE TABLE IF NOT EXISTS ssn_db_tb_log (name TEXT, value INTEGER,PRIMARY KEY(name))", nil];
+    [_db prepareSql:@"CREATE TABLE IF NOT EXISTS ssn_db_tb_log (name TEXT, value INTEGER,PRIMARY KEY(name))" arguments:nil];
 }
 
 - (NSUInteger)versionForTableName:(NSString *)tableName
@@ -264,8 +264,8 @@ NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
         NSString *sql1 = @"UPDATE ssn_db_tb_log SET value = ? WHERE name = ?";
         NSString *sql2 = @"INSERT INTO ssn_db_tb_log (name,value) VALUES(?,?)";
         [_db executeTransaction:^(SSNDB *dataBase, BOOL *rollback) {
-            [_db prepareSql:sql1, @(version), tableName, nil];
-            [_db prepareSql:sql2, tableName, @(version), nil];
+            [_db prepareSql:sql1 arguments:@[ @(version), tableName ]];
+            [_db prepareSql:sql2 arguments:@[ tableName, @(version)]];
         } sync:YES];
     }
     else
@@ -277,7 +277,7 @@ NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
 - (void)removeVersionForTableName:(NSString *)tableName
 {
     NSString *sql = @"DELETE FROM ssn_db_tb_log WHERE name = ?";
-    [_db prepareSql:sql, tableName, nil];
+    [_db prepareSql:sql arguments:@[ tableName ]];
 }
 
 #pragma mark 表描述文件解析
@@ -447,39 +447,6 @@ NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
     return _primaries;
 }
 
-//接管db操作
-- (void)insertObjects:(NSArray *)objects
-{
-    for (id obj in objects)
-    {
-        [self insertObject:obj];
-    }
-}
-
-- (void)updateObjects:(NSArray *)objects
-{
-    for (id obj in objects)
-    {
-        [self updateObjects:obj];
-    }
-}
-
-- (void)deleteObjects:(NSArray *)objects
-{
-    for (id obj in objects)
-    {
-        [self deleteObjects:obj];
-    }
-}
-
-- (void)upinsertObjects:(NSArray *)objects
-{
-    for (id obj in objects)
-    {
-        [self upinsertObject:obj];
-    }
-}
-
 - (NSArray *)valuesFormKeys:(NSArray *)keys object:(id)object
 {
     NSMutableArray *vs = [NSMutableArray arrayWithCapacity:1];
@@ -498,57 +465,170 @@ NSString const *SSNDBTableNameKey = @"SSNDBTableNameKey";
     return vs;
 }
 
-- (void)insertObject:(id)object
+//接管db操作
+- (void)insertObjects:(NSArray *)objects
 {
     NSAssert(_db, @"模板表不能操作数据");
-
-    NSString *clnames = [_colums componentsJoinedByString:@","];
-    NSString *format = [NSString stringWithUTF8String:"?" repeat:[_colums count] joinedUTF8String:","];
-    NSString *sql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String],
-                                                   [clnames UTF8String], [format UTF8String]];
-
-    [_db prepareSql:sql arguments:[self valuesFormKeys:_colums object:object]];
+    
+    if ([objects count] == 0) {
+        return ;
+    }
+    
+    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        for (id obj in objects){ @autoreleasepool {
+            
+            NSString *clnames = [_colums componentsJoinedByString:@","];
+            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_colums count] joinedUTF8String:","];
+            NSString *sql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
+            
+            [db prepareSql:sql arguments:[self valuesFormKeys:_colums object:obj]];
+        }}
+    } sync:YES];
 }
 
-- (void)updateObject:(id)object
+- (void)updateObjects:(NSArray *)objects
 {
     NSAssert(_db, @"模板表不能操作数据");
-
+    
+    if ([objects count] == 0) {
+        return ;
+    }
+    
     if ([_primaries count] == 0)
     {
         return;
     }
+    
+    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        for (id obj in objects){ @autoreleasepool {
+            
+            NSMutableArray *cls = [NSMutableArray arrayWithArray:_colums];
+            [cls removeObjectsInArray:_primaries];
+            NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
+            NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
+            NSString *sql = [NSString stringWithUTF8Format:"UPDATE %s SET %s WHERE (%s)", [_name UTF8String], [values UTF8String], [wheres UTF8String]];
+            
+            [cls addObjectsFromArray:_primaries]; //从新把主键加上
+            [db prepareSql:sql arguments:[self valuesFormKeys:cls object:obj]];
+        }}
+    } sync:YES];
+}
 
-    NSMutableArray *cls = [NSMutableArray arrayWithArray:_colums];
-    [cls removeObjectsInArray:_primaries];
-    NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
-    NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
-    NSString *sql = [NSString stringWithUTF8Format:"UPDATE %s SET %s WHERE (%s)", [_name UTF8String],
-                                                   [values UTF8String], [wheres UTF8String]];
+- (void)deleteObjects:(NSArray *)objects
+{
+    NSAssert(_db, @"模板表不能操作数据");
+    
+    if ([objects count] == 0) {
+        return ;
+    }
+    
+    if ([_primaries count] == 0)
+    {
+        return;
+    }
+    
+    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        for (id obj in objects){ @autoreleasepool {
+            
+            NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
+            NSString *sql = [NSString stringWithUTF8Format:"DELETE FROM %s WHERE (%s)", [_name UTF8String], [wheres UTF8String]];
+            
+            [db prepareSql:sql arguments:[self valuesFormKeys:_primaries object:obj]];
+        }}
+    } sync:YES];
+}
 
-    [cls addObjectsFromArray:_primaries]; //从新把主键加上
-    [_db prepareSql:sql arguments:[self valuesFormKeys:cls object:object]];
+- (void)upinsertObjects:(NSArray *)objects
+{
+    NSAssert(_db, @"模板表不能操作数据");
+    
+    if ([objects count] == 0) {
+        return ;
+    }
+    
+    if ([_primaries count] == 0)
+    {
+        return;
+    }
+    
+    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        for (id obj in objects){ @autoreleasepool {
+            
+            NSMutableArray *cls = [NSMutableArray arrayWithArray:_colums];
+            [cls removeObjectsInArray:_primaries];
+            NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
+            NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
+            NSString *upsql = [NSString stringWithUTF8Format:"UPDATE %s SET %s WHERE (%s)", [_name UTF8String], [values UTF8String], [wheres UTF8String]];
+            
+            [cls addObjectsFromArray:_primaries]; //从新把主键加上
+            
+            NSString *clnames = [_colums componentsJoinedByString:@","];
+            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_colums count] joinedUTF8String:","];
+            NSString *insql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
+            
+            [db prepareSql:upsql arguments:[self valuesFormKeys:cls object:obj]];
+            [db prepareSql:insql arguments:[self valuesFormKeys:_colums object:obj]];
+        }}
+    } sync:YES];
+}
+
+- (void)inreplaceObjects:(NSArray *)objects {
+    NSAssert(_db, @"模板表不能操作数据");
+    
+    if ([objects count] == 0) {
+        return ;
+    }
+    
+    if ([_primaries count] == 0)
+    {
+        return;
+    }
+    
+    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        for (id obj in objects){ @autoreleasepool {
+            
+            NSString *clnames = [_colums componentsJoinedByString:@","];
+            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_colums count] joinedUTF8String:","];
+            NSString *sql = [NSString stringWithUTF8Format:"INSERT OR REPLACE INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
+            
+            [db prepareSql:sql arguments:[self valuesFormKeys:_colums object:obj]];
+        }}
+    } sync:YES];
+}
+
+- (void)insertObject:(id)object
+{
+    if (object) {
+        [self insertObjects:@[ object ]];
+    }
+}
+
+- (void)updateObject:(id)object
+{
+    if (object) {
+        [self updateObjects:@[ object ]];
+    }
 }
 
 - (void)deleteObject:(id)object
 {
-    NSAssert(_db, @"模板表不能操作数据");
-
-    NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
-    NSString *sql =
-        [NSString stringWithUTF8Format:"DELETE FROM %s WHERE (%s)", [_name UTF8String], [wheres UTF8String]];
-
-    [_db prepareSql:sql arguments:[self valuesFormKeys:_primaries object:object]];
+    if (object) {
+        [self deleteObjects:@[ object ]];
+    }
 }
 
 - (void)upinsertObject:(id)object
 {
-    NSAssert(_db, @"模板表不能操作数据");
-
-    [_db executeTransaction:^(SSNDB *dataBase, BOOL *rollback) {
-        [self updateObject:object];
-        [self insertObject:object];
-    } sync:YES];
+    if (object) {
+        [self upinsertObjects:@[ object ]];
+    }
 }
+
+- (void)inreplaceObject:(id)object {
+    if (object) {
+        [self inreplaceObjects:@[ object ]];
+    }
+}
+
 
 @end
