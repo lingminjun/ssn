@@ -29,7 +29,7 @@ if (nil == self) { return ;}\
 #endif
 
 @property (nonatomic,strong) NSString *currentTag;
-@property (nonatomic) NSInteger actionCount;
+@property (nonatomic) long actionCount;
 @property (nonatomic) BOOL isSuspend;
 
 - (void)startTimer:(NSTimeInterval)timeOut tag:(NSString *)tag;
@@ -139,7 +139,7 @@ if (nil == self) { return ;}\
             }
             
             [self suspendActionQueue];
-            NSLog(@"%@ queue freeze！tag = %@, actionCount = %d",self.identify,tag,self.actionCount);
+            NSLog(@"%@ queue freeze！tag = %@, actionCount = %ld",self.identify,tag,self.actionCount);
         }
         else {
             self.currentTag = nil;

@@ -21,6 +21,9 @@
 		535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F266C1983F09100C0D7C0 /* SSNRouter.m */; };
 		535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F26731983F7A800C0D7C0 /* NSURL+Router.m */; };
 		535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F267619841ED800C0D7C0 /* SSNVC+Router.m */; };
+		537064941A2A01A500287199 /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064931A2A01A500287199 /* SSNDBFetch.m */; };
+		537064951A2A01A500287199 /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064931A2A01A500287199 /* SSNDBFetch.m */; };
+		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
 		5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C5961A0498290072C3F9 /* DMProfileViewController.m */; };
 		5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C59A1A0499B90072C3F9 /* DMChatViewController.m */; };
 		538E3835199869430061692E /* DMTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3834199869430061692E /* DMTabViewController.m */; };
@@ -173,6 +176,10 @@
 		535F26731983F7A800C0D7C0 /* NSURL+Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Router.m"; sourceTree = "<group>"; };
 		535F267519841ED800C0D7C0 /* SSNVC+Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNVC+Router.h"; sourceTree = "<group>"; };
 		535F267619841ED800C0D7C0 /* SSNVC+Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SSNVC+Router.m"; sourceTree = "<group>"; };
+		537064921A2A01A500287199 /* SSNDBFetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBFetch.h; sourceTree = "<group>"; };
+		537064931A2A01A500287199 /* SSNDBFetch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBFetch.m; sourceTree = "<group>"; };
+		537064961A2A032700287199 /* TSUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUser.h; sourceTree = "<group>"; };
+		537064971A2A032700287199 /* TSUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUser.m; sourceTree = "<group>"; };
 		5388C5951A0498290072C3F9 /* DMProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProfileViewController.h; sourceTree = "<group>"; };
 		5388C5961A0498290072C3F9 /* DMProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProfileViewController.m; sourceTree = "<group>"; };
 		5388C5991A0499B90072C3F9 /* DMChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMChatViewController.h; sourceTree = "<group>"; };
@@ -500,6 +507,8 @@
 				53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */,
 				53BB50BF1A1441F50070B67D /* ssn_json_test.m */,
 				53D576F91A18EC3F007155B1 /* QuantaTest.m */,
+				537064961A2A032700287199 /* TSUser.h */,
+				537064971A2A032700287199 /* TSUser.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -671,6 +680,8 @@
 		53FF517D1A29E21B009CB764 /* fetch */ = {
 			isa = PBXGroup;
 			children = (
+				537064921A2A01A500287199 /* SSNDBFetch.h */,
+				537064931A2A01A500287199 /* SSNDBFetch.m */,
 			);
 			path = fetch;
 			sourceTree = "<group>";
@@ -803,6 +814,7 @@
 				538E3841199869E00061692E /* DMSignNavController.m in Sources */,
 				538E3838199869880061692E /* DMContactNavController.m in Sources */,
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
+				537064941A2A01A500287199 /* SSNDBFetch.m in Sources */,
 				533378B11986432800084428 /* SSNDBPool.m in Sources */,
 				538E3835199869430061692E /* DMTabViewController.m in Sources */,
 				53050E0B1A1A1BC600F5EA39 /* SSNPerformance.c in Sources */,
@@ -855,6 +867,7 @@
 				53D24648199C83B400EFDF29 /* SSNRouter.m in Sources */,
 				53D24649199C83B400EFDF29 /* SSNPage.h in Sources */,
 				53D2464A199C83B400EFDF29 /* NSURL+Router.h in Sources */,
+				537064981A2A032700287199 /* TSUser.m in Sources */,
 				53D898E51A0E670C00CE63E0 /* SSNSafeSet.m in Sources */,
 				53D2464B199C83B400EFDF29 /* NSURL+Router.m in Sources */,
 				53D898E71A0F12DE00CE63E0 /* ssn_safe_array_test.m in Sources */,
@@ -887,6 +900,7 @@
 				53D24669199C83B500EFDF29 /* NiceQueue.h in Sources */,
 				53D2466A199C83B500EFDF29 /* NiceQueue.m in Sources */,
 				53D2466B199C83B500EFDF29 /* NSString+SSN.m in Sources */,
+				537064951A2A01A500287199 /* SSNDBFetch.m in Sources */,
 				53D662711A0BC910008D2296 /* SSNHostingTaskTail.m in Sources */,
 				53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */,
 				53D662751A0BD51D008D2296 /* SSNSafeArray.m in Sources */,

@@ -58,13 +58,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ssnTests/ssnTests.mm"
-            timestampString = "438959716.923629"
+            timestampString = "438960820.379392"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "377"
-            endingLineNumber = "377"
-            landmarkName = "-testDBTable1"
-            landmarkType = "5">
+            startingLineNumber = "406"
+            endingLineNumber = "406"
+            landmarkName = "read_inet(ssn::inet &amp;inet, const unsigned char *bytes, const unsigned long &amp;size, const unsigned int &amp;tag, void *context)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -111,7 +111,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "141"
             endingLineNumber = "141"
-            landmarkName = "-test_function_name"
+            landmarkName = "-test_kkobj"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

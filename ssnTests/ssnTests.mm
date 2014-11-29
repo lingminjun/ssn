@@ -25,6 +25,8 @@
 #import "SSNRouter.h"
 #import "NSURL+Router.h"
 
+#import "TSUser.h"
+
 @interface TSLObj : NSObject
 {
     NSString *_name;
@@ -43,16 +45,6 @@
     return _name;
 }
 
-@end
-
-@interface TSUser : NSObject
-@property (nonatomic, strong) NSString *uid;
-@property (nonatomic, strong) NSString *name;
-@property (nonatomic) NSInteger age;
-@property (nonatomic) BOOL sex;
-@end
-
-@implementation TSUser
 @end
 
 @interface KVOModel : NSObject {
@@ -329,6 +321,35 @@ static long long all_waited_time = 0ll;
     NSArray *objs = [db objects:nil sql:@"SELECT * FROM user WHERE uid = ?", user.uid, nil];
     
     NSLog(@"%@", objs);
+    
+    //    [table deleteObject:user];
+    //
+    //    objs = [db objects:nil sql:@"SELECT * FROM user WHERE uid = ?", @(user.uid), nil];
+    //
+    //    NSLog(@"%@", objs);
+    //[db prepareSql:@"INSERT INTO user (uid,name,age) VALUES(?,?,?)", @(1), @"xhc", @(25), nil];
+}
+
+
+- (void)test_dic_sort
+{
+    SSNDBPool *pool = [SSNDBPool shareInstance];
+    SSNDB *db = [pool dbWithScope:@"test1"];
+    NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/TestUser2.json";
+    SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
+    
+    [table update];
+    
+    NSArray *objs = [db objects:nil sql:@"SELECT * FROM user ORDER BY uid DESC", nil];
+    
+    NSLog(@"%@", objs);
+    
+    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES];
+    
+    NSMutableArray *sorts = [NSMutableArray arrayWithArray:objs];
+    [sorts sortedArrayUsingDescriptors:@[sort]];
+    
+    NSLog(@"%@", sorts);
     
     //    [table deleteObject:user];
     //
