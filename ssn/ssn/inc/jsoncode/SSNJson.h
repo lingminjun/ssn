@@ -27,7 +27,8 @@
 @end
 
 /**
- *  默认实现支持，NSObject 默认实现了一套encodeWithJsonCoder和decodeWithJsonCoder，并提供通用方法来获取最终值
+ *  默认实现支持SSNJsonCoding，
+ *  NSObject默认实现了一套encodeWithJsonCoder和decodeWithJsonCoder，并提供通用方法来获取最终值
  *  NSObject的默认实现是code所有属性，key为属性名
  *  注意：若对象属性类型被KVC转换成NSNumber，其中NSNumber为类对象('#')、方法(':')、指针('^')以及结构枚举共用体的复杂值类型将被当做bit encode
  *       对象的属性读写都是采用KVC方式，若你的属性中定义了指针（'*'）、自定义结构（'{'）请务必重载-valueForUndefinedKey:方法
@@ -119,6 +120,7 @@
 //json array单独支持，一个对象选择array存储后，再调用上面对象存储方式，将会抛出异常，同样，一段选用上面对象存储方式后，就不能再选用数组存储了
 - (void)encodeArray:(NSArray *)array;
 - (void)addEncodeObjectInArray:(id)objv;
+- (NSArray *)decodeArrayObjectClass:(Class)clazz;
 - (NSArray *)decodeArray;
 
 @end

@@ -11,7 +11,7 @@
 FOUNDATION_EXTERN NSString *const SSNDBTableWillMigrateNotification; //数据准备迁移 mainThread
 FOUNDATION_EXTERN NSString *const SSNDBTableDidMigrateNotification;  //数据迁移结束 mainThread
 FOUNDATION_EXTERN NSString *const SSNDBTableDidDropNotification;     //数据表删除 mainThread
-FOUNDATION_EXTERN NSString *const SSNDBTableNameKey;                 //数据迁移表格
+FOUNDATION_EXTERN NSString *const SSNDBTableNameUserInfoKey;         //数据迁移表格
 
 #ifndef _SSNDBTable_
 #define _SSNDBTable_
@@ -74,8 +74,8 @@ typedef enum : NSUInteger
 - (void)drop; //删除数据表
 
 //最终表的主键和所有列
-- (NSArray *)currentColums;
-- (NSArray *)currentPrimaryColums;
+- (NSArray *)columnNames;
+- (NSArray *)primaryColumnNames;
 
 //接管db操作
 - (void)insertObject:(id)object;

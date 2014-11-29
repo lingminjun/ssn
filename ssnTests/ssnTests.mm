@@ -346,8 +346,7 @@ static long long all_waited_time = 0ll;
     
     NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES];
     
-    NSMutableArray *sorts = [NSMutableArray arrayWithArray:objs];
-    [sorts sortedArrayUsingDescriptors:@[sort]];
+    NSArray *sorts = [objs sortedArrayUsingDescriptors:@[sort]];
     
     NSLog(@"%@", sorts);
     

@@ -24,29 +24,26 @@
  #endif
  #define SQLITE3_TEXT     3
  */
-typedef enum : NSUInteger
-{
+typedef NS_ENUM(NSUInteger, SSNDBColumnType) {
     SSNDBColumnInt = SQLITE_INTEGER,
     SSNDBColumnFloat = SQLITE_FLOAT,
     SSNDBColumnBool = SQLITE_INTEGER,
     SSNDBColumnBlob = SQLITE_BLOB,
     SSNDBColumnText = SQLITE_TEXT,
     SSNDBColumnNull = SQLITE_NULL,
-} SSNDBColumnType;
+};
 
-typedef enum : NSUInteger
-{                           //属性描述
+typedef NS_ENUM(NSUInteger, SSNDBColumnLevel) {                           //属性描述
     SSNDBColumnNormal = 0,  //一般属性(可为空)
     SSNDBColumnNotNull = 1, //一般属性(不允许为空)
     SSNDBColumnPrimary = 2, //主键（不允许为空）,多个时默认形成联合组件
-} SSNDBColumnLevel;
+};
 
-typedef enum : NSUInteger
-{
+typedef NS_ENUM(NSUInteger, SSNDBColumnIndex) {
     SSNDBColumnNotIndex = 0,    //不需要索引
     SSNDBColumnNormalIndex = 1, //索引（不允许为空）
     SSNDBColumnUniqueIndex = 2, //唯一索引（不允许为空）
-} SSNDBColumnIndex;
+};
 
 #endif
 

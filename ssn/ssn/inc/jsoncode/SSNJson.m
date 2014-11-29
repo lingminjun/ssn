@@ -271,7 +271,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
         return coder;
     }
     
-    //是数组类型，需要对只对象化
+    //是数组类型，需要对值对象化
     if ([objv isKindOfClass:[NSArray class]])
     {
         SSNJsonCoder *coder = [SSNJsonCoder coderWithTargetClass:nil];
@@ -798,12 +798,13 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
     }
 }
 
-- (NSArray *)decodeArray {
+- (NSArray *)decodeArrayObjectClass:(Class)clazz {
     NSMutableArray *array = [NSMutableArray array];
     for (id obj in [self rootArray]) {
-        //是字典类型，需要对值对象化
+
         id target_obj = nil;
         SSNJsonCoder *coder = [SSNJsonCoder coderWithRootObject:obj];
+        coder.targetClass = clazz;
         id obj = [NSObject ssn_objectFromJsonCoder:coder];
         if (obj) {
             target_obj = obj;
@@ -822,6 +823,10 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
         }
     }
     return array;
+}
+
+- (NSArray *)decodeArray {
+    return [self decodeArrayObjectClass:nil];
 }
 
 @end

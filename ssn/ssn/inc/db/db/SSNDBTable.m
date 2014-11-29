@@ -14,7 +14,6 @@
 NSString *const SSNDBTableWillMigrateNotification = @"SSNDBTableWillMigrateNotification"; //数据准备迁移 mainThread
 NSString *const SSNDBTableDidMigrateNotification = @"SSNDBTableDidMigrateNotification"; //数据迁移结束 mainThread
 NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification";
-NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
 
 @interface SSNDBTable ()
 
@@ -22,7 +21,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) SSNDB *db; //依赖的数据库
 @property (nonatomic, strong) NSString *path;
-@property (nonatomic, strong) NSArray *colums;
+@property (nonatomic, strong) NSArray *columns;
 @property (nonatomic, strong) NSArray *primaries;
 @property (nonatomic) NSUInteger currentVersion;
 @property (nonatomic) NSUInteger lastVersion; //最后的版本
@@ -42,8 +41,8 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
 //解析表
 - (NSDictionary *)parseJSONForFilePath:(NSString *)path;
 
-//存储colums
-- (void)peelColums;
+//存储columns
+- (void)peelcolumns;
 
 //检查表状态
 - (void)checkTableStatus;
@@ -74,7 +73,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
         NSAssert([_its count], @"表解析不合法! 请修改表描述文件");
 
         // 3、缓存列名
-        [self peelColums];
+        [self peelcolumns];
 
         // 4、检查表状态
         [self checkTableStatus];
@@ -96,7 +95,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
         NSAssert([_its count], @"模板表解析不合法! 请修改表描述文件");
 
         // 3、缓存列名
-        [self peelColums];
+        [self peelcolumns];
     }
     return self;
 }
@@ -124,7 +123,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
         self.db = db;
         self.path = meta.path;
         self.its = meta.its;
-        self.colums = meta.colums;
+        self.columns = meta.columns;
         self.primaries = meta.primaries;
 
         // 1、检查并创建表日志表
@@ -191,7 +190,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
             };
 
             //通知界面，正在迁移
-            NSDictionary *notifyInfo = @{SSNDBTableNameKey : _name};
+            NSDictionary *notifyInfo = @{SSNDBTableNameUserInfoKey : _name};
             [self postMainThreadNotification:SSNDBTableWillMigrateNotification info:notifyInfo];
 
             if (_status == SSNDBTableNone)
@@ -235,7 +234,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
         [db prepareSql:dropsql arguments:nil];
         [self removeVersionForTableName:_name];
 
-        NSDictionary *notifyInfo = @{SSNDBTableNameKey : _name};
+        NSDictionary *notifyInfo = @{SSNDBTableNameUserInfoKey : _name};
         [self postMainThreadNotification:SSNDBTableDidDropNotification info:notifyInfo];
     };
     [_db executeTransaction:block sync:YES];
@@ -343,7 +342,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
 }
 
 #pragma mark 剥离存储columns
-- (void)peelColums
+- (void)peelcolumns
 {
     if (!_its)
     {
@@ -366,7 +365,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
             [clnames addObject:cl.name];
         }
 
-        _colums = [clnames copy];
+        _columns = [clnames copy];
         _primaries = [primaries copy];
     }
 }
@@ -437,14 +436,14 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
 
 #pragma mark 数据管理
 //最终表的主键和所有列
-- (NSArray *)currentColums
+- (NSArray *)columnNames
 {
-    return _colums;
+    return [_columns copy];
 }
 
-- (NSArray *)currentPrimaryColums
+- (NSArray *)primaryColumnNames
 {
-    return _primaries;
+    return [_primaries copy];
 }
 
 - (NSArray *)valuesFormKeys:(NSArray *)keys object:(id)object
@@ -477,11 +476,11 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
     [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
         for (id obj in objects){ @autoreleasepool {
             
-            NSString *clnames = [_colums componentsJoinedByString:@","];
-            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_colums count] joinedUTF8String:","];
+            NSString *clnames = [_columns componentsJoinedByString:@","];
+            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
             NSString *sql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
             
-            [db prepareSql:sql arguments:[self valuesFormKeys:_colums object:obj]];
+            [db prepareSql:sql arguments:[self valuesFormKeys:_columns object:obj]];
         }}
     } sync:YES];
 }
@@ -502,7 +501,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
     [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
         for (id obj in objects){ @autoreleasepool {
             
-            NSMutableArray *cls = [NSMutableArray arrayWithArray:_colums];
+            NSMutableArray *cls = [NSMutableArray arrayWithArray:_columns];
             [cls removeObjectsInArray:_primaries];
             NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
             NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
@@ -554,7 +553,7 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
     [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
         for (id obj in objects){ @autoreleasepool {
             
-            NSMutableArray *cls = [NSMutableArray arrayWithArray:_colums];
+            NSMutableArray *cls = [NSMutableArray arrayWithArray:_columns];
             [cls removeObjectsInArray:_primaries];
             NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
             NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
@@ -562,12 +561,12 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
             
             [cls addObjectsFromArray:_primaries]; //从新把主键加上
             
-            NSString *clnames = [_colums componentsJoinedByString:@","];
-            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_colums count] joinedUTF8String:","];
+            NSString *clnames = [_columns componentsJoinedByString:@","];
+            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
             NSString *insql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
             
             [db prepareSql:upsql arguments:[self valuesFormKeys:cls object:obj]];
-            [db prepareSql:insql arguments:[self valuesFormKeys:_colums object:obj]];
+            [db prepareSql:insql arguments:[self valuesFormKeys:_columns object:obj]];
         }}
     } sync:YES];
 }
@@ -587,11 +586,11 @@ NSString *const SSNDBTableNameKey = @"SSNDBTableNameKey";
     [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
         for (id obj in objects){ @autoreleasepool {
             
-            NSString *clnames = [_colums componentsJoinedByString:@","];
-            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_colums count] joinedUTF8String:","];
+            NSString *clnames = [_columns componentsJoinedByString:@","];
+            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
             NSString *sql = [NSString stringWithUTF8Format:"INSERT OR REPLACE INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
             
-            [db prepareSql:sql arguments:[self valuesFormKeys:_colums object:obj]];
+            [db prepareSql:sql arguments:[self valuesFormKeys:_columns object:obj]];
         }}
     } sync:YES];
 }
