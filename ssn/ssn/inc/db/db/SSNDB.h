@@ -39,6 +39,9 @@ FOUNDATION_EXTERN NSString *const SSNDBRowIdUserInfoKey;      //notification use
 
 #pragma Transaction method
 //执行事务，在arc中请注意传入strong参数，确保操作完成，防止循环引用
-- (void)executeTransaction:(void (^)(SSNDB *dataBase, BOOL *rollback))block sync:(BOOL)sync;
+- (void)executeTransaction:(void (^)(SSNDB *database, BOOL *rollback))block sync:(BOOL)sync;
+
+//执行block，block在数据库执行线程中执行，在arc中请注意传入strong参数，确保操作完成，防止循环引用
+- (void)executeBlock:(void (^)(SSNDB *database))block sync:(BOOL)sync;
 
 @end

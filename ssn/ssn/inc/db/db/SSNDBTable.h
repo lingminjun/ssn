@@ -69,7 +69,7 @@ typedef enum : NSUInteger
 - (SSNDBTableStatus)status; //表状态，非常重要的接口
 
 // table的状体
-- (void)update; //创建数据表并升级到最新，使用者需要操作某个数据表时，一定要保证此方法已经被执行
+- (void)update; //创建数据表并升级到最新，使用者需要操作某个数据表时，一定要保证此方法已经被执行，此方法不放在初始化中调用主要用于多表集中迁移思路
 
 - (void)drop; //删除数据表
 

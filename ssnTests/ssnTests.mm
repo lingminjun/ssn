@@ -243,14 +243,14 @@ static long long all_waited_time = 0ll;
 
     //[db prepareSql:@"INSERT OR REPLACE INTO tst_tb (name,value) VALUES(?,?)", @"1", @(4), nil];
 
-    [db executeTransaction:^(SSNDB *dataBase, BOOL *rollback) {
-        [db prepareSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"2", @(0), nil];
+    [db executeTransaction:^(SSNDB *database, BOOL *rollback) {
+        [database prepareSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"2", @(0), nil];
 
-        [db prepareSql:@"UPDATE tst_tb SET value = ? WHERE name = ?", @(3), @"1", nil];
-        [db prepareSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"1", @(3), nil];
+        [database prepareSql:@"UPDATE tst_tb SET value = ? WHERE name = ?", @(3), @"1", nil];
+        [database prepareSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"1", @(3), nil];
     } sync:YES];
 
-    //    [db executeTransaction:^(SSNDB *dataBase, BOOL *rollback) {
+    //    [db executeTransaction:^(SSNDB *database, BOOL *rollback) {
     //        //        [db prepareSql:@"DELETE FROM tst_tb WHERE name = ?", @"1", nil];
     //        //        [db prepareSql:@"INSERT INTO tst_tb (name,value) VALUES(?,?)", @"1", @(7), nil];
     //

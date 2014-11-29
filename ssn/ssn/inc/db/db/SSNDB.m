@@ -625,7 +625,7 @@ static void ssndb_sqlite_rollback(void *user_data)
 
 #pragma Transaction method
 //执行事务，在arc中请注意传入strong参数，确保操作完成，防止循环引用
-- (void)executeTransaction:(void (^)(SSNDB *dataBase, BOOL *rollback))block sync:(BOOL)sync
+- (void)executeTransaction:(void (^)(SSNDB *database, BOOL *rollback))block sync:(BOOL)sync
 {
     if (!block)
     {
@@ -648,6 +648,25 @@ static void ssndb_sqlite_rollback(void *user_data)
         }
     }};
 
+    if (sync)
+    {
+        [_ioQueue sync:in_block];
+    }
+    else
+    {
+        [_ioQueue async:in_block];
+    }
+}
+
+//执行block，block在数据库执行线程中执行，在arc中请注意传入strong参数，确保操作完成，防止循环引用
+- (void)executeBlock:(void (^)(SSNDB *database))block sync:(BOOL)sync {
+    if (!block)
+    {
+        return;
+    }
+    
+    dispatch_block_t in_block = ^{ @autoreleasepool { block(self); }};
+    
     if (sync)
     {
         [_ioQueue sync:in_block];

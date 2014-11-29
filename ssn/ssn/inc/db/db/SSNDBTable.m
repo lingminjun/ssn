@@ -163,9 +163,14 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         }
     }
 
-    void (^block)(SSNDB * db, BOOL * rollback) = ^(SSNDB *db, BOOL *rollback) {
+    void (^block)(SSNDB * db) = ^(SSNDB *db) {
         @autoreleasepool
         {
+            //需要防止多个表对象同时操作，重新检查表状态
+            [self checkTableStatus];
+            if (SSNDBTableOK == _status) {
+                return ;
+            }
 
             //需要更新标信息存储
             [self updateVersion:_lastVersion forTableName:_name];
@@ -216,7 +221,7 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         }
     };
 
-    [_db executeTransaction:block sync:YES];
+    [_db executeBlock:block sync:YES];//DDL操作每一句话都将是事务级别，所以放事务block反而增加开销
     _status = SSNDBTableOK;
 }
 
@@ -230,14 +235,14 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
     }
 
     NSString *dropsql = [NSString stringWithUTF8Format:"DROP TABLE %s", [_name UTF8String]];
-    void (^block)(SSNDB * db, BOOL * rollback) = ^(SSNDB *db, BOOL *rollback) {
+    void (^block)(SSNDB * db) = ^(SSNDB *db) {
         [db prepareSql:dropsql arguments:nil];
         [self removeVersionForTableName:_name];
 
         NSDictionary *notifyInfo = @{SSNDBTableNameUserInfoKey : _name};
         [self postMainThreadNotification:SSNDBTableDidDropNotification info:notifyInfo];
     };
-    [_db executeTransaction:block sync:YES];
+    [_db executeBlock:block sync:YES];
     _status = SSNDBTableNone;
     _currentVersion = 0;
 }
@@ -262,9 +267,9 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         //采用sql0将造成rowid更新，实际操作是delete and insert
         NSString *sql1 = @"UPDATE ssn_db_tb_log SET value = ? WHERE name = ?";
         NSString *sql2 = @"INSERT INTO ssn_db_tb_log (name,value) VALUES(?,?)";
-        [_db executeTransaction:^(SSNDB *dataBase, BOOL *rollback) {
-            [_db prepareSql:sql1 arguments:@[ @(version), tableName ]];
-            [_db prepareSql:sql2 arguments:@[ tableName, @(version)]];
+        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+            [db prepareSql:sql1 arguments:@[ @(version), tableName ]];
+            [db prepareSql:sql2 arguments:@[ tableName, @(version)]];
         } sync:YES];
     }
     else
@@ -430,8 +435,8 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
 #pragma - mark 通知
 - (void)postMainThreadNotification:(NSString *)key info:(NSDictionary *)info
 {
-    dispatch_async(dispatch_get_main_queue(),
-                   ^{ [[NSNotificationCenter defaultCenter] postNotificationName:key object:self userInfo:info]; });
+    dispatch_queue_t main_queue = dispatch_get_main_queue();
+    dispatch_async(main_queue, ^{ [[NSNotificationCenter defaultCenter] postNotificationName:key object:self userInfo:info]; });
 }
 
 #pragma mark 数据管理
