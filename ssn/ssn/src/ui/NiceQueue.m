@@ -181,7 +181,7 @@ if (nil == self) { return ;}\
                 
                 self.actionCount -= 1;
                 
-                NSLog(@"%@ queue fire！tag = %@ ,actionCount = %d",self.identify, tag,self.actionCount);
+                NSLog(@"%@ queue fire！tag = %@ ,actionCount = %ld",self.identify, tag,self.actionCount);
             }
         }dispatch_block_end(block);
         
