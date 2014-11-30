@@ -343,7 +343,14 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         }
         
         [_metaResults insertObject:box.nObj atIndex:box.nIndex];
-        id<SSNDBFetchObject> nObj = [box.nObj copyWithZone:NULL];//复制对象
+        
+        id<SSNDBFetchObject> nObj = nil;
+        if (_fetchReadonly) {
+            nObj = box.nObj;
+        }
+        else {
+            [box.nObj copyWithZone:NULL];//复制对象
+        }
         
         [self processInsertedObject:nObj atIndex:box.nIndex evictObject:rmObj evictIndex:rmIndex];
     }
@@ -351,7 +358,14 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         ssn_log("\n rowid = %lld update object at index = %ld！\n", rowId, box.index);
         
         [_metaResults replaceObjectAtIndex:box.index withObject:box.nObj];
-        id<SSNDBFetchObject> nObj = [box.nObj copyWithZone:NULL];//复制对象
+        
+        id<SSNDBFetchObject> nObj = nil;
+        if (_fetchReadonly) {
+            nObj = box.nObj;
+        }
+        else {
+            [box.nObj copyWithZone:NULL];//复制对象
+        }
         
         [self processUpdatedObject:nObj atIndex:box.index];
     }
@@ -361,7 +375,13 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         [_metaResults removeObjectAtIndex:box.index];
         [_metaResults insertObject:box.nObj atIndex:box.nIndex];
         
-        id<SSNDBFetchObject> nObj = [box.nObj copyWithZone:NULL];//复制对象
+        id<SSNDBFetchObject> nObj = nil;
+        if (_fetchReadonly) {
+            nObj = box.nObj;
+        }
+        else {
+            [box.nObj copyWithZone:NULL];//复制对象
+        }
         
         [self processMovedObject:nObj fromIndex:box.index toIndex:box.nIndex];
     }
