@@ -10,13 +10,6 @@
 #import <XCTest/XCTest.h>
 #import "SSNSafeArray.h"
 
-@interface TSPerson : NSObject
-@property (nonatomic,strong) NSString *name;
-@end
-
-@implementation TSPerson
-@end
-
 @interface ssn_safe_array_test : XCTestCase
 
 @end
@@ -92,28 +85,6 @@
         NSLog(@"%@",obj);
     }
     
-    XCTAssert(YES, @"Pass");
-}
-
-- (void)test_k_v_c_test {
-    
-    SSNSafeArray *ary = [[SSNSafeArray alloc] init];
-    
-    @autoreleasepool {
-        for (int i = 0; i < 100; i++) {
-            NSString *key = [NSString stringWithFormat:@"name%d", i];
-            TSPerson *ps = [[TSPerson alloc] init];
-            ps.name = key;
-            [ary addObject:ps];
-        }
-    }
-    
-     //[ary setValue:@"ddddd" forKey:@"0.name"];
-    
-    NSArray *names = [ary valueForKey:@"name"];
-    NSLog(@"names=%@",names);
-    
-    //CFRunLoopRunInMode(kCFRunLoopDefaultMode, 5, false);
     XCTAssert(YES, @"Pass");
 }
 

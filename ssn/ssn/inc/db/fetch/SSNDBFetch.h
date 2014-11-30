@@ -8,12 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+
+@protocol SSNDBFetchObject;
+
 /**
  *  查询数据集描述
  */
 @interface SSNDBFetch : NSObject<NSCopying>
 
-@property (nonatomic, strong) Class<NSCopying> entity; //数据返回实例，如果你不传入对象，则返回数据项放入字典中
+@property (nonatomic, strong) Class<SSNDBFetchObject> entity; //数据返回实例，如果你不传入对象，则返回数据项放入字典中
 
 @property (nonatomic, copy) NSArray *sortDescriptors; //<NSSortDescriptor *>
 
@@ -23,10 +26,19 @@
 
 @property (nonatomic) NSUInteger limit;//限制大小，传入0表示无限制
 
-- (instancetype)initWithEntity:(Class<NSCopying>)clazz;
-- (instancetype)initWithEntity:(Class<NSCopying>)clazz sortDescriptors:(NSArray *)sortDescriptors predicate:(NSPredicate *)predicate offset:(NSUInteger)offset limit:(NSUInteger)limit;
+- (instancetype)initWithEntity:(Class<SSNDBFetchObject>)clazz;
+- (instancetype)initWithEntity:(Class<SSNDBFetchObject>)clazz sortDescriptors:(NSArray *)sortDescriptors predicate:(NSPredicate *)predicate offset:(NSUInteger)offset limit:(NSUInteger)limit;
 
-+ (instancetype)fetchWithEntity:(Class<NSCopying>)clazz;
-+ (instancetype)fetchWithEntity:(Class<NSCopying>)clazz sortDescriptors:(NSArray *)sortDescriptors predicate:(NSPredicate *)predicate offset:(NSUInteger)offset limit:(NSUInteger)limit;
++ (instancetype)fetchWithEntity:(Class<SSNDBFetchObject>)clazz;
++ (instancetype)fetchWithEntity:(Class<SSNDBFetchObject>)clazz sortDescriptors:(NSArray *)sortDescriptors predicate:(NSPredicate *)predicate offset:(NSUInteger)offset limit:(NSUInteger)limit;
+
+- (NSString *)sqlStatement;//where子句和order by子句以及limit子句
+
+@end
+
+//fetch使用必须满足fetch对象协议
+@protocol SSNDBFetchObject <NSObject,NSCopying>
+
+@property (nonatomic) int64_t rowid;//fetch对象依赖rowid
 
 @end

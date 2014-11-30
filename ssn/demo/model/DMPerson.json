@@ -1,0 +1,12 @@
+{
+    "tb":"DMPerson",
+    "its":[{
+           "vs":1,
+           "cl":[
+                 {"name":"uid",  "type":3,   "level":2,  "fill":"",  "index":1,  "mapping":""},
+                 {"name":"name", "type":3,   "level":0,  "fill":"",  "index":1,  "mapping":""},
+                 {"name":"avatar", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
+                 {"name":"mobile", "type":3,   "level":0,  "fill":"",  "index":1,  "mapping":""}
+                 ]
+           }]
+}

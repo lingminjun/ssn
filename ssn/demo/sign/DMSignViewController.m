@@ -7,6 +7,7 @@
 //
 
 #import "DMSignViewController.h"
+#import "DMSignEngine.h"
 
 @interface DMSignViewController ()
 
@@ -39,6 +40,7 @@
 
 - (void)doneAction:(id)sender
 {
+    [DMSignEngine sharedInstance].loginId = @"18758014247";
     [self.ssn_router openURL:[NSURL URLWithString:@"app://default"]];
 }
 

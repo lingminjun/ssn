@@ -634,5 +634,32 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
     }
 }
 
+- (NSArray *)objectsWithClass:(Class)clazz forPredicate:(NSPredicate *)predicate {
+    NSAssert(_db, @"模板表不能查询数据");
+    
+    NSMutableString *sql = [NSMutableString stringWithFormat:@"SELECT * FROM %@ ",_name];
+    if (predicate) {
+        [sql appendFormat:@"WHERE %@",[predicate predicateFormat]];
+    }
+    
+    return [_db objects:clazz sql:sql arguments:nil];
+}
+
+- (NSArray *)objectsWithClass:(Class)clazz forConditions:(NSDictionary *)conditions {
+    NSAssert(_db, @"模板表不能查询数据");
+    
+    NSMutableString *sql = [NSMutableString stringWithFormat:@"SELECT * FROM %@ ",_name];
+
+    NSArray *values = nil;
+    if ([conditions count]) {
+        NSArray *allKeys = [conditions allKeys];
+        values = [conditions objectsForKeys:allKeys notFoundMarker:[NSNull null]];
+        NSString *wheres = [NSString componentsStringWithArray:allKeys appendingString:@" = ?" joinedString:@" AND "];
+        [sql appendFormat:@"WHERE %@",wheres];
+    }
+    
+    return [_db objects:clazz sql:sql arguments:values];
+}
+
 
 @end

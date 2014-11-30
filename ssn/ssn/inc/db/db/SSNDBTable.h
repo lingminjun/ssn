@@ -93,4 +93,7 @@ typedef enum : NSUInteger
 - (void)inreplaceObject:(id)object;          // insert or replace
 - (void)inreplaceObjects:(NSArray *)objects; // insert or replace
 
+- (NSArray *)objectsWithClass:(Class)clazz forPredicate:(NSPredicate *)predicate;//查询支持
+- (NSArray *)objectsWithClass:(Class)clazz forConditions:(NSDictionary *)conditions;//查询支持
+
 @end

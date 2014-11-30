@@ -15,11 +15,17 @@
 
 @property (nonatomic, strong, readonly) NSString *name;
 
+@property (nonatomic, readonly) BOOL isSyncPriStrategy;//同步优先策略，默认采用同步优先策略
+
 - (instancetype)initWithName:(NSString *)name;
+- (instancetype)initWithName:(NSString *)name syncPriStrategy:(BOOL)syncPriStrategy;
 
 - (void)async:(dispatch_block_t)block;
 
 - (void)sync:(dispatch_block_t)block;
+
++ (instancetype)queueWithName:(NSString *)name;
++ (instancetype)queueWithName:(NSString *)name  syncPriStrategy:(BOOL)syncPriStrategy;
 
 //工程共享的serialQueue
 + (instancetype)defaultSerialQueue;

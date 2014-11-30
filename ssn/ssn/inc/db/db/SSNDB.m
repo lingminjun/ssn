@@ -217,10 +217,7 @@ static void ssndb_sqlite_rollback(void *user_data)
     return sqlite3_column_type(statement, column);
 }
 
-- (void)copyValuesFromStatement:(sqlite3_stmt *)statement
-                          toRow:(NSMutableDictionary *)row
-                    columnTypes:(NSArray *)columnTypes
-                    columnNames:(NSArray *)columnNames
+- (void)copyValuesFromStatement:(sqlite3_stmt *)statement toRow:(id)row columnTypes:(NSArray *)columnTypes columnNames:(NSArray *)columnNames
 {
     int columnCount = sqlite3_column_count(statement);
 
@@ -413,7 +410,14 @@ static void ssndb_sqlite_rollback(void *user_data)
 
                 @autoreleasepool
                 {
-                    NSMutableDictionary *row = [NSMutableDictionary dictionaryWithCapacity:1];
+                    id row = nil;
+                    if (aclass) {
+                        row = [[aclass alloc] init];
+                    }
+                    else {
+                        row = [NSMutableDictionary dictionary];
+                    }
+                    
                     [self copyValuesFromStatement:statement toRow:row columnTypes:columnTypes columnNames:columnNames];
                     [rows addObject:row];
                 }

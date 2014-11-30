@@ -12,6 +12,29 @@
 		533378AE1986431200084428 /* SSNDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378AD1986431200084428 /* SSNDB.m */; };
 		533378B11986432800084428 /* SSNDBPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B01986432800084428 /* SSNDBPool.m */; };
 		533378B41986435B00084428 /* SSNDBTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B31986435B00084428 /* SSNDBTable.m */; };
+		533BE3941A2AC30500E07FF0 /* ssn_fetch_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3931A2AC30500E07FF0 /* ssn_fetch_test.m */; };
+		533BE3961A2AC43800E07FF0 /* TestPerson.json in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3951A2AC43800E07FF0 /* TestPerson.json */; };
+		533BE3991A2AC4B400E07FF0 /* TSPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3981A2AC4B400E07FF0 /* TSPerson.m */; };
+		533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE39C1A2AFF7800E07FF0 /* DMSession.m */; };
+		533BE39E1A2AFF7800E07FF0 /* DMSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE39C1A2AFF7800E07FF0 /* DMSession.m */; };
+		533BE3A01A2B010800E07FF0 /* DMSession.json in Resources */ = {isa = PBXBuildFile; fileRef = 533BE39F1A2B010800E07FF0 /* DMSession.json */; };
+		533BE3A11A2B010800E07FF0 /* DMSession.json in Resources */ = {isa = PBXBuildFile; fileRef = 533BE39F1A2B010800E07FF0 /* DMSession.json */; };
+		533BE3A41A2B02C300E07FF0 /* DMSignEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3A31A2B02C300E07FF0 /* DMSignEngine.m */; };
+		533BE3A51A2B02C300E07FF0 /* DMSignEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3A31A2B02C300E07FF0 /* DMSignEngine.m */; };
+		533BE3A81A2B070800E07FF0 /* dm_default_avatar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3A71A2B070800E07FF0 /* dm_default_avatar@2x.png */; };
+		533BE3A91A2B070800E07FF0 /* dm_default_avatar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3A71A2B070800E07FF0 /* dm_default_avatar@2x.png */; };
+		533BE3B21A2B0C0D00E07FF0 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3AF1A2B0C0D00E07FF0 /* Default-568h@2x.png */; };
+		533BE3B31A2B0C0D00E07FF0 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3AF1A2B0C0D00E07FF0 /* Default-568h@2x.png */; };
+		533BE3B41A2B0C0D00E07FF0 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3B01A2B0C0D00E07FF0 /* Default.png */; };
+		533BE3B51A2B0C0D00E07FF0 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3B01A2B0C0D00E07FF0 /* Default.png */; };
+		533BE3B61A2B0C0D00E07FF0 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3B11A2B0C0D00E07FF0 /* Default@2x.png */; };
+		533BE3B71A2B0C0D00E07FF0 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3B11A2B0C0D00E07FF0 /* Default@2x.png */; };
+		533BE3B91A2B0DC900E07FF0 /* DMPerson.json in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3B81A2B0DC900E07FF0 /* DMPerson.json */; };
+		533BE3BA1A2B0DC900E07FF0 /* DMPerson.json in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3B81A2B0DC900E07FF0 /* DMPerson.json */; };
+		533BE3BD1A2B0DDA00E07FF0 /* DMPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3BC1A2B0DDA00E07FF0 /* DMPerson.m */; };
+		533BE3BE1A2B0DDA00E07FF0 /* DMPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3BC1A2B0DDA00E07FF0 /* DMPerson.m */; };
+		533BE3C01A2B150500E07FF0 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 533BE3BF1A2B150500E07FF0 /* AddressBook.framework */; };
+		533BE3C21A2B150B00E07FF0 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */; };
 		534B4AA919C04E4B00698137 /* KKObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B4AA819C04E4B00698137 /* KKObj.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
 		53512E2619A3959A00DACC42 /* lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53512E2419A3959A00DACC42 /* lock.cpp */; };
@@ -164,6 +187,24 @@
 		533378B01986432800084428 /* SSNDBPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBPool.m; sourceTree = "<group>"; };
 		533378B21986435B00084428 /* SSNDBTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBTable.h; sourceTree = "<group>"; };
 		533378B31986435B00084428 /* SSNDBTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBTable.m; sourceTree = "<group>"; };
+		533BE3931A2AC30500E07FF0 /* ssn_fetch_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_fetch_test.m; sourceTree = "<group>"; };
+		533BE3951A2AC43800E07FF0 /* TestPerson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestPerson.json; sourceTree = "<group>"; };
+		533BE3971A2AC4B400E07FF0 /* TSPerson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPerson.h; sourceTree = "<group>"; };
+		533BE3981A2AC4B400E07FF0 /* TSPerson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPerson.m; sourceTree = "<group>"; };
+		533BE39B1A2AFF7800E07FF0 /* DMSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSession.h; sourceTree = "<group>"; };
+		533BE39C1A2AFF7800E07FF0 /* DMSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSession.m; sourceTree = "<group>"; };
+		533BE39F1A2B010800E07FF0 /* DMSession.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DMSession.json; sourceTree = "<group>"; };
+		533BE3A21A2B02C300E07FF0 /* DMSignEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSignEngine.h; sourceTree = "<group>"; };
+		533BE3A31A2B02C300E07FF0 /* DMSignEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSignEngine.m; sourceTree = "<group>"; };
+		533BE3A71A2B070800E07FF0 /* dm_default_avatar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dm_default_avatar@2x.png"; sourceTree = "<group>"; };
+		533BE3AF1A2B0C0D00E07FF0 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
+		533BE3B01A2B0C0D00E07FF0 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = ../Default.png; sourceTree = "<group>"; };
+		533BE3B11A2B0C0D00E07FF0 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "../Default@2x.png"; sourceTree = "<group>"; };
+		533BE3B81A2B0DC900E07FF0 /* DMPerson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DMPerson.json; sourceTree = "<group>"; };
+		533BE3BB1A2B0DDA00E07FF0 /* DMPerson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPerson.h; sourceTree = "<group>"; };
+		533BE3BC1A2B0DDA00E07FF0 /* DMPerson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPerson.m; sourceTree = "<group>"; };
+		533BE3BF1A2B150500E07FF0 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		534B4AA719C04E4B00698137 /* KKObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKObj.h; sourceTree = "<group>"; };
 		534B4AA819C04E4B00698137 /* KKObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKObj.m; sourceTree = "<group>"; };
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -277,6 +318,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				533BE3C21A2B150B00E07FF0 /* AddressBookUI.framework in Frameworks */,
+				533BE3C01A2B150500E07FF0 /* AddressBook.framework in Frameworks */,
 				53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */,
 				53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */,
 				53D163E6191A629C00AD4C81 /* CoreGraphics.framework in Frameworks */,
@@ -315,6 +358,27 @@
 				53D78578199F2B29004D9D62 /* SSNDBTable+Factory.m */,
 			);
 			path = db;
+			sourceTree = "<group>";
+		};
+		533BE39A1A2AFF5300E07FF0 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				533BE3B81A2B0DC900E07FF0 /* DMPerson.json */,
+				533BE39F1A2B010800E07FF0 /* DMSession.json */,
+				533BE39B1A2AFF7800E07FF0 /* DMSession.h */,
+				533BE39C1A2AFF7800E07FF0 /* DMSession.m */,
+				533BE3BB1A2B0DDA00E07FF0 /* DMPerson.h */,
+				533BE3BC1A2B0DDA00E07FF0 /* DMPerson.m */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		533BE3A61A2B070800E07FF0 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				533BE3A71A2B070800E07FF0 /* dm_default_avatar@2x.png */,
+			);
+			path = images;
 			sourceTree = "<group>";
 		};
 		53512E2319A3957600DACC42 /* core */ = {
@@ -365,6 +429,8 @@
 		538E382D199868710061692E /* demo */ = {
 			isa = PBXGroup;
 			children = (
+				533BE3A61A2B070800E07FF0 /* images */,
+				533BE39A1A2AFF5300E07FF0 /* model */,
 				5388C5981A0499AA0072C3F9 /* chat */,
 				5388C5941A0497FF0072C3F9 /* profile */,
 				538E3832199869080061692E /* tab */,
@@ -416,6 +482,8 @@
 				538E3840199869E00061692E /* DMSignNavController.m */,
 				538E3842199869F90061692E /* DMSignViewController.h */,
 				538E3843199869F90061692E /* DMSignViewController.m */,
+				533BE3A21A2B02C300E07FF0 /* DMSignEngine.h */,
+				533BE3A31A2B02C300E07FF0 /* DMSignEngine.m */,
 			);
 			path = sign;
 			sourceTree = "<group>";
@@ -462,6 +530,8 @@
 		53D163E2191A629C00AD4C81 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */,
+				533BE3BF1A2B150500E07FF0 /* AddressBook.framework */,
 				53D7D0C219A8F5A90025A2E2 /* libstdc++.dylib */,
 				53512E2119A371AC00DACC42 /* libz.dylib */,
 				53ECB175191FC11500BEB29D /* libsqlite3.dylib */,
@@ -488,6 +558,9 @@
 		53D163EA191A629C00AD4C81 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				533BE3AF1A2B0C0D00E07FF0 /* Default-568h@2x.png */,
+				533BE3B01A2B0C0D00E07FF0 /* Default.png */,
+				533BE3B11A2B0C0D00E07FF0 /* Default@2x.png */,
 				53D163EB191A629C00AD4C81 /* ssn-Info.plist */,
 				53D163EC191A629C00AD4C81 /* InfoPlist.strings */,
 				53D163EF191A629C00AD4C81 /* main.m */,
@@ -499,6 +572,7 @@
 		53D1640B191A629C00AD4C81 /* ssnTests */ = {
 			isa = PBXGroup;
 			children = (
+				533BE3951A2AC43800E07FF0 /* TestPerson.json */,
 				53D16411191A629C00AD4C81 /* ssnTests.mm */,
 				53D1640C191A629C00AD4C81 /* Supporting Files */,
 				53D78573199F1564004D9D62 /* TestUser.json */,
@@ -513,6 +587,9 @@
 				53D576F91A18EC3F007155B1 /* QuantaTest.m */,
 				537064961A2A032700287199 /* TSUser.h */,
 				537064971A2A032700287199 /* TSUser.m */,
+				533BE3931A2AC30500E07FF0 /* ssn_fetch_test.m */,
+				533BE3971A2AC4B400E07FF0 /* TSPerson.h */,
+				533BE3981A2AC4B400E07FF0 /* TSPerson.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -763,7 +840,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				533BE3A81A2B070800E07FF0 /* dm_default_avatar@2x.png in Resources */,
+				533BE3B41A2B0C0D00E07FF0 /* Default.png in Resources */,
 				535F26651983A21D00C0D7C0 /* db.md in Resources */,
+				533BE3A01A2B010800E07FF0 /* DMSession.json in Resources */,
+				533BE3B21A2B0C0D00E07FF0 /* Default-568h@2x.png in Resources */,
+				533BE3B91A2B0DC900E07FF0 /* DMPerson.json in Resources */,
+				533BE3B61A2B0C0D00E07FF0 /* Default@2x.png in Resources */,
 				53D163EE191A629C00AD4C81 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -772,9 +855,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				533BE3A91A2B070800E07FF0 /* dm_default_avatar@2x.png in Resources */,
 				53D78574199F1564004D9D62 /* TestUser.json in Resources */,
 				53D78576199F15A9004D9D62 /* TestUser2.json in Resources */,
+				533BE3B71A2B0C0D00E07FF0 /* Default@2x.png in Resources */,
+				533BE3B51A2B0C0D00E07FF0 /* Default.png in Resources */,
+				533BE3BA1A2B0DC900E07FF0 /* DMPerson.json in Resources */,
+				533BE3961A2AC43800E07FF0 /* TestPerson.json in Resources */,
 				53D16410191A629C00AD4C81 /* InfoPlist.strings in Resources */,
+				533BE3B31A2B0C0D00E07FF0 /* Default-568h@2x.png in Resources */,
+				533BE3A11A2B010800E07FF0 /* DMSession.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -788,10 +878,13 @@
 				53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */,
 				53D576F71A187403007155B1 /* SSNQuantum.m in Sources */,
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
+				533BE3BD1A2B0DDA00E07FF0 /* DMPerson.m in Sources */,
 				53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */,
 				5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */,
 				538E384D19986A700061692E /* DMSettingViewController.m in Sources */,
 				53D7D0B319A857220025A2E2 /* buffer.cpp in Sources */,
+				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,
+				533BE3A41A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
 				538E3844199869F90061692E /* DMSignViewController.m in Sources */,
 				53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
@@ -838,6 +931,7 @@
 				53D6626C1A0BC521008D2296 /* SSNSafeDictionary.h in Sources */,
 				53D6626D1A0BC521008D2296 /* SSNSafeDictionary.m in Sources */,
 				53DBD62919EA642900728F96 /* NSObject+SSNTracking.h in Sources */,
+				533BE3991A2AC4B400E07FF0 /* TSPerson.m in Sources */,
 				53F74FD81A1EDB8800FB36B2 /* stt.cpp in Sources */,
 				53DBD62A19EA642900728F96 /* NSObject+SSNTracking.m in Sources */,
 				53D12DBE19B623B9004D09F4 /* SSNDBTable+Factory.h in Sources */,
@@ -847,6 +941,7 @@
 				53D7D0BC19A8F40D0025A2E2 /* lock.cpp in Sources */,
 				53D7D0BD19A8F40D0025A2E2 /* lock.h in Sources */,
 				53D7D0BE19A8F40D0025A2E2 /* inet.cpp in Sources */,
+				533BE3A51A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
 				53D7D0BF19A8F40D0025A2E2 /* inet.h in Sources */,
 				53D7D0C019A8F40D0025A2E2 /* buffer.cpp in Sources */,
 				53D7D0C119A8F40D0025A2E2 /* buffer.h in Sources */,
@@ -855,6 +950,7 @@
 				53D24636199C83B400EFDF29 /* DMTabViewController.m in Sources */,
 				53DFE9C11A104C3E00944E51 /* SSNJson.m in Sources */,
 				53D24637199C83B400EFDF29 /* DMContactNavController.h in Sources */,
+				533BE3BE1A2B0DDA00E07FF0 /* DMPerson.m in Sources */,
 				53D24638199C83B400EFDF29 /* DMContactNavController.m in Sources */,
 				53D24639199C83B400EFDF29 /* DMContactViewController.h in Sources */,
 				53D2463A199C83B400EFDF29 /* DMContactViewController.m in Sources */,
@@ -909,9 +1005,11 @@
 				53D2466A199C83B500EFDF29 /* NiceQueue.m in Sources */,
 				53D2466B199C83B500EFDF29 /* NSString+SSN.m in Sources */,
 				537064951A2A01A500287199 /* SSNDBFetch.m in Sources */,
+				533BE39E1A2AFF7800E07FF0 /* DMSession.m in Sources */,
 				53D662711A0BC910008D2296 /* SSNHostingTaskTail.m in Sources */,
 				53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */,
 				53D662751A0BD51D008D2296 /* SSNSafeArray.m in Sources */,
+				533BE3941A2AC30500E07FF0 /* ssn_fetch_test.m in Sources */,
 				53D16412191A629C00AD4C81 /* ssnTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

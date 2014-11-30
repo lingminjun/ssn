@@ -20,5 +20,7 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>UILaunchStoryboardName</key>
+	<string>launch_image</string>
 </dict>
 </plist>

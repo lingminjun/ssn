@@ -52,7 +52,9 @@
     [userInfo setValue:name forKey:@"tableName"];
     [userInfo setValue:templateName forKey:@"templateName"];
 
-    return [cache objectForKey:key userInfo:userInfo];
+    SSNDBTable *table = [cache objectForKey:key userInfo:userInfo];
+    [table update];
+    return table;
 }
 
 + (void)clearMemoryTableWithDB:(SSNDB *)db name:(NSString *)name

@@ -1,0 +1,14 @@
+{
+    "tb":"DMSession",
+    "its":[{
+           "vs":1,
+           "cl":[
+                 {"name":"sid",  "type":3,   "level":2,  "fill":"",  "index":1,  "mapping":""},
+                 {"name":"title", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
+                 {"name":"icon", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
+                 {"name":"content", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
+                 {"name":"modifiedAt",  "type":1,   "level":0,  "fill":"",  "index":1,  "mapping":""},
+                 {"name":"unreadCount",  "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""}
+                 ]
+           }]
+}

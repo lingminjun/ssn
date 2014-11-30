@@ -35,6 +35,7 @@
     //跟踪用户行为
     [NSObject ssn_tracking_class:[UIViewController class] selector:@selector(viewDidLoad)];
     [NSObject ssn_tracking_class:[UIViewController class] selector:@selector(viewWillAppear:)];
+    [NSObject ssn_tracking_class:[UINavigationController class] selector:@selector(pushViewController:animated:)];
 
     [self.ssn_router setScheme:@"app"];
 
