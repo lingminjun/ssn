@@ -349,7 +349,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
             nObj = box.nObj;
         }
         else {
-            [box.nObj copyWithZone:NULL];//复制对象
+            nObj = [box.nObj copyWithZone:NULL];//复制对象
         }
         
         [self processInsertedObject:nObj atIndex:box.nIndex evictObject:rmObj evictIndex:rmIndex];
@@ -364,7 +364,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
             nObj = box.nObj;
         }
         else {
-            [box.nObj copyWithZone:NULL];//复制对象
+            nObj = [box.nObj copyWithZone:NULL];//复制对象
         }
         
         [self processUpdatedObject:nObj atIndex:box.index];
@@ -380,7 +380,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
             nObj = box.nObj;
         }
         else {
-            [box.nObj copyWithZone:NULL];//复制对象
+            nObj = [box.nObj copyWithZone:NULL];//复制对象
         }
         
         [self processMovedObject:nObj fromIndex:box.index toIndex:box.nIndex];
