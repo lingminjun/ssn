@@ -17,6 +17,8 @@ http://segmentfault.com/blog/ilikewhite/1190000000646452
 Auto Layout Help - Editing Auto Layout Constraints 苹果文档
 https://developer.apple.com/library/ios/recipes/xcode_help-IB_auto_layout/chapters/EditingConstraintAttributesintheAttributesInspector.html
 
+https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html
+
 
 WWDC 2014 Session笔记 - iOS界面开发的大一统 从autolaout 到 size class
 http://onevcat.com/2014/07/ios-ui-unique/

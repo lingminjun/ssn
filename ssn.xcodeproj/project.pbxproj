@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		53050E0B1A1A1BC600F5EA39 /* SSNPerformance.c in Sources */ = {isa = PBXBuildFile; fileRef = 53050E0A1A1A1BC600F5EA39 /* SSNPerformance.c */; };
 		53050E0C1A1A1BC600F5EA39 /* SSNPerformance.c in Sources */ = {isa = PBXBuildFile; fileRef = 53050E0A1A1A1BC600F5EA39 /* SSNPerformance.c */; };
+		531CEBC01A2C71D10029F895 /* ssnlog.c in Sources */ = {isa = PBXBuildFile; fileRef = 531CEBBE1A2C71D10029F895 /* ssnlog.c */; };
+		531CEBC11A2C71D10029F895 /* ssnlog.c in Sources */ = {isa = PBXBuildFile; fileRef = 531CEBBE1A2C71D10029F895 /* ssnlog.c */; };
 		533378AE1986431200084428 /* SSNDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378AD1986431200084428 /* SSNDB.m */; };
 		533378B11986432800084428 /* SSNDBPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B01986432800084428 /* SSNDBPool.m */; };
 		533378B41986435B00084428 /* SSNDBTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378B31986435B00084428 /* SSNDBTable.m */; };
@@ -151,6 +153,7 @@
 		53D898E71A0F12DE00CE63E0 /* ssn_safe_array_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D898E61A0F12DE00CE63E0 /* ssn_safe_array_test.m */; };
 		53D898E91A0FA0C800CE63E0 /* ssn_safe_set_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */; };
 		53D9065919A4E3AB009056F2 /* inet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D9065719A4E3AB009056F2 /* inet.cpp */; };
+		53D9A1971A2CC66F009F777D /* ssn_log_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9A1961A2CC66F009F777D /* ssn_log_test.m */; };
 		53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DBD62719EA610100728F96 /* ssnDTTest.m */; };
 		53DBD62919EA642900728F96 /* NSObject+SSNTracking.h in Sources */ = {isa = PBXBuildFile; fileRef = 53FAA61719E8F5F3006EBBE3 /* NSObject+SSNTracking.h */; };
 		53DBD62A19EA642900728F96 /* NSObject+SSNTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FAA61819E8F5F3006EBBE3 /* NSObject+SSNTracking.m */; };
@@ -181,6 +184,8 @@
 /* Begin PBXFileReference section */
 		53050E091A1A1BC600F5EA39 /* SSNPerformance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNPerformance.h; sourceTree = "<group>"; };
 		53050E0A1A1A1BC600F5EA39 /* SSNPerformance.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SSNPerformance.c; sourceTree = "<group>"; };
+		531CEBBE1A2C71D10029F895 /* ssnlog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnlog.c; sourceTree = "<group>"; };
+		531CEBBF1A2C71D10029F895 /* ssnlog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnlog.h; sourceTree = "<group>"; };
 		533378AC1986431200084428 /* SSNDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDB.h; sourceTree = "<group>"; };
 		533378AD1986431200084428 /* SSNDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDB.m; sourceTree = "<group>"; };
 		533378AF1986432800084428 /* SSNDBPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBPool.h; sourceTree = "<group>"; };
@@ -292,6 +297,7 @@
 		53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_safe_set_test.m; sourceTree = "<group>"; };
 		53D9065719A4E3AB009056F2 /* inet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inet.cpp; sourceTree = "<group>"; };
 		53D9065819A4E3AB009056F2 /* inet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inet.h; sourceTree = "<group>"; };
+		53D9A1961A2CC66F009F777D /* ssn_log_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_log_test.m; sourceTree = "<group>"; };
 		53DBD62719EA610100728F96 /* ssnDTTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssnDTTest.m; sourceTree = "<group>"; };
 		53DDBC40194B4BB700BA4F58 /* SSNNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNNavigationController.h; sourceTree = "<group>"; };
 		53DDBC45194B4BD100BA4F58 /* SSNNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNNavigationController.m; sourceTree = "<group>"; };
@@ -343,6 +349,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		531CEBBD1A2C718C0029F895 /* log */ = {
+			isa = PBXGroup;
+			children = (
+				531CEBBE1A2C71D10029F895 /* ssnlog.c */,
+				531CEBBF1A2C71D10029F895 /* ssnlog.h */,
+			);
+			path = log;
+			sourceTree = "<group>";
+		};
 		533378AB198642DA00084428 /* db */ = {
 			isa = PBXGroup;
 			children = (
@@ -590,6 +605,7 @@
 				533BE3931A2AC30500E07FF0 /* ssn_fetch_test.m */,
 				533BE3971A2AC4B400E07FF0 /* TSPerson.h */,
 				533BE3981A2AC4B400E07FF0 /* TSPerson.m */,
+				53D9A1961A2CC66F009F777D /* ssn_log_test.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -666,6 +682,7 @@
 		53ECB15D191FBB6000BEB29D /* base */ = {
 			isa = PBXGroup;
 			children = (
+				531CEBBD1A2C718C0029F895 /* log */,
 				53FAA61519E8F4EE006EBBE3 /* dt */,
 				53ECB15E191FBB6000BEB29D /* NSString+SSN.h */,
 				53ECB15F191FBB6000BEB29D /* ssnbase.h */,
@@ -901,6 +918,7 @@
 				538E384A19986A560061692E /* DMSessionViewController.m in Sources */,
 				535E2BCE1A1C5AE300D67318 /* ssnbase.m in Sources */,
 				53D662701A0BC910008D2296 /* SSNHostingTaskTail.m in Sources */,
+				531CEBC01A2C71D10029F895 /* ssnlog.c in Sources */,
 				535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */,
 				533378B41986435B00084428 /* SSNDBTable.m in Sources */,
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
@@ -988,6 +1006,7 @@
 				53D24654199C83B400EFDF29 /* SSNCuteSerialQueue.m in Sources */,
 				53D24655199C83B400EFDF29 /* NSFileManager+SSN.h in Sources */,
 				53D24656199C83B400EFDF29 /* NSFileManager+SSN.m in Sources */,
+				531CEBC11A2C71D10029F895 /* ssnlog.c in Sources */,
 				534B4AA919C04E4B00698137 /* KKObj.m in Sources */,
 				53D24657199C83B400EFDF29 /* SSNDB.h in Sources */,
 				53D24658199C83B400EFDF29 /* SSNDB.m in Sources */,
@@ -1010,6 +1029,7 @@
 				53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */,
 				53D662751A0BD51D008D2296 /* SSNSafeArray.m in Sources */,
 				533BE3941A2AC30500E07FF0 /* ssn_fetch_test.m in Sources */,
+				53D9A1971A2CC66F009F777D /* ssn_log_test.m in Sources */,
 				53D16412191A629C00AD4C81 /* ssnTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
