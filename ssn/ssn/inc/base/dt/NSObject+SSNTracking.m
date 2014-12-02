@@ -21,6 +21,7 @@
 #import <pthread/pthread.h>
 
 #import "ssnbase.h"
+#import "SSNLogger.h"
 
 #import "SSNPerformance.h"
 
@@ -486,7 +487,8 @@ void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const lon
             [logString appendFormat:@"c_a=%lld&u_t=%lld&s_t=%lld&c_u=%f",t_callat,u_cost,s_cost,cpu_usage];
 #endif
             
-            ssn_log("\nssn_track_log【%s】\n",[logString UTF8String]);
+            SSNLogVerbose(@"ssn_track_log【%@】", logString);
+            //ssn_log("\nssn_track_log【%s】\n",[logString UTF8String]);
         }
     });
 }
@@ -583,7 +585,7 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
         ssn_get_save_class_method_collect_ivar(clazz, selector, ivarList, NO);
     }
     
-    ssn_log("\n ssn tracking class:%s selector:%s\n",[NSStringFromClass(clazz) UTF8String],[NSStringFromSelector(selector) UTF8String]);
+    SSNLogVerbose(@"ssn_track_log 【ssn tracking class:%@ selector:%@】", NSStringFromClass(clazz), NSStringFromSelector(selector));
     
     //3、再为此类添加转发方法
     SEL forwarding_sel = NSSelectorFromString(ssn_objc_forwarding_method_name(selector));
@@ -596,12 +598,12 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     //4、替换原来方法名字下的实现
     if (class_addMethod(clazz, selector, (IMP)ssn_objc_forwarding_method_imp, method_type))
     {
-        ssn_log("\n ssn tracking add selector:%s\n",[NSStringFromSelector(selector) UTF8String]);
+        SSNLog(@"ssn tracking add selector:%@\n",NSStringFromSelector(selector));
     }
     else
     {
         class_replaceMethod(clazz,selector,(IMP)ssn_objc_forwarding_method_imp, method_type);
-        ssn_log("\n ssn tracking rewrite selector:%s\n",[NSStringFromSelector(selector) UTF8String]);
+        SSNLog(@"ssn tracking rewrite selector:%@\n",NSStringFromSelector(selector));
     }
     
 }
