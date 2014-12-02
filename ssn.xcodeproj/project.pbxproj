@@ -37,6 +37,8 @@
 		533BE3BE1A2B0DDA00E07FF0 /* DMPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3BC1A2B0DDA00E07FF0 /* DMPerson.m */; };
 		533BE3C01A2B150500E07FF0 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 533BE3BF1A2B150500E07FF0 /* AddressBook.framework */; };
 		533BE3C21A2B150B00E07FF0 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */; };
+		533EBA051A2D6E1D00D960A3 /* SSNLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 533EBA041A2D6E1D00D960A3 /* SSNLogger.m */; };
+		533EBA061A2D6E1D00D960A3 /* SSNLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 533EBA041A2D6E1D00D960A3 /* SSNLogger.m */; };
 		534B4AA919C04E4B00698137 /* KKObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B4AA819C04E4B00698137 /* KKObj.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
 		53512E2619A3959A00DACC42 /* lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53512E2419A3959A00DACC42 /* lock.cpp */; };
@@ -210,6 +212,8 @@
 		533BE3BC1A2B0DDA00E07FF0 /* DMPerson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPerson.m; sourceTree = "<group>"; };
 		533BE3BF1A2B150500E07FF0 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		533EBA031A2D6E1D00D960A3 /* SSNLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNLogger.h; sourceTree = "<group>"; };
+		533EBA041A2D6E1D00D960A3 /* SSNLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNLogger.m; sourceTree = "<group>"; };
 		534B4AA719C04E4B00698137 /* KKObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKObj.h; sourceTree = "<group>"; };
 		534B4AA819C04E4B00698137 /* KKObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKObj.m; sourceTree = "<group>"; };
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -354,6 +358,8 @@
 			children = (
 				531CEBBE1A2C71D10029F895 /* ssnlog.c */,
 				531CEBBF1A2C71D10029F895 /* ssnlog.h */,
+				533EBA031A2D6E1D00D960A3 /* SSNLogger.h */,
+				533EBA041A2D6E1D00D960A3 /* SSNLogger.m */,
 			);
 			path = log;
 			sourceTree = "<group>";
@@ -934,6 +940,7 @@
 				537064941A2A01A500287199 /* SSNDBFetch.m in Sources */,
 				53F519A91A2A185D00D4C381 /* SSNDBFetchController.m in Sources */,
 				533378B11986432800084428 /* SSNDBPool.m in Sources */,
+				533EBA051A2D6E1D00D960A3 /* SSNLogger.m in Sources */,
 				538E3835199869430061692E /* DMTabViewController.m in Sources */,
 				53050E0B1A1A1BC600F5EA39 /* SSNPerformance.c in Sources */,
 				53DFE9C01A104C3E00944E51 /* SSNJson.m in Sources */,
@@ -966,6 +973,7 @@
 				53D898E91A0FA0C800CE63E0 /* ssn_safe_set_test.m in Sources */,
 				53D24635199C83B400EFDF29 /* DMTabViewController.h in Sources */,
 				53D24636199C83B400EFDF29 /* DMTabViewController.m in Sources */,
+				533EBA061A2D6E1D00D960A3 /* SSNLogger.m in Sources */,
 				53DFE9C11A104C3E00944E51 /* SSNJson.m in Sources */,
 				53D24637199C83B400EFDF29 /* DMContactNavController.h in Sources */,
 				533BE3BE1A2B0DDA00E07FF0 /* DMPerson.m in Sources */,

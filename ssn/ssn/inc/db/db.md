@@ -34,3 +34,21 @@ model 副本 管理，主要抽象传 SSNDBContext来管理
 
 流量、稳定都还行， 性能在赋值受影响
 
+
+
+同步协议：
+
+场景一、一次正常的用户操作行为
+
+user---->write db---->hook---->remote rpc---->cloud db---->notice client(biz_type)---->pull update(biz_type, cur_tag)
+          ack 200<-------------remote rpc
+
+客户端有状态，故:client_model(biz_data, cur_tag, pre_tag, status)
+服务端没状态，故:server_model(biz_data, cur_tag, pre_tag)
+
+客户端记日志，故:clent_log(serialized(biz_data), cur_tag, pre_tag) //serialized(biz_data)用于merge工作（耗时可以接受）
+
+服务端ack时，客户端响应修改status，status变化仅仅通知ui层，不触发rpc，tag不改变
+
+
+

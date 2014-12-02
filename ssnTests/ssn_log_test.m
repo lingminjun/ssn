@@ -10,6 +10,7 @@
 #import <XCTest/XCTest.h>
 
 #import "ssnlog.h"
+#import "SSNLogger.h"
 
 @interface ssn_log_test : XCTestCase
 
@@ -29,13 +30,22 @@
 
 - (void)testExample {
     // This is an example of a functional test case.
-    ssn_file_log(NULL, 0, "dsfsdj%sdddd","000000000000");
+    
+    SSNLogVerbose(@"dsfsdj%sdddd","000000000000");
+    SSNLogVerbose(@"dshjfsdhfdksjfj");
+    SSNLogVerbose(@"================================");
 }
 
 - (void)testPerformanceExample {
     // This is an example of a performance test case.
     [self measureBlock:^{
         // Put the code you want to measure the time of here.
+        SSNLogVerbose(@"dsfsdj%sdddd","000000000000");
+        SSNLogVerbose(@"dshjfsdhfdksjfj");
+        SSNLogVerbose(@"================================");
+        SSNLogVerbose(@"kkkkk的首付款防溺水的说法是放假的思考了 ");
+        SSNLogVerbose(@"kkkkk的首付款的撒旦防溺水的说法是放假的思考了 ");
+        SSNLogVerbose(@"k的撒旦顶顶顶顶顶顶顶顶顶顶顶顶顶考了 ");
     }];
 }
 

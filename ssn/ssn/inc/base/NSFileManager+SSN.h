@@ -13,4 +13,7 @@
 //将在document中创建对应的目录，多级目录创建，创建失败返回nil
 - (NSString *)pathDocumentDirectoryWithPathComponents:(NSString *)pathComponents;
 
+//将在Library/Caches中创建对应的目录，多级目录创建，创建失败返回nil
+- (NSString *)pathCachesDirectoryWithPathComponents:(NSString *)pathComponents;
+
 @end

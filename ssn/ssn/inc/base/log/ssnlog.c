@@ -8,7 +8,6 @@
 
 #include "ssnlog.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -21,6 +20,7 @@
 
 #define SSN_FILE_MAX_LINES 1024         //每行ASII 128 个，大致1024行
 #define SSN_FILE_MAX_SIZE (1024*1024)   //1M的限定
+
 
 /*
  获得当前时间字符串，采用“2014-12-01 22:13:36”格式，占用较多字符
@@ -49,10 +49,6 @@ void ssn_log_get_local_utc_hex_time(char* buffer)
 {
     time_t rawtime = 0;
     time(&rawtime);
-    
-//    if (rawtime > SSN_1970_UTC_TIME) {
-//        rawtime -= SSN_1970_UTC_TIME;
-//    }
     
     //采用这种方式显示占用太大字符
     sprintf(buffer, "%08x",(unsigned int)rawtime);
@@ -91,41 +87,43 @@ long ssn_log_get_file_size(const char* filename)
 void ssn_log_get_file_name(char* filename)
 {
     char now[32] = {'\0'};
-    ssn_log_get_local_clear_time(now);
+    
+    time_t rawtime;
+    struct tm* timeinfo;
+    
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    
+    //文件格式限定字符
+    sprintf(now, "%04d-%02d-%02d %02d-%02d-%02d",
+            (timeinfo->tm_year+1900), (timeinfo->tm_mon+1), timeinfo->tm_mday,
+            timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+    
     sprintf(filename, "%s.txt", now);
 }
 
 /*
  写入日志文件
  @param filename [in]: 日志文件名
- @param max_size [in]: 日志文件大小限制
  @param buffer [in]: 日志内容
- @param buf_size [in]: 日志内容大小
  @return 空
  */
-void ssn_log_write_log_file(const char* filename, const long max_size, const char* buffer, const size_t buf_size)
+void ssn_log_write_log_file(const char* filename, const char* buffer)
 {
+    
+    FILE *fp;
+    
     if (filename != NULL && buffer != NULL)
     {
-        // 文件超过最大限制, 删除
-        long length = ssn_log_get_file_size(filename);
-        
-        if (length > max_size)
-        {
-            unlink(filename); // 删除文件
-        }
-        
         // 写日志
+        fp = fopen(filename, "at+");
+        if (fp != NULL)
         {
-            FILE *fp;
-            fp = fopen(filename, "at+");
-            if (fp != NULL)
-            {
-                fwrite(buffer, buf_size, 1, fp);
-                
-                fclose(fp);
-                fp = NULL;
-            }
+            //按照行输入
+            fputs(buffer, fp);
+            
+            fclose(fp);
+            fp = NULL;
         }
     }
 }
@@ -138,8 +136,57 @@ void ssn_log_write_log_file(const char* filename, const long max_size, const cha
  *  @return 空
  */
 void ssn_file_log(const char *file, const ssn_log_level level, const char * __restrict format, ...) {
+    
     char *pbuffer = NULL;
     char buffer[ssn_log_buffer_size] = {'\0'};
+    size_t len = 0;
+    
+    va_list arg_ptr;
+    
+#ifdef DEBUG
+    ssn_log_get_local_clear_time(buffer);
+#else
+    ssn_log_get_local_utc_hex_time(buffer);//utc节省日志控件
+#endif
+    
+    len = strlen(buffer);
+    buffer[len] = ' ';//插入一个空格
+    pbuffer = (buffer + len + 1);
+    
+    va_start(arg_ptr, format);
+    vsprintf(pbuffer, format, arg_ptr);
+    va_end(arg_ptr);
+    
+    len = strlen(buffer);
+    buffer[len] = '\n';//插入一个空格
+    
+    //写文件todo
+    if (file) {
+        ssn_log_write_log_file(file, buffer);
+    }
+    
+#ifndef DEBUG
+    if (level == ssn_console_log && level == ssn_verbose_log) {
+#endif
+        printf("%s",buffer);
+#ifndef DEBUG
+    }
+#endif
+}
+
+
+/**
+ *  写入日志
+ *  @param  [in]:    已经open的日志文件handler
+ *  @param  [in]:    日志级别
+ *  @param  [in]:    format
+ *  @return 空
+ */
+void ssn_file_puts_log(FILE *fp, const ssn_log_level level, const char * __restrict format, ...) {
+    char *pbuffer = NULL;
+    char buffer[ssn_log_buffer_size] = {'\0'};
+    size_t len = 0;
+    
     va_list arg_ptr;
     
 #ifdef DEBUG
@@ -148,7 +195,7 @@ void ssn_file_log(const char *file, const ssn_log_level level, const char * __re
     ssn_log_get_local_utc_hex_time(buffer);
 #endif
     
-    size_t len = strlen(buffer);
+    len = strlen(buffer);
     buffer[len] = ' ';//插入一个空格
     pbuffer = (buffer + len + 1);
     
@@ -156,15 +203,52 @@ void ssn_file_log(const char *file, const ssn_log_level level, const char * __re
     vsprintf(pbuffer, format, arg_ptr);
     va_end(arg_ptr);
     
+    len = strlen(buffer);
+    buffer[len] = '\n';//插入一个空格
+    
     //写文件todo
-    if (file) {
-        ssn_log_write_log_file(file, SSN_FILE_MAX_SIZE, buffer, strlen(buffer));
+    if (fp) {
+        fputs(buffer, fp);
     }
     
 #ifndef DEBUG
     if (level == ssn_verbose_log && level == ssn_debug_log) {
 #endif
-        printf("%s\n",buffer);
+        printf("%s",buffer);
+#ifndef DEBUG
+    }
+#endif
+
+}
+
+void ssn_file_puts_line(FILE *fp, const ssn_log_level level, const char *log) {
+    
+    char buffer[ssn_log_buffer_size] = {'\0'};
+    size_t len = 0;
+    
+#ifdef DEBUG
+    ssn_log_get_local_clear_time(buffer);
+#else
+    ssn_log_get_local_utc_hex_time(buffer);
+#endif
+    
+    len = strlen(buffer);
+    buffer[len] = ' ';//插入一个空格
+    
+    strcat(buffer, log);
+    
+    len = strlen(buffer);
+    buffer[len] = '\n';//插入一个空格
+    
+    //写文件todo
+    if (fp) {
+        fputs(buffer, fp);
+    }
+    
+#ifndef DEBUG
+    if (level == ssn_verbose_log && level == ssn_debug_log) {
+#endif
+        printf("%s",buffer);
 #ifndef DEBUG
     }
 #endif

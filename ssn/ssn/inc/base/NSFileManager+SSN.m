@@ -49,4 +49,40 @@
     return path;
 }
 
+- (NSString *)pathCachesDirectoryWithPathComponents:(NSString *)pathComponents {
+    static NSString *cachesDirectory = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        @autoreleasepool
+        {
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+            cachesDirectory = [paths objectAtIndex:0];
+        }
+    });
+    
+    if (!pathComponents)
+    {
+        return nil;
+    }
+    
+    NSString *path = [cachesDirectory stringByAppendingPathComponent:pathComponents];
+    
+    @autoreleasepool
+    {
+        NSError *error = nil;
+        if (![self fileExistsAtPath:path])
+        {
+            [self createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error];
+        }
+        
+        if (error)
+        {
+            ssn_log("create cache dir %s error:[%s]", [path UTF8String], [[error description] UTF8String]);
+            return nil;
+        }
+    }
+    
+    return path;
+}
+
 @end
