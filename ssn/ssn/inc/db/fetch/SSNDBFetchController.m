@@ -93,11 +93,11 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 
 #pragma mark status
 - (NSString *)fetchSql {
-    return [NSString stringWithFormat:@"SELECT rowid,* FROM %@ %@", _table.name, [_fetch sqlStatement]];
+    return [NSString stringWithFormat:@"SELECT rowid AS ssn_dbfetch_rowid,* FROM %@ %@", _table.name, [_fetch sqlStatement]];
 }
 
 - (NSString *)fetchForRowidSql {
-    return [NSString stringWithFormat:@"SELECT rowid,* FROM %@ WHERE rowid = ? LIMIT 0,1", _table.name];
+    return [NSString stringWithFormat:@"SELECT rowid AS ssn_dbfetch_rowid,* FROM %@ WHERE rowid = ? LIMIT 0,1", _table.name];
 }
 
 
@@ -215,7 +215,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     NSUInteger count = [_metaResults count];
     for (NSUInteger idx = 0; idx < count; idx ++) {
         id<SSNDBFetchObject> obj = [_metaResults objectAtIndex:idx];
-        if ([obj rowid] == rowid) {
+        if ([obj ssn_dbfetch_rowid] == rowid) {
             box.obj = obj;
             box.index = idx;
             break ;

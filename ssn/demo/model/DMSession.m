@@ -10,7 +10,7 @@
 
 @implementation DMSession
 
-@synthesize rowid = _rowid;
+@synthesize ssn_dbfetch_rowid = _ssn_dbfetch_rowid;
 
 
 - (NSUInteger)hash {
@@ -27,7 +27,7 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     DMSession *copy = [[DMSession alloc] init];
-    copy.rowid = self.rowid;
+    copy.ssn_dbfetch_rowid = self.ssn_dbfetch_rowid;
     copy.sid = self.sid;
     copy.title = self.title;
     copy.icon = self.icon;

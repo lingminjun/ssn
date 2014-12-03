@@ -10,7 +10,7 @@
 
 @implementation DMPerson
 
-@synthesize rowid = _rowid;
+@synthesize ssn_dbfetch_rowid = _ssn_dbfetch_rowid;
 
 - (NSUInteger)hash {
     return [self.uid hash];
@@ -26,7 +26,7 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     DMPerson *copy = [[DMPerson alloc] init];
-    copy.rowid = self.rowid;
+    copy.ssn_dbfetch_rowid = self.ssn_dbfetch_rowid;
     copy.uid = self.uid;
     copy.name = self.name;
     copy.avatar = self.avatar;
