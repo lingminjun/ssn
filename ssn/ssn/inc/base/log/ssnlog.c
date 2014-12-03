@@ -121,6 +121,7 @@ void ssn_log_write_log_file(const char* filename, const char* buffer)
         {
             //按照行输入
             fputs(buffer, fp);
+            fflush(fp);//效率稍微稍微收到影响
             
             fclose(fp);
             fp = NULL;
@@ -209,6 +210,7 @@ void ssn_file_puts_log(FILE *fp, const ssn_log_level level, const char * __restr
     //写文件todo
     if (fp) {
         fputs(buffer, fp);
+        fflush(fp);//效率稍微稍微收到影响
     }
     
 #ifndef DEBUG
@@ -243,6 +245,7 @@ void ssn_file_puts_line(FILE *fp, const ssn_log_level level, const char *log) {
     //写文件todo
     if (fp) {
         fputs(buffer, fp);
+        fflush(fp);//效率稍微稍微收到影响
     }
     
 #ifndef DEBUG
