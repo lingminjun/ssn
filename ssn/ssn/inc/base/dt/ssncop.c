@@ -1,12 +1,12 @@
 //
-//  SSNPerformance.c
+//  ssncop.c
 //  ssn
 //
-//  Created by lingminjun on 14-11-17.
+//  Created by lingminjun on 14/12/3.
 //  Copyright (c) 2014年 lingminjun. All rights reserved.
 //
 
-#include "SSNPerformance.h"
+#include "ssncop.h"
 #include <mach/mach.h>
 #include <mach/kern_return.h>
 #include <assert.h>
@@ -32,8 +32,8 @@ double ssn_current_cpu_usage(void)
     thread_basic_info_t basic_info_th;
     uint32_t stat_thread = 0; // Mach threads
     
-//    long tot_sec = 0;
-//    long tot_usec = 0;
+    //    long tot_sec = 0;
+    //    long tot_usec = 0;
     double tot_cpu = 0;
     int j;
     
@@ -66,8 +66,8 @@ double ssn_current_cpu_usage(void)
         basic_info_th = (thread_basic_info_t)thinfo;
         
         if (!(basic_info_th->flags & TH_FLAGS_IDLE)) {
-//            tot_sec = tot_sec + basic_info_th->user_time.seconds + basic_info_th->system_time.seconds;
-//            tot_usec = tot_usec + basic_info_th->system_time.microseconds + basic_info_th->system_time.microseconds;
+            //            tot_sec = tot_sec + basic_info_th->user_time.seconds + basic_info_th->system_time.seconds;
+            //            tot_usec = tot_usec + basic_info_th->system_time.microseconds + basic_info_th->system_time.microseconds;
             tot_cpu = tot_cpu + basic_info_th->cpu_usage / (double)TH_USAGE_SCALE * 100.0;
         }
         
@@ -107,7 +107,7 @@ double ssn_current_thread_cpu_usage(void)
     return tot_cpu;
 }
 
-SSN_C_EXTERN ssn_performance_info_t ssn_current_performance_info(void) {
+ssn_performance_info_t ssn_current_performance_info(void) {
     kern_return_t kr;
     
     pthread_t current_thread = pthread_self();

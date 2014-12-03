@@ -23,7 +23,7 @@
 #import "ssnbase.h"
 #import "SSNLogger.h"
 
-#import "SSNPerformance.h"
+#import "ssncop.h"
 
 #define ssn_used_string_utf8_format 0
 
