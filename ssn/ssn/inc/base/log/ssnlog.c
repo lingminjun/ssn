@@ -81,6 +81,25 @@ long ssn_log_get_file_size(const char* filename)
 }
 
 /**
+ *  获取日志目录名
+ *  @param [out]: 目录名
+ */
+void ssn_log_get_dir_name(char *dirname,const long interval)
+{
+    time_t rawtime;
+    struct tm* timeinfo;
+    
+    time(&rawtime);
+    
+    rawtime += interval;//加上间隔时间
+    
+    timeinfo = localtime(&rawtime);
+    
+    //文件格式限定字符
+    sprintf(dirname, "%04d-%02d-%02d", (timeinfo->tm_year+1900), (timeinfo->tm_mon+1), timeinfo->tm_mday);
+}
+
+/**
  *  获取日志文件名
  *  @param filename [out]: 文件名
  */

@@ -7,6 +7,7 @@
 //
 
 #import "SSNLogger.h"
+#import <UIKit/UIKit.h>
 #import "SSNRigidCache.h"
 #import "NSFileManager+SSN.h"
 #import <stdio.h>
@@ -14,7 +15,7 @@
 
 NSString *const SSNDefaultLoggerDir = @"log";
 
-NSString *const SSNDefaultLoggerScope = @"SSNDefaultLoggerScope";
+NSString *const SSNDefaultLoggerScope = @"_ssn_default_";
 
 #define SSN_LOGGER_PUTS_LINES       (1024)
 
@@ -96,6 +97,10 @@ NSString *const SSNDefaultLoggerScope = @"SSNDefaultLoggerScope";
 
 - (void)log:(SSNLoggerLevel)level string:(NSString *)string;
 
+- (void)appEnterBackgroudNotify:(NSNotification *)notify;
+
+- (BOOL)checkSameDayReadonly:(BOOL)readonly;
+
 @end
 
 @implementation SSNLogger
@@ -141,8 +146,71 @@ NSString *const SSNDefaultLoggerScope = @"SSNDefaultLoggerScope";
     self = [super init];
     if (self) {
         _scope = [scope copy];
+        
+        //在切入后台后 默默的检查下磁盘，清除7天后的log文件
+        if (![self checkSameDayReadonly:YES]) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(appEnterBackgroudNotify:)
+                                                         name:UIApplicationDidEnterBackgroundNotification
+                                                       object:nil];
+        }
     }
     return self;
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+static NSString *const SSN_LOG_CHECK_FLAG_FORMAT = @"_ssn_log_%@_check_flag_";
+- (BOOL)checkSameDayReadonly:(BOOL)readonly {
+    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+    NSString *key = [NSString stringWithFormat:SSN_LOG_CHECK_FLAG_FORMAT,_scope];
+    NSInteger value = [userdefaults integerForKey:key];
+    int64_t now = [[NSDate date] timeIntervalSince1970];
+    NSInteger now_value = (NSInteger)(now / (24*3600));
+    BOOL result =  value == now_value;
+    if (!result && !readonly) {
+        [userdefaults setInteger:now_value forKey:key];
+        [userdefaults synchronize];
+    }
+    return result;
+}
+
+- (void)appEnterBackgroudNotify:(NSNotification *)notify {
+    
+    //这个事一天做一次就ok了，不要影响应该用
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    if ([self checkSameDayReadonly:NO]) {
+        return ;
+    }
+    
+    @autoreleasepool {
+        //找到目录
+        NSString *comp = SSNDefaultLoggerDir;
+        comp = [comp stringByAppendingPathComponent:_scope];
+        NSString *logDir = [[NSFileManager defaultManager] pathCachesDirectoryWithPathComponents:comp];
+        
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSArray *subDirs = [fileManager contentsOfDirectoryAtPath:logDir error:NULL];
+        
+        //新生产file
+        char day_str[12] = {'\0'};
+        ssn_log_get_dir_name(day_str,-7*24*3600);//"yyyy-MM-dddd",七天前
+        NSString *dayStr = [NSString stringWithUTF8String:day_str];
+        
+        
+        for (NSString *dir in subDirs) {
+            if (NSOrderedAscending != [dir compare:dayStr]) {
+                continue ;
+            }
+            @autoreleasepool {
+                NSString *path = [logDir stringByAppendingPathComponent:dir];
+                [fileManager removeItemAtPath:path error:NULL];
+                printf("\nremove log dir %s\n",[dir UTF8String]);
+            }
+        }
+    }
 }
 
 #pragma mark 文件目录和大小控制，按照日期建目录
@@ -168,11 +236,10 @@ NSString *const SSNDefaultLoggerScope = @"SSNDefaultLoggerScope";
         
         NSString *day_dir = [NSString stringWithCString:day_str encoding:NSUTF8StringEncoding];
         NSString *file_name = [NSString stringWithCString:now_str encoding:NSUTF8StringEncoding];
+        
         NSString *comp = SSNDefaultLoggerDir;
-        if (_scope != SSNDefaultLoggerScope) {
-            comp = [comp stringByAppendingPathComponent:_scope];
-        }
-        comp = [SSNDefaultLoggerDir stringByAppendingPathComponent:day_dir];
+        comp = [comp stringByAppendingPathComponent:_scope];
+        comp = [comp stringByAppendingPathComponent:day_dir];
         
         NSString *path = [[NSFileManager defaultManager] pathCachesDirectoryWithPathComponents:comp];
         

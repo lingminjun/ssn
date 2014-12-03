@@ -9,6 +9,12 @@
 #ifndef __ssn__log__
 #define __ssn__log__
 
+#if defined(__cplusplus)
+#define SSN_LOG_EXTERN extern "C"
+#else
+#define SSN_LOG_EXTERN extern
+#endif
+
 #include <stdio.h>
 
 typedef enum _ssn_log_level {
@@ -18,17 +24,24 @@ typedef enum _ssn_log_level {
 } ssn_log_level;
 
 /**
+ *  获取日志目录名
+ *  @param [out]: 目录名
+ *  @param [in]:  与现在间隔的时间(s)
+ */
+SSN_LOG_EXTERN void ssn_log_get_dir_name(char *,const long);
+
+/**
  *  获取日志文件名
  *  @param [out]: 文件名
  */
-void ssn_log_get_file_name(char *);
+SSN_LOG_EXTERN void ssn_log_get_file_name(char *);
 
 /**
  *  获得文件大小
  *  @param filename [in]: 文件名
  *  @return 文件大小
  */
-long ssn_log_get_file_size(const char *);
+SSN_LOG_EXTERN long ssn_log_get_file_size(const char *);
 
 /**
  *  写入日志
@@ -37,7 +50,7 @@ long ssn_log_get_file_size(const char *);
  *  @param  [in]:    format
  *  @return 空
  */
-void ssn_file_log(const char *, const ssn_log_level, const char * __restrict, ...);
+SSN_LOG_EXTERN void ssn_file_log(const char *, const ssn_log_level, const char * __restrict, ...);
 
 /**
  *  写入日志
@@ -46,7 +59,7 @@ void ssn_file_log(const char *, const ssn_log_level, const char * __restrict, ..
  *  @param  [in]:    format
  *  @return 空
  */
-void ssn_file_puts_log(FILE *, const ssn_log_level, const char * __restrict, ...);
+SSN_LOG_EXTERN void ssn_file_puts_log(FILE *, const ssn_log_level, const char * __restrict, ...);
 
 /**
  *  写入日志
@@ -55,6 +68,6 @@ void ssn_file_puts_log(FILE *, const ssn_log_level, const char * __restrict, ...
  *  @param  [in]:    format
  *  @return 空
  */
-void ssn_file_puts_line(FILE *, const ssn_log_level, const char *);
+SSN_LOG_EXTERN void ssn_file_puts_line(FILE *, const ssn_log_level, const char *);
 
 #endif /* defined(__ssn__log__) */
