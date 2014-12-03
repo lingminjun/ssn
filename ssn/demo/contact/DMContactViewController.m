@@ -209,6 +209,7 @@
     }
     
     [tb upinsertObjects:list];
+    //[tb inreplaceObjects:list];
 }
 
 

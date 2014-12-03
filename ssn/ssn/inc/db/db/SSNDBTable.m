@@ -477,17 +477,17 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
     if ([objects count] == 0) {
         return ;
     }
-    
-    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
-        for (id obj in objects){ @autoreleasepool {
-            
-            NSString *clnames = [_columns componentsJoinedByString:@","];
-            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
-            NSString *sql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
-            
-            [db prepareSql:sql arguments:[self valuesFormKeys:_columns object:obj]];
-        }}
-    } sync:YES];
+    @autoreleasepool {
+        NSString *clnames = [_columns componentsJoinedByString:@","];
+        NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
+        NSString *sql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
+        
+        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+            for (id obj in objects){ @autoreleasepool {
+                [db prepareSql:sql arguments:[self valuesFormKeys:_columns object:obj]];
+            }}
+        } sync:YES];
+    }
 }
 
 - (void)updateObjects:(NSArray *)objects
@@ -503,19 +503,20 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         return;
     }
     
-    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
-        for (id obj in objects){ @autoreleasepool {
-            
-            NSMutableArray *cls = [NSMutableArray arrayWithArray:_columns];
-            [cls removeObjectsInArray:_primaries];
-            NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
-            NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
-            NSString *sql = [NSString stringWithUTF8Format:"UPDATE %s SET %s WHERE (%s)", [_name UTF8String], [values UTF8String], [wheres UTF8String]];
-            
-            [cls addObjectsFromArray:_primaries]; //从新把主键加上
-            [db prepareSql:sql arguments:[self valuesFormKeys:cls object:obj]];
-        }}
-    } sync:YES];
+    @autoreleasepool {
+        NSMutableArray *cls = [NSMutableArray arrayWithArray:_columns];
+        NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
+        NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
+        NSString *sql = [NSString stringWithUTF8Format:"UPDATE %s SET %s WHERE (%s)", [_name UTF8String], [values UTF8String], [wheres UTF8String]];
+        
+        [cls addObjectsFromArray:_primaries]; //从新把主键加上
+        
+        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+            for (id obj in objects){ @autoreleasepool {
+                [db prepareSql:sql arguments:[self valuesFormKeys:cls object:obj]];
+            }}
+        } sync:YES];
+    }
 }
 
 - (void)deleteObjects:(NSArray *)objects
@@ -531,15 +532,18 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         return;
     }
     
-    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
-        for (id obj in objects){ @autoreleasepool {
-            
-            NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
-            NSString *sql = [NSString stringWithUTF8Format:"DELETE FROM %s WHERE (%s)", [_name UTF8String], [wheres UTF8String]];
-            
-            [db prepareSql:sql arguments:[self valuesFormKeys:_primaries object:obj]];
-        }}
-    } sync:YES];
+    @autoreleasepool {
+        
+        NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
+        NSString *sql = [NSString stringWithUTF8Format:"DELETE FROM %s WHERE (%s)", [_name UTF8String], [wheres UTF8String]];
+        
+        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+            for (id obj in objects){ @autoreleasepool {
+                
+                [db prepareSql:sql arguments:[self valuesFormKeys:_primaries object:obj]];
+            }}
+        } sync:YES];
+    }
 }
 
 - (void)upinsertObjects:(NSArray *)objects
@@ -555,25 +559,67 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         return;
     }
     
-    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
-        for (id obj in objects){ @autoreleasepool {
-            
-            NSMutableArray *cls = [NSMutableArray arrayWithArray:_columns];
-            [cls removeObjectsInArray:_primaries];
-            NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
-            NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
-            NSString *upsql = [NSString stringWithUTF8Format:"UPDATE %s SET %s WHERE (%s)", [_name UTF8String], [values UTF8String], [wheres UTF8String]];
-            
-            [cls addObjectsFromArray:_primaries]; //从新把主键加上
-            
-            NSString *clnames = [_columns componentsJoinedByString:@","];
-            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
-            NSString *insql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
-            
-            [db prepareSql:upsql arguments:[self valuesFormKeys:cls object:obj]];
-            [db prepareSql:insql arguments:[self valuesFormKeys:_columns object:obj]];
-        }}
-    } sync:YES];
+    @autoreleasepool {
+        NSMutableArray *cls = [NSMutableArray arrayWithArray:_columns];
+        NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
+        NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
+        NSString *upsql = [NSString stringWithUTF8Format:"UPDATE %s SET %s WHERE (%s)", [_name UTF8String], [values UTF8String], [wheres UTF8String]];
+        
+        [cls addObjectsFromArray:_primaries]; //从新把主键加上
+        
+        NSString *clnames = [_columns componentsJoinedByString:@","];
+        NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
+        NSString *insql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
+        
+        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+            for (id obj in objects){ @autoreleasepool {
+                
+                [db prepareSql:upsql arguments:[self valuesFormKeys:cls object:obj]];
+                [db prepareSql:insql arguments:[self valuesFormKeys:_columns object:obj]];
+                
+            }}
+        } sync:YES];
+    }
+}
+
+- (void)upinsertObjects:(NSArray *)objects fields:(NSArray *)fields {
+    NSAssert(_db, @"模板表不能操作数据");
+    
+    if ([objects count] == 0) {
+        return ;
+    }
+    
+    if ([_primaries count] == 0)
+    {
+        return;
+    }
+    
+    if ([fields count] == 0) {
+        [self updateObjects:objects];
+        return ;
+    }
+    
+    @autoreleasepool {
+        
+        NSMutableArray *cls = [NSMutableArray arrayWithArray:fields];
+        NSString *values = [NSString componentsStringWithArray:cls appendingString:@" = ?" joinedString:@","];
+        NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
+        NSString *upsql = [NSString stringWithUTF8Format:"UPDATE %s SET %s WHERE (%s)", [_name UTF8String], [values UTF8String], [wheres UTF8String]];
+        
+        [cls addObjectsFromArray:_primaries]; //从新把主键加上
+        
+        NSString *clnames = [_columns componentsJoinedByString:@","];
+        NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
+        NSString *insql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
+    
+        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+            for (id obj in objects){ @autoreleasepool {
+                
+                [db prepareSql:upsql arguments:[self valuesFormKeys:cls object:obj]];
+                [db prepareSql:insql arguments:[self valuesFormKeys:_columns object:obj]];
+            }}
+        } sync:YES];
+    }
 }
 
 - (void)inreplaceObjects:(NSArray *)objects {
@@ -588,16 +634,18 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         return;
     }
     
-    [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
-        for (id obj in objects){ @autoreleasepool {
-            
-            NSString *clnames = [_columns componentsJoinedByString:@","];
-            NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
-            NSString *sql = [NSString stringWithUTF8Format:"INSERT OR REPLACE INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
-            
-            [db prepareSql:sql arguments:[self valuesFormKeys:_columns object:obj]];
-        }}
-    } sync:YES];
+    @autoreleasepool {
+        NSString *clnames = [_columns componentsJoinedByString:@","];
+        NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
+        NSString *sql = [NSString stringWithUTF8Format:"INSERT OR REPLACE INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
+    
+        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+            for (id obj in objects){ @autoreleasepool {
+                
+                [db prepareSql:sql arguments:[self valuesFormKeys:_columns object:obj]];
+            }}
+        } sync:YES];
+    }
 }
 
 - (void)insertObject:(id)object
@@ -625,6 +673,12 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
 {
     if (object) {
         [self upinsertObjects:@[ object ]];
+    }
+}
+
+- (void)upinsertObject:(id)object fields:(NSArray *)fields {
+    if (object) {
+        [self upinsertObjects:@[ object ] fields:fields];
     }
 }
 

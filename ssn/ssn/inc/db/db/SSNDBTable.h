@@ -90,6 +90,9 @@ typedef enum : NSUInteger
 - (void)upinsertObject:(id)object;          // update or insert
 - (void)upinsertObjects:(NSArray *)objects; // update or insert
 
+- (void)upinsertObject:(id)object fields:(NSArray *)fields;          // update(指定字段) or insert，如果fields传入nil将等价与upinsertObject:
+- (void)upinsertObjects:(NSArray *)objects fields:(NSArray *)fields; // update(指定字段) or insert，如果fields传入nil将等价与upinsertObjects:
+
 - (void)inreplaceObject:(id)object;          // insert or replace
 - (void)inreplaceObjects:(NSArray *)objects; // insert or replace
 
