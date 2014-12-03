@@ -39,7 +39,7 @@
 //fetch使用满足fetch对象协议
 @protocol SSNDBFetchObject <NSObject,NSCopying>
 
-@optional//建议实现，可以减少增加fetch遍历效率
+@required//建议实现，可以减少增加fetch遍历效率
 @property (nonatomic) int64_t ssn_dbfetch_rowid;//
 
 @end
