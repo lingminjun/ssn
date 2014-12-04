@@ -246,32 +246,44 @@ void ssn_file_puts_line(FILE *fp, const ssn_log_level level, const char *log) {
     
     char buffer[ssn_log_buffer_size] = {'\0'};
     size_t len = 0;
+    char *pbuffer = NULL;
+    
+    if ((strlen(log) + 21) > ssn_log_buffer_size) {
+        pbuffer = (char *)malloc(strlen(log) + 21);
+    }
+    else {
+        pbuffer = buffer;
+    }
     
 #ifdef DEBUG
-    ssn_log_get_local_clear_time(buffer);
+    ssn_log_get_local_clear_time(pbuffer);
 #else
-    ssn_log_get_local_utc_hex_time(buffer);
+    ssn_log_get_local_utc_hex_time(pbuffer);
 #endif
     
-    len = strlen(buffer);
-    buffer[len] = ' ';//插入一个空格
+    len = strlen(pbuffer);
+    pbuffer[len] = ' ';//插入一个空格
     
-    strcat(buffer, log);
+    strcat(pbuffer, log);
     
-    len = strlen(buffer);
-    buffer[len] = '\n';//插入一个空格
+    len = strlen(pbuffer);
+    pbuffer[len] = '\n';//插入一个空格
     
     //写文件todo
     if (fp) {
-        fputs(buffer, fp);
+        fputs(pbuffer, fp);
         fflush(fp);//效率稍微稍微收到影响
     }
     
 #ifndef DEBUG
     if (level == ssn_verbose_log && level == ssn_debug_log) {
 #endif
-        printf("%s",buffer);
+        printf("%s",pbuffer);
 #ifndef DEBUG
     }
 #endif
+    
+    if (pbuffer && pbuffer != buffer) {
+        free(pbuffer);
+    }
 }
