@@ -40,6 +40,6 @@
 @protocol SSNDBFetchObject <NSObject,NSCopying>
 
 @required//建议实现，可以减少增加fetch遍历效率
-@property (nonatomic) int64_t ssn_dbfetch_rowid;//
+@property (nonatomic) int64_t ssn_dbfetch_rowid;//NSCopying实现是一定要将ssn_dbfetch_rowid赋值
 
 @end
