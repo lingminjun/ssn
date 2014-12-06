@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 
-#import "ssnsimplemap.h"
+#import "ssnsmap.h"
 
 @interface ssn_bbox_test : XCTestCase
 
@@ -31,7 +31,7 @@
     // This is an example of a functional test case.
     
     
-    ssn_simple_map_t *map = ssn_smap_create(4, 1);
+    ssn_smap_t *map = ssn_smap_create(4, 1);
     
     const char *a = "肖海长";
     //NSLog(@"111 = %s",a);

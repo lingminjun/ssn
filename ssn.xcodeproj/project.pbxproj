@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		530156271A30DA1000041506 /* sssblackbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 530156251A30DA1000041506 /* sssblackbox.c */; };
-		530156281A30DA1000041506 /* sssblackbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 530156251A30DA1000041506 /* sssblackbox.c */; };
+		530156271A30DA1000041506 /* ssnbbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 530156251A30DA1000041506 /* ssnbbox.c */; };
+		530156281A30DA1000041506 /* ssnbbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 530156251A30DA1000041506 /* ssnbbox.c */; };
 		531CEBC01A2C71D10029F895 /* ssnlog.c in Sources */ = {isa = PBXBuildFile; fileRef = 531CEBBE1A2C71D10029F895 /* ssnlog.c */; };
 		531CEBC11A2C71D10029F895 /* ssnlog.c in Sources */ = {isa = PBXBuildFile; fileRef = 531CEBBE1A2C71D10029F895 /* ssnlog.c */; };
 		533378AE1986431200084428 /* SSNDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378AD1986431200084428 /* SSNDB.m */; };
@@ -165,8 +165,8 @@
 		53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC48194B4BD100BA4F58 /* NiceQueue.m */; };
 		53DFE9C01A104C3E00944E51 /* SSNJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DFE9BF1A104C3E00944E51 /* SSNJson.m */; };
 		53DFE9C11A104C3E00944E51 /* SSNJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DFE9BF1A104C3E00944E51 /* SSNJson.m */; };
-		53E06ED81A3329CA005DF490 /* ssnsimplemap.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06ED61A3329CA005DF490 /* ssnsimplemap.c */; };
-		53E06ED91A3329CA005DF490 /* ssnsimplemap.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06ED61A3329CA005DF490 /* ssnsimplemap.c */; };
+		53E06ED81A3329CA005DF490 /* ssnsmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06ED61A3329CA005DF490 /* ssnsmap.c */; };
+		53E06ED91A3329CA005DF490 /* ssnsmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06ED61A3329CA005DF490 /* ssnsmap.c */; };
 		53E06EDB1A33461F005DF490 /* ssn_bbox_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E06EDA1A33461F005DF490 /* ssn_bbox_test.m */; };
 		53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E512D41998F81C002925E6 /* SSNRigidCache.m */; };
 		53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB166191FBB6000BEB29D /* NSString+SSN.m */; };
@@ -189,8 +189,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		530156251A30DA1000041506 /* sssblackbox.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sssblackbox.c; sourceTree = "<group>"; };
-		530156261A30DA1000041506 /* sssblackbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sssblackbox.h; sourceTree = "<group>"; };
+		530156251A30DA1000041506 /* ssnbbox.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnbbox.c; sourceTree = "<group>"; };
+		530156261A30DA1000041506 /* ssnbbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnbbox.h; sourceTree = "<group>"; };
 		531CEBBE1A2C71D10029F895 /* ssnlog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnlog.c; sourceTree = "<group>"; };
 		531CEBBF1A2C71D10029F895 /* ssnlog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnlog.h; sourceTree = "<group>"; };
 		533378AC1986431200084428 /* SSNDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDB.h; sourceTree = "<group>"; };
@@ -316,8 +316,8 @@
 		53DDBC48194B4BD100BA4F58 /* NiceQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NiceQueue.m; sourceTree = "<group>"; };
 		53DFE9BE1A104C3E00944E51 /* SSNJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNJson.h; sourceTree = "<group>"; };
 		53DFE9BF1A104C3E00944E51 /* SSNJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNJson.m; sourceTree = "<group>"; };
-		53E06ED61A3329CA005DF490 /* ssnsimplemap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnsimplemap.c; sourceTree = "<group>"; };
-		53E06ED71A3329CA005DF490 /* ssnsimplemap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnsimplemap.h; sourceTree = "<group>"; };
+		53E06ED61A3329CA005DF490 /* ssnsmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnsmap.c; sourceTree = "<group>"; };
+		53E06ED71A3329CA005DF490 /* ssnsmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnsmap.h; sourceTree = "<group>"; };
 		53E06EDA1A33461F005DF490 /* ssn_bbox_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_bbox_test.m; sourceTree = "<group>"; };
 		53E512D31998F81C002925E6 /* SSNRigidCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRigidCache.h; sourceTree = "<group>"; };
 		53E512D41998F81C002925E6 /* SSNRigidCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRigidCache.m; sourceTree = "<group>"; };
@@ -366,10 +366,10 @@
 		530156241A30D79900041506 /* bbox */ = {
 			isa = PBXGroup;
 			children = (
-				530156251A30DA1000041506 /* sssblackbox.c */,
-				530156261A30DA1000041506 /* sssblackbox.h */,
-				53E06ED61A3329CA005DF490 /* ssnsimplemap.c */,
-				53E06ED71A3329CA005DF490 /* ssnsimplemap.h */,
+				530156251A30DA1000041506 /* ssnbbox.c */,
+				530156261A30DA1000041506 /* ssnbbox.h */,
+				53E06ED61A3329CA005DF490 /* ssnsmap.c */,
+				53E06ED71A3329CA005DF490 /* ssnsmap.h */,
 			);
 			path = bbox;
 			sourceTree = "<group>";
@@ -950,14 +950,14 @@
 				531CEBC01A2C71D10029F895 /* ssnlog.c in Sources */,
 				535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */,
 				533378B41986435B00084428 /* SSNDBTable.m in Sources */,
-				53E06ED81A3329CA005DF490 /* ssnsimplemap.c in Sources */,
+				53E06ED81A3329CA005DF490 /* ssnsmap.c in Sources */,
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
 				5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */,
 				535788BE1A2F5DAB009673EF /* ssncop.c in Sources */,
 				535F26741983F7A800C0D7C0 /* NSURL+Router.m in Sources */,
 				53D6938D1A0BA5770051B6DF /* SSNHostingTask.m in Sources */,
 				53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */,
-				530156271A30DA1000041506 /* sssblackbox.c in Sources */,
+				530156271A30DA1000041506 /* ssnbbox.c in Sources */,
 				538E384719986A3B0061692E /* DMContactViewController.m in Sources */,
 				53D78579199F2B29004D9D62 /* SSNDBTable+Factory.m in Sources */,
 				538E3841199869E00061692E /* DMSignNavController.m in Sources */,
@@ -1005,7 +1005,7 @@
 				53D24638199C83B400EFDF29 /* DMContactNavController.m in Sources */,
 				53D24639199C83B400EFDF29 /* DMContactViewController.h in Sources */,
 				53D2463A199C83B400EFDF29 /* DMContactViewController.m in Sources */,
-				53E06ED91A3329CA005DF490 /* ssnsimplemap.c in Sources */,
+				53E06ED91A3329CA005DF490 /* ssnsmap.c in Sources */,
 				53D2463B199C83B400EFDF29 /* DMSessionNavController.h in Sources */,
 				53D2463C199C83B400EFDF29 /* DMSessionNavController.m in Sources */,
 				53D2463D199C83B400EFDF29 /* DMSessionViewController.h in Sources */,
@@ -1020,7 +1020,7 @@
 				53D24646199C83B400EFDF29 /* DMSignViewController.m in Sources */,
 				535E2BCF1A1C5AE300D67318 /* ssnbase.m in Sources */,
 				53D24647199C83B400EFDF29 /* SSNRouter.h in Sources */,
-				530156281A30DA1000041506 /* sssblackbox.c in Sources */,
+				530156281A30DA1000041506 /* ssnbbox.c in Sources */,
 				53D24648199C83B400EFDF29 /* SSNRouter.m in Sources */,
 				53D24649199C83B400EFDF29 /* SSNPage.h in Sources */,
 				53D2464A199C83B400EFDF29 /* NSURL+Router.h in Sources */,

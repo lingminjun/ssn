@@ -1,12 +1,12 @@
 //
-//  sssblackbox.c
+//  ssnblackbox.c
 //  ssn
 //
 //  Created by lingminjun on 14/12/5.
 //  Copyright (c) 2014年 lingminjun. All rights reserved.
 //
 
-#include "sssblackbox.h"
+#include "ssnbbox.h"
 #include <CommonCrypto/CommonDigest.h>
 #include <CommonCrypto/CommonCryptor.h>
 
@@ -94,6 +94,48 @@ int ssn_bbox_key_hash_to_cryp(char *buff, size_t buff_size, const char *cryp,con
     
     return SSN_BBOX_ERROR;
 }
+//
+//- (NSData *)fileDataForKey:(NSString *)key encryData:(NSData *)encryData
+//{
+//    const int data_length = [encryData length];
+//    const int key_length = [key length];
+//    const int length = data_length + key_length;
+//    const int split_count = 16;
+//
+//    assert(key.length >= 2 * split_count);
+//
+//    char *fileBytes = (char *)malloc(length*sizeof(char));
+//
+//    const void *bytes = [encryData bytes];
+//
+//    const char *soucrePoint = bytes;
+//    char *filePoint = fileBytes;
+//
+//    int vector = data_length/split_count;
+//    vector = vector > 0 ? vector : 0;
+//
+//    for (int index = 0; index < split_count; index++)
+//    {
+//        memcpy(filePoint, soucrePoint, vector);
+//        soucrePoint = soucrePoint + vector;
+//        filePoint = filePoint + vector;
+//
+//        memcpy(filePoint, [[key substringWithRange:NSMakeRange(2*index, 2)] UTF8String], 2);
+//        filePoint = filePoint + 2;
+//    }
+//
+//    if (soucrePoint != bytes + data_length)
+//    {
+//        //末尾的数据合入
+//        memcpy(filePoint, soucrePoint, data_length - (vector * split_count));
+//    }
+//
+//    NSData *result = [NSData dataWithBytes:fileBytes length:length];
+//
+//    free(fileBytes);
+//
+//    return result;
+//}
 
 int ssn_bbox_gather_key_from_cryp(char *buff, size_t *buff_size, const char *cryp,const size_t cryp_size, char *key) {
     int vector = 0;
@@ -139,49 +181,6 @@ int ssn_bbox_gather_key_from_cryp(char *buff, size_t *buff_size, const char *cry
     
     return SSN_BBOX_NOERROR;
 }
-
-
-//- (NSData *)fileDataForKey:(NSString *)key encryData:(NSData *)encryData
-//{
-//    const int data_length = [encryData length];
-//    const int key_length = [key length];
-//    const int length = data_length + key_length;
-//    const int split_count = 16;
-//    
-//    assert(key.length >= 2 * split_count);
-//    
-//    char *fileBytes = (char *)malloc(length*sizeof(char));
-//    
-//    const void *bytes = [encryData bytes];
-//    
-//    const char *soucrePoint = bytes;
-//    char *filePoint = fileBytes;
-//    
-//    int vector = data_length/split_count;
-//    vector = vector > 0 ? vector : 0;
-//    
-//    for (int index = 0; index < split_count; index++)
-//    {
-//        memcpy(filePoint, soucrePoint, vector);
-//        soucrePoint = soucrePoint + vector;
-//        filePoint = filePoint + vector;
-//        
-//        memcpy(filePoint, [[key substringWithRange:NSMakeRange(2*index, 2)] UTF8String], 2);
-//        filePoint = filePoint + 2;
-//    }
-//    
-//    if (soucrePoint != bytes + data_length)
-//    {
-//        //末尾的数据合入
-//        memcpy(filePoint, soucrePoint, data_length - (vector * split_count));
-//    }
-//    
-//    NSData *result = [NSData dataWithBytes:fileBytes length:length];
-//    
-//    free(fileBytes);
-//    
-//    return result;
-//}
 
 
 

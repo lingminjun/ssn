@@ -6,14 +6,14 @@
 //  Copyright (c) 2014年 lingminjun. All rights reserved.
 //
 
-#include "ssnsimplemap.h"
+#include "ssnsmap.h"
 
 #include <string.h>
 #include <stdlib.h>
 
 #define SSN_S_MAP_DEFAULT_HASHSIZE (1024)
 
-typedef struct _ssn_simple_map_t ssn_simple_map_inner_t;
+typedef struct _ssn_smap_t ssn_smap_inner_t;
 
 
 unsigned long ssn_smap_hash(const char *k, const unsigned long hash_size) {
@@ -26,9 +26,9 @@ unsigned long ssn_smap_hash(const char *k, const unsigned long hash_size) {
     return h;
 }
 
-ssn_simple_map_node *ssn_smap_lookup(ssn_simple_map_inner_t *pmap, const char *k, const unsigned long hash_size, ssn_simple_map_node **pre_np){
+ssn_smap_node *ssn_smap_lookup(ssn_smap_inner_t *pmap, const char *k, const unsigned long hash_size, ssn_smap_node **pre_np){
     unsigned long h = ssn_smap_hash(k, hash_size);
-    ssn_simple_map_node *np = (pmap->header + h);
+    ssn_smap_node *np = (pmap->header + h);
     
     //前一个节点保存
     if (pre_np) {
@@ -51,7 +51,7 @@ ssn_simple_map_node *ssn_smap_lookup(ssn_simple_map_inner_t *pmap, const char *k
     return NULL;
 }
 
-void ssn_smap_set_node_key(ssn_simple_map_node *np, const char *key) {
+void ssn_smap_set_node_key(ssn_smap_node *np, const char *key) {
     size_t size = strlen(key);
     char *k = (char *)malloc(size + 1);
     memcpy(k, key, size);
@@ -60,7 +60,7 @@ void ssn_smap_set_node_key(ssn_simple_map_node *np, const char *key) {
 }
 
 
-void ssn_smap_set_node_value(ssn_simple_map_node *np, const char *value, unsigned int nocopy) {
+void ssn_smap_set_node_value(ssn_smap_node *np, const char *value, unsigned int nocopy) {
     
     size_t size = strlen(value);
     
@@ -75,7 +75,7 @@ void ssn_smap_set_node_value(ssn_simple_map_node *np, const char *value, unsigne
     }
 }
 
-void ssn_smap_free_node(ssn_simple_map_node *np, unsigned int freevalue, unsigned int freeme) {
+void ssn_smap_free_node(ssn_smap_node *np, unsigned int freevalue, unsigned int freeme) {
     if (np->key) {
         free((void *)(np->key));
         np->key = NULL;
@@ -95,14 +95,14 @@ void ssn_smap_free_node(ssn_simple_map_node *np, unsigned int freevalue, unsigne
  @brief 获取一个map
  @param hash_size 传入零默认使用1024
  */
-ssn_simple_map_t *ssn_smap_create(const unsigned long hash_size, unsigned int nocopy) {
-    ssn_simple_map_inner_t *pmap = (ssn_simple_map_inner_t *)malloc(sizeof(ssn_simple_map_inner_t));
+ssn_smap_t *ssn_smap_create(const unsigned long hash_size, unsigned int nocopy) {
+    ssn_smap_inner_t *pmap = (ssn_smap_inner_t *)malloc(sizeof(ssn_smap_inner_t));
     pmap->hash_size = hash_size == 0 ? SSN_S_MAP_DEFAULT_HASHSIZE : hash_size;
     pmap->nocopy = nocopy;
     pmap->size = 0;
-    pmap->header = (ssn_simple_map_node *)malloc(sizeof(ssn_simple_map_node) * pmap->hash_size);
-    memset(pmap->header, 0, sizeof(ssn_simple_map_node) * pmap->hash_size);
-    return (ssn_simple_map_t *)pmap;
+    pmap->header = (ssn_smap_node *)malloc(sizeof(ssn_smap_node) * pmap->hash_size);
+    memset(pmap->header, 0, sizeof(ssn_smap_node) * pmap->hash_size);
+    return (ssn_smap_t *)pmap;
 }
 
 /**
@@ -111,11 +111,11 @@ ssn_simple_map_t *ssn_smap_create(const unsigned long hash_size, unsigned int no
  @param value 需要添加的内容，如果是nocopy将不会申请新资源
  @param key 添加的key
  */
-int ssn_smap_add_node(ssn_simple_map_t *map, const char *value, const char *key) {
+int ssn_smap_add_node(ssn_smap_t *map, const char *value, const char *key) {
     
-    ssn_simple_map_node *pre_np = NULL;
-    ssn_simple_map_inner_t *pmap = (ssn_simple_map_inner_t *)map;
-    ssn_simple_map_node *np = ssn_smap_lookup(pmap, key, pmap->hash_size, &pre_np);
+    ssn_smap_node *pre_np = NULL;
+    ssn_smap_inner_t *pmap = (ssn_smap_inner_t *)map;
+    ssn_smap_node *np = ssn_smap_lookup(pmap, key, pmap->hash_size, &pre_np);
     
     //已经存在key，替换
     if (np) {
@@ -131,7 +131,7 @@ int ssn_smap_add_node(ssn_simple_map_t *map, const char *value, const char *key)
     }
 
     //创建一个新的node，插入到末尾
-    np = (ssn_simple_map_node *)malloc(sizeof(ssn_simple_map_node));
+    np = (ssn_smap_node *)malloc(sizeof(ssn_smap_node));
     
     ssn_smap_set_node_key(np, key);
     ssn_smap_set_node_value(np, value, pmap->nocopy);
@@ -148,11 +148,11 @@ int ssn_smap_add_node(ssn_simple_map_t *map, const char *value, const char *key)
  @param map   操作的数据对象
  @param key 对应的key
  */
-const char *ssn_smap_copy_value(ssn_simple_map_t *map, const char *key) {
+const char *ssn_smap_copy_value(ssn_smap_t *map, const char *key) {
     char *value = NULL;
     size_t size = 0;
-    ssn_simple_map_inner_t *pmap = (ssn_simple_map_inner_t *)map;
-    ssn_simple_map_node *np = ssn_smap_lookup(pmap, key, pmap->hash_size, NULL);
+    ssn_smap_inner_t *pmap = (ssn_smap_inner_t *)map;
+    ssn_smap_node *np = ssn_smap_lookup(pmap, key, pmap->hash_size, NULL);
     
     if (np) {
         size = strlen(np->value);
@@ -171,9 +171,9 @@ const char *ssn_smap_copy_value(ssn_simple_map_t *map, const char *key) {
  @param pvalue 获取key下面的内容指针，不会copy数据
  @param key 对应的key
  */
-const char *ssn_smap_get_value(ssn_simple_map_t *map, const char *key) {
-    ssn_simple_map_inner_t *pmap = (ssn_simple_map_inner_t *)map;
-    ssn_simple_map_node *np = ssn_smap_lookup(pmap, key, pmap->hash_size, NULL);
+const char *ssn_smap_get_value(ssn_smap_t *map, const char *key) {
+    ssn_smap_inner_t *pmap = (ssn_smap_inner_t *)map;
+    ssn_smap_node *np = ssn_smap_lookup(pmap, key, pmap->hash_size, NULL);
     
     if (np) {
         return  np->value;
@@ -189,11 +189,11 @@ const char *ssn_smap_get_value(ssn_simple_map_t *map, const char *key) {
  @param key 对应的key
  @param freevalue 资源是否释放
  */
-int ssn_smap_remove_value(ssn_simple_map_t *map, const char *key, const unsigned int freevalue) {
+int ssn_smap_remove_value(ssn_smap_t *map, const char *key, const unsigned int freevalue) {
     unsigned int freeme = 1;
-    ssn_simple_map_node *pre_np = NULL;
-    ssn_simple_map_inner_t *pmap = (ssn_simple_map_inner_t *)map;
-    ssn_simple_map_node *np = ssn_smap_lookup(pmap, key, pmap->hash_size, &pre_np);
+    ssn_smap_node *pre_np = NULL;
+    ssn_smap_inner_t *pmap = (ssn_smap_inner_t *)map;
+    ssn_smap_node *np = ssn_smap_lookup(pmap, key, pmap->hash_size, &pre_np);
     
     if (np) {//找到后先解开链路
         
@@ -217,11 +217,11 @@ int ssn_smap_remove_value(ssn_simple_map_t *map, const char *key, const unsigned
  @param key 对应的key
  @param freevalue 资源是否释放
  */
-void ssn_smap_destroy(ssn_simple_map_t *map, unsigned int freevalue) {
-    ssn_simple_map_inner_t *pmap = (ssn_simple_map_inner_t *)map;
+void ssn_smap_destroy(ssn_smap_t *map, unsigned int freevalue) {
+    ssn_smap_inner_t *pmap = (ssn_smap_inner_t *)map;
     unsigned long index = 0;
-    ssn_simple_map_node *header_np = NULL;
-    ssn_simple_map_node *np = NULL;
+    ssn_smap_node *header_np = NULL;
+    ssn_smap_node *np = NULL;
     
     for (index = 0; index < pmap->hash_size; index++) {
         header_np = (pmap->header + index);
