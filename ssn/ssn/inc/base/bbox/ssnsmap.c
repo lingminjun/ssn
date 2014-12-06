@@ -184,6 +184,28 @@ const char *ssn_smap_get_value(ssn_smap_t *map, const char *key) {
 
 
 /**
+ @brief 枚举所有值建对
+ @param map   操作的数据对象
+ @param iterator 迭代器
+ */
+void ssn_smap_enumerate_key_value(ssn_smap_t *map,void *context, void (*iterator)(const char *value, const char *key, void *context)) {
+    ssn_smap_node *np = NULL;
+    ssn_smap_inner_t *pmap = (ssn_smap_inner_t *)map;
+    long index = 0;
+    
+    for (index = 0; index < pmap->hash_size; index++) {
+        np = (pmap->header + index);
+        while (np && np->key) {
+            if (iterator) {
+                iterator(np->value,np->key,context);
+            }
+            np = np->next;
+        }
+    }
+}
+
+
+/**
  @brief 删除对象，是否释放资源
  @param map   操作的数据对象
  @param key 对应的key
@@ -232,7 +254,7 @@ void ssn_smap_destroy(ssn_smap_t *map, unsigned int freevalue) {
         while (header_np->next) {
             np = header_np->next;
             header_np->next = np->next;
-            ssn_smap_free_node(header_np, freevalue, 1);//释放节点
+            ssn_smap_free_node(np, freevalue, 1);//释放节点
         }
     }
     

@@ -69,6 +69,14 @@ SSN_SMAP_EXTERN const char *ssn_smap_copy_value(ssn_smap_t *map, const char *key
  */
 SSN_SMAP_EXTERN const char *ssn_smap_get_value(ssn_smap_t *map, const char *key);
 
+/**
+ @brief 枚举所有值建对
+ @param map   操作的数据对象
+ @param context 操作上下文
+ @param iterator 迭代器
+ */
+SSN_SMAP_EXTERN void ssn_smap_enumerate_key_value(ssn_smap_t *map, void *context, void (*iterator)(const char *value, const char *key, void *context));
+
 
 /**
  @brief 删除对象，是否释放资源

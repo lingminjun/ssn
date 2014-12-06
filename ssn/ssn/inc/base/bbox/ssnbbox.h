@@ -12,8 +12,8 @@
 #ifndef __ssn__ssnblackbox__
 #define __ssn__ssnblackbox__
 
-#include <stdio.h>
 #include "ssnsmap.h"
+#include <pthread.h>
 
 #if defined(__cplusplus)
 #define SSN_BBOX_EXTERN extern "C"
@@ -29,14 +29,23 @@
  @brief 一个简易的hash map对象
  */
 typedef struct _ssn_bbox_t {
-    char *path;                     //文件存储地址
-    ssn_smap_t map;           //元素内存缓存
+    const char *path;         //文件存储地址
+    ssn_smap_t *map;          //元素内存缓存
+    pthread_rwlock_t rwlock; //读写锁
 } ssn_bbox_t;
 
 /**
  *  防止gdb调试，debug下不起作用
  */
 SSN_BBOX_EXTERN void ssn_bbox_disable_gdb(void);
+
+/**
+ *  获取bbox实例
+ *  @param  path [in] 存储路径
+ *  @param  hash_size [in] 值键容量
+ *  @return ssn_bbox_t
+ */
+SSN_BBOX_EXTERN ssn_bbox_t *ssn_bbox_create(const char *path, const unsigned long hash_size);
 
 /**
  *  获取key对应的值
@@ -71,5 +80,11 @@ SSN_BBOX_EXTERN int ssn_bbox_set_value(const char *value, const char *key, ssn_b
  *  @return 操作是否成功，成功返回 SSN_BBOX_NOERROR
  */
 SSN_BBOX_EXTERN int ssn_bbox_remove_value(const char *key, ssn_bbox_t *bbox);
+
+/**
+ *  释放bbox实例
+ *  @param  bbox [in]  释放对象
+ */
+SSN_BBOX_EXTERN void ssn_bbox_destroy(ssn_bbox_t *bbox);
 
 #endif /* defined(__ssn__sssblackbox__) */

@@ -168,6 +168,8 @@
 		53E06ED81A3329CA005DF490 /* ssnsmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06ED61A3329CA005DF490 /* ssnsmap.c */; };
 		53E06ED91A3329CA005DF490 /* ssnsmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06ED61A3329CA005DF490 /* ssnsmap.c */; };
 		53E06EDB1A33461F005DF490 /* ssn_bbox_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E06EDA1A33461F005DF490 /* ssn_bbox_test.m */; };
+		53E06EE01A335C3B005DF490 /* ssnbase64.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06EDE1A335C3B005DF490 /* ssnbase64.c */; };
+		53E06EE11A335C3B005DF490 /* ssnbase64.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06EDE1A335C3B005DF490 /* ssnbase64.c */; };
 		53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E512D41998F81C002925E6 /* SSNRigidCache.m */; };
 		53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB166191FBB6000BEB29D /* NSString+SSN.m */; };
 		53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
@@ -319,6 +321,8 @@
 		53E06ED61A3329CA005DF490 /* ssnsmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnsmap.c; sourceTree = "<group>"; };
 		53E06ED71A3329CA005DF490 /* ssnsmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnsmap.h; sourceTree = "<group>"; };
 		53E06EDA1A33461F005DF490 /* ssn_bbox_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_bbox_test.m; sourceTree = "<group>"; };
+		53E06EDE1A335C3B005DF490 /* ssnbase64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnbase64.c; sourceTree = "<group>"; };
+		53E06EDF1A335C3B005DF490 /* ssnbase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnbase64.h; sourceTree = "<group>"; };
 		53E512D31998F81C002925E6 /* SSNRigidCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRigidCache.h; sourceTree = "<group>"; };
 		53E512D41998F81C002925E6 /* SSNRigidCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRigidCache.m; sourceTree = "<group>"; };
 		53ECB15E191FBB6000BEB29D /* NSString+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSN.h"; sourceTree = "<group>"; };
@@ -370,6 +374,8 @@
 				530156261A30DA1000041506 /* ssnbbox.h */,
 				53E06ED61A3329CA005DF490 /* ssnsmap.c */,
 				53E06ED71A3329CA005DF490 /* ssnsmap.h */,
+				53E06EDE1A335C3B005DF490 /* ssnbase64.c */,
+				53E06EDF1A335C3B005DF490 /* ssnbase64.h */,
 			);
 			path = bbox;
 			sourceTree = "<group>";
@@ -936,6 +942,7 @@
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
 				53D6ED49199A6EC90029D82F /* NSFileManager+SSN.m in Sources */,
 				535F266D1983F09100C0D7C0 /* SSNRouter.m in Sources */,
+				53E06EE01A335C3B005DF490 /* ssnbase64.c in Sources */,
 				53D6ED46199A03F90029D82F /* SSNCuteSerialQueue.m in Sources */,
 				533378AE1986431200084428 /* SSNDB.m in Sources */,
 				53FAA61919E8F5F3006EBBE3 /* NSObject+SSNTracking.m in Sources */,
@@ -1017,6 +1024,7 @@
 				53D24643199C83B400EFDF29 /* DMSignNavController.h in Sources */,
 				53D24644199C83B400EFDF29 /* DMSignNavController.m in Sources */,
 				53D24645199C83B400EFDF29 /* DMSignViewController.h in Sources */,
+				53E06EE11A335C3B005DF490 /* ssnbase64.c in Sources */,
 				53D24646199C83B400EFDF29 /* DMSignViewController.m in Sources */,
 				535E2BCF1A1C5AE300D67318 /* ssnbase.m in Sources */,
 				53D24647199C83B400EFDF29 /* SSNRouter.h in Sources */,

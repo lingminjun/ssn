@@ -10,6 +10,7 @@
 #import <XCTest/XCTest.h>
 
 #import "ssnsmap.h"
+#import "ssnbbox.h"
 
 @interface ssn_bbox_test : XCTestCase
 
@@ -27,7 +28,7 @@
     [super tearDown];
 }
 
-- (void)testExample {
+- (void)test_map {
     // This is an example of a functional test case.
     
     
@@ -56,6 +57,48 @@
     }
     
     ssn_smap_destroy(map, 0);
+    
+    XCTAssert(YES, @"Pass");
+    
+}
+
+- (void)test_box {
+    char *p = "/Users/lingminjun/Workdesk/work/ssn/ssnTests/bbox.txt";
+    
+    ssn_bbox_t *box = ssn_bbox_create(p, 4);
+    ssn_bbox_set_value("肖海长", "111", box);
+    ssn_bbox_set_value("杨世亮", "222", box);
+    ssn_bbox_set_value("梁冰珏", "333", box);
+    ssn_bbox_set_value("张居阔", "444", box);
+    ssn_bbox_set_value("刘太举", "555", box);
+    
+    NSLog(@"222 = %s",ssn_bbox_get_value("222", box));
+    NSLog(@"333 = %s",ssn_bbox_get_value("333", box));
+    NSLog(@"444 = %s",ssn_bbox_get_value("444", box));
+    NSLog(@"555 = %s",ssn_bbox_get_value("555", box));
+    
+    ssn_bbox_destroy(box);
+    
+    XCTAssert(YES, @"Pass");
+    
+}
+
+- (void)test_box_read {
+    char *p = "/Users/lingminjun/Workdesk/work/ssn/ssnTests/bbox.txt";
+    
+    ssn_bbox_t *box = ssn_bbox_create(p, 4);
+//    ssn_bbox_set_value("肖海长", "111", box);
+//    ssn_bbox_set_value("杨世亮", "222", box);
+//    ssn_bbox_set_value("梁冰珏", "333", box);
+//    ssn_bbox_set_value("张居阔", "444", box);
+//    ssn_bbox_set_value("刘太举", "555", box);
+    
+    NSLog(@"222 = %@",[NSString stringWithUTF8String:ssn_bbox_get_value("222", box)]);
+    NSLog(@"333 = %@",[NSString stringWithUTF8String:ssn_bbox_get_value("333", box)]);
+    NSLog(@"444 = %@",[NSString stringWithUTF8String:ssn_bbox_get_value("444", box)]);
+    NSLog(@"555 = %@",[NSString stringWithUTF8String:ssn_bbox_get_value("555", box)]);
+    
+    ssn_bbox_destroy(box);
     
     XCTAssert(YES, @"Pass");
     
