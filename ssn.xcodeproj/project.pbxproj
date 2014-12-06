@@ -165,6 +165,9 @@
 		53DDBC4B194B4BD100BA4F58 /* NiceQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DDBC48194B4BD100BA4F58 /* NiceQueue.m */; };
 		53DFE9C01A104C3E00944E51 /* SSNJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DFE9BF1A104C3E00944E51 /* SSNJson.m */; };
 		53DFE9C11A104C3E00944E51 /* SSNJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DFE9BF1A104C3E00944E51 /* SSNJson.m */; };
+		53E06ED81A3329CA005DF490 /* ssnsimplemap.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06ED61A3329CA005DF490 /* ssnsimplemap.c */; };
+		53E06ED91A3329CA005DF490 /* ssnsimplemap.c in Sources */ = {isa = PBXBuildFile; fileRef = 53E06ED61A3329CA005DF490 /* ssnsimplemap.c */; };
+		53E06EDB1A33461F005DF490 /* ssn_bbox_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E06EDA1A33461F005DF490 /* ssn_bbox_test.m */; };
 		53E512D51998F81C002925E6 /* SSNRigidCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E512D41998F81C002925E6 /* SSNRigidCache.m */; };
 		53ECB16C191FBB6000BEB29D /* NSString+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ECB166191FBB6000BEB29D /* NSString+SSN.m */; };
 		53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
@@ -313,6 +316,9 @@
 		53DDBC48194B4BD100BA4F58 /* NiceQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NiceQueue.m; sourceTree = "<group>"; };
 		53DFE9BE1A104C3E00944E51 /* SSNJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNJson.h; sourceTree = "<group>"; };
 		53DFE9BF1A104C3E00944E51 /* SSNJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNJson.m; sourceTree = "<group>"; };
+		53E06ED61A3329CA005DF490 /* ssnsimplemap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnsimplemap.c; sourceTree = "<group>"; };
+		53E06ED71A3329CA005DF490 /* ssnsimplemap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnsimplemap.h; sourceTree = "<group>"; };
+		53E06EDA1A33461F005DF490 /* ssn_bbox_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_bbox_test.m; sourceTree = "<group>"; };
 		53E512D31998F81C002925E6 /* SSNRigidCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRigidCache.h; sourceTree = "<group>"; };
 		53E512D41998F81C002925E6 /* SSNRigidCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRigidCache.m; sourceTree = "<group>"; };
 		53ECB15E191FBB6000BEB29D /* NSString+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSN.h"; sourceTree = "<group>"; };
@@ -362,6 +368,8 @@
 			children = (
 				530156251A30DA1000041506 /* sssblackbox.c */,
 				530156261A30DA1000041506 /* sssblackbox.h */,
+				53E06ED61A3329CA005DF490 /* ssnsimplemap.c */,
+				53E06ED71A3329CA005DF490 /* ssnsimplemap.h */,
 			);
 			path = bbox;
 			sourceTree = "<group>";
@@ -625,6 +633,7 @@
 				533BE3971A2AC4B400E07FF0 /* TSPerson.h */,
 				533BE3981A2AC4B400E07FF0 /* TSPerson.m */,
 				53D9A1961A2CC66F009F777D /* ssn_log_test.m */,
+				53E06EDA1A33461F005DF490 /* ssn_bbox_test.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -941,6 +950,7 @@
 				531CEBC01A2C71D10029F895 /* ssnlog.c in Sources */,
 				535F267719841ED800C0D7C0 /* SSNVC+Router.m in Sources */,
 				533378B41986435B00084428 /* SSNDBTable.m in Sources */,
+				53E06ED81A3329CA005DF490 /* ssnsimplemap.c in Sources */,
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
 				5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */,
 				535788BE1A2F5DAB009673EF /* ssncop.c in Sources */,
@@ -995,6 +1005,7 @@
 				53D24638199C83B400EFDF29 /* DMContactNavController.m in Sources */,
 				53D24639199C83B400EFDF29 /* DMContactViewController.h in Sources */,
 				53D2463A199C83B400EFDF29 /* DMContactViewController.m in Sources */,
+				53E06ED91A3329CA005DF490 /* ssnsimplemap.c in Sources */,
 				53D2463B199C83B400EFDF29 /* DMSessionNavController.h in Sources */,
 				53D2463C199C83B400EFDF29 /* DMSessionNavController.m in Sources */,
 				53D2463D199C83B400EFDF29 /* DMSessionViewController.h in Sources */,
@@ -1033,6 +1044,7 @@
 				531CEBC11A2C71D10029F895 /* ssnlog.c in Sources */,
 				534B4AA919C04E4B00698137 /* KKObj.m in Sources */,
 				53D24657199C83B400EFDF29 /* SSNDB.h in Sources */,
+				53E06EDB1A33461F005DF490 /* ssn_bbox_test.m in Sources */,
 				53D24658199C83B400EFDF29 /* SSNDB.m in Sources */,
 				53D24659199C83B400EFDF29 /* SSNDBPool.h in Sources */,
 				53D2465A199C83B400EFDF29 /* SSNDBPool.m in Sources */,
