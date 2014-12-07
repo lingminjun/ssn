@@ -10,6 +10,11 @@
 
 /**
  *  函数调用情况跟踪，只支持对象方法，且不支持可变参数
+ *  现有参数指标
+ c_a=call at time. 函数调用时间点
+ u_t=call cost user time.函数调用时间开销，不算系统部分
+ s_t=call cost system time.函数调用时间开销，系统部分
+ c_u=call cpu usage. 函数调用cpu当前占有率
  */
 @interface NSObject (SSNTracking)
 
