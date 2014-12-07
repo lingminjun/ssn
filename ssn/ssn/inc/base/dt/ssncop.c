@@ -12,6 +12,11 @@
 #include <assert.h>
 #include <pthread/pthread.h>
 
+#include <sys/param.h>
+#include <sys/mount.h>
+
+#include <unistd.h>
+
 // Defines
 #define MB (1024*1024)
 #define GB (MB*1024)
@@ -192,4 +197,48 @@ double ssn_current_thread_memory_usage(void)
     }
     
     return tot_memory;
+}
+
+#pragma mark 磁盘大小计算
+long long ssn_disk_free_space(void) {
+    struct statfs tStats;
+    long long freespace = -1;
+    if(statfs("/", &tStats) >= 0){
+        freespace = (long long)tStats.f_bsize * tStats.f_bfree;
+    }
+    
+    return freespace;
+}
+
+long long ssn_get_dir_space(const char *dir_path) {
+    struct statfs tStats;
+    statfs(dir_path, &tStats);
+    long long  space = (long long )(tStats.f_blocks * tStats.f_bsize);
+    
+    return space;
+}
+
+unsigned int ssn_os_is_jail_broken(void)
+{
+    const char* jailbreak_apps[] =
+    {
+        "/Applications/Cydia.app",
+        "/Applications/limera1n.app",
+        "/Applications/greenpois0n.app",
+        "/Applications/blackra1n.app",
+        "/Applications/blacksn0w.app",
+        "/Applications/redsn0w.app",
+        "/Applications/Absinthe.app",
+        NULL,
+    };
+    
+    // Now check for known jailbreak apps. If we encounter one, the device is jailbroken.
+    for(int i = 0; jailbreak_apps[i] != NULL; ++i)
+    {
+        if(0 == access(jailbreak_apps[i], F_OK))
+        {
+            return 1;
+        }
+    }
+    return 0;
 }

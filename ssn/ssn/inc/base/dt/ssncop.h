@@ -35,4 +35,10 @@ SSN_COP_EXTERN ssn_performance_info_t ssn_performance_info_imp_called(ssn_perfor
 
 SSN_COP_EXTERN double ssn_current_thread_memory_usage(void);//当前进程内存占有率
 
+SSN_COP_EXTERN long long ssn_disk_free_space(void);//获取剩余磁盘大小（字节）
+
+SSN_COP_EXTERN long long ssn_get_dir_space(const char *dir_path);//获取目录大小（字节）
+
+SSN_COP_EXTERN unsigned int ssn_os_is_jail_broken(void);//是否越狱
+
 #endif /* defined(__ssn__ssncop__) */
