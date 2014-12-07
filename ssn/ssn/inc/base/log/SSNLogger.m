@@ -13,7 +13,7 @@
 #import <stdio.h>
 #import "ssnlog.h"
 
-NSString *const SSNDefaultLoggerDir = @"log";
+NSString *const SSNDefaultLoggerDir = @"ssnlog";
 
 NSString *const SSNDefaultLoggerScope = @"_ssn_default_";
 
@@ -111,12 +111,7 @@ NSString *const SSNDefaultLoggerScope = @"_ssn_default_";
  *  @retaurn 对应Library/Caches/log下的日志目录
  */
 + (instancetype)sharedInstance {
-    static SSNLogger *logger = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        logger = [[SSNLogger alloc] initWithScope:SSNDefaultLoggerScope];
-    });
-    return logger;
+    return [self loggerWithScope:SSNDefaultLoggerScope];
 }
 
 /**
@@ -135,6 +130,7 @@ NSString *const SSNDefaultLoggerScope = @"_ssn_default_";
         logger_cache = [[SSNRigidCache alloc] initWithConstructor:^id(id key, NSDictionary *userInfo) {
             return [[SSNLogger alloc] initWithScope:scope];
         }];
+        [logger_cache setCountLimit:2];//
     });
     
     return [logger_cache objectForKey:scope];
@@ -189,10 +185,12 @@ static NSString *const SSN_LOG_CHECK_FLAG_FORMAT = @"_ssn_log_%@_check_flag_";
         //找到目录
         NSString *comp = SSNDefaultLoggerDir;
         comp = [comp stringByAppendingPathComponent:_scope];
-        NSString *logDir = [[NSFileManager defaultManager] pathCachesDirectoryWithPathComponents:comp];
         
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSArray *subDirs = [fileManager contentsOfDirectoryAtPath:logDir error:NULL];
+        NSFileManager *manager = [NSFileManager ssn_fileManager];
+        
+        NSString *logDir = [manager pathCachesDirectoryWithPathComponents:comp];
+        
+        NSArray *subDirs = [manager contentsOfDirectoryAtPath:logDir error:NULL];
         
         //新生产file
         char day_str[12] = {'\0'};
@@ -206,7 +204,7 @@ static NSString *const SSN_LOG_CHECK_FLAG_FORMAT = @"_ssn_log_%@_check_flag_";
             }
             @autoreleasepool {
                 NSString *path = [logDir stringByAppendingPathComponent:dir];
-                [fileManager removeItemAtPath:path error:NULL];
+                [manager removeItemAtPath:path error:NULL];
                 printf("\nremove log dir %s\n",[dir UTF8String]);
             }
         }
@@ -241,7 +239,8 @@ static NSString *const SSN_LOG_CHECK_FLAG_FORMAT = @"_ssn_log_%@_check_flag_";
         comp = [comp stringByAppendingPathComponent:_scope];
         comp = [comp stringByAppendingPathComponent:day_dir];
         
-        NSString *path = [[NSFileManager defaultManager] pathCachesDirectoryWithPathComponents:comp];
+        NSFileManager *manager = [NSFileManager ssn_fileManager];
+        NSString *path = [manager pathCachesDirectoryWithPathComponents:comp];
         
         path = [path stringByAppendingPathComponent:file_name];
         

@@ -12,6 +12,11 @@
 
 @implementation NSFileManager (SSN)
 
++ (instancetype)ssn_fileManager {
+    return [[NSFileManager alloc] init];
+}
+
+
 - (NSString *)pathDocumentDirectoryWithPathComponents:(NSString *)pathComponents
 {
     static NSString *documentsDirectory = nil;

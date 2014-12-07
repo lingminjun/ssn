@@ -34,9 +34,11 @@ NSString *const SSNDBRowIdUserInfoKey     = @"SSNDBRowIdUserInfoKey";      //row
 
 + (NSString *)pathForScope:(NSString *)scope
 {
-    static NSString *dbdir = @"db";
+    static NSString *dbdir = @"ssndb";
     NSString *dirPath = [dbdir stringByAppendingPathComponent:scope];
-    dirPath = [[NSFileManager defaultManager] pathDocumentDirectoryWithPathComponents:dirPath];
+    
+    NSFileManager *manager = [NSFileManager ssn_fileManager];
+    dirPath = [manager pathDocumentDirectoryWithPathComponents:dirPath];
     return [dirPath stringByAppendingPathComponent:SSNDBFileName];
 }
 

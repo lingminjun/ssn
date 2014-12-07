@@ -34,31 +34,31 @@ typedef enum : NSUInteger {
 @interface SSNLogger : NSObject
 
 /**
- *  在Library/Caches/log下写日志，
- *  @retaurn 对应Library/Caches/log下的日志目录
+ *  在Library/Caches/ssnlog/_ssn_default_下写日志，
+ *  @retaurn 对应Library/Caches/ssnlog/_ssn_default_下的日志目录
  */
 + (instancetype)sharedInstance;
 
 /**
- *  在Library/Caches/log/[scope]下写日志，不建议使用此方法
+ *  在Library/Caches/ssnlog/[scope]下写日志，不建议使用此方法
  *  @param scope 日志级别
- *  @retaurn 对应Library/Caches/log/[scope]下的日志目录
+ *  @retaurn 对应Library/Caches/ssnlog/[scope]下的日志目录
  */
 + (instancetype)loggerWithScope:(NSString *)scope;
 
 /**
- *  在Library/Caches/log下写日志
+ *  在Library/Caches/ssnlog下写日志
  *  @param level 日志级别
  *  @param format 日志format
  */
 - (void)log:(SSNLoggerLevel)level format:(NSString *)format, ...;
 
 /**
- *  在Documents/log下写日志，不建议使用此方法
+ *  在Documents/ssnlog下写日志，不建议使用此方法
  *  @param level 日志级别
  *  @param format 日志format
  */
-- (void)focuslog:(SSNLoggerLevel)level format:(NSString *)format, ...;
+//- (void)focuslog:(SSNLoggerLevel)level format:(NSString *)format, ...;
 
 
 @end
