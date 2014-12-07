@@ -44,4 +44,22 @@ FOUNDATION_EXTERN NSString *const SSNDBRowIdUserInfoKey;      //notification use
 //执行block，block在数据库执行线程中执行，在arc中请注意传入strong参数，确保操作完成，防止循环引用
 - (void)executeBlock:(void (^)(SSNDB *database))block sync:(BOOL)sync;
 
+#pragma attach other database completed arduous task
+/**
+ @brief 创建一个临时库来执行一项艰巨的任务，这里建议是一些非常耗时的任务，然后关联两个数据库，进行数据库关联操作，请不要随意使用，注意保持一个attachDatabase独立
+ @param attachDatabase 临时库的名字，目录在主库目录下
+ @param arduousBlock   艰巨任务执行block，临时库不建议应用出block，每次操作完他将关闭，不然后面的attach 可能失效，此block在非主库线程中
+ @param attachBlock    最后关联动作执行，此block在主库线程中执行
+ 
+ 使用场景说明：比如有一项非常艰巨的任务，大批量的数据导入，如果直接在主库线程中执行，非常占用时间，导致其他模块阻塞，你可以采用临时库来完成
+    sql:[db executeSql:@"INSERT OR IGNORE INTO table_name SELECT * FROM attach_db.table_name"];
+ */
+- (void)addAttachDatabase:(NSString *)attachDatabase arduousBlock:(void (^)(SSNDB *attachDB))arduousBlock attachBlock:(void (^)(SSNDB *db, NSString *attachDatabase))attachBlock;
+
+/**
+ @brief 移除临时表
+ @param attachDatabase 临时库的名字，目录在主库目录下
+ */
+- (void)removeAttachDatabase:(NSString *)attachDatabase;//删除临时数据库
+
 @end

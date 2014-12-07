@@ -385,7 +385,7 @@
     NSArray *createSqls = [self createTableSqlsWithColumns:toCols forTable:tableName];
     [sqls addObjectsFromArray:createSqls];
 
-    // 3 导入数据
+    // 3 导入数据（create table as 虽然速度快，但是表字段定义类型模糊【无类型】，主键索引都无法描述）
     NSMutableString *insertInto = [NSMutableString stringWithCapacity:10];
     [sqls addObject:insertInto];
     [insertInto appendFormat:@"INSERT INTO %@ SELECT ", tableName];
