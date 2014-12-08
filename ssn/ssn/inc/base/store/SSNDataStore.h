@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 
 /**
- @brief 方便的存储文件，充分考虑存储效率
+ @brief 方便的存储文件，CAS（Content-Addressable Storage），内容寻址存储，系一种数据存储机构。
  */
 @interface SSNDataStore : NSObject
 
-@property (nonatomic,strong,readonly) NSString *scope;//所在区域（决定路径）
-@property (nonatomic) BOOL isCacheDir;//是否为cache目录
+@property (nonatomic,copy,readonly) NSString *scope;//所在区域（决定路径）
+@property (nonatomic,readonly) BOOL isCacheDir;//是否为cache目录
 @property (nonatomic) BOOL memoryCache;//内存缓存，是否存在内存缓存
 
 /**

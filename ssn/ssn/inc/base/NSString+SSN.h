@@ -23,8 +23,8 @@
                         appendingString:(NSString *)append
                            joinedString:(NSString *)joined;
 
-// md5
-- (NSString *)md5String;
+
+- (NSString *)ssn_md5;//小写
 
 // urlencode
 - (NSString *)urlEncode;

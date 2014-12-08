@@ -43,6 +43,7 @@
 		533BE3C21A2B150B00E07FF0 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */; };
 		533EBA051A2D6E1D00D960A3 /* SSNLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 533EBA041A2D6E1D00D960A3 /* SSNLogger.m */; };
 		533EBA061A2D6E1D00D960A3 /* SSNLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 533EBA041A2D6E1D00D960A3 /* SSNLogger.m */; };
+		533F4FD51A35997F009D29C6 /* ssn_datastore_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 533F4FD41A35997F009D29C6 /* ssn_datastore_test.m */; };
 		534B4AA919C04E4B00698137 /* KKObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B4AA819C04E4B00698137 /* KKObj.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
 		53512E2619A3959A00DACC42 /* lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53512E2419A3959A00DACC42 /* lock.cpp */; };
@@ -229,6 +230,7 @@
 		533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		533EBA031A2D6E1D00D960A3 /* SSNLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNLogger.h; sourceTree = "<group>"; };
 		533EBA041A2D6E1D00D960A3 /* SSNLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNLogger.m; sourceTree = "<group>"; };
+		533F4FD41A35997F009D29C6 /* ssn_datastore_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_datastore_test.m; sourceTree = "<group>"; };
 		534B4AA719C04E4B00698137 /* KKObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKObj.h; sourceTree = "<group>"; };
 		534B4AA819C04E4B00698137 /* KKObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKObj.m; sourceTree = "<group>"; };
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -659,6 +661,7 @@
 				533BE3981A2AC4B400E07FF0 /* TSPerson.m */,
 				53D9A1961A2CC66F009F777D /* ssn_log_test.m */,
 				53E06EDA1A33461F005DF490 /* ssn_bbox_test.m */,
+				533F4FD41A35997F009D29C6 /* ssn_datastore_test.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -1021,6 +1024,7 @@
 				53D7D0BD19A8F40D0025A2E2 /* lock.h in Sources */,
 				53D7D0BE19A8F40D0025A2E2 /* inet.cpp in Sources */,
 				533BE3A51A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
+				533F4FD51A35997F009D29C6 /* ssn_datastore_test.m in Sources */,
 				53D7D0BF19A8F40D0025A2E2 /* inet.h in Sources */,
 				53D7D0C019A8F40D0025A2E2 /* buffer.cpp in Sources */,
 				53D7D0C119A8F40D0025A2E2 /* buffer.h in Sources */,

@@ -137,8 +137,7 @@
     }
 }
 
-- (NSString *)md5String
-{
+- (NSString *)ssn_md5 {
     const char *concat_str = [self UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
     CC_MD5(concat_str, (CC_LONG)strlen(concat_str), result);
@@ -149,6 +148,7 @@
     }
     return [hash lowercaseString];
 }
+
 
 - (NSString *)urlEncode
 {
