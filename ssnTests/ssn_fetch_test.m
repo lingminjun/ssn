@@ -189,6 +189,8 @@
     [table update];
     
     [db addAttachDatabase:@"attach_db" arduousBlock:^(SSNDB *attachDB) {
+        
+        //一项艰巨的任务【耗时比较长的事，如大批量数据插入】
         SSNDBTable *tb = [SSNDBTable tableWithDB:attachDB tableJSONDescriptionFilePath:path];
         [tb update];
         
@@ -207,15 +209,6 @@
         [db removeAttachDatabase:@"attach_db"];
     }];
     
-    
-//    [db executeSql:@"ATTACH DATABASE '/Users/lingminjun/Library/Developer/CoreSimulator/Devices/B106EDFD-2A7E-413E-9CE1-8BB7E681987F/data/Documents/ssndb/attach2/db.sqlite' AS attach_db"];
-//    
-//    [db executeSql:@"INSERT OR IGNORE INTO person SELECT * FROM attach_db.person"];
-//    
-//    [db executeSql:@"DETACH DATABASE attach_db"];
-    
-    //SELECT t1.first_col FROM testtable t1, mydb.testtable t2 WHERE t.first_col = t2.first_col; first_col
-    //INSERT INTO Subscription SELECT OrderId, “”, ProductId FROM __temp__Subscription
     
     NSPredicate *where = [NSPredicate predicateWithFormat:@"uid = '11'"];
     NSArray *objs = [table objectsWithClass:[TSPerson class] forPredicate:where];
