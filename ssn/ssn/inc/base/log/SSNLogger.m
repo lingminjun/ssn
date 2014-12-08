@@ -127,8 +127,8 @@ NSString *const SSNDefaultLoggerScope = @"_ssn_default_";
     static SSNRigidCache *logger_cache = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        logger_cache = [[SSNRigidCache alloc] initWithConstructor:^id(id key, NSDictionary *userInfo) {
-            return [[SSNLogger alloc] initWithScope:scope];
+        logger_cache = [[SSNRigidCache alloc] initWithConstructor:^id(NSString *key, NSDictionary *userInfo) {
+            return [[SSNLogger alloc] initWithScope:key];
         }];
         [logger_cache setCountLimit:2];//
     });

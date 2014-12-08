@@ -18,6 +18,14 @@
 @property (nonatomic) BOOL memoryCache;//内存缓存，是否存在内存缓存
 
 /**
+ @brief 唯一初始化方法
+ @param scope 定义的域
+ @param cacheDir 是否为cache目录
+ @return 返回找到的数据，可能返回nil
+ */
+- (instancetype)initWithScope:(NSString *)scope isCacheDir:(BOOL)cacheDir;
+
+/**
  @brief key对应的存储的文件内容
  @param key 需要寻找的key
  @return 返回找到的数据，可能返回nil
@@ -54,16 +62,5 @@
  @brief 清理磁盘【不可逆】
  */
 - (void)clearDisk;//
-
-/**
- @brief Documents/ssnstore/[scope]目录下缓存
- */
-+ (instancetype)dataStoreWithScope:(NSString *)scope;
-
-
-/**
- @brief Library/Caches/ssnstore/[scope]目录下缓存
- */
-+ (instancetype)cacheStoreWithScope:(NSString *)scope;
 
 @end

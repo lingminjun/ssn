@@ -13,6 +13,8 @@
 		530375C41A3425C40094F907 /* SSNDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 530375C21A3425C40094F907 /* SSNDataStore.m */; };
 		530375C71A342FD60094F907 /* SSNHosting.m in Sources */ = {isa = PBXBuildFile; fileRef = 530375C61A342FD60094F907 /* SSNHosting.m */; };
 		530375C81A342FD60094F907 /* SSNHosting.m in Sources */ = {isa = PBXBuildFile; fileRef = 530375C61A342FD60094F907 /* SSNHosting.m */; };
+		53092C0A1A35E729005F65FE /* SSNDataStore+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53092C091A35E729005F65FE /* SSNDataStore+Factory.m */; };
+		53092C0B1A35E729005F65FE /* SSNDataStore+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53092C091A35E729005F65FE /* SSNDataStore+Factory.m */; };
 		531CEBC01A2C71D10029F895 /* ssnlog.c in Sources */ = {isa = PBXBuildFile; fileRef = 531CEBBE1A2C71D10029F895 /* ssnlog.c */; };
 		531CEBC11A2C71D10029F895 /* ssnlog.c in Sources */ = {isa = PBXBuildFile; fileRef = 531CEBBE1A2C71D10029F895 /* ssnlog.c */; };
 		533378AE1986431200084428 /* SSNDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 533378AD1986431200084428 /* SSNDB.m */; };
@@ -202,6 +204,8 @@
 		530375C21A3425C40094F907 /* SSNDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDataStore.m; sourceTree = "<group>"; };
 		530375C51A342FD60094F907 /* SSNHosting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNHosting.h; sourceTree = "<group>"; };
 		530375C61A342FD60094F907 /* SSNHosting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNHosting.m; sourceTree = "<group>"; };
+		53092C081A35E729005F65FE /* SSNDataStore+Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNDataStore+Factory.h"; sourceTree = "<group>"; };
+		53092C091A35E729005F65FE /* SSNDataStore+Factory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SSNDataStore+Factory.m"; sourceTree = "<group>"; };
 		531CEBBE1A2C71D10029F895 /* ssnlog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnlog.c; sourceTree = "<group>"; };
 		531CEBBF1A2C71D10029F895 /* ssnlog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnlog.h; sourceTree = "<group>"; };
 		533378AC1986431200084428 /* SSNDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDB.h; sourceTree = "<group>"; };
@@ -395,6 +399,8 @@
 			children = (
 				530375C11A3425C40094F907 /* SSNDataStore.h */,
 				530375C21A3425C40094F907 /* SSNDataStore.m */,
+				53092C081A35E729005F65FE /* SSNDataStore+Factory.h */,
+				53092C091A35E729005F65FE /* SSNDataStore+Factory.m */,
 			);
 			path = store;
 			sourceTree = "<group>";
@@ -999,6 +1005,7 @@
 				53F519A91A2A185D00D4C381 /* SSNDBFetchController.m in Sources */,
 				533378B11986432800084428 /* SSNDBPool.m in Sources */,
 				533EBA051A2D6E1D00D960A3 /* SSNLogger.m in Sources */,
+				53092C0A1A35E729005F65FE /* SSNDataStore+Factory.m in Sources */,
 				538E3835199869430061692E /* DMTabViewController.m in Sources */,
 				53DFE9C01A104C3E00944E51 /* SSNJson.m in Sources */,
 				53D898E41A0E670C00CE63E0 /* SSNSafeSet.m in Sources */,
@@ -1051,6 +1058,7 @@
 				53D24643199C83B400EFDF29 /* DMSignNavController.h in Sources */,
 				53D24644199C83B400EFDF29 /* DMSignNavController.m in Sources */,
 				53D24645199C83B400EFDF29 /* DMSignViewController.h in Sources */,
+				53092C0B1A35E729005F65FE /* SSNDataStore+Factory.m in Sources */,
 				53E06EE11A335C3B005DF490 /* ssnbase64.c in Sources */,
 				53D24646199C83B400EFDF29 /* DMSignViewController.m in Sources */,
 				535E2BCF1A1C5AE300D67318 /* ssnbase.m in Sources */,

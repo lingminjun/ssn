@@ -55,20 +55,6 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
     pthread_rwlock_destroy(&_rwlock);
 }
 
-/**
- @brief Documents/ssnstore/[scope]目录下缓存
- */
-+ (instancetype)dataStoreWithScope:(NSString *)scope {
-    return [[[self class] alloc] initWithScope:scope isCacheDir:NO];
-}
-
-
-/**
- @brief Library/Caches/ssnstore/[scope]目录下缓存
- */
-+ (instancetype)cacheStoreWithScope:(NSString *)scope {
-    return [[[self class] alloc] initWithScope:scope isCacheDir:YES];
-}
 
 /**
  @brief key对应的存储的文件内容
