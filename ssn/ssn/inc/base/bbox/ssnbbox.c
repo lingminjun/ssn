@@ -76,9 +76,9 @@ int ssn_bbox_aes256_decrypt(char *text, size_t *text_size,const size_t buff_size
     }
      */
     
-    CCCryptorStatus status = CCCrypt(kCCDecrypt, kCCAlgorithmAES128,
+    CCCryptorStatus status = CCCrypt(kCCDecrypt, kCCAlgorithmAES,
                                      kCCOptionPKCS7Padding | kCCOptionECBMode,
-                                     key, kCCKeySizeAES128,
+                                     key, kCCKeySizeAES256,
                                      NULL,
                                      cryp, cryp_size,
                                      text, buff_size,
@@ -192,9 +192,9 @@ int ssn_bbox_gather_key_from_cryp(char *buff, size_t *buff_size, const char *cry
 }
 
 long ssn_bbox_read_line_size(FILE *file) {
-    long size = 0;
-    fscanf(file,"%ld\n",&size);
-    return size;
+    char num[21] = {'\0'};//long length
+    fgets(num, (int)21, file);
+    return atol(num);
 }
 
 void ssn_bbox_read_line(FILE *file,char *buff,long line_size) {
@@ -236,7 +236,7 @@ void ssn_bbox_read_file_to_map(const char *path, ssn_smap_t *map) {
             continue;
         }
         else {//方便后面加解密运算，将length长度适当调整成32的倍数
-            buffer_length = (buffer_length < ssn_bbox_aes256_length ? ssn_bbox_aes256_length :((long)((buffer_length + 1)/ssn_bbox_aes256_length) * ssn_bbox_aes256_length)) + 1;
+            buffer_length = (buffer_length < ssn_bbox_aes256_length ? ssn_bbox_aes256_length :((long)((buffer_length + ssn_bbox_aes256_length - 1)/ssn_bbox_aes256_length) * ssn_bbox_aes256_length)) + 1;
         }
         
         //buffer申请并清空
@@ -330,7 +330,10 @@ void ssn_bbox_smap_iterator(const char *value, const char *key, FILE *fp) {
     buffer_length = strlen(key) + strlen(value) + ssn_bbox_aes256_length;
     
     //方便后面加解密运算，将length长度适当调整成32的倍数
-    buffer_length = (buffer_length < ssn_bbox_aes256_length ? ssn_bbox_aes256_length :((long)((buffer_length + 1)/ssn_bbox_aes256_length) * ssn_bbox_aes256_length)) + 1;
+    buffer_length = (buffer_length < ssn_bbox_aes256_length ? ssn_bbox_aes256_length :((long)((buffer_length + ssn_bbox_aes256_length - 1)/ssn_bbox_aes256_length) * ssn_bbox_aes256_length));
+    
+    //还需要考虑base64长度
+    buffer_length = ssn_base64_encode_length(buffer_length);
     
     //申请内存
     buffer1 = ssn_malloc_buffer(buffer_length);
@@ -367,7 +370,8 @@ void ssn_bbox_smap_iterator(const char *value, const char *key, FILE *fp) {
     ssn_base64_encode((unsigned char *)buffer2, (unsigned char *)buffer1, length1, &length2);
     
     //输入到文件
-    fprintf(fp, "%ld\n%s",length2,buffer2);
+    fprintf(fp, "%ld\n%s\n",length2,buffer2);
+    printf("%ld\n%s",length2,buffer2);
     fflush(fp);
     
     free(buffer1);

@@ -34,6 +34,7 @@
     SSNLogVerbose(@"dsfsdj%sdddd","000000000000");
     SSNLogVerbose(@"dshjfsdhfdksjfj");
     SSNLogVerbose(@"================================");
+    NSLog(@"%lu",ULONG_MAX);
 }
 
 - (void)testPerformanceExample {
