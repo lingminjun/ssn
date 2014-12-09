@@ -92,6 +92,12 @@ int ssn_bbox_aes256_decrypt(char *text, size_t *text_size,const size_t buff_size
     return SSN_BBOX_ERROR;
 }
 
+void *ssn_malloc_buffer(unsigned long size) {
+    void *buff = malloc(size);
+    memset(buff, 0, size);
+    return buff;
+}
+
 int ssn_bbox_key_hash_to_cryp(char *buff, size_t buff_size, const char *cryp,const size_t cryp_size, const char *key) {
     
     long vector = 0;
@@ -195,43 +201,7 @@ void ssn_bbox_read_line(FILE *file,char *buff,long line_size) {
     fgets(buff, (int)line_size, file);
 }
 
-const char *ssn_bbox_split_char = "&";//非base64字符
-
-void ssn_bbox_joined_value_key(char *buff,const char *value, const char *key) {
-    unsigned long value_len = 0,key_len = 0;
-    unsigned char *base64_value = NULL,*base64_key = NULL;
-    
-    base64_value = ssn_base64_encode((const unsigned char *)value, strlen(value), &value_len);
-    base64_key = ssn_base64_encode((const unsigned char *)key, strlen(key), &key_len);
-    memcpy(buff, base64_key, key_len);
-    buff = buff + key_len;
-    memcpy(buff, ssn_bbox_split_char, 1);//分割符
-    buff = buff + 1;
-    memcpy(buff, base64_value, value_len);
-    
-    free(base64_value);
-    free(base64_key);
-}
-
-void ssn_bbox_split_value_key(char *value, char *key, char *text) {
-    unsigned long value_len = 0,key_len = 0;
-    char *base64_value = NULL,*base64_key = NULL;
-    char *original_value = NULL,*original_key = NULL;
-    
-    base64_key = strtok(text, ssn_bbox_split_char);
-    if (base64_key) {
-        base64_value = strtok(NULL, ssn_bbox_split_char);
-    }
-    
-    original_key = (char *)ssn_base64_decode((unsigned char *)base64_key, strlen(base64_key), &key_len);
-    original_value = (char *)ssn_base64_decode((unsigned char *)base64_value, strlen(base64_value), &value_len);
-    
-    memcpy(key, original_key, key_len);
-    memcpy(value, original_value, value_len);
-    
-    free(original_key);
-    free(original_value);
-}
+const char ssn_bbox_split_char = '&';//非base64字符
 
 void ssn_bbox_get_key_from_key(char *okey, const char *ikey) {
     size_t len = 0;
@@ -245,16 +215,13 @@ void ssn_bbox_get_key_from_key(char *okey, const char *ikey) {
 
 void ssn_bbox_read_file_to_map(const char *path, ssn_smap_t *map) {
     
-    long line_size = 0;
-    char *buff = NULL;
-    char *out_base64 = NULL;
-    char *text = NULL;
-    char *original_text = NULL;
+    char *buffer1 = NULL,*buffer2 = NULL;//两个实际操作的buffer
     char aeskey[ssn_bbox_aes256_length + 1] = {'\0'};
-    unsigned long out_len = 0, text_out_size = 0,out_size = 0;
-    char *key = NULL, *value = NULL;
+    char *point1 = NULL,*point2 = NULL;//两个游标，分别用于指向key，value起始位置
+    unsigned long length1 = 0,length2 = 0;//记录key,value的长度
+    unsigned long buffer_length = 0;
     
-    FILE *fp = fopen(path, "rt");
+    FILE *fp = fopen(path, "rt");//文本只读打开
     
     if (!fp) {
         return ;
@@ -262,101 +229,149 @@ void ssn_bbox_read_file_to_map(const char *path, ssn_smap_t *map) {
     
     while(!feof(fp))
     {
-        line_size = ssn_bbox_read_line_size(fp);
+        buffer_length = ssn_bbox_read_line_size(fp);//取行长度
         
-        if (line_size == 0) {
+        if (buffer_length == 0) {//出现错误，暂时先不管，打印下日志
+            printf("ssn bbox read line size error\n");
+            continue;
+        }
+        else {//方便后面加解密运算，将length长度适当调整成32的倍数
+            buffer_length = (buffer_length < ssn_bbox_aes256_length ? ssn_bbox_aes256_length :((long)((buffer_length + 1)/ssn_bbox_aes256_length) * ssn_bbox_aes256_length)) + 1;
+        }
+        
+        //buffer申请并清空
+        buffer1 = ssn_malloc_buffer(buffer_length);
+        buffer2 = ssn_malloc_buffer(buffer_length);
+        
+        //数据还原
+        length1 = 0;
+        length2 = 0;
+        point1 = NULL;
+        point2 = NULL;
+        
+        //清空key
+        memset(aeskey, 0, ssn_bbox_aes256_length + 1);
+        
+        //读取数据
+        ssn_bbox_read_line(fp, buffer1, buffer_length);
+        
+        //解析数据。此时非常重要，出来的数据已经不是字符串了
+        ssn_base64_decode((unsigned char *)buffer2, (unsigned char *)buffer1, strlen(buffer1), &length2);
+        
+        if (length2 == 0) {//base64出来的数据有错误
+            printf("ssn bbox base64 decode error\n");
             continue;
         }
         
-        buff = malloc(line_size + 1);
-        memset(buff,0,line_size + 1);
-        memset(aeskey, 0, ssn_bbox_aes256_length + 1);
+        //清空buffer1，数据已经没有意义
+        memset(buffer1, 0, buffer_length);
+        length1 = 0;
         
-        ssn_bbox_read_line(fp, buff, 1024);
+        //收集key并且获得密文数据
+        ssn_bbox_gather_key_from_cryp(buffer1, &length1, buffer2, length2, aeskey);
         
-        out_base64 = (char *)ssn_base64_decode((unsigned char *)buff, line_size, &out_len);
-        if (out_len<line_size) {
-            out_len = line_size;
+        //清空buffer2，数据已经没有意义
+        memset(buffer2, 0, buffer_length);
+        length2 = 0;
+        
+        //解密数据到buffer2中
+        ssn_bbox_aes256_decrypt(buffer2, &length2, buffer_length, buffer1, length1, aeskey);
+        printf("ssn bbox read content[%s]\n", buffer2);//理论上是明文字符串了，可以打印看看
+        
+        
+        //此时分割出key和value(base64版本)，
+        point1 = buffer2;
+        point2 = strchr(buffer2, ssn_bbox_split_char);
+        if (point2 == NULL) {
+            printf("ssn bbox split value key error\n");
+            continue;
         }
+        point2 += 1;//去掉分割伏
         
-        text = malloc(out_len+1);
-        memset(text, 0, out_len+1);
+        //清空buffer1，数据已经没有意义
+        memset(buffer1, 0, buffer_length);
+        length1 = 0;
         
-        original_text = malloc(out_len+1);
-        memset(original_text, 0, out_len+1);
+        //先解析出key，因为map是copy的，所以数据就保存到buffer1中就ok
+        ssn_base64_decode((unsigned char *)buffer1, (unsigned char *)point1, (point2 - point1 - 1), &length1);
+        point1 = buffer1;
         
-        //收集key
-        ssn_bbox_gather_key_from_cryp(text, &text_out_size, out_base64, out_len, aeskey);
+        //解析出value，因为map是copy的，所以数据就保存到buffer1中就ok
+        ssn_base64_decode((unsigned char *)(buffer1 + strlen(point1) + 1), (unsigned char *)point2, strlen(point2), &length1);
+        point2 = (buffer1 + strlen(point1) + 1);
         
-        //解密
-        ssn_bbox_aes256_decrypt(original_text, &out_size, out_len, text, text_out_size, aeskey);
-        
-        //分割
-        key = malloc(out_size);
-        memset(key, 0, out_size);
-        value = malloc(out_size);
-        memset(value, 0, out_size);
-        
-        ssn_bbox_split_value_key(value, key, original_text);
-        
-        printf("key:%s = value:%s",key,value);
-        
-        //添加到内存
-        ssn_smap_add_node(map, value, key);
+        //将数据加入到map
+        printf("ssn bbox out[key:%s = value:%s]\n",point1,point2);
+        ssn_smap_add_node(map, point2, point1);
         
         //释放资源
-        free(value);
-        free(key);
-        free(original_text);
-        free(text);
-        free(out_base64);
+        free(buffer1);
+        free(buffer2);
     }
     
     fclose(fp);
 }
 
 void ssn_bbox_smap_iterator(const char *value, const char *key, FILE *fp) {
-    char *in_base64 = NULL;
-    char *text = NULL;
-    char *original_text = NULL;
-    char *file_text = NULL;
+    
+    char *buffer1 = NULL,*buffer2 = NULL;//两个实际操作的buffer
     char aeskey[ssn_bbox_aes256_length + 1] = {'\0'};
-    unsigned long original_len = 0;
-    unsigned long out_len = 0, out_size = 0;
-    //char *key = NULL, *value = NULL;
+    char *point1 = NULL,*point2 = NULL;//两个游标，分别用于指向key，value起始位置
+    unsigned long length1 = 0,length2 = 0;//记录key,value的长度
+    unsigned long buffer_length = 0;
+    
+    //打印需要写入的key和value
+    printf("ssn bbox in[key:%s = value:%s]\n",key,value);
     
     //生产加密key
     ssn_bbox_get_key_from_key(aeskey, key);
     
-    //拼接内容
-    original_len = strlen(key) + strlen(value) + strlen(ssn_bbox_split_char) + 1;
-    original_text = malloc(original_len);
-    memset(original_text, 0, original_len);
-    ssn_bbox_joined_value_key(original_text, value, key);
+    //计算buffer长度，key_len+value_len+1+ssn_bbox_aes256_length 32整数被
+    buffer_length = strlen(key) + strlen(value) + ssn_bbox_aes256_length;
     
-    //加密内容
-    if (original_len < 33) {
-        original_len = 33;
-    }
-    text = malloc(original_len);
-    memset(text, 0, original_len);
-    ssn_bbox_aes256_encrypt(text, &out_len, original_len, original_text, strlen(original_text), aeskey);
+    //方便后面加解密运算，将length长度适当调整成32的倍数
+    buffer_length = (buffer_length < ssn_bbox_aes256_length ? ssn_bbox_aes256_length :((long)((buffer_length + 1)/ssn_bbox_aes256_length) * ssn_bbox_aes256_length)) + 1;
     
-    //秘钥散列到
-    file_text = malloc(out_len + ssn_bbox_aes256_length + 1);
-    memset(file_text, 0, out_len + ssn_bbox_aes256_length + 1);
-    ssn_bbox_key_hash_to_cryp(file_text, (out_len + ssn_bbox_aes256_length + 1), text, out_len, aeskey);
+    //申请内存
+    buffer1 = ssn_malloc_buffer(buffer_length);
+    buffer2 = ssn_malloc_buffer(buffer_length);
     
+    //将key和value都base64到buffer1
+    ssn_base64_encode((unsigned char*)buffer1, (unsigned char*)key, strlen(key), &length1);
+    point1 = buffer1;
     
-    //base64下
-    in_base64 = (char *)ssn_base64_encode((unsigned char *)file_text, (out_len + ssn_bbox_aes256_length), &out_size);
+    //中间这位设置成分割符
+    memset(point1 + strlen(point1), ssn_bbox_split_char, 1);
+    
+    //拼接value
+    point2 = (buffer1 + strlen(point1));
+    ssn_base64_encode((unsigned char*)point2, (unsigned char*)value, strlen(value), &length1);
+    
+    printf("ssn bbox write content[%s]\n", buffer1);//理论上是明文字符串了，
+    
+    //将拼接内容buffer1加密到buffer2上，此时必须要记录长度，因为不再是字符串，仅仅是数据流
+    ssn_bbox_aes256_encrypt(buffer2, &length2, buffer_length, buffer1, strlen(buffer1), aeskey);
+    
+    //清空buffer1，数据已经没有意义
+    memset(buffer1, 0, buffer_length);
+
+    //将key散列到密文中，到buffer1
+    length1 = length2 + ssn_bbox_aes256_length;//密文长度加秘钥长度
+    ssn_bbox_key_hash_to_cryp(buffer1, buffer_length, buffer2, length2, aeskey);
+    
+    //清空buffer2，数据已经没有意义
+    memset(buffer2, 0, buffer_length);
+    length2 = 0;
+    
+    //将整个密文base64下到buffer2
+    ssn_base64_encode((unsigned char *)buffer2, (unsigned char *)buffer1, length1, &length2);
     
     //输入到文件
-    fprintf(fp, "%ld\n%s",out_size,in_base64);
+    fprintf(fp, "%ld\n%s",length2,buffer2);
+    fflush(fp);
     
-    free(in_base64);
-    free(text);
-    free(original_text);
+    free(buffer1);
+    free(buffer2);
 }
 
 void ssn_bbox_write_map_to_file(const char *path, ssn_smap_t *map) {

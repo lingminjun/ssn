@@ -60,7 +60,7 @@ typedef struct {
 @property (nonatomic) NSUInteger age;
 
 //@property (nonatomic) char *tempname;
-@property (nonatomic) MYTStruct abc;
+//@property (nonatomic) MYTStruct abc;
 @property (nonatomic) Foo foo;
 
 
@@ -72,7 +72,7 @@ typedef struct {
 
 @implementation SSNJsonModel
 
-@synthesize abc = _abc;
+//@synthesize abc = _abc;
 @synthesize foo = _foo;
 
 @end
@@ -150,12 +150,12 @@ typedef struct {
     model.foo = fo;
     
     MYTStruct st = {NO,11};
-    model.abc = st;
+    //model.abc = st;
     
     NSLog(@"model foo %i,%i",model.foo.flag,model.foo.x);
-    NSLog(@"model stt %i,%i",model.abc.flag,model.abc.x);
+    //NSLog(@"model stt %i,%i",model.abc.flag,model.abc.x);
     id obj = [model valueForKey:@"foo"];
-    id obj1 = [model valueForKey:@"abc"];
+    //id obj1 = [model valueForKey:@"abc"];
     
     NSString *json = [model ssn_toJsonString];
     NSLog(@"[%@]",json);

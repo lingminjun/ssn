@@ -13,6 +13,7 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 #endif
+#import "NSData+SSNBase64.h"
 
 NSString *const SSN_JSON_CODER_CLASS_TYPE_KEY   = @":class@";//避免与常见属性重复，冒号不可能作为语言标示符，故以冒号开头
 
@@ -519,7 +520,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 
 - (void)encodeData:(NSData *)data forKey:(NSString *)key {
     NSAssert([key length] > 0 && [data length] > 0, @"SSNJsonCoder：传入正确参数");
-    NSString *base64 = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    NSString *base64 = [data ssn_base64];
     [[self rootDictionary] setValue:base64 forKey:key];
 }
 
@@ -665,7 +666,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 - (NSData *)decodeDataForKey:(NSString *)key {
     NSString *base64 = [[self rootDictionary] valueForKey:key];
     if (base64) {
-        return [[NSData alloc] initWithBase64EncodedString:base64 options:NSDataBase64DecodingIgnoreUnknownCharacters];
+        return [NSData ssn_base64EncodedString:base64];
     }
     return nil;
 }

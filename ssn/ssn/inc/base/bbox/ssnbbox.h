@@ -26,7 +26,7 @@
 #define SSN_BBOX_EINVAL     2
 
 /**
- @brief 一个简易的hash map对象
+ @brief 一个黑匣子操作对象
  */
 typedef struct _ssn_bbox_t {
     const char *path;         //文件存储地址

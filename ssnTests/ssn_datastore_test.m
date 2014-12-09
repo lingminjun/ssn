@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
-#import "SSNDataStore.h"
+#import "SSNDataStore+Factory.h"
 
 @interface ssn_datastore_test : XCTestCase
 

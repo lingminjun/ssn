@@ -25,35 +25,35 @@ static const unsigned char ssn_base64_table[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabc
  * nul terminated to make it easier to use as a C string. The nul terminator is
  * not included in out_len.
  */
-unsigned char * ssn_base64_encode(const unsigned char *src, unsigned long len, unsigned long *out_len)
+unsigned char * ssn_base64_encode(unsigned char *out_buff, const unsigned char *src, unsigned long len, unsigned long *out_len)
 {
     unsigned char *out, *pos;
     const unsigned char *end, *in;
     size_t olen;
-    int line_len;
     
-    olen = len * 4 / 3 + 4; /* 3-byte blocks to 4-byte */
-    olen += olen / 72; /* line feeds */
+    olen = ssn_base64_encode_length(len); /* 3-byte blocks to 4-byte */
     olen++; /* nul termination */
-    out = malloc(olen);
-    if (out == NULL)
+    if (out_buff) {
+        out = out_buff;
+    }
+    else {
+        out = malloc(olen);
+    }
+    
+    if (out == NULL) {
         return NULL;
+    }
     
     end = src + len;
     in = src;
     pos = out;
-    line_len = 0;
+    
     while (end - in >= 3) {
         *pos++ = ssn_base64_table[in[0] >> 2];
         *pos++ = ssn_base64_table[((in[0] & 0x03) << 4) | (in[1] >> 4)];
         *pos++ = ssn_base64_table[((in[1] & 0x0f) << 2) | (in[2] >> 6)];
         *pos++ = ssn_base64_table[in[2] & 0x3f];
         in += 3;
-        line_len += 4;
-        if (line_len >= 72) {
-            *pos++ = '\n';
-            line_len = 0;
-        }
     }
     
     if (end - in) {
@@ -67,18 +67,15 @@ unsigned char * ssn_base64_encode(const unsigned char *src, unsigned long len, u
             *pos++ = ssn_base64_table[(in[1] & 0x0f) << 2];
         }
         *pos++ = '=';
-        line_len += 4;
     }
     
-    if (line_len)
-        *pos++ = '\n';
-    
     *pos = '\0';
-    if (out_len)
+    if (out_len) {
         *out_len = pos - out;
+    }
+    
     return out;
 }
-
 
 /**
  * base64_decode - Base64 decode
@@ -90,37 +87,53 @@ unsigned char * ssn_base64_encode(const unsigned char *src, unsigned long len, u
  *
  * Caller is responsible for freeing the returned buffer.
  */
-unsigned char * ssn_base64_decode(const unsigned char *src, unsigned long len, unsigned long *out_len)
+unsigned char *ssn_base64_decode(unsigned char *out_buff, const unsigned char *src, unsigned long len, unsigned long *out_len)
 {
-    unsigned char dtable[256], *out, *pos, in[4], block[4], tmp;
-    size_t i, count, olen;
+    unsigned char *out, *pos, in[4], block[4], tmp, c;
+    size_t i, count;
     
-    memset(dtable, 0x80, 256);
-    for (i = 0; i < sizeof(ssn_base64_table); i++)
-        dtable[ssn_base64_table[i]] = i;
-    dtable['='] = 0;
-    
-    count = 0;
-    for (i = 0; i < len; i++) {
-        if (dtable[src[i]] != 0x80)
-            count++;
+    if (out_buff) {
+        out = out_buff;
+    }
+    else {
+        out = malloc(len + 1);//最后多加一位，放'\0'
+        memset(out, 0, len + 1);
     }
     
-    if (count % 4)
+    if (out == NULL) {
         return NULL;
+    }
     
-    olen = count / 4 * 3;
-    pos = out = malloc(count);
-    if (out == NULL)
-        return NULL;
+    pos = out;//
     
     count = 0;
     for (i = 0; i < len; i++) {
-        tmp = dtable[src[i]];
-        if (tmp == 0x80)
-            continue;
         
-        in[count] = src[i];
+        c = src[i];//取字符
+        
+        if (c >= 'A' && c <= 'Z') {
+            tmp = c - 'A';
+        }
+        else if (c >= 'a' && c <= 'z') {
+            tmp = 26 + c - 'a';
+        }
+        else if (c >= '0' && c <= '9') {
+            tmp = 26 * 2 + c - '0';
+        }
+        else if (c >= '0' && c <= '9') {
+            tmp = 26 * 2 + 10;
+        }
+        else if (c == '/') {
+            tmp = 26 * 2 + 10 + 1;
+        }
+        else if (c == '=') {
+            tmp = 0;
+        }
+        else {//其他字符不支持
+            continue ;
+        }
+        
+        in[count] = '=';
         block[count] = tmp;
         count++;
         if (count == 4) {
@@ -131,13 +144,34 @@ unsigned char * ssn_base64_decode(const unsigned char *src, unsigned long len, u
         }
     }
     
-    if (pos > out) {
-        if (in[2] == '=')
+    while (count) {//编码缺省结尾符
+        in[count] = '=';
+        block[count] = 0;
+        count++;
+        if (count == 4) {
+            *pos++ = (block[0] << 2) | (block[1] >> 4);
+            *pos++ = (block[1] << 4) | (block[2] >> 2);
+            *pos++ = (block[2] << 6) | block[3];
+            count = 0;
+        }
+    }
+    
+    if (pos > out) {//去掉结尾字符
+        if (in[2] == '=') {
             pos -= 2;
-        else if (in[3] == '=')
+        }
+        else if (in[3] == '=') {
             pos--;
+        }
     }
     
     *out_len = pos - out;
+    if (out_len == 0) {//无法解析数据
+        if (!out_buff) {
+            free(out);
+            out = NULL;
+        }
+    }
+    
     return out;
 }

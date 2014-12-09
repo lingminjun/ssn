@@ -11,6 +11,7 @@
 
 #import "ssnsmap.h"
 #import "ssnbbox.h"
+#import "ssnbase64.h"
 
 @interface ssn_bbox_test : XCTestCase
 
@@ -63,7 +64,7 @@
 }
 
 - (void)test_box {
-    char *p = "/Users/lingminjun/Workdesk/work/ssn/ssnTests/bbox.txt";
+    char *p = "/Users/lingminjun/Workdesk/work/ssn/ssnTests/sbbox.txt";
     
     ssn_bbox_t *box = ssn_bbox_create(p, 4);
     ssn_bbox_set_value("肖海长", "111", box);
@@ -72,10 +73,10 @@
     ssn_bbox_set_value("张居阔", "444", box);
     ssn_bbox_set_value("刘太举", "555", box);
     
-    NSLog(@"222 = %s",ssn_bbox_get_value("222", box));
-    NSLog(@"333 = %s",ssn_bbox_get_value("333", box));
-    NSLog(@"444 = %s",ssn_bbox_get_value("444", box));
-    NSLog(@"555 = %s",ssn_bbox_get_value("555", box));
+    NSLog(@"222 = %@",[NSString stringWithUTF8String:ssn_bbox_get_value("222", box)]);
+    NSLog(@"333 = %@",[NSString stringWithUTF8String:ssn_bbox_get_value("333", box)]);
+    NSLog(@"444 = %@",[NSString stringWithUTF8String:ssn_bbox_get_value("444", box)]);
+    NSLog(@"555 = %@",[NSString stringWithUTF8String:ssn_bbox_get_value("555", box)]);
     
     ssn_bbox_destroy(box);
     
@@ -84,7 +85,7 @@
 }
 
 - (void)test_box_read {
-    char *p = "/Users/lingminjun/Workdesk/work/ssn/ssnTests/bbox.txt";
+    char *p = "/Users/lingminjun/Workdesk/work/ssn/ssnTests/sbbox.txt";
     
     ssn_bbox_t *box = ssn_bbox_create(p, 4);
 //    ssn_bbox_set_value("肖海长", "111", box);
@@ -102,6 +103,43 @@
     
     XCTAssert(YES, @"Pass");
     
+}
+
+- (void)test_base64_encode {
+    unsigned char *text = "1234";
+    unsigned long len = 0;
+    unsigned char *base64 = ssn_base64_encode(NULL, text, strlen(text), &len);
+    NSLog(@"%s",base64);
+    
+    text = "12345678901234567890123456789012345678901234567890123456789012345678901234567890";
+    base64 = ssn_base64_encode(NULL, text, strlen(text), &len);
+    NSLog(@"%s",base64);
+}
+
+- (void)test_ios_base64_encode {
+    NSString *text = @"1234";
+    NSString *base64 = [[text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    NSLog(@"%@",base64);
+    long len = 0;
+    NSLog(@"%s",ssn_base64_decode(NULL, [base64 UTF8String], [base64 length], &len));
+    
+    text = @"12345678901234567890123456789012345678901234567890123456789012345678901234567890";
+    base64 = [[text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    NSLog(@"%@",base64);
+    
+    
+    NSLog(@"%s",ssn_base64_decode(NULL, [base64 UTF8String], [base64 length], &len));
+    
+    
+    NSLog(@"%s",ssn_base64_decode(NULL, "MTIzNA", 6, &len));
+}
+
+- (void)test_ios_base64_decode {
+    long len = 0;
+    const char *t = "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTA";
+    for (int i = 0; i < 100; i++) {
+        NSLog(@"%s",ssn_base64_decode(NULL, t, strlen(t), &len));
+    }
 }
 
 - (void)testPerformanceExample {

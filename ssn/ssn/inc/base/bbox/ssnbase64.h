@@ -15,8 +15,11 @@
 #define SSN_BASE64_EXTERN extern
 #endif
 
+#define ssn_base64_encode_length(len) ((len) * 4 / 3 + 4)
+
 /**
  * base64_encode - Base64 encode
+ * @buff: require variable length >= (len * 4 / 3 + 4)，you can see ssn_base64_encode_length
  * @src: Data to be encoded
  * @len: Length of the data to be encoded
  * @out_len: Pointer to output length variable, or %NULL if not used
@@ -27,7 +30,7 @@
  * nul terminated to make it easier to use as a C string. The nul terminator is
  * not included in out_len.
  */
-SSN_BASE64_EXTERN unsigned char *ssn_base64_encode(const unsigned char *src, unsigned long len, unsigned long *out_len);
+SSN_BASE64_EXTERN unsigned char *ssn_base64_encode(unsigned char *buff, const unsigned char *src, unsigned long len, unsigned long *out_len);
 
 
 /**
@@ -40,6 +43,7 @@ SSN_BASE64_EXTERN unsigned char *ssn_base64_encode(const unsigned char *src, uns
  *
  * Caller is responsible for freeing the returned buffer.
  */
-SSN_BASE64_EXTERN unsigned char *ssn_base64_decode(const unsigned char *src, unsigned long len, unsigned long *out_len);
+SSN_BASE64_EXTERN unsigned char *ssn_base64_decode(unsigned char *out_buff, const unsigned char *src, unsigned long len, unsigned long *out_len);
+
 
 #endif /* defined(__ssn__ssnbase64__) */
