@@ -105,6 +105,15 @@
     
 }
 
+- (void)test_base64_en_de {
+    char *t = "hPsxMQ2+MSHLY2o6oEJrPJcZK2TxeH56MeV8YfFMXXC6L1tyGQdeeXTnJmQJkSZ3aAgkaRobJShuXmQpsOt3JQ==";
+    long l = 0;
+    printf("%s\n",t);
+    char *d = ssn_base64_decode(NULL, t, strlen(t), &l);
+    char *e = ssn_base64_encode(NULL, d, l, 0);
+    printf("%s\n",e);
+}
+
 - (void)test_base64_encode {
     unsigned char *text = "1234";
     unsigned long len = 0;
@@ -137,8 +146,9 @@
 - (void)test_ios_base64_decode {
     long len = 0;
     const char *t = "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTA";
+    long l = strlen(t);
     for (int i = 0; i < 100; i++) {
-        NSLog(@"%s",ssn_base64_decode(NULL, t, strlen(t), &len));
+        NSLog(@"%s",ssn_base64_decode(NULL, t, l, &len));
     }
 }
 

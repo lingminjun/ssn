@@ -254,6 +254,7 @@ void ssn_bbox_read_file_to_map(const char *path, ssn_smap_t *map) {
         
         //读取数据
         ssn_bbox_read_line(fp, buffer1, buffer_length);
+        printf("ssn bbox read line [%s]\n",buffer1);
         
         //解析数据。此时非常重要，出来的数据已经不是字符串了
         ssn_base64_decode((unsigned char *)buffer2, (unsigned char *)buffer1, strlen(buffer1), &length2);
@@ -371,7 +372,7 @@ void ssn_bbox_smap_iterator(const char *value, const char *key, FILE *fp) {
     
     //输入到文件
     fprintf(fp, "%ld\n%s\n",length2,buffer2);
-    printf("%ld\n%s",length2,buffer2);
+    printf("%ld\n%s\n",length2,buffer2);
     fflush(fp);
     
     free(buffer1);

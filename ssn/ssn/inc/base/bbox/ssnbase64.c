@@ -120,7 +120,7 @@ unsigned char *ssn_base64_decode(unsigned char *out_buff, const unsigned char *s
         else if (c >= '0' && c <= '9') {
             tmp = 26 * 2 + c - '0';
         }
-        else if (c >= '0' && c <= '9') {
+        else if (c == '+') {
             tmp = 26 * 2 + 10;
         }
         else if (c == '/') {
