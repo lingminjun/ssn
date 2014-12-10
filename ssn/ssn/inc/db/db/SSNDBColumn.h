@@ -51,7 +51,7 @@ typedef NS_ENUM(NSUInteger, SSNDBColumnIndex) {
 
 @property (nonatomic, strong, readonly) NSString *name;
 @property (nonatomic, strong, readonly) NSString *fill;    //默认填充值，default value
-@property (nonatomic, strong, readonly) NSString *mapping; //数据迁移时用，如(prevTableColumnName + 1)
+@property (nonatomic, strong, readonly) NSString *mapping; //数据迁移时用，如(prevTable.ColumnName + 1)
 @property (nonatomic, readonly) SSNDBColumnType type;
 @property (nonatomic, readonly) SSNDBColumnLevel level;
 @property (nonatomic, readonly) SSNDBColumnIndex index;
