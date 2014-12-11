@@ -187,6 +187,8 @@
 		53F74FD71A1EDB8800FB36B2 /* stt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F74FD51A1EDB8800FB36B2 /* stt.cpp */; };
 		53F74FD81A1EDB8800FB36B2 /* stt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F74FD51A1EDB8800FB36B2 /* stt.cpp */; };
 		53FAA61919E8F5F3006EBBE3 /* NSObject+SSNTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FAA61819E8F5F3006EBBE3 /* NSObject+SSNTracking.m */; };
+		53FEB2481A396DF600E71921 /* SSNBlackBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FEB2471A396DF600E71921 /* SSNBlackBox.m */; };
+		53FEB2491A396DF600E71921 /* SSNBlackBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FEB2471A396DF600E71921 /* SSNBlackBox.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -353,6 +355,8 @@
 		53F74FD61A1EDB8800FB36B2 /* stt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stt.h; sourceTree = "<group>"; };
 		53FAA61719E8F5F3006EBBE3 /* NSObject+SSNTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SSNTracking.h"; sourceTree = "<group>"; };
 		53FAA61819E8F5F3006EBBE3 /* NSObject+SSNTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SSNTracking.m"; sourceTree = "<group>"; };
+		53FEB2461A396DF600E71921 /* SSNBlackBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNBlackBox.h; sourceTree = "<group>"; };
+		53FEB2471A396DF600E71921 /* SSNBlackBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNBlackBox.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -394,6 +398,8 @@
 				53E06ED71A3329CA005DF490 /* ssnsmap.h */,
 				53E06EDE1A335C3B005DF490 /* ssnbase64.c */,
 				53E06EDF1A335C3B005DF490 /* ssnbase64.h */,
+				53FEB2461A396DF600E71921 /* SSNBlackBox.h */,
+				53FEB2471A396DF600E71921 /* SSNBlackBox.m */,
 			);
 			path = bbox;
 			sourceTree = "<group>";
@@ -972,6 +978,7 @@
 				538E384D19986A700061692E /* DMSettingViewController.m in Sources */,
 				53D7D0B319A857220025A2E2 /* buffer.cpp in Sources */,
 				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,
+				53FEB2481A396DF600E71921 /* SSNBlackBox.m in Sources */,
 				533BE3A41A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
 				538E3844199869F90061692E /* DMSignViewController.m in Sources */,
 				53DDBC49194B4BD100BA4F58 /* SSNNavigationController.m in Sources */,
@@ -1058,6 +1065,7 @@
 				53D2463D199C83B400EFDF29 /* DMSessionViewController.h in Sources */,
 				530375C81A342FD60094F907 /* SSNHosting.m in Sources */,
 				53D2463E199C83B400EFDF29 /* DMSessionViewController.m in Sources */,
+				53FEB2491A396DF600E71921 /* SSNBlackBox.m in Sources */,
 				53D2463F199C83B400EFDF29 /* DMSettingNavController.h in Sources */,
 				53D24640199C83B400EFDF29 /* DMSettingNavController.m in Sources */,
 				53D24641199C83B400EFDF29 /* DMSettingViewController.h in Sources */,

@@ -13,6 +13,8 @@
 #import "ssnbbox.h"
 #import "ssnbase64.h"
 
+#import "SSNBlackBox.h"
+
 @interface ssn_bbox_test : XCTestCase
 
 @end
@@ -150,6 +152,22 @@
     for (int i = 0; i < 100; i++) {
         NSLog(@"%s",ssn_base64_decode(NULL, t, l, &len));
     }
+}
+
+
+- (void)test_box_read_value {
+    NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/sbbox.txt";
+    
+    SSNBlackBox *box = [SSNBlackBox sharedInstance];
+    [box setBBoxPath:path];
+    
+    NSLog(@"222 = %@",[box securityValueForKey:@"222"]);
+    NSLog(@"333 = %@",[box securityValueForKey:@"333"]);
+    NSLog(@"444 = %@",[box securityValueForKey:@"444"]);
+    NSLog(@"555 = %@",[box securityValueForKey:@"555"]);
+    
+    XCTAssert(YES, @"Pass");
+    
 }
 
 - (void)testPerformanceExample {
