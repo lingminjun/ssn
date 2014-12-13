@@ -157,7 +157,14 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
     [_dic removeObjectForKey:aKey];
     ssn_unlock
 }
-
+- (id)objectRemoveForKey:(id)aKey {
+    id obj = nil;
+    ssn_write_lock
+    obj = [_dic objectForKey:aKey];
+    [_dic removeObjectForKey:aKey];
+    ssn_unlock
+    return obj;
+}
 
 - (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey {
     ssn_write_lock

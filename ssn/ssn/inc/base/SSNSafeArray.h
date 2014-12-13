@@ -48,6 +48,7 @@
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index;
 - (void)removeLastObject;
 - (void)removeObjectAtIndex:(NSUInteger)index;
+- (id)objectRemoveAtIndex:(NSUInteger)index;//返回删除的对象
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject;
 
 - (void)addObjectsFromArray:(NSArray *)otherArray;

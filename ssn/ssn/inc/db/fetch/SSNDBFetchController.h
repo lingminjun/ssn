@@ -25,12 +25,18 @@
 
 @property (nonatomic) BOOL fetchReadonly;//FetchController的只读状态，如果为YES，所有查询结果集不能对实例进行修改，否则出现排序错误等其他错误
 
+@property (nonatomic) BOOL isExtensible;//可扩充型查询结果管理器，如果为yes，将不受fetch的limit约束，符合条件的新元素进入或者翻页将扩充结果集
+
 @property (nonatomic, weak) id<SSNDBFetchControllerDelegate> delegate;
 
 #pragma mark status
 - (BOOL)isPerformed;//已经执行过了，
 
 - (BOOL)performFetch;//执行查询，已经执行后忽略此方法，除非你更换了查询描述
+
+//翻页支持
+- (BOOL)performNextFetchCount:(NSUInteger)count;//向大于offset方向拉取，即拉取(offset+limit到offset+limit+count)数据
+- (BOOL)performPrevFetchCount:(NSUInteger)count;//向小于offset方法拉取，即拉取(offset-count到offset)的数据
 
 #pragma mark init
 

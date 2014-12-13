@@ -14,6 +14,8 @@
 #import "SSNDBPool.h"
 #import "SSNDBTable+Factory.h"
 
+#import "SSNBound.h"
+
 @interface DMProfileViewController ()
 
 @property (nonatomic,strong) DMPerson *person;
@@ -32,6 +34,16 @@
                                                                               style:UIBarButtonItemStylePlain
                                                                              target:self
                                                                              action:@selector(doneAction:)];
+    
+    UITextField *avatar = [[UITextField alloc] initWithFrame:CGRectMake(40, 60, 200, 40)];
+    avatar.placeholder = @"输入头像url";
+    [self.view addSubview:avatar];
+    
+    [self.person ssn_boundObject:avatar forField:@"text" tieField:@"avatar"];
+}
+
+- (void)dealloc {
+    [self.person ssn_clearTieFieldBound:@"avatar"];
 }
 
 - (void)doneAction:(id)sender

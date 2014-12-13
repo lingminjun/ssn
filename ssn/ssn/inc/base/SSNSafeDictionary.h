@@ -37,6 +37,7 @@
 - (id)objectForKeyedSubscript:(id)key;
 
 - (void)removeObjectForKey:(id)aKey;
+- (id)objectRemoveForKey:(id)aKey;//删除对象并返回
 - (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey;
 
 - (void)removeAllObjects;

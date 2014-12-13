@@ -20,6 +20,8 @@
 #import "SSNDBPool.h"
 #import "SSNDBTable+Factory.h"
 
+#import "SSNBound.h"
+
 @interface DMContactViewController ()<SSNDBFetchControllerDelegate,ABPeoplePickerNavigationControllerDelegate>
 
 @property SSNDBFetchController *fetchController;
@@ -57,11 +59,6 @@
     self.tableView.rowHeight = 60;
     
     [_fetchController performFetch];
-    
-    //self.friends = @[@"肖海长",@"杨世亮",@"凌敏均"];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
 
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"添加" style:UIBarButtonItemStylePlain target:self action:@selector(addPerson:)];
@@ -242,8 +239,15 @@
 
 - (void)configureCell:(UITableViewCell *)cell person:(DMPerson *)person atIndexPath:(NSIndexPath *)indexPath {
     
-    UIImage *image = [UIImage imageNamed:@"dm_default_avatar"];
-    cell.imageView.image = image;
+    [cell.imageView ssn_boundObject:person forField:@"avatar" tieField:@"image" filter:nil map:^id(id obj, NSString *field, id changed_new_value) {
+        if (changed_new_value) {
+            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:changed_new_value]];
+            if (data) {
+                return [UIImage imageWithData:data];
+            }
+        }
+        return [UIImage imageNamed:@"dm_default_avatar"];
+    }];
     
     cell.textLabel.text = person.name;
     cell.detailTextLabel.text = person.mobile;
@@ -267,8 +271,8 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     DMPerson *person = [_fetchController objectAtIndex:indexPath.row];
-    //[self openRelativePath:@"../profile" query:@{@"uid":person.uid,@"person":person}];
-    [self openRelativePath:@"../profile" query:@{@"uid":person.uid}];
+    [self openRelativePath:@"../profile" query:@{@"uid":person.uid,@"person":person}];
+    //[self openRelativePath:@"../profile" query:@{@"uid":person.uid}];
 }
 
 /*

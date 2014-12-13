@@ -221,6 +221,14 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
     ssn_unlock
 }
 
+- (id)objectRemoveAtIndex:(NSUInteger)index {
+    id obj = nil;
+    ssn_write_lock
+    obj = [_arr objectAtIndex:index];
+    [_arr removeObjectAtIndex:index];
+    ssn_unlock
+    return obj;
+}
 
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject {
     ssn_write_lock

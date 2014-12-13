@@ -219,6 +219,27 @@
 }
 
 
+- (id)objectTest {
+    return [[TSPerson alloc] init];
+}
+
+
+- (void)test_ock {
+    // This is an example of a functional test case.
+    
+    @autoreleasepool {
+        __autoreleasing TSPerson *p = [self objectTest];
+        
+        [self addObserver:p forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:nil];
+    }
+    
+    @autoreleasepool {
+        __autoreleasing TSPerson *p = [[TSPerson alloc] init];
+        [self addObserver:p forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:nil];
+    }
+    
+    
+}
 
 
 @end
