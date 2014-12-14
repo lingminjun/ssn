@@ -23,6 +23,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 @property (nonatomic) SSNDBFetchedChangeType changeType;
 @property (nonatomic) NSUInteger index;
 @property (nonatomic) NSUInteger nIndex;//新的位置
+@property (nonatomic) BOOL refetch;//重新fetch结果集，针对非可变型数据集重新无法计算数据移动路线时需要
 @end
 
 @implementation SSNDBFetchIndexBox
@@ -55,14 +56,17 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 }
 
 - (void)setFetch:(SSNDBFetch *)fetch {
-    [_queue async:^{
+    SSNDBFetch *tfetch = [fetch copy];
+    
+    //同步赋值，
+    [_queue sync:^{
+        _fetch = tfetch;
         if (_isPerformed) {
             [_metaResults removeAllObjects];
             [self processRemoveAllObjects];
             _isPerformed = NO;
         }
     }];
-    _fetch = fetch;
 }
 
 #pragma mark init
@@ -100,6 +104,35 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     return [NSString stringWithFormat:@"SELECT rowid AS ssn_dbfetch_rowid,* FROM %@ WHERE rowid = ? LIMIT 0,1", _table.name];
 }
 
+- (void)observerDBYpdatedNotification {
+    //监听数据变化
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dbupdatedNotification:) name:SSNDBUpdatedNotification object:_db];
+}
+
+- (void)resetResults:(NSArray *)objs {
+    
+    if (objs) {
+        [_metaResults setArray:objs];//直接替换感觉不是很好，简单粗暴
+    }
+    else {
+        [_metaResults removeAllObjects];
+    }
+    
+    //复制所有数据给result，meta数据理论上是只读得，如果被返回到外界，将不可控
+    NSMutableArray *list = [NSMutableArray array];
+    if (_fetchReadonly) {
+        [list setArray:objs];
+    }
+    else {
+        for (id<SSNDBFetchObject> obj in _metaResults) {
+            [list addObject:[obj copyWithZone:NULL]];
+        }
+    }
+    
+    //开始第一轮插入所有数据
+    [self processAddAllObjects:list];
+}
 
 - (BOOL)performFetch {
     
@@ -115,36 +148,131 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         _isPerformed = YES;
         
         //监听数据变化
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dbupdatedNotification:) name:SSNDBUpdatedNotification object:_db];
+        [self observerDBYpdatedNotification];
         
         NSString *sql = [self fetchSql];
         
         ssn_log("\n perform fetch sql = %s！ \n", [sql UTF8String]);
         
         NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
-        if (objs) {
-            [_metaResults setArray:objs];
-            
-            //复制所有数据给result，meta数据理论上是只读得，如果被返回到外界，将不可控
-            NSMutableArray *list = [NSMutableArray array];
-            if (_fetchReadonly) {
-                [list setArray:objs];
-            }
-            else {
-                for (id<SSNDBFetchObject> obj in _metaResults) {
-                    [list addObject:[obj copyWithZone:NULL]];
-                }
-            }
-            
-            //开始第一轮插入所有数据
-            [self processAddAllObjects:list];
-        }
+        
+        //重置结果集
+        [self resetResults:objs];
     };
     
     [_queue async:block];
     
     return YES;
+}
+
+- (BOOL)reperformFetch {//重新发起查询
+
+    dispatch_block_t block = ^{
+
+        _isPerformed = YES;
+        
+        //监听数据变化
+        [self observerDBYpdatedNotification];
+        
+        NSString *sql = [self fetchSql];
+        ssn_log("\n reperform fetch sql = %s！ \n", [sql UTF8String]);
+        
+        NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
+        
+        //重置结果集
+        [self resetResults:objs];
+    };
+    
+    [_queue async:block];
+    
+    return YES;
+}
+
+- (void)performNextFetchCount:(NSUInteger)count {
+    
+    if (count == 0) {
+        return ;
+    }
+    
+    dispatch_block_t block = ^{
+        
+        if (_fetch.limit == 0) {//limit没有限制，说明根本不支持翻页
+            return ;
+        }
+        
+        //计算翻页
+        if (!_isExtensible) {//不可变容量时，offset需要偏移
+            _fetch.offset += count;
+        }
+        _fetch.limit += count;
+        
+        _isPerformed = YES;
+        
+        //监听数据变化
+        [self observerDBYpdatedNotification];
+        
+        NSString *sql = [self fetchSql];
+        
+        ssn_log("\n perform next fetch sql = %s！ \n", [sql UTF8String]);
+        
+        NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
+        
+        //重置结果集
+        [self resetResults:objs];
+    };
+    
+    [_queue async:block];
+    
+}
+
+- (void)performPrevFetchCount:(NSUInteger)count {
+    if (count == 0) {
+        return ;
+    }
+    
+    dispatch_block_t block = ^{
+        if (_fetch.limit == 0) {//limit没有限制，说明根本不支持翻页
+            return ;
+        }
+        
+        if (_fetch.offset == 0) {//已经是最前一页了
+            return ;
+        }
+        
+        //计算翻页
+        NSUInteger old_limit = _fetch.limit;
+        NSUInteger old_offset = _fetch.offset;
+        if (_fetch.offset > count) {//offset需要偏移，如果往前不够翻一页，则需要翻到最前面
+            _fetch.offset -= count;
+        }
+        else {
+            _fetch.offset = 0;
+        }
+        
+        //limit需要缩减
+        if (!_isExtensible) {//不可变容量时，翻页count为准
+            _fetch.limit = count;
+        }
+        else {//可变就麻烦一点，从新的offset开始计算，到老的count为准
+            _fetch.limit = old_limit + old_offset - _fetch.offset;
+        }
+        
+        _isPerformed = YES;
+        
+        //监听数据变化
+        [self observerDBYpdatedNotification];
+        
+        NSString *sql = [self fetchSql];
+        
+        ssn_log("\n perform prev fetch sql = %s！ \n", [sql UTF8String]);
+        
+        NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
+        
+        //重置结果集
+        [self resetResults:objs];
+    };
+    
+    [_queue async:block];
 }
 
 #pragma mark object manager
@@ -191,6 +319,10 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 
 - (NSComparisonResult)comparisonResultWithSorts:(NSArray *)sorts object:(id<SSNDBFetchObject>)obj otherObject:(id<SSNDBFetchObject>)other {
 
+    if (nil == other) {
+        return NSOrderedDescending;
+    }
+    
     //一级一级比较
     NSComparisonResult comp_rt = NSOrderedDescending;
     for (NSSortDescriptor *sort in sorts) {
@@ -204,6 +336,34 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     return comp_rt;
 }
 
+- (id<SSNDBFetchObject>)objectForRowid:(int64_t)rowid index:(NSUInteger *)pindex {
+    __block id<SSNDBFetchObject> result = nil;
+    [_metaResults enumerateObjectsUsingBlock:^(id<SSNDBFetchObject> obj, NSUInteger idx, BOOL *stop) {
+        if ([obj ssn_dbfetch_rowid] == rowid) {
+            result = obj;
+            if (pindex) {
+                *pindex = idx;
+            }
+            *stop = YES;
+        }
+    }];
+    return result;
+}
+
+- (id<SSNDBFetchObject>)objectForIdenticalTo:(id)anObject index:(NSUInteger *)pindex {
+    __block id<SSNDBFetchObject> result = nil;
+    [_metaResults enumerateObjectsUsingBlock:^(id<SSNDBFetchObject> obj, NSUInteger idx, BOOL *stop) {
+        if ([anObject isEqual:obj]) {
+            result = obj;
+            if (pindex) {
+                *pindex = idx;
+            }
+            *stop = YES;
+        }
+    }];
+    return result;
+}
+
 - (SSNDBFetchIndexBox *)findIndexForRowId:(int64_t)rowid operation:(int)operation {
     
     SSNDBFetchIndexBox *box = [[SSNDBFetchIndexBox alloc] init];
@@ -211,58 +371,83 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     box.index = NSNotFound;//默认值
     box.nIndex = NSNotFound;//默认值
     
-    //step 1用rowid寻找位置，基于效率考虑，没必要去查询一次数据库
+    //step 1 先用rowid在内存中寻找原来的数据和位置，（基于效率考虑，尽量不去查询数据库）
     NSUInteger count = [_metaResults count];
-    for (NSUInteger idx = 0; idx < count; idx ++) {
-        id<SSNDBFetchObject> obj = [_metaResults objectAtIndex:idx];
-        if ([obj ssn_dbfetch_rowid] == rowid) {
-            box.obj = obj;
-            box.index = idx;
-            break ;
-        }
-    }
+    NSUInteger index = 0;
+    box.obj = [self objectForRowid:rowid index:&index];
+    box.index = index;
     
-    //如果是插入或者更新，需要进一步确认其位置
+    //step 2 如果不是插入和更新操作（暂时只有删除），则直接认定删除，立即返回结果
     if (operation != SQLITE_INSERT && operation != SQLITE_UPDATE) {
         if (box.obj) {
             box.changeType = SSNDBFetchedChangeDelete;
         }
+        else if (NO == _isExtensible && _fetch.limit > 0 &&  _fetch.offset > 0){//数据不在指定的结果集范围，非可扩充型数据将需要重新查询数据
+            box.refetch = YES;
+        }
         return box;
     }
     
-    //step 2 因为前面找不到，只能去数据库查询新对象(还无法断定此数据是有效区间内，sql replace方法将使得 rowid 新增)
+    //step 3 用rowid到数据库获取最新的值
     NSArray *objs = [_db objects:_fetch.entity sql:[self fetchForRowidSql] arguments:@[ @(rowid) ]];
     box.nObj = [objs firstObject];//取第一个对象
-    if (nil == box.nObj) {//根本找不到对象，可以认定是下一被删除的数据
+    if (nil == box.nObj) {//根本找不到对象，可以认定是下一被删除的数据(数据在表中已经删除，但是还没有hook回调过来)
         return box;
     }
     
-    //step 3 用对象来找原来的位置
-    for (NSUInteger idx = 0; idx < count; idx ++) {
-        id<SSNDBFetchObject> obj = [_metaResults objectAtIndex:idx];
-        if ([box.nObj isEqual:obj]) {
-            box.obj = obj;
-            box.index = idx;
-            break ;
-        }
+    //step 4 用新数据来找原来的数据和位置（防止replace sql语句，replace语句使得rowid变更；或者一个sql事务中，删除所有行，重新插入新数据，rowid将从0开始）
+    if (nil == box.obj || NO == [box.obj isEqual:box.nObj]) {
+        box.obj = [self objectForIdenticalTo:box.nObj index:&index];
+        box.index = index;
     }
     
-    //step 4 检查是否满足fetch条件，检查第一个和最后一个，如果比第一个“小”，比最后一个“大”，则丢弃
+    //step 5 计算新数据大致在结果集中所处的位置，其实就是跟结果集首尾位置比较
     NSArray *sorts = _fetch.sortDescriptors;
-    id<SSNDBFetchObject> firstObj = [_metaResults firstObject];
-    id<SSNDBFetchObject> lastObj = [_metaResults lastObject];
+    NSComparisonResult fore_compare = [self comparisonResultWithSorts:sorts object:box.nObj otherObject:[_metaResults firstObject]];
+    NSComparisonResult aft_compare = [self comparisonResultWithSorts:sorts object:box.nObj otherObject:[_metaResults lastObject]];
     
-    NSComparisonResult com_rt1 = [self comparisonResultWithSorts:sorts object:box.nObj otherObject:firstObj];
-    NSComparisonResult com_rt2 = [self comparisonResultWithSorts:sorts object:box.nObj otherObject:lastObj];
-    
-    if (com_rt1 < NSOrderedAscending || com_rt2 > NSOrderedDescending) {//比第一个“小”，比最后一个“大”，返回直接丢弃或删除
-        if (box.obj) {
-            box.changeType = SSNDBFetchedChangeDelete;
+    //step 6 分析数据在数据集中的移动轨迹（不一定能分析出来）
+    /*
+     step 6 说明：
+     1）在不可扩充型数据集中，我们无法精确计算offset的移动，除非重新调用sql查询数据集。先看下面分析：
+     
+     我们将所有符合where子句的数据按照offset，limit做如下区分
+     第一段：[0 , offset]
+     第二段：[offset , (offset+limit)] //(控制器持有的数据)
+     第三段：[(offset+limit) , +无穷]
+     
+     所以每一次数据修改，都必须清楚记录，是从哪一个区段到哪一个区段，然控制器结果集仅仅记录第二断，所以第一段和第三段的数据我们无法判断。
+     
+     但是当offset为零时，数据仅仅被分成两个区段，而且这种情况是我们常见的情况，此时数据移动是可以被计算出来的，所以这种情况不需要重新查询数据库
+     第一段：[0==offset , limit]
+     第二段：[limit , +无穷]
+     
+     2）可扩充型数据集因为只需要将数据新增即可，所以不要精确计算offset的位置（足以满足业务需要，如动态，消息都应该是可扩充型数据集）
+     */
+    if (NO == _isExtensible && _fetch.limit > 0 &&  _fetch.offset > 0) {//过滤哪些无法找到数据移动轨迹的情况
+        if (nil == box.obj //第一种情况，不知道原来数据属于哪一区段
+            || (box.obj && fore_compare == NSOrderedAscending) //移到了最前面，无法判断是否还在offset以内
+            || (box.obj && aft_compare == NSOrderedDescending) //移到了最后面，无法判断是否还在limit以内
+            ) {
+            box.refetch = YES;
+            return box;
         }
-        return box;
     }
     
-    //step 5 既然在fetch条件内，则继续检查新的位置，先计算比较起始位置，减少for循环（看比原来大还是小）
+    //step 7 针对可扩充型数据集做一次数据集范围调整
+    /*
+     step 7 说明：
+     可变型数据集，只要有新数据过来都可以认定是插入，但是有几个原则：
+        1）无论数据插入到什么位置，最前面也不例外，offset始终不变
+        2）插入数据超过数据集大小限制，将自动将limit调整到可以放入此数据
+        3）删除任何数据都不引起offset和limit的变化
+     */
+    if (_isExtensible && nil == box.obj && count == _fetch.limit) {
+        _fetch.limit += 1;
+    }
+    
+    //step 8 精确新数据插入位置与操作类型
+    //既然在fetch条件内，则继续检查新的位置，先计算比较起始位置，减少for循环（看比原来大还是小）
     NSUInteger begin_index = 0;
     NSUInteger end_index = count;
     if (box.obj) {
@@ -285,7 +470,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         box.changeType = SSNDBFetchedChangeInsert;
     }
     
-    //step 6 根据起始位置寻找，找到第一次小于当前位置返回
+    //step 9 根据起始位置寻找，找到第一次小于当前位置返回
     for (NSUInteger idx = begin_index; idx < end_index; idx++) {
         id<SSNDBFetchObject> obj = [_metaResults objectAtIndex:idx];
         
@@ -296,7 +481,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         }
     }
     
-    //step 7 仍然没有找到新的，直接插入到end位置上，但是需要检查此对象是否插入limit以外
+    //step 10 仍然没有找到新的，直接插入到end位置上，但是需要检查此对象是否插入limit以外
     if (box.nIndex == NSNotFound) {
         
         if (_fetch.limit == 0 || (_fetch.limit > 0 && end_index < _fetch.limit)) {
@@ -319,9 +504,25 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 - (void)addOperation:(int)operation rowId:(int64_t)rowId {
     //step 1、寻找出需要操作的对象和位置
     SSNDBFetchIndexBox *box = [self findIndexForRowId:rowId operation:operation];
+    
+    //先要检查是否需要重新fetch，如果是需要重新fetch的，单的处理比较好
+    if (box.refetch) {
+        ssn_log("\n rowid = %lld 使得结果集必须重新fetch！！！\n", rowId);
+        [self reperformFetch];
+        return ;
+    }
+    
     if (box.index == NSNotFound && box.nIndex == NSNotFound) {
         ssn_log("\n rowid = %lld 不在结果的数据变更！！！忽略！！！ \n", rowId);
         return ;
+    }
+    
+    id<SSNDBFetchObject> nObj = nil;//复制出新的对象给对外结果集
+    if (_fetchReadonly) {
+        nObj = box.nObj;
+    }
+    else {
+        nObj = [box.nObj copyWithZone:NULL];//复制对象
     }
     
     if (box.changeType == SSNDBFetchedChangeDelete) {
@@ -344,28 +545,12 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         
         [_metaResults insertObject:box.nObj atIndex:box.nIndex];
         
-        id<SSNDBFetchObject> nObj = nil;
-        if (_fetchReadonly) {
-            nObj = box.nObj;
-        }
-        else {
-            nObj = [box.nObj copyWithZone:NULL];//复制对象
-        }
-        
         [self processInsertedObject:nObj atIndex:box.nIndex evictObject:rmObj evictIndex:rmIndex];
     }
     else if (box.changeType == SSNDBFetchedChangeUpdate) {
         ssn_log("\n rowid = %lld update object at index = %ld！\n", rowId, box.index);
         
         [_metaResults replaceObjectAtIndex:box.index withObject:box.nObj];
-        
-        id<SSNDBFetchObject> nObj = nil;
-        if (_fetchReadonly) {
-            nObj = box.nObj;
-        }
-        else {
-            nObj = [box.nObj copyWithZone:NULL];//复制对象
-        }
         
         [self processUpdatedObject:nObj atIndex:box.index];
     }
@@ -374,14 +559,6 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         
         [_metaResults removeObjectAtIndex:box.index];
         [_metaResults insertObject:box.nObj atIndex:box.nIndex];
-        
-        id<SSNDBFetchObject> nObj = nil;
-        if (_fetchReadonly) {
-            nObj = box.nObj;
-        }
-        else {
-            nObj = [box.nObj copyWithZone:NULL];//复制对象
-        }
         
         [self processMovedObject:nObj fromIndex:box.index toIndex:box.nIndex];
     }

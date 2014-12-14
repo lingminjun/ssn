@@ -470,7 +470,11 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
 }
 
 //接管db操作
-- (void)insertObjects:(NSArray *)objects
+- (void)insertObjects:(NSArray *)objects {
+    [self insertObjects:objects inTransaction:YES];
+}
+
+- (void)insertObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction
 {
     NSAssert(_db, @"模板表不能操作数据");
     
@@ -482,15 +486,26 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
         NSString *sql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
         
-        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        void (^inline_block)(SSNDB *db) = ^(SSNDB *db) {
             for (id obj in objects){ @autoreleasepool {
                 [db prepareSql:sql arguments:[self valuesFormKeys:_columns object:obj]];
             }}
-        } sync:YES];
+        };
+        
+        if (inTransaction) {
+            [_db executeTransaction:^(SSNDB *db, BOOL *rollback) { inline_block(db); } sync:YES];
+        }
+        else {
+            [_db executeBlock:^(SSNDB *db) { inline_block(db); } sync:YES];
+        }
     }
 }
 
-- (void)updateObjects:(NSArray *)objects
+- (void)updateObjects:(NSArray *)objects {
+    [self updateObjects:objects inTransaction:YES];
+}
+
+- (void)updateObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction
 {
     NSAssert(_db, @"模板表不能操作数据");
     
@@ -511,15 +526,25 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         
         [cls addObjectsFromArray:_primaries]; //从新把主键加上
         
-        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        void (^inline_block)(SSNDB *db) = ^(SSNDB *db) {
             for (id obj in objects){ @autoreleasepool {
                 [db prepareSql:sql arguments:[self valuesFormKeys:cls object:obj]];
             }}
-        } sync:YES];
+        };
+        
+        if (inTransaction) {
+            [_db executeTransaction:^(SSNDB *db, BOOL *rollback) { inline_block(db); } sync:YES];
+        }
+        else {
+            [_db executeBlock:^(SSNDB *db) { inline_block(db); } sync:YES];
+        }
     }
 }
+- (void)deleteObjects:(NSArray *)objects {
+    [self deleteObjects:objects inTransaction:YES];
+}
 
-- (void)deleteObjects:(NSArray *)objects
+- (void)deleteObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction
 {
     NSAssert(_db, @"模板表不能操作数据");
     
@@ -537,16 +562,26 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         NSString *wheres = [NSString componentsStringWithArray:_primaries appendingString:@" = ?" joinedString:@" AND "];
         NSString *sql = [NSString stringWithUTF8Format:"DELETE FROM %s WHERE (%s)", [_name UTF8String], [wheres UTF8String]];
         
-        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        void (^inline_block)(SSNDB *db) = ^(SSNDB *db) {
             for (id obj in objects){ @autoreleasepool {
-                
                 [db prepareSql:sql arguments:[self valuesFormKeys:_primaries object:obj]];
             }}
-        } sync:YES];
+        };
+        
+        if (inTransaction) {
+            [_db executeTransaction:^(SSNDB *db, BOOL *rollback) { inline_block(db); } sync:YES];
+        }
+        else {
+            [_db executeBlock:^(SSNDB *db) { inline_block(db); } sync:YES];
+        }
     }
 }
 
-- (void)upinsertObjects:(NSArray *)objects
+- (void)upinsertObjects:(NSArray *)objects {
+    [self upinsertObjects:objects inTransaction:YES];
+}
+
+- (void)upinsertObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction
 {
     NSAssert(_db, @"模板表不能操作数据");
     
@@ -571,18 +606,27 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
         NSString *insql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
         
-        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        void (^inline_block)(SSNDB *db) = ^(SSNDB *db) {
             for (id obj in objects){ @autoreleasepool {
-                
                 [db prepareSql:upsql arguments:[self valuesFormKeys:cls object:obj]];
                 [db prepareSql:insql arguments:[self valuesFormKeys:_columns object:obj]];
-                
             }}
-        } sync:YES];
+        };
+        
+        if (inTransaction) {
+            [_db executeTransaction:^(SSNDB *db, BOOL *rollback) { inline_block(db); } sync:YES];
+        }
+        else {
+            [_db executeBlock:^(SSNDB *db) { inline_block(db); } sync:YES];
+        }
     }
 }
 
 - (void)upinsertObjects:(NSArray *)objects fields:(NSArray *)fields {
+    [self upinsertObjects:objects fields:fields inTransaction:YES];
+}
+
+- (void)upinsertObjects:(NSArray *)objects fields:(NSArray *)fields inTransaction:(BOOL)inTransaction {
     NSAssert(_db, @"模板表不能操作数据");
     
     if ([objects count] == 0) {
@@ -595,7 +639,7 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
     }
     
     if ([fields count] == 0) {
-        [self updateObjects:objects];
+        [self updateObjects:objects inTransaction:inTransaction];
         return ;
     }
     
@@ -612,17 +656,27 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
         NSString *insql = [NSString stringWithUTF8Format:"INSERT INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
     
-        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        void (^inline_block)(SSNDB *db) = ^(SSNDB *db) {
             for (id obj in objects){ @autoreleasepool {
-                
                 [db prepareSql:upsql arguments:[self valuesFormKeys:cls object:obj]];
                 [db prepareSql:insql arguments:[self valuesFormKeys:_columns object:obj]];
             }}
-        } sync:YES];
+        };
+        
+        if (inTransaction) {
+            [_db executeTransaction:^(SSNDB *db, BOOL *rollback) { inline_block(db); } sync:YES];
+        }
+        else {
+            [_db executeBlock:^(SSNDB *db) { inline_block(db); } sync:YES];
+        }
     }
 }
 
 - (void)inreplaceObjects:(NSArray *)objects {
+    [self inreplaceObjects:objects inTransaction:YES];
+}
+
+- (void)inreplaceObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction {
     NSAssert(_db, @"模板表不能操作数据");
     
     if ([objects count] == 0) {
@@ -639,12 +693,18 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
         NSString *format = [NSString stringWithUTF8String:"?" repeat:[_columns count] joinedUTF8String:","];
         NSString *sql = [NSString stringWithUTF8Format:"INSERT OR REPLACE INTO %s(%s) VALUES(%s)", [_name UTF8String], [clnames UTF8String], [format UTF8String]];
     
-        [_db executeTransaction:^(SSNDB *db, BOOL *rollback) {
+        void (^inline_block)(SSNDB *db) = ^(SSNDB *db) {
             for (id obj in objects){ @autoreleasepool {
-                
                 [db prepareSql:sql arguments:[self valuesFormKeys:_columns object:obj]];
             }}
-        } sync:YES];
+        };
+        
+        if (inTransaction) {
+            [_db executeTransaction:^(SSNDB *db, BOOL *rollback) { inline_block(db); } sync:YES];
+        }
+        else {
+            [_db executeBlock:^(SSNDB *db) { inline_block(db); } sync:YES];
+        }
     }
 }
 
@@ -713,6 +773,11 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
     }
     
     return [_db objects:clazz sql:sql arguments:values];
+}
+
+- (void)truncate {
+    NSString *sql = [NSString stringWithUTF8Format:"DELETE FROM %s WHERE rowid > 0",[_name UTF8String]];
+    [_db prepareSql:sql arguments:nil];
 }
 
 

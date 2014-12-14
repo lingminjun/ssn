@@ -82,6 +82,45 @@
     [table upinsertObject:user1];
 }
 
+- (void)test_delete_data {
+    SSNDBPool *pool = [SSNDBPool shareInstance];
+    SSNDB *db = [pool dbWithScope:@"test1"];
+    NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/TestPerson.json";
+    SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
+    [table update];
+
+    TSPerson *user1 = [[TSPerson alloc] init];
+    user1.uid = @"12";
+    user1.name = @"name:凌敏均";
+    user1.age = 26;
+    user1.sex = 0;
+    
+    [db prepareSql:[NSString stringWithFormat:@"DELETE FROM %@ ",[table name]],nil];
+    //[db prepareSql:[NSString stringWithFormat:@"DELETE FROM %@ WHERE rowid > 0",[table name]],nil];
+    //[table deleteObject:user1];
+}
+
+- (void)test_truncate {
+    SSNDBPool *pool = [SSNDBPool shareInstance];
+    SSNDB *db = [pool dbWithScope:@"test1"];
+    NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/TestPerson.json";
+    SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
+    [table update];
+    
+    
+    TSPerson *user1 = [[TSPerson alloc] init];
+    user1.uid = @"14";
+    user1.name = @"name:杨世亮";
+    user1.age = 26;
+    user1.sex = 0;
+    
+    [db executeTransaction:^(SSNDB *database, BOOL *rollback) {
+        [table truncate];
+        [table upinsertObjects:@[user1] inTransaction:NO];
+    } sync:YES];
+}
+
+
 - (void)test_fetch_rowid2
 {
     SSNDBPool *pool = [SSNDBPool shareInstance];

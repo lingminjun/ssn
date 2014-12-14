@@ -13,6 +13,7 @@
 
 /**
  *  查询结果集管理器
+ *  控制器依赖数据库变更的回调，所以使用者必须注意不要使用非DML语句来操作数据，特别要指出的是，delete语句一定要带上where子句，否则sqlite将优化成truncate
  */
 @interface SSNDBFetchController : NSObject
 
@@ -34,9 +35,9 @@
 
 - (BOOL)performFetch;//执行查询，已经执行后忽略此方法，除非你更换了查询描述
 
-//翻页支持
-- (BOOL)performNextFetchCount:(NSUInteger)count;//向大于offset方向拉取，即拉取(offset+limit到offset+limit+count)数据
-- (BOOL)performPrevFetchCount:(NSUInteger)count;//向小于offset方法拉取，即拉取(offset-count到offset)的数据
+//翻页支持，仅限于limit大于零时有效
+- (void)performNextFetchCount:(NSUInteger)count;//向大于offset方向拉取，即拉取(offset+limit到offset+limit+count)数据
+- (void)performPrevFetchCount:(NSUInteger)count;//向小于offset方法拉取，即拉取(offset-count到offset)的数据
 
 #pragma mark init
 

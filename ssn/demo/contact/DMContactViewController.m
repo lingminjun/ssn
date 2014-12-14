@@ -20,7 +20,7 @@
 #import "SSNDBPool.h"
 #import "SSNDBTable+Factory.h"
 
-#import "SSNBound.h"
+#import "SSNKVOBound.h"
 
 @interface DMContactViewController ()<SSNDBFetchControllerDelegate,ABPeoplePickerNavigationControllerDelegate>
 

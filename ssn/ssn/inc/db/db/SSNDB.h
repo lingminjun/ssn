@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 
 FOUNDATION_EXTERN NSString *const SSNDBUpdatedNotification;  //数据库更新 dbthread
-FOUNDATION_EXTERN NSString *const SSNDBRollbackNotification; //数据库回滚 dbthread
+//FOUNDATION_EXTERN NSString *const SSNDBCommitNotification; //数据库事务提交 dbthread
+//FOUNDATION_EXTERN NSString *const SSNDBRollbackNotification; //数据库回滚 dbthread
 
 FOUNDATION_EXTERN NSString *const SSNDBTableNameUserInfoKey;  //notification userinfo key : table name(NSString)
 FOUNDATION_EXTERN NSString *const SSNDBOperationUserInfoKey;  //notification userinfo key : operation(NSNumber<int>) eg. SQLITE_INSERT

@@ -80,23 +80,31 @@ typedef enum : NSUInteger
 //接管db操作
 - (void)insertObject:(id)object;
 - (void)insertObjects:(NSArray *)objects;
+- (void)insertObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction;//是否在事务中，方便多个DDL方法组装
 
 - (void)updateObject:(id)object;
 - (void)updateObjects:(NSArray *)objects;
+- (void)updateObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction;//是否在事务中，方便多个DDL方法组装
 
 - (void)deleteObject:(id)object;
 - (void)deleteObjects:(NSArray *)objects;
+- (void)deleteObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction;//是否在事务中，方便多个DDL方法组装
 
 - (void)upinsertObject:(id)object;          // update or insert
 - (void)upinsertObjects:(NSArray *)objects; // update or insert
+- (void)upinsertObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction;//是否在事务中，方便多个DDL方法组装
 
 - (void)upinsertObject:(id)object fields:(NSArray *)fields;          // update(指定字段) or insert，如果fields传入nil将等价与upinsertObject:
 - (void)upinsertObjects:(NSArray *)objects fields:(NSArray *)fields; // update(指定字段) or insert，如果fields传入nil将等价与upinsertObjects:
+- (void)upinsertObjects:(NSArray *)objects fields:(NSArray *)fields inTransaction:(BOOL)inTransaction;//是否在事务中，方便多个DDL方法组装
 
 - (void)inreplaceObject:(id)object;          // insert or replace
 - (void)inreplaceObjects:(NSArray *)objects; // insert or replace
+- (void)inreplaceObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction;//是否在事务中，方便多个DDL方法组装
 
 - (NSArray *)objectsWithClass:(Class)clazz forPredicate:(NSPredicate *)predicate;//查询支持
 - (NSArray *)objectsWithClass:(Class)clazz forConditions:(NSDictionary *)conditions;//查询支持
+
+- (void)truncate;//清空表，请务必调用此方法，否则hook失效，并非sql语句“truncate table xxx”，实际执行delete语句，所以可以与其他方法一起在事务中使用
 
 @end

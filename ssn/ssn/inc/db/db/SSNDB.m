@@ -12,8 +12,9 @@
 #import "SSNCuteSerialQueue.h"
 #import "NSFileManager+SSN.h"
 
-NSString *const SSNDBUpdatedNotification = @"SSNDBUpdatedNotification";   //数据准备迁移
-NSString *const SSNDBRollbackNotification = @"SSNDBRollbackNotification"; //数据迁移结束
+NSString *const SSNDBUpdatedNotification = @"SSNDBUpdatedNotification";   //
+NSString *const SSNDBCommitNotification  = @"SSNDBCommitNotification";      //
+NSString *const SSNDBRollbackNotification = @"SSNDBRollbackNotification"; //
 
 NSString *const SSNDBTableNameUserInfoKey = @"SSNDBTableNameUserInfoKey";  //table name(NSString)
 NSString *const SSNDBOperationUserInfoKey = @"SSNDBOperationUserInfoKey";  //operation(NSNumber<int>) eg. SQLITE_INSERT
@@ -42,6 +43,75 @@ NSString *const SSNDBRowIdUserInfoKey     = @"SSNDBRowIdUserInfoKey";      //row
     return [dirPath stringByAppendingPathComponent:filename];
 }
 
+#pragma mark - Hook
+
+static void ssn_sqlite_update(void *user_data, int operation, char const *database_name, char const *table_name, sqlite_int64 row_id)
+{
+    //并非我们关心的回调
+    if (user_data == NULL) {
+        return ;
+    }
+    
+    @autoreleasepool {
+        ssn_log("\nssn_sqlite_update operation = %d, table_name = %s, row_id = %lld\n",operation ,table_name, row_id);
+        
+        SSNDB *db = (__bridge SSNDB *)(user_data);
+        
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:3];
+        if (table_name) {
+            [userInfo setObject:[NSString stringWithUTF8String:table_name] forKey:SSNDBTableNameUserInfoKey];
+        }
+        
+        if (operation > 0) {
+            [userInfo setObject:@(operation) forKey:SSNDBOperationUserInfoKey];
+        }
+        
+        if (row_id > 0) {
+            [userInfo setObject:@(row_id) forKey:SSNDBRowIdUserInfoKey];
+        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:SSNDBUpdatedNotification
+                                                            object:db
+                                                          userInfo:userInfo];
+        
+    }
+    
+}
+
+static int ssndb_sqlite_commit(void *user_data) {
+    //并非我们关心的回调
+    if (user_data == NULL) {
+        return SQLITE_OK;
+    }
+    
+    @autoreleasepool {
+        ssn_log("\nssndb_sqlite_commit\n");
+        
+        SSNDB *db = (__bridge SSNDB *)(user_data);
+        [[NSNotificationCenter defaultCenter] postNotificationName:SSNDBCommitNotification object:db];
+        
+    }
+    
+    return SQLITE_OK;
+}
+
+static void ssndb_sqlite_rollback(void *user_data)
+{
+    //并非我们关心的回调
+    if (user_data == NULL) {
+        return ;
+    }
+    
+    @autoreleasepool {
+        ssn_log("\nssndb_sqlite_rollback\n");
+        
+        SSNDB *db = (__bridge SSNDB *)(user_data);
+        [[NSNotificationCenter defaultCenter] postNotificationName:SSNDBRollbackNotification object:db];
+        
+    }
+}
+
+#pragma mark init
 - (instancetype)initWithScope:(NSString *)scope
 {
     return [self initWithScope:scope filename:nil queue:nil];
@@ -94,6 +164,7 @@ NSString *const SSNDBRowIdUserInfoKey     = @"SSNDBRowIdUserInfoKey";      //row
             
             // add hook
             sqlite3_update_hook(_database, &ssn_sqlite_update, (__bridge void *)(self));
+            sqlite3_commit_hook(_database, &ssndb_sqlite_commit, (__bridge void *)(self));
             sqlite3_rollback_hook(_database, &ssndb_sqlite_rollback, (__bridge void *)(self));
         };
         
@@ -106,6 +177,7 @@ NSString *const SSNDBRowIdUserInfoKey     = @"SSNDBRowIdUserInfoKey";      //row
 {
     dispatch_block_t block = ^{
         sqlite3_update_hook(_database, NULL, NULL);
+        sqlite3_commit_hook(_database, NULL, NULL);
         sqlite3_rollback_hook(_database, NULL, NULL);
 
         if (sqlite3_close(_database) != SQLITE_OK)
@@ -115,58 +187,6 @@ NSString *const SSNDBRowIdUserInfoKey     = @"SSNDBRowIdUserInfoKey";      //row
     };
 
     [_ioQueue sync:block];
-}
-
-#pragma mark - Hook
-
-static void ssn_sqlite_update(void *user_data, int operation, char const *database_name, char const *table_name, sqlite_int64 row_id)
-{
-    //并非我们关心的回调
-    if (user_data == NULL) {
-        return ;
-    }
-    
-    @autoreleasepool {
-        ssn_log("\nssn_sqlite_update operation = %d, table_name = %s, row_id = %lld\n",operation ,table_name, row_id);
-        
-        SSNDB *db = (__bridge SSNDB *)(user_data);
-        
-        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:3];
-        if (table_name) {
-            [userInfo setObject:[NSString stringWithUTF8String:table_name] forKey:SSNDBTableNameUserInfoKey];
-        }
-        
-        if (operation > 0) {
-            [userInfo setObject:@(operation) forKey:SSNDBOperationUserInfoKey];
-        }
-        
-        if (row_id > 0) {
-            [userInfo setObject:@(row_id) forKey:SSNDBRowIdUserInfoKey];
-        }
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:SSNDBUpdatedNotification
-                                                            object:db
-                                                          userInfo:userInfo];
-
-    }
-    
-}
-
-static void ssndb_sqlite_rollback(void *user_data)
-{
-    //并非我们关心的回调
-    if (user_data == NULL) {
-        return ;
-    }
-    
-    @autoreleasepool {
-        ssn_log("\nssndb_sqlite_rollback\n");
-        
-        SSNDB *db = (__bridge SSNDB *)(user_data);
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:SSNDBRollbackNotification object:db];
-        
-    }
 }
 
 #pragma mark error
