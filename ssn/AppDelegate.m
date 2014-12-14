@@ -30,6 +30,47 @@
 
 @implementation AppDelegate
 
+- (void)copyFile {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *doc = [paths objectAtIndex:0];
+    
+    UIImage *image = [UIImage imageNamed:@"Default.png"];
+    
+    NSString *src = [doc stringByAppendingPathComponent:@"test_scr.png"];
+    
+    //文件写道doc下
+    [UIImagePNGRepresentation(image) writeToFile:src atomically:YES];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:src]) {
+        NSLog(@"src 文件没有被写入！！！！！");
+    }
+    
+    NSString *tgt = [doc stringByAppendingPathComponent:@"test_target.png"];
+    
+    FILE *ifp = fopen([src UTF8String], "rb");
+    FILE *ofp = fopen([tgt UTF8String], "wb");
+    
+    unsigned char buff[4*8] = {'\0'};
+    
+    while (!feof(ifp)) {
+        memset(buff, 0, sizeof(buff));
+        if (fread(buff, sizeof(buff), 1, ifp) > 0) {
+            fwrite(buff, sizeof(buff), 1, ofp);
+            fflush(ofp);//防止缓存区没有写入
+        }
+        else {
+            printf("=======\n");
+        }
+    }
+    
+    fclose(ifp);
+    fclose(ofp);
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:tgt]) {
+        NSLog(@"tgt 文件没有被写入！！！！！");
+    }
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     //跟踪用户行为
@@ -70,6 +111,9 @@
     }
 
     [self.window makeKeyAndVisible];
+    
+    //测试文件读写
+    //[self copyFile];
 
     return YES;
 }

@@ -31,12 +31,12 @@ typedef id (^ssn_dbbound_batch_mapping)(SSNDBTable *table, NSString *column, NSA
 
 /**
  @brief 映射，对目标改变值重新转换，最后转换成监听者可以赋值(KVC)的对象
- @param table     绑定的目标数据表
- @param column    绑定的目标数据表对应的列，这里不单单是某一列，凡是sqlite支持的函数都可以，如: sum(*) AS count
+ @param table  绑定的目标数据表
+ @param sql    绑定的目标数据表对应的列，这里不单单是某一列，凡是sqlite支持的函数都可以，如: sum(*) AS count
  @param changed_new_values 所有符合条件的数据字典形式
  @return 返回合适的对象
  */
-typedef id (^ssn_dbbound_general_mapping)(SSNDBTable *table, NSString *where, NSArray *changed_new_values);
+typedef id (^ssn_dbbound_general_mapping)(SSNDBTable *table, NSString *sql, NSArray *changed_new_values);
 
 /**
  @brief 绑定器，数据库数据表绑定器，
@@ -71,7 +71,7 @@ typedef id (^ssn_dbbound_general_mapping)(SSNDBTable *table, NSString *where, NS
  @param value   绑定数据表中column等于的value的数据
  @param tieField    绑定作用的属性，该属性必须支持setter方法
  */
-- (void)ssn_boundTable:(SSNDBTable *)table forColumn:(NSString *)column isEqual:(id)value tieField:(NSString *)tieField;
+- (void)ssn_boundTable:(SSNDBTable *)table forColumn:(NSString *)column isEqual:(id<NSCopying>)value tieField:(NSString *)tieField;
 
 
 /**
@@ -82,7 +82,7 @@ typedef id (^ssn_dbbound_general_mapping)(SSNDBTable *table, NSString *where, NS
  @param tieField    绑定作用的属性，该属性必须支持setter方法
  @param map         映射，注意不要循环引用
  */
-- (void)ssn_boundTable:(SSNDBTable *)table forColumn:(NSString *)column isEqual:(id)value tieField:(NSString *)tieField map:(ssn_dbbound_batch_mapping)map;
+- (void)ssn_boundTable:(SSNDBTable *)table forColumn:(NSString *)column isEqual:(id<NSCopying>)value tieField:(NSString *)tieField map:(ssn_dbbound_batch_mapping)map;
 
 
 /**
@@ -90,7 +90,7 @@ typedef id (^ssn_dbbound_general_mapping)(SSNDBTable *table, NSString *where, NS
  @param table   绑定某个数据表，
  @param sql     sql支持的sql语句
  @param tieField   绑定作用的属性，该属性必须支持setter方法
- @param map        映射，注意不要循环引用
+ @param map        映射，注意不要循环引用，必须存在
  */
 - (void)ssn_boundTable:(SSNDBTable *)table forSQL:(NSString *)sql tieField:(NSString *)tieField map:(ssn_dbbound_general_mapping)map;
 

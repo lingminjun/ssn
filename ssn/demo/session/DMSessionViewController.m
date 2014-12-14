@@ -15,6 +15,9 @@
 #import "SSNDBPool.h"
 #import "SSNDBTable+Factory.h"
 
+#import "SSNDBBound.h"
+#import "SSNBound.h"
+
 
 @interface DMSessionViewController ()<SSNDBFetchControllerDelegate>
 
@@ -46,7 +49,20 @@
 {
     [super viewDidLoad];
 
-    self.title = @"Session";
+    SSNDB *db = [[SSNDBPool shareInstance] dbWithScope:[DMSignEngine sharedInstance].loginId];
+    SSNDBTable *tb = [SSNDBTable tableWithDB:db name:NSStringFromClass([DMSession class]) templateName:nil];
+    NSString *sql = [NSString stringWithFormat:@"select count(*) AS count from %@",tb.name];
+    
+    [self ssn_boundTable:tb forSQL:sql tieField:@"title" map:^id(SSNDBTable *table, NSString *sql, NSArray *changed_new_values) {
+        NSArray *sums = [changed_new_values valueForKey:@"count"];
+        NSNumber *first = [sums firstObject];
+        if (first) {
+            return [NSString stringWithFormat:@"Session(%@)",first];
+        }
+        else {
+            return @"Session(0)";
+        }
+    }];
     
     self.tableView.rowHeight = 60;
     

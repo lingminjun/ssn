@@ -195,6 +195,7 @@
 		53FAA61919E8F5F3006EBBE3 /* NSObject+SSNTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FAA61819E8F5F3006EBBE3 /* NSObject+SSNTracking.m */; };
 		53FEB2481A396DF600E71921 /* SSNBlackBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FEB2471A396DF600E71921 /* SSNBlackBox.m */; };
 		53FEB2491A396DF600E71921 /* SSNBlackBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FEB2471A396DF600E71921 /* SSNBlackBox.m */; };
+		53FEC0721A3D649C00FBA926 /* test_read_write.m in Sources */ = {isa = PBXBuildFile; fileRef = 53FEC0711A3D649C00FBA926 /* test_read_write.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -369,6 +370,7 @@
 		53FAA61819E8F5F3006EBBE3 /* NSObject+SSNTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SSNTracking.m"; sourceTree = "<group>"; };
 		53FEB2461A396DF600E71921 /* SSNBlackBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNBlackBox.h; sourceTree = "<group>"; };
 		53FEB2471A396DF600E71921 /* SSNBlackBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNBlackBox.m; sourceTree = "<group>"; };
+		53FEC0711A3D649C00FBA926 /* test_read_write.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test_read_write.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -710,6 +712,7 @@
 				53D9A1961A2CC66F009F777D /* ssn_log_test.m */,
 				53E06EDA1A33461F005DF490 /* ssn_bbox_test.m */,
 				533F4FD41A35997F009D29C6 /* ssn_datastore_test.m */,
+				53FEC0711A3D649C00FBA926 /* test_read_write.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -1133,6 +1136,7 @@
 				53D2464D199C83B400EFDF29 /* SSNVC+Router.m in Sources */,
 				53D2464E199C83B400EFDF29 /* SSNNavigationController.h in Sources */,
 				53D2464F199C83B400EFDF29 /* NSString+SSN.h in Sources */,
+				53FEC0721A3D649C00FBA926 /* test_read_write.m in Sources */,
 				53D24650199C83B400EFDF29 /* ssnbase.h in Sources */,
 				53D24651199C83B400EFDF29 /* SSNRigidCache.h in Sources */,
 				53D24652199C83B400EFDF29 /* SSNRigidCache.m in Sources */,

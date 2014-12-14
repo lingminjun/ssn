@@ -53,12 +53,5 @@ typedef id (^ssn_bound_mapping)(id obj, NSString *field, id changed_new_value);
  */
 - (void)ssn_boundObject:(id)object forField:(NSString *)field tieField:(NSString *)tieField filter:(ssn_bound_filter)filter map:(ssn_bound_mapping)map;
 
-
-/**
- @brief 移除属性的绑定
- @param tieField    绑定作用的属性
- */
-- (void)ssn_clearTieFieldBound:(NSString *)tieField;
-
 @end
 

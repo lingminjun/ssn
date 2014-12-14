@@ -8,10 +8,9 @@
 
 #import "SSNKVOBound.h"
 #import "SSNBound.h"
-#import "SSNSafeDictionary.h"
 #import "NSString+SSN.h"
 
-@interface SSNKVOBound : NSObject
+@interface SSNKVOBound : NSObject <SSNBound>
 @property (nonatomic, strong) NSString *field;//绑定对象属性
 @property (nonatomic, strong) NSString *tiekey;//被影响的属性
 @property (nonatomic, strong) NSString *tailkey;//绑定对象记录绑定key
@@ -29,6 +28,20 @@
 
 
 @implementation SSNKVOBound
+
+/**
+ @brief 返回另一端对象
+ */
+- (id)ssn_tailObject {
+    return _obj;
+}
+
+/**
+ @brief 返回另一端绑定的key
+ */
+- (NSString *)ssn_tailKey {
+    return _tailkey;
+}
 
 - (void)dealloc {
     self.unsafe = nil;
@@ -63,7 +76,6 @@
     else {
         dispatch_async(dispatch_get_main_queue(), block);
     }
-
 }
 
 
@@ -102,27 +114,6 @@
 
 @end
 
-@interface SSNWeakBound : NSObject
-@property (nonatomic,weak) SSNKVOBound *bound;
-@end
-@implementation SSNWeakBound
-
-- (void)dealloc {
-    SSNKVOBound *b = _bound;
-    if (b.unsafe) {
-        [b.unsafe removeObserver:b forKeyPath:b.field];
-        b.unsafe = nil;
-        b.obj = nil;
-    }
-}
-
-+ (instancetype)boxWithBound:(SSNKVOBound *)bound {
-    SSNWeakBound *box = [[[self class] alloc] init];
-    box.bound = bound;
-    return box;
-}
-@end
-
 @implementation NSObject (SSNKVOBound)
 
 /**
@@ -158,31 +149,22 @@
     bound.filter = filter;
     bound.map = map;
     
-    SSNSafeDictionary *dic = [self ssn_bound_dictionary];
-    [dic setObject:bound forKey:tieField];
+    [self ssn_tieBound:bound forKey:tieField];
     
-    SSNSafeDictionary *tail = [object ssn_bound_dictionary_tail];
-    [tail setObject:[SSNWeakBound boxWithBound:bound] forKey:bound.tailkey];
+    SSNWeakBound *box = [SSNWeakBound bound:bound free:^(SSNKVOBound *b) {
+        if (b.unsafe) {
+            [b.unsafe removeObserver:b forKeyPath:b.field];
+            b.unsafe = nil;
+            b.obj = nil;
+        }
+    }];
+    
+    [object ssn_tieTailBound:box forKey:bound.tailkey];
     
     //注册key-value change，将bound对象传入，不要引用bound，
     [object addObserver:bound forKeyPath:field options:NSKeyValueObservingOptionNew context:nil];
     
     [bound processMainThreadChangedWithNewValue:[object valueForKey:field]];
-}
-
-
-/**
- @brief 移除属性的绑定
- @param tieField    绑定影响的属性
- */
-- (void)ssn_clearTieFieldBound:(NSString *)tieField {
-    if ([tieField length] == 0) {
-        return ;
-    }
-    
-    SSNSafeDictionary *dic = [self ssn_bound_dictionary];
-    SSNKVOBound *bound = [dic objectRemoveForKey:tieField];
-    [[bound.obj ssn_bound_dictionary_tail] removeObjectForKey:bound.tailkey];
 }
 
 @end

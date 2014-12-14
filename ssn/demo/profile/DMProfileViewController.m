@@ -14,6 +14,7 @@
 #import "SSNDBPool.h"
 #import "SSNDBTable+Factory.h"
 
+#import "SSNKVOBound.h"
 #import "SSNBound.h"
 
 @interface DMProfileViewController ()

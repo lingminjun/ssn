@@ -14,6 +14,7 @@
 NSString *const SSNDBTableWillMigrateNotification = @"SSNDBTableWillMigrateNotification"; //数据准备迁移 mainThread
 NSString *const SSNDBTableDidMigrateNotification = @"SSNDBTableDidMigrateNotification"; //数据迁移结束 mainThread
 NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification";
+NSString *const SSNDBTableUpdatedNotification = @"SSNDBTableUpdatedNotification";
 
 @interface SSNDBTable ()
 
@@ -77,6 +78,9 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
 
         // 4、检查表状态
         [self checkTableStatus];
+        
+        // 5、监听变化
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dbupdatedNotification:) name:SSNDBUpdatedNotification object:db];
     }
     return self;
 }
@@ -112,8 +116,7 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
 
 - (instancetype)initWithName:(NSString *)name meta:(SSNDBTable *)meta db:(SSNDB *)db
 {
-    NSAssert(db && [name length] && meta && ![name isEqualToString:meta.name],
-             @"创" @"建" @"数" @"据表子表实例参数非法");
+    NSAssert(db && [name length] && meta && ![name isEqualToString:meta.name], @"创建数据表子表实例参数非法");
     self = [super init];
     if (self)
     {
@@ -131,6 +134,9 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
 
         // 2、检查表状态
         [self checkTableStatus];
+        
+        // 3、监听变化
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dbupdatedNotification:) name:SSNDBUpdatedNotification object:db];
     }
     return self;
 }
@@ -138,6 +144,10 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
 + (instancetype)tableWithName:(NSString *)name meta:(SSNDBTable *)meta db:(SSNDB *)db
 {
     return [[[self class] alloc] initWithName:name meta:meta db:db];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 // table的状体
@@ -245,6 +255,18 @@ NSString *const SSNDBTableDidDropNotification = @"SSNDBTableDidDropNotification"
     [_db executeBlock:block sync:YES];
     _status = SSNDBTableNone;
     _currentVersion = 0;
+}
+
+#pragma mark 通知监听
+- (void)dbupdatedNotification:(NSNotification *)notice {
+    //只关心数据的增删改
+    NSDictionary *userInfo = notice.userInfo;
+    NSString *tableName = [userInfo objectForKey:SSNDBTableNameUserInfoKey];
+    if (![_name isEqualToString:tableName]) {
+        return ;
+    }
+    
+    [self postMainThreadNotification:SSNDBTableUpdatedNotification info:userInfo];
 }
 
 #pragma mark 日志表操作

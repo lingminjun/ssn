@@ -21,6 +21,7 @@
 #import "SSNDBTable+Factory.h"
 
 #import "SSNKVOBound.h"
+#import "SSNDBBound.h"
 
 @interface DMContactViewController ()<SSNDBFetchControllerDelegate,ABPeoplePickerNavigationControllerDelegate>
 
@@ -42,13 +43,14 @@
         NSSortDescriptor *sort1 = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
         NSSortDescriptor *sort2 = [NSSortDescriptor sortDescriptorWithKey:@"mobile" ascending:YES];
         
-        SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMPerson class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:1 limit:4];
+        SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMPerson class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:0 limit:0];
         
         _fetchController = [SSNDBFetchController fetchControllerWithDB:db table:tb fetch:fetch];
         
         //_fetchController.
         
         [_fetchController setDelegate:self];
+        
     }
     return self;
 }
@@ -57,7 +59,21 @@
 {
     [super viewDidLoad];
 
-    self.title = @"Contact";
+    SSNDB *db = [[SSNDBPool shareInstance] dbWithScope:[DMSignEngine sharedInstance].loginId];
+    SSNDBTable *tb = [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPerson class]) templateName:nil];
+    NSString *sql = [NSString stringWithFormat:@"select count(*) AS count from %@",tb.name];
+    
+    [self ssn_boundTable:tb forSQL:sql tieField:@"title" map:^id(SSNDBTable *table, NSString *sql, NSArray *changed_new_values) {
+        NSArray *sums = [changed_new_values valueForKey:@"count"];
+        NSNumber *first = [sums firstObject];
+        if (first) {
+            return [NSString stringWithFormat:@"Contact(%@)",first];
+        }
+        else {
+            return @"Contact(0)";
+        }
+    }];
+    
     
     self.tableView.rowHeight = 60;
     

@@ -11,6 +11,7 @@
 FOUNDATION_EXTERN NSString *const SSNDBTableWillMigrateNotification; //数据准备迁移 mainThread
 FOUNDATION_EXTERN NSString *const SSNDBTableDidMigrateNotification;  //数据迁移结束 mainThread
 FOUNDATION_EXTERN NSString *const SSNDBTableDidDropNotification;     //数据表删除 mainThread
+FOUNDATION_EXTERN NSString *const SSNDBTableUpdatedNotification;     //数据表更新 mainThread
 FOUNDATION_EXTERN NSString *const SSNDBTableNameUserInfoKey;         //数据迁移表格
 
 #ifndef _SSNDBTable_
