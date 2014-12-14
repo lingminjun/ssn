@@ -42,9 +42,12 @@
         NSSortDescriptor *sort1 = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
         NSSortDescriptor *sort2 = [NSSortDescriptor sortDescriptorWithKey:@"mobile" ascending:YES];
         
-        SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMPerson class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:0 limit:0];
+        SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMPerson class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:1 limit:4];
         
         _fetchController = [SSNDBFetchController fetchControllerWithDB:db table:tb fetch:fetch];
+        
+        //_fetchController.
+        
         [_fetchController setDelegate:self];
     }
     return self;

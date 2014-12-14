@@ -110,7 +110,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dbupdatedNotification:) name:SSNDBUpdatedNotification object:_db];
 }
 
-- (void)resetResults:(NSArray *)objs {
+- (void)resetResults:(NSArray *)objs {//此函数将来可以优化下，两个结果集比较一下，将需要删除的数据先删除，然后将要插入的数据重新插入
     
     if (objs) {
         [_metaResults setArray:objs];//直接替换感觉不是很好，简单粗暴
@@ -285,8 +285,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 }
 
 - (id)objectAtIndex:(NSUInteger)index {
-    NSUInteger i = index + _fetch.offset;
-    return [_results objectAtIndex:i];
+    return [_results objectAtIndex:index];
 }
 
 - (NSUInteger)indexOfObject:(id)object {
@@ -379,11 +378,16 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     
     //step 2 如果不是插入和更新操作（暂时只有删除），则直接认定删除，立即返回结果
     if (operation != SQLITE_INSERT && operation != SQLITE_UPDATE) {
-        if (box.obj) {
-            box.changeType = SSNDBFetchedChangeDelete;
+        if (NO == _isExtensible && _fetch.limit > 0 &&  _fetch.offset > 0){//数据不在指定的结果集范围，非可扩充型数据将需要重新查询数据
+            if (box.obj && count < _fetch.limit) {
+                box.changeType = SSNDBFetchedChangeDelete;
+            }
+            else {//结果集如果开始是满的，也必须重新refetch
+                box.refetch = YES;
+            }
         }
-        else if (NO == _isExtensible && _fetch.limit > 0 &&  _fetch.offset > 0){//数据不在指定的结果集范围，非可扩充型数据将需要重新查询数据
-            box.refetch = YES;
+        else if (box.obj) {//可变性很好办，删除数据就ok
+            box.changeType = SSNDBFetchedChangeDelete;
         }
         return box;
     }
