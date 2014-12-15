@@ -159,8 +159,8 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
     dispatch_source_set_event_handler(timer, ^{ __strong typeof(w_self) self = w_self; if (!self) {return ;}
         
         BOOL isExpressed = NO;
-        pthread_mutex_lock(&self->_mutex);//采用偏移量取值，主要是不让block应用self对象
-        if (objects != self->_arr) {//已经被播放过，objects里面的内容过期
+        pthread_mutex_lock(&self->_mutex);//采用偏移量取值，主要是不让block引用self对象
+        if (objects != self->_arr) {//已经被播发过，objects里面的内容过期
             isExpressed = YES;
         }
         self->_arr = nil;
@@ -178,8 +178,8 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
         [self cancelTimer:timer];
     });
     
-    //不在需要加锁，基于性能考虑，因为订阅播发容错处理
-    _timer = timer;//这个参数不做线程保护，即使没有被记录下来timer，造成没有停止scheduled也没关系，最多走到“time expire”逻辑
+    //不需要加锁，基于性能考虑，因为scheduled播发已经做容错处理
+    _timer = timer;//这个参数不做线程保护，即使没有被记录下来timer，造成没有停止scheduled也没关系，将走“time expire”逻辑
     dispatch_resume(timer);
     
 }
