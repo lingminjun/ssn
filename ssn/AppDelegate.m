@@ -114,6 +114,13 @@
     
     //测试文件读写
     //[self copyFile];
+    __weak typeof(self) w_self = self;
+    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        __strong typeof(w_self) self = w_self; if (!self) {return ;}
+        if (self->_window) {
+            NSLog(@"dddddd");
+        }
+    });
 
     return YES;
 }

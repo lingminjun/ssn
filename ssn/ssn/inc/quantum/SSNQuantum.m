@@ -9,6 +9,12 @@
 #import "SSNQuantum.h"
 #import <pthread.h>
 
+#if DEBUG
+#define ssn_quantum_log(s, ...) printf(s, ##__VA_ARGS__)
+#else
+#define ssn_quantum_log(s, ...) ((void)0)
+#endif
+
 NSString *const SSNQuantumProcessorNotification = @"SSNQuantumProcessorNotification";
 NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
 
@@ -73,10 +79,14 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
         
         //一旦被加入的数据超过最大值，就立即播发
         if ([_arr count] >= _maxCount) {
-            [self cancelTimer];
+            [self cancelTimer:_timer];//cancel最后一次就行
+            _timer = nil;
             
             NSArray *arry = [NSArray arrayWithArray:_arr];
-            dispatch_async(_queue, ^{ NSLog(@"over count prior express %@",arry); [self processorWithObjects:arry]; });
+            dispatch_async(_queue, ^{
+                ssn_quantum_log("over count prior express %s \n",[[arry description] UTF8String]);
+                [self processorWithObjects:arry];
+            });
             _arr = nil;
         }
         
@@ -88,7 +98,10 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
         [t_lists addObjectsFromArray:objects];
         
         if ([t_lists count] >= _maxCount) {
-            dispatch_async(_queue, ^{ NSLog(@"over count express %@",t_lists); [self processorWithObjects:t_lists]; });
+            dispatch_async(_queue, ^{
+                ssn_quantum_log("over count express %s \n",[[t_lists description] UTF8String]);
+                [self processorWithObjects:t_lists];
+            });
         }
         else {
             _arr = t_lists;//记录放到block中数组
@@ -103,12 +116,16 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
     pthread_mutex_lock(&_mutex);
     
     //1 先停止加载的timer
-    [self cancelTimer];
+    [self cancelTimer:_timer];
+    _timer = nil;
     
     //2 将所有的数据播发
     if ([_arr count]) {
         NSArray *arry = [NSArray arrayWithArray:_arr];
-        dispatch_async(_queue, ^{  NSLog(@"direct express %@",arry); [self processorWithObjects:arry]; });
+        dispatch_async(_queue, ^{
+            ssn_quantum_log("direct express %s \n",[[arry description] UTF8String]);
+            [self processorWithObjects:arry];
+        });
         _arr = nil;
     }
     
@@ -137,23 +154,39 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
     dispatch_time_t del = dispatch_time(DISPATCH_TIME_NOW, timeOut * NSEC_PER_SEC);
     dispatch_source_set_timer(timer, del, timeOut * NSEC_PER_SEC, 1ull * NSEC_PER_USEC);
+    
     __weak typeof(self) w_self = self;
     dispatch_source_set_event_handler(timer, ^{ __strong typeof(w_self) self = w_self; if (!self) {return ;}
-        NSLog(@"time out express %@",objects);
-        [self processorWithObjects:objects];
-        [self cancelTimer];
+        
+        BOOL isExpressed = NO;
+        pthread_mutex_lock(&self->_mutex);//采用偏移量取值，主要是不让block应用self对象
+        if (objects != self->_arr) {//已经被播放过，objects里面的内容过期
+            isExpressed = YES;
+        }
+        self->_arr = nil;
+        pthread_mutex_unlock(&self->_mutex);
+        
+        if (!isExpressed) {
+            ssn_quantum_log("time out express %s \n",[[objects description] UTF8String]);
+            [self processorWithObjects:objects];
+        }
+#ifdef DEBUG //debug下这个日志还是比较重要
+        else {
+            ssn_quantum_log("time expire %s \n",[[objects description] UTF8String]);//超时触发，但是此次超时是过期的，作废
+        }
+#endif
+        [self cancelTimer:timer];
     });
-    _timer = timer;
     
+    //不在需要加锁，基于性能考虑，因为订阅播发容错处理
+    _timer = timer;//这个参数不做线程保护，即使没有被记录下来timer，造成没有停止scheduled也没关系，最多走到“time expire”逻辑
     dispatch_resume(timer);
     
 }
 
-- (void)cancelTimer {
-
-    if (_timer) {
-        dispatch_source_cancel(_timer);
-        _timer = nil;
+- (void)cancelTimer:(dispatch_source_t)timer {
+    if (timer) {
+        dispatch_source_cancel(timer);
     }
 }
 

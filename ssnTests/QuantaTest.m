@@ -37,13 +37,27 @@
 }
 
 - (void)test_add_less_obj {
-    SSNQuantum *quant = [[SSNQuantum alloc] initWithInterval:0.5 maxCount:5];
+    SSNQuantum *quant = [[SSNQuantum alloc] initWithInterval:0.001 maxCount:5];
     quant.delegate = self;
     
     [quant pushObject:@"1"];
     [quant pushObject:@"2"];
     [quant pushObject:@"3"];
     
+    sleep(1);
+    
+    [quant pushObject:@"4"];
+    [quant pushObject:@"5"];
+    [quant pushObject:@"6"];
+    
+    sleep(1);
+}
+
+- (void)test_retain_count {
+    SSNQuantum *quant = [[SSNQuantum alloc] initWithInterval:0.001 maxCount:5];
+    quant.delegate = self;
+    
+    [quant pushObject:@"1"];
     
     sleep(1);
 }
@@ -62,12 +76,12 @@
     [quant pushObject:@"6"];
     
     
-    sleep(1);
+    sleep(10);
 }
 
 
 - (void)test_add_direct_obj {
-    SSNQuantum *quant = [[SSNQuantum alloc] initWithInterval:0.5 maxCount:5];
+    SSNQuantum *quant = [[SSNQuantum alloc] initWithInterval:0.01 maxCount:5];
     quant.delegate = self;
     
     [quant pushObject:@"1"];
@@ -80,6 +94,8 @@
     
     sleep(1);
 }
+
+
 
 - (void)testPerformanceExample {
     // This is an example of a performance test case.
