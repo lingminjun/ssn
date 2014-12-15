@@ -164,6 +164,7 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
             isExpressed = YES;
         }
         self->_arr = nil;
+        self->_timer = nil;
         pthread_mutex_unlock(&self->_mutex);
         
         if (!isExpressed) {
@@ -178,8 +179,7 @@ NSString *const SSNQuantumObjectsKey = @"SSNQuantumObjectsKey";
         [self cancelTimer:timer];
     });
     
-    //不需要加锁，基于性能考虑，因为scheduled播发已经做容错处理
-    _timer = timer;//这个参数不做线程保护，即使没有被记录下来timer，造成没有停止scheduled也没关系，将走“time expire”逻辑
+    _timer = timer;
     dispatch_resume(timer);
     
 }
