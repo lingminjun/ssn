@@ -53,7 +53,8 @@ static void ssn_sqlite_update(void *user_data, int operation, char const *databa
     }
     
     @autoreleasepool {
-        ssn_log("\nssn_sqlite_update operation = %d, table_name = %s, row_id = %lld\n",operation ,table_name, row_id);
+#define ssn_log_opt_fmt(o) (o == SQLITE_INSERT ? "insert" : (o == SQLITE_UPDATE ? "update" : "delete"))
+        ssn_log("\nssn_sqlite_update operation = %s, table_name = %s, row_id = %lld\n",ssn_log_opt_fmt(operation) ,table_name, row_id);
         
         SSNDB *db = (__bridge SSNDB *)(user_data);
         

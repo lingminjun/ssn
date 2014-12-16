@@ -89,15 +89,17 @@
     SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
     [table update];
 
-    TSPerson *user1 = [[TSPerson alloc] init];
-    user1.uid = @"12";
-    user1.name = @"name:凌敏均";
-    user1.age = 26;
-    user1.sex = 0;
+//    TSPerson *user1 = [[TSPerson alloc] init];
+//    user1.uid = @"12";
+//    user1.name = @"name:凌敏均";
+//    user1.age = 26;
+//    user1.sex = 0;
     
-    [db prepareSql:[NSString stringWithFormat:@"DELETE FROM %@ ",[table name]],nil];
+    //[db prepareSql:[NSString stringWithFormat:@"DELETE FROM %@ ",[table name]],nil];
     //[db prepareSql:[NSString stringWithFormat:@"DELETE FROM %@ WHERE rowid > 0",[table name]],nil];
     //[table deleteObject:user1];
+    
+    [table truncate];
 }
 
 - (void)test_truncate {

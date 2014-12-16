@@ -10,5 +10,6 @@
                  {"name":"modifiedAt",  "type":1,   "level":0,  "fill":"",  "index":1,  "mapping":""},
                  {"name":"unreadCount",  "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""}
                  ]
-           }]
+           }
+           ]
 }

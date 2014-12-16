@@ -14,6 +14,7 @@
 #import "SSNSafeArray.h"
 #import <sqlite3.h>
 #import "ssnbase.h"
+#import "ssndiff.h"
 
 const NSUInteger SSNDBFetchedChangeNan = 0;
 
@@ -27,6 +28,21 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 @end
 
 @implementation SSNDBFetchIndexBox
+@end
+
+@interface SSNDBFetchChangesResult : NSObject
+@property (nonatomic,strong) NSMutableArray *results;
+@property (nonatomic) int64_t changedRowid;//触发改变的rowid
+@end
+
+@implementation SSNDBFetchChangesResult
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _results = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
 @end
 
 @interface SSNDBFetchController ()
@@ -110,102 +126,78 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dbupdatedNotification:) name:SSNDBUpdatedNotification object:_db];
 }
 
-//计算出删除，更新，和插入的数据，并且记录第一次插入数据的index
-- (NSArray *)changesFrom:(NSArray *)from to:(NSArray *)to firstInsert:(NSUInteger *)index {
-    
-    //@autoreleasepool {
-        NSMutableArray *changeds = [NSMutableArray array];
-   
-//        //必须按照删除、插入、更新顺序
-//        NSMutableArray *dels = [NSMutableArray array];
-//        NSMutableArray *upds = [NSMutableArray array];
-    
-    NSMutableIndexSet *founds = [NSMutableIndexSet indexSet];
-
-    //两次遍历将删除的和更新的都计算出来
-    long size = MAX([from count], [to count]);
-    int *adjust = malloc(sizeof(int)*size);
-    memset(adjust, 0, sizeof(int)*size);
-    
-    [from enumerateObjectsUsingBlock:^(id<SSNDBFetchObject> fobj, NSUInteger idx, BOOL *stop) {
-        int64_t rowid = [fobj ssn_dbfetch_rowid];
-        
-        SSNDBFetchIndexBox *box = [[SSNDBFetchIndexBox alloc] init];
-        box.nIndex = NSNotFound;
-        box.obj = fobj;
-        box.index = idx + adjust[idx];
-        
-        [to enumerateObjectsUsingBlock:^(id<SSNDBFetchObject> tobj, NSUInteger idx, BOOL *stop) {
-            if (rowid == [tobj ssn_dbfetch_rowid] && [fobj isEqual:tobj]) {
-                *stop = YES;
-                box.nIndex = idx;
-                box.nObj = tobj;
-                
-                [founds addIndex:idx];//把已经找到过的idx记录下来
-            }
-        }];
-        
-        if (box.nObj) {//已经找到的，判断是update还是move
-            if (box.index == box.nIndex) {
-                box.changeType = SSNDBFetchedChangeUpdate;
-            }
-            else {//这里任然存在问题，调整值必须每一个都是指一遍
-                box.changeType = SSNDBFetchedChangeMove;
-                
-                if (box.index < box.nIndex) {
-                    for (long i = box.index; i < box.nIndex; i++) {
-                        adjust[i] -= 0;
-                    }
-                }
-                else {
-                    for (long i = box.nIndex; i < box.index; i++) {
-                        adjust[i] += 0;
-                    }
-                }
-                
-            }
-        }
-        else {
-            box.changeType = SSNDBFetchedChangeDelete;
-            
-            for (long i = idx; i < size; i++) {
-                adjust[i] -= 0;
-            }
-        }
-        
-        [changeds addObject:box];
-    }];
-    
-    if (*index) {
-        if ([changeds count]) {
-            *index = [changeds count] - 1;
-        }
-        else {
-            *index = 0;
-        }
-    }
-    
-    //计算新插入的
-    NSMutableArray *inserts = [NSMutableArray array];
-    if ([to count]) {
-        [inserts setArray:to];
-        
-        [inserts removeObjectsAtIndexes:founds];
-        [inserts enumerateObjectsUsingBlock:^(id<SSNDBFetchObject> obj, NSUInteger idx, BOOL *stop) {
-            SSNDBFetchIndexBox *box = [[SSNDBFetchIndexBox alloc] init];
-            box.nIndex = idx;
-            box.index = idx;
-            box.nObj = obj;
-            box.changeType = SSNDBFetchedChangeInsert;
-            [changeds addObject:box];
-        }];
-    }
-    
-    return changeds;
+int db_fetch_elem_equal(void *from, void *to, const size_t f_idx, const size_t t_idx, void *context) {
+    id<SSNDBFetchObject> old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
+    id<SSNDBFetchObject> new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
+    return [old_obj isEqual:new_obj];
 }
 
-- (void)resetResults:(NSArray *)objs {//此函数将来可以优化下，两个结果集比较一下，将需要删除的数据先删除，然后将要插入的数据重新插入
+
+void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t_idx, const ssn_diff_change_type type, void *context) {
+    SSNDBFetchChangesResult *changesResult = (__bridge SSNDBFetchChangesResult *)context;
+    switch (type) {
+        case ssn_diff_no_change: {
+            id<SSNDBFetchObject> old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
+            id<SSNDBFetchObject> new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
+            
+            if (changesResult.changedRowid == [new_obj ssn_dbfetch_rowid]) {//当前变化的数据正是引发重新perform的数据，则要记录update
+                SSNDBFetchIndexBox *box = [[SSNDBFetchIndexBox alloc] init];
+                box.index = f_idx;
+                box.nIndex = t_idx;
+                box.obj = old_obj;
+                box.nObj = new_obj;
+                box.changeType = SSNDBFetchedChangeUpdate;
+                ssn_log("\n rowid = %lld update object at index = %ld！\n", [new_obj ssn_dbfetch_rowid], box.index);
+                [changesResult.results addObject:box];
+            }
+        }
+            break;
+        case ssn_diff_insert: {
+            id<SSNDBFetchObject> new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
+            SSNDBFetchIndexBox *box = [[SSNDBFetchIndexBox alloc] init];
+            box.index = t_idx;
+            box.nIndex = t_idx;
+            box.nObj = new_obj;
+            box.changeType = SSNDBFetchedChangeInsert;
+            ssn_log("\n rowid = %lld insert object at index = %ld！\n", [new_obj ssn_dbfetch_rowid], box.nIndex);
+            [changesResult.results addObject:box];
+        }
+            break;
+        case ssn_diff_delete: {
+            id<SSNDBFetchObject> old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
+            SSNDBFetchIndexBox *box = [[SSNDBFetchIndexBox alloc] init];
+            box.index = f_idx;
+            box.nIndex = NSNotFound;
+            box.obj = old_obj;
+            box.changeType = SSNDBFetchedChangeDelete;
+            ssn_log("\n rowid = %lld delete object at index = %ld！\n", [old_obj ssn_dbfetch_rowid], box.index);
+            [changesResult.results addObject:box];
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+//计算出删除，更新，和插入的数据，并且记录第一次插入数据的index
+- (NSArray *)changesFrom:(NSArray *)from to:(NSArray *)to changedRowid:(int64_t)rowid {
     
+    @autoreleasepool {
+        SSNDBFetchChangesResult *changesResult = [[SSNDBFetchChangesResult alloc] init];
+        changesResult.changedRowid = rowid;
+        
+        ssn_diff((__bridge void *)from, (__bridge void *)to, [from count], [to count], db_fetch_elem_equal, db_fetch_chgs_iter, (__bridge void *)changesResult);
+        
+        return changesResult.results;
+    }
+}
+
+- (void)resetResults:(NSArray *)objs {
+    [self resetResults:objs changedRowid:0];
+}
+
+- (void)resetResults:(NSArray *)objs changedRowid:(int64_t)rowid {//此函数将来可以优化下，两个结果集比较一下，将需要删除的数据先删除，然后将要插入的数据重新插入
+    /*
     if (objs) {
         [_metaResults setArray:objs];//直接替换感觉不是很好，简单粗暴
     }
@@ -226,8 +218,9 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     
     //开始第一轮插入所有数据
     [self processAddAllObjects:list];
-    
-    /*//优化后结果存在错误
+     
+    */
+    //优化后结果存在错误
     NSMutableArray *olds = [NSMutableArray arrayWithArray:_metaResults];
     
     //修改原始数据集
@@ -244,12 +237,11 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         }
     }
     
-    NSUInteger firstInset = NSNotFound;
-    NSArray *changes = [self changesFrom:olds to:news firstInsert:&firstInset];
+    NSArray *changes = [self changesFrom:olds to:news changedRowid:rowid];
 
     //开始第一轮插入所有数据
-    [self processResetObjects:news obeyChanges:changes firstInsert:firstInset];
-     */
+    [self processResetObjects:news obeyChanges:changes];
+    
 }
 
 - (BOOL)performFetch {
@@ -283,7 +275,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     return YES;
 }
 
-- (BOOL)reperformFetch {//重新发起查询
+- (BOOL)reperformFetchWithChangedRowid:(int64_t)changed_rowid {//重新发起查询
 
     dispatch_block_t block = ^{
 
@@ -298,7 +290,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
         NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
         
         //重置结果集
-        [self resetResults:objs];
+        [self resetResults:objs changedRowid:changed_rowid];
     };
     
     [_queue async:block];
@@ -630,7 +622,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     //先要检查是否需要重新fetch，如果是需要重新fetch的，单的处理比较好
     if (box.refetch) {
         ssn_log("\n rowid = %lld 使得结果集必须重新fetch！！！\n", rowId);
-        [self reperformFetch];
+        [self reperformFetchWithChangedRowid:rowId];
         return ;
     }
     
@@ -648,7 +640,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     }
     
     if (box.changeType == SSNDBFetchedChangeDelete) {
-        ssn_log("\n rowid = %lld deleted object at index = %ld！\n", rowId, box.index);
+        ssn_log("\n rowid = %lld delete object at index = %ld！\n", rowId, box.index);
         //删除原始数据
         [_metaResults removeObjectAtIndex:box.index];
         [self processDeletedObject:box.obj atIndex:box.index];
@@ -759,17 +751,13 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     dispatch_async(self.delegateQueue, block);
 }
 
-- (void)processResetObjects:(NSArray *)objs obeyChanges:(NSArray *)changes firstInsert:(NSUInteger)firstInsert {
+- (void)processResetObjects:(NSArray *)objs obeyChanges:(NSArray *)changes {
     dispatch_block_t block = ^{
         
         [_delegate ssndb_controllerWillChange:self];
         
         //删除老数据
         [changes enumerateObjectsUsingBlock:^(SSNDBFetchIndexBox *box, NSUInteger idx, BOOL *stop) {
-            
-            if (idx == firstInsert) {//修改数据集
-                [_results setArray:objs];
-            }
             
             switch (box.changeType) {
                 case SSNDBFetchedChangeInsert:
@@ -789,6 +777,8 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
             }
             
         }];
+        
+        [_results setArray:objs];
         
         [_delegate ssndb_controllerDidChange:self];
         

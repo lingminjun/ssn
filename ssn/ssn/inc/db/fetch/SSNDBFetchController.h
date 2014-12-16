@@ -95,7 +95,7 @@ typedef NS_ENUM(NSUInteger, SSNDBFetchedChangeType) {
             break;
         case SSNDBFetchedChangeUpdate:
         {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
             [self configureCell:cell object:object atIndexPath:indexPath];
         }
