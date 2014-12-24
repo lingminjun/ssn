@@ -9,7 +9,7 @@
 #import "SSNDBTable.h"
 #import "SSNDBColumn.h"
 #import "SSNDB.h"
-#import "ssnbase.h"
+#import "NSString+SSN.h"
 
 NSString *const SSNDBTableWillMigrateNotification = @"SSNDBTableWillMigrateNotification"; //数据准备迁移 mainThread
 NSString *const SSNDBTableDidMigrateNotification = @"SSNDBTableDidMigrateNotification"; //数据迁移结束 mainThread

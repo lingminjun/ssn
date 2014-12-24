@@ -7,10 +7,15 @@
 //
 
 #import "SSNDB.h"
-#import "ssnbase.h"
 #import <sqlite3.h>
 #import "SSNCuteSerialQueue.h"
 #import "NSFileManager+SSN.h"
+
+#if DEBUG
+#define ssn_db_log(s, ...) printf(s, ##__VA_ARGS__)
+#else
+#define ssn_db_log(s, ...) ((void)0)
+#endif
 
 NSString *const SSNDBUpdatedNotification = @"SSNDBUpdatedNotification";   //
 NSString *const SSNDBCommitNotification  = @"SSNDBCommitNotification";      //
@@ -53,8 +58,8 @@ static void ssn_sqlite_update(void *user_data, int operation, char const *databa
     }
     
     @autoreleasepool {
-#define ssn_log_opt_fmt(o) (o == SQLITE_INSERT ? "insert" : (o == SQLITE_UPDATE ? "update" : "delete"))
-        ssn_log("\nssn_sqlite_update operation = %s, table_name = %s, row_id = %lld\n",ssn_log_opt_fmt(operation) ,table_name, row_id);
+#define ssn_db_log_opt_fmt(o) (o == SQLITE_INSERT ? "insert" : (o == SQLITE_UPDATE ? "update" : "delete"))
+        ssn_db_log("\nssn_sqlite_update operation = %s, table_name = %s, row_id = %lld\n",ssn_db_log_opt_fmt(operation) ,table_name, row_id);
         
         SSNDB *db = (__bridge SSNDB *)(user_data);
         
@@ -86,7 +91,7 @@ static int ssndb_sqlite_commit(void *user_data) {
     }
     
     @autoreleasepool {
-        ssn_log("\nssndb_sqlite_commit\n");
+        ssn_db_log("\nssndb_sqlite_commit\n");
         
         SSNDB *db = (__bridge SSNDB *)(user_data);
         [[NSNotificationCenter defaultCenter] postNotificationName:SSNDBCommitNotification object:db];
@@ -104,7 +109,7 @@ static void ssndb_sqlite_rollback(void *user_data)
     }
     
     @autoreleasepool {
-        ssn_log("\nssndb_sqlite_rollback\n");
+        ssn_db_log("\nssndb_sqlite_rollback\n");
         
         SSNDB *db = (__bridge SSNDB *)(user_data);
         [[NSNotificationCenter defaultCenter] postNotificationName:SSNDBRollbackNotification object:db];
@@ -140,7 +145,7 @@ static void ssndb_sqlite_rollback(void *user_data)
         
         
         NSAssert(self.dbpath, @"dbpath 无法建立");
-        ssn_log("\ndbpath=%s\n",[_dbpath UTF8String]);
+        ssn_db_log("\ndbpath=%s\n",[_dbpath UTF8String]);
         
         if (queue) {
             _ioQueue = queue;
@@ -153,7 +158,7 @@ static void ssndb_sqlite_rollback(void *user_data)
             // 因为数据库单线程操作，直接SINGLETHREAD即可，效率更高
             if (sqlite3_config(SQLITE_CONFIG_SINGLETHREAD) == SQLITE_OK)
             {
-                ssn_log("sqlite3 config single thread!\n");
+                ssn_db_log("sqlite3 config single thread!\n");
             }
             
             // opens database, creating the file if it does not already exist

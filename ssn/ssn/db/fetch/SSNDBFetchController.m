@@ -13,8 +13,13 @@
 #import "SSNCuteSerialQueue.h"
 #import "SSNSafeArray.h"
 #import <sqlite3.h>
-#import "ssnbase.h"
 #import "ssndiff.h"
+
+#if DEBUG
+#define ssn_fetch_log(s, ...) printf(s, ##__VA_ARGS__)
+#else
+#define ssn_fetch_log(s, ...) ((void)0)
+#endif
 
 const NSUInteger SSNDBFetchedChangeNan = 0;
 
@@ -147,7 +152,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
                 box.obj = old_obj;
                 box.nObj = new_obj;
                 box.changeType = SSNDBFetchedChangeUpdate;
-                ssn_log("\n rowid = %lld update object at index = %ld！\n", [new_obj ssn_dbfetch_rowid], box.index);
+                ssn_fetch_log("\n rowid = %lld update object at index = %ld！\n", [new_obj ssn_dbfetch_rowid], box.index);
                 [changesResult.results addObject:box];
             }
         }
@@ -159,7 +164,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
             box.nIndex = t_idx;
             box.nObj = new_obj;
             box.changeType = SSNDBFetchedChangeInsert;
-            ssn_log("\n rowid = %lld insert object at index = %ld！\n", [new_obj ssn_dbfetch_rowid], box.nIndex);
+            ssn_fetch_log("\n rowid = %lld insert object at index = %ld！\n", [new_obj ssn_dbfetch_rowid], box.nIndex);
             [changesResult.results addObject:box];
         }
             break;
@@ -170,7 +175,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
             box.nIndex = NSNotFound;
             box.obj = old_obj;
             box.changeType = SSNDBFetchedChangeDelete;
-            ssn_log("\n rowid = %lld delete object at index = %ld！\n", [old_obj ssn_dbfetch_rowid], box.index);
+            ssn_fetch_log("\n rowid = %lld delete object at index = %ld！\n", [old_obj ssn_dbfetch_rowid], box.index);
             [changesResult.results addObject:box];
         }
             break;
@@ -262,7 +267,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         
         NSString *sql = [self fetchSql];
         
-        ssn_log("\n perform fetch sql = %s！ \n", [sql UTF8String]);
+        ssn_fetch_log("\n perform fetch sql = %s！ \n", [sql UTF8String]);
         
         NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
         
@@ -285,7 +290,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         [self observerDBYpdatedNotification];
         
         NSString *sql = [self fetchSql];
-        ssn_log("\n reperform fetch sql = %s！ \n", [sql UTF8String]);
+        ssn_fetch_log("\n reperform fetch sql = %s！ \n", [sql UTF8String]);
         
         NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
         
@@ -323,7 +328,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         
         NSString *sql = [self fetchSql];
         
-        ssn_log("\n perform next fetch sql = %s！ \n", [sql UTF8String]);
+        ssn_fetch_log("\n perform next fetch sql = %s！ \n", [sql UTF8String]);
         
         NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
         
@@ -374,7 +379,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         
         NSString *sql = [self fetchSql];
         
-        ssn_log("\n perform prev fetch sql = %s！ \n", [sql UTF8String]);
+        ssn_fetch_log("\n perform prev fetch sql = %s！ \n", [sql UTF8String]);
         
         NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
         
@@ -621,13 +626,13 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     
     //先要检查是否需要重新fetch，如果是需要重新fetch的，单的处理比较好
     if (box.refetch) {
-        ssn_log("\n rowid = %lld 使得结果集必须重新fetch！！！\n", rowId);
+        ssn_fetch_log("\n rowid = %lld 使得结果集必须重新fetch！！！\n", rowId);
         [self reperformFetchWithChangedRowid:rowId];
         return ;
     }
     
     if (box.index == NSNotFound && box.nIndex == NSNotFound) {
-        ssn_log("\n rowid = %lld 不在结果的数据变更！！！忽略！！！ \n", rowId);
+        ssn_fetch_log("\n rowid = %lld 不在结果的数据变更！！！忽略！！！ \n", rowId);
         return ;
     }
     
@@ -640,13 +645,13 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     }
     
     if (box.changeType == SSNDBFetchedChangeDelete) {
-        ssn_log("\n rowid = %lld delete object at index = %ld！\n", rowId, box.index);
+        ssn_fetch_log("\n rowid = %lld delete object at index = %ld！\n", rowId, box.index);
         //删除原始数据
         [_metaResults removeObjectAtIndex:box.index];
         [self processDeletedObject:box.obj atIndex:box.index];
     }
     else if (box.changeType == SSNDBFetchedChangeInsert) {
-        ssn_log("\n rowid = %lld insert object at index = %ld！\n", rowId, box.nIndex);
+        ssn_fetch_log("\n rowid = %lld insert object at index = %ld！\n", rowId, box.nIndex);
         
         //检查是否超出
         id<SSNDBFetchObject> rmObj = nil;
@@ -654,7 +659,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         if (_fetch.limit > 0 && [_metaResults count] >= _fetch.limit) {
             rmObj = [_metaResults lastObject];
             rmIndex = _fetch.limit - 1;//最后一个位置上（必须按照老位置计算）
-            ssn_log("\n rowid = %lld insert evict object at index = %ld！\n", rowId, _fetch.limit);
+            ssn_fetch_log("\n rowid = %lld insert evict object at index = %ld！\n", rowId, _fetch.limit);
         }
         
         [_metaResults insertObject:box.nObj atIndex:box.nIndex];
@@ -662,14 +667,14 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         [self processInsertedObject:nObj atIndex:box.nIndex evictObject:rmObj evictIndex:rmIndex];
     }
     else if (box.changeType == SSNDBFetchedChangeUpdate) {
-        ssn_log("\n rowid = %lld update object at index = %ld！\n", rowId, box.index);
+        ssn_fetch_log("\n rowid = %lld update object at index = %ld！\n", rowId, box.index);
         
         [_metaResults replaceObjectAtIndex:box.index withObject:box.nObj];
         
         [self processUpdatedObject:nObj atIndex:box.index];
     }
     else if (box.changeType == SSNDBFetchedChangeMove) {
-        ssn_log("\n rowid = %lld move object from index = %ld to index = %ld！\n", rowId, box.index, box.nIndex);
+        ssn_fetch_log("\n rowid = %lld move object from index = %ld to index = %ld！\n", rowId, box.index, box.nIndex);
         
         [_metaResults removeObjectAtIndex:box.index];
         [_metaResults insertObject:box.nObj atIndex:box.nIndex];
@@ -677,7 +682,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         [self processMovedObject:nObj fromIndex:box.index toIndex:box.nIndex];
     }
     else {
-        ssn_log("\n rowid = %lld 不清楚的操作！！！忽略！！！ \n", rowId);
+        ssn_fetch_log("\n rowid = %lld 不清楚的操作！！！忽略！！！ \n", rowId);
     }
 }
 

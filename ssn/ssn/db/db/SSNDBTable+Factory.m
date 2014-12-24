@@ -7,7 +7,8 @@
 //
 
 #import "SSNDBTable+Factory.h"
-#import "ssnbase.h"
+#import "SSNRigidCache.h"
+#import "NSString+SSN.h"
 
 @implementation SSNDBTable (Factory)
 

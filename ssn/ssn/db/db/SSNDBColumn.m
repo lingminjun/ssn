@@ -7,7 +7,7 @@
 //
 
 #import "SSNDBColumn.h"
-#import "ssnbase.h"
+#import "NSString+SSN.h"
 
 @interface SSNDBColumn ()
 

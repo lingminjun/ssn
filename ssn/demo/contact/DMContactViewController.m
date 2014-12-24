@@ -8,6 +8,7 @@
 
 #import "DMContactViewController.h"
 
+#import "SSNRouter.h"
 #import "DMPerson.h"
 #import "DMSession.h"
 #import "DMSignEngine.h"
