@@ -8,7 +8,6 @@
 
 #import "SSNDBFetchController.h"
 #import "SSNDB.h"
-#import "SSNDBTable.h"
 #import "SSNDBFetch.h"
 #import "SSNCuteSerialQueue.h"
 #import "SSNSafeArray.h"
@@ -37,7 +36,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 
 @interface SSNDBFetchChangesResult : NSObject
 @property (nonatomic,strong) NSMutableArray *results;
-@property (nonatomic) int64_t changedRowid;//触发改变的rowid
+@property (nonatomic,strong) NSArray *changedRowids;//触发改变的rowid
 @end
 
 @implementation SSNDBFetchChangesResult
@@ -58,6 +57,8 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 @property (nonatomic,strong) SSNSafeArray *results;//数据集，已经备份，不做安全考虑
 
 @property (nonatomic) BOOL isPerformed;
+
+@property (nonatomic) BOOL isNoticeDBUpdated;
 
 - (void)dbupdatedNotification:(NSNotification *)notice;
 
@@ -92,18 +93,17 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 
 #pragma mark init
 
-- (instancetype)initWithDB:(SSNDB *)db table:(SSNDBTable *)table fetch:(SSNDBFetch *)fetch {
-    NSAssert(db && table, @"必须传入数据库以及操作的表");
-    NSAssert(table.db == db, @"传入的数据表必须同样是当前数据下面的表");
+- (instancetype)initWithDB:(SSNDB *)db fetch:(id<SSNDBFetchRequest>)fetch {
+    NSAssert(db, @"必须传入数据库");
     self = [super init];
     if (self) {
         _db = db;
-        _table = table;
-        _fetch = [fetch copy];
+        //_table = table;
+        _fetch = [fetch copyWithZone:NULL];
         _metaResults = [[NSMutableArray alloc] init];
         _results = [[SSNSafeArray alloc] init];
         _delegateQueue = dispatch_get_main_queue();
-        _queue = [SSNCuteSerialQueue queueWithName:[NSString stringWithFormat:@"fetch.%@.queue", _table.name] syncPriStrategy:NO];
+        _queue = [SSNCuteSerialQueue queueWithName:[NSString stringWithFormat:@"fetch.%@.queue", [_fetch dbTable]] syncPriStrategy:NO];
     }
     return self;
 }
@@ -112,20 +112,26 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-+ (instancetype)fetchControllerWithDB:(SSNDB *)db table:(SSNDBTable *)table fetch:(SSNDBFetch *)fetch {
-    return [[[self class] alloc] initWithDB:db table:table fetch:fetch];
++ (instancetype)fetchControllerWithDB:(SSNDB *)db fetch:(id<SSNDBFetchRequest>)fetch {
+    return [[[self class] alloc] initWithDB:db fetch:fetch];
 }
 
 #pragma mark status
 - (NSString *)fetchSql {
-    return [NSString stringWithFormat:@"SELECT rowid AS ssn_dbfetch_rowid,* FROM %@ %@", _table.name, [_fetch sqlStatement]];
+    return [_fetch fetchSql];
 }
 
 - (NSString *)fetchForRowidSql {
-    return [NSString stringWithFormat:@"SELECT rowid AS ssn_dbfetch_rowid,* FROM %@ WHERE rowid = ? LIMIT 0,1", _table.name];
+    return [_fetch fetchForRowidSql];
 }
 
 - (void)observerDBYpdatedNotification {
+    
+    if (_isNoticeDBUpdated) {
+        return ;
+    }
+    _isNoticeDBUpdated = YES;
+    
     //监听数据变化
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dbupdatedNotification:) name:SSNDBUpdatedNotification object:_db];
@@ -145,7 +151,8 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
             id<SSNDBFetchObject> old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
             id<SSNDBFetchObject> new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
             
-            if (changesResult.changedRowid == [new_obj ssn_dbfetch_rowid]) {//当前变化的数据正是引发重新perform的数据，则要记录update
+            NSNumber *new_rowid = @([new_obj ssn_dbfetch_rowid]);
+            if ([changesResult.changedRowids containsObject:new_rowid]) {//当前变化的数据正是引发重新perform的数据，则要记录update
                 SSNDBFetchIndexBox *box = [[SSNDBFetchIndexBox alloc] init];
                 box.index = f_idx;
                 box.nIndex = t_idx;
@@ -185,11 +192,11 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
 }
 
 //计算出删除，更新，和插入的数据，并且记录第一次插入数据的index
-- (NSArray *)changesFrom:(NSArray *)from to:(NSArray *)to changedRowid:(int64_t)rowid {
+- (NSArray *)changesFrom:(NSArray *)from to:(NSArray *)to changedRowids:(NSArray *)rowids {
     
     @autoreleasepool {
         SSNDBFetchChangesResult *changesResult = [[SSNDBFetchChangesResult alloc] init];
-        changesResult.changedRowid = rowid;
+        changesResult.changedRowids = rowids;
         
         ssn_diff((__bridge void *)from, (__bridge void *)to, [from count], [to count], db_fetch_elem_equal, db_fetch_chgs_iter, (__bridge void *)changesResult);
         
@@ -198,10 +205,10 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
 }
 
 - (void)resetResults:(NSArray *)objs {
-    [self resetResults:objs changedRowid:0];
+    [self resetResults:objs changedRowids:nil];
 }
 
-- (void)resetResults:(NSArray *)objs changedRowid:(int64_t)rowid {//此函数将来可以优化下，两个结果集比较一下，将需要删除的数据先删除，然后将要插入的数据重新插入
+- (void)resetResults:(NSArray *)objs changedRowids:(NSArray *)rowids {//此函数将来可以优化下，两个结果集比较一下，将需要删除的数据先删除，然后将要插入的数据重新插入
     /*
     if (objs) {
         [_metaResults setArray:objs];//直接替换感觉不是很好，简单粗暴
@@ -242,7 +249,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         }
     }
     
-    NSArray *changes = [self changesFrom:olds to:news changedRowid:rowid];
+    NSArray *changes = [self changesFrom:olds to:news changedRowids:rowids];
 
     //开始第一轮插入所有数据
     [self processResetObjects:news obeyChanges:changes];
@@ -280,7 +287,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     return YES;
 }
 
-- (BOOL)reperformFetchWithChangedRowid:(int64_t)changed_rowid {//重新发起查询
+- (BOOL)reperformFetchWithChangedRowids:(NSArray *)rowids {//重新发起查询
 
     dispatch_block_t block = ^{
 
@@ -295,7 +302,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         NSArray *objs = [_db objects:_fetch.entity sql:sql arguments:nil];
         
         //重置结果集
-        [self resetResults:objs changedRowid:changed_rowid];
+        [self resetResults:objs changedRowids:rowids];
     };
     
     [_queue async:block];
@@ -412,7 +419,15 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     //只关心数据的增删改
     NSDictionary *userInfo = notice.userInfo;
     NSString *tableName = [userInfo objectForKey:SSNDBTableNameUserInfoKey];
-    if (![_table.name isEqualToString:tableName]) {
+    if (![_fetch.dbTable isEqualToString:tableName]) {
+        
+        if ([_fetch respondsToSelector:@selector(cascadedTables)]) {
+            NSSet *tables = [_fetch cascadedTables];
+            if ([tables containsObject:tableName]) {
+                [self cascadedTableChangedNotify:notice];
+            }
+        }
+        
         return ;
     }
     
@@ -429,6 +444,26 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     //可以处理数据了
     [_queue async:^{ [self addOperation:operation rowId:row_id]; }];
     
+}
+
+- (void)cascadedTableChangedNotify:(NSNotification *)notice {
+    NSDictionary *userInfo = notice.userInfo;
+    
+    NSString *tableName = [userInfo objectForKey:SSNDBTableNameUserInfoKey];
+    
+    int operation = [[userInfo objectForKey:SSNDBOperationUserInfoKey] intValue];
+    if (SQLITE_INSERT != operation && SQLITE_UPDATE != operation && SQLITE_DELETE != operation) {
+        return ;
+    }
+    
+    int64_t row_id = [[userInfo objectForKey:SSNDBRowIdUserInfoKey] longLongValue];
+    if (row_id <= 0) {
+        return ;
+    }
+    
+    //可以处理数据了
+    [_queue async:^{ [self addOperation:operation rowId:row_id changeTable:tableName]; }];
+
 }
 
 - (NSComparisonResult)comparisonResultWithSorts:(NSArray *)sorts object:(id<SSNDBFetchObject>)obj otherObject:(id<SSNDBFetchObject>)other {
@@ -620,6 +655,28 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     return box;
 }
 
+- (void)addOperation:(int)operation rowId:(int64_t)rowId changeTable:(NSString *)changeTable
+{
+    if (![_fetch respondsToSelector:@selector(fetchForCascadedTableChangedSql:)]) {
+        ssn_fetch_log("\n 级联表%s发生更改，造成结果集%s数据发生变化，因为没有实现查询语句，忽略！！！\n", [changeTable UTF8String],[[_fetch dbTable] UTF8String]);
+        return ;
+    }
+    
+    NSString *change_sql = [_fetch fetchForCascadedTableChangedSql:changeTable];
+    NSArray *rowids = [_db objects:nil sql:change_sql arguments:@[@(rowId)]];
+    if ([rowids count] == 0) {
+        ssn_fetch_log("\n 级联表%s发生更改，造成结果集%s数据发生变化，没有找到影响变化的行，忽略！！！\n", [changeTable UTF8String],[[_fetch dbTable] UTF8String]);
+        return ;
+    }
+    
+    //得到被影响的rowids，这些数据需要更新
+    rowids = [rowids valueForKey:@"ssn_dbfetch_rowid"];
+    
+    ssn_fetch_log("\n 级联表%s发生更改，造成结果集%s数据发生变化，影响数据rowid in%s，重新fetch！！！\n", [changeTable UTF8String],[[_fetch dbTable] UTF8String],[[[rowids description] stringByReplacingOccurrencesOfString:@"\n" withString:@""] UTF8String]);
+    
+    [self reperformFetchWithChangedRowids:rowids];
+}
+
 - (void)addOperation:(int)operation rowId:(int64_t)rowId {
     //step 1、寻找出需要操作的对象和位置
     SSNDBFetchIndexBox *box = [self findIndexForRowId:rowId operation:operation];
@@ -627,7 +684,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     //先要检查是否需要重新fetch，如果是需要重新fetch的，单的处理比较好
     if (box.refetch) {
         ssn_fetch_log("\n rowid = %lld 使得结果集必须重新fetch！！！\n", rowId);
-        [self reperformFetchWithChangedRowid:rowId];
+        [self reperformFetchWithChangedRowids:@[@(rowId)]];
         return ;
     }
     

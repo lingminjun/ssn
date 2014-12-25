@@ -10,6 +10,7 @@
 
 #import "SSNRouter.h"
 #import "DMPerson.h"
+#import "DMPersonExt.h"
 #import "DMSession.h"
 #import "DMSignEngine.h"
 
@@ -23,6 +24,42 @@
 
 #import "SSNKVOBound.h"
 #import "SSNDBBound.h"
+
+@interface DMPersonVM : NSObject<SSNDBFetchObject>
+@property (nonatomic,copy) NSString *uid;
+@property (nonatomic,copy) NSString *name;
+@property (nonatomic,copy) NSString *avatar;
+@property (nonatomic,copy) NSString *mobile;
+@property (nonatomic,copy) NSString *brief;
+@property (nonatomic,copy) NSString *address;
+@end
+
+@implementation DMPersonVM
+@synthesize ssn_dbfetch_rowid = _ssn_dbfetch_rowid;
+
+- (NSUInteger)hash {
+    return [self.uid hash];
+}
+
+- (BOOL)isEqual:(DMPersonVM *)object {
+    if (![object isKindOfClass:[DMPersonVM class]]) {
+        return NO;
+    }
+    return [self.uid isEqualToString:object.uid];
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    DMPersonVM *copy = [[DMPersonVM alloc] init];
+    copy.ssn_dbfetch_rowid = self.ssn_dbfetch_rowid;
+    copy.uid = self.uid;
+    copy.name = self.name;
+    copy.avatar = self.avatar;
+    copy.mobile = self.mobile;
+    copy.brief = self.brief;
+    copy.address = self.address;
+    return copy;
+}
+@end
 
 @interface DMContactViewController ()<SSNDBFetchControllerDelegate,ABPeoplePickerNavigationControllerDelegate>
 
@@ -39,16 +76,32 @@
     {
         // Custom initialization
         SSNDB *db = [[SSNDBPool shareInstance] dbWithScope:[DMSignEngine sharedInstance].loginId];
-        SSNDBTable *tb = [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPerson class]) templateName:nil];
+        
+        //表生成下
+        [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPerson class]) templateName:nil];
+        [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPersonExt class]) templateName:nil];
         
         NSSortDescriptor *sort1 = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
         NSSortDescriptor *sort2 = [NSSortDescriptor sortDescriptorWithKey:@"mobile" ascending:YES];
         
-        SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMPerson class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:0 limit:0];
+        //非级联测试
+        //SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMPerson class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:1 limit:4 fromTable:NSStringFromClass([DMPerson class])];
         
-        _fetchController = [SSNDBFetchController fetchControllerWithDB:db table:tb fetch:fetch];
+        //级联测试
+        SSNDBCascadeFetch *fetch = [SSNDBCascadeFetch fetchWithEntity:[DMPersonVM class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:1 limit:4 fromTable:NSStringFromClass([DMPerson class])];
         
-        //_fetchController.
+        [fetch setQueryColumnDescriptors:@[
+                                           @"uid",
+                                           @"name",
+                                           @"avatar",
+                                           @"mobile",
+                                           @"DMPersonExt.brief AS brief",
+                                           @"DMPersonExt.address AS address"
+                                           ]];
+        
+        [fetch addCascadedTable:NSStringFromClass([DMPersonExt class]) joinedColumn:@"uid" to:@"uid"];
+        
+        _fetchController = [SSNDBFetchController fetchControllerWithDB:db fetch:fetch];
         
         [_fetchController setDelegate:self];
         
@@ -210,7 +263,8 @@
     
     SSNDB *db = [[SSNDBPool shareInstance] dbWithScope:[DMSignEngine sharedInstance].loginId];
     SSNDBTable *tb = [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPerson class]) templateName:nil];
-    [tb update];
+    
+    SSNDBTable *tbext = [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPersonExt class]) templateName:nil];
     
     NSMutableArray *list = [NSMutableArray array];
     for (NSString *phone in mobiles) {
@@ -218,15 +272,24 @@
         if ([mobile length] == 0) {
             continue ;
         }
-        DMPerson *pn = [[DMPerson alloc] init];
+//        DMPerson *pn = [[DMPerson alloc] init];
+//        pn.uid = mobile;
+//        pn.mobile = mobile;
+//        pn.name = name;
+//        [list addObject:pn];
+        
+        DMPersonVM *pn = [[DMPersonVM alloc] init];
         pn.uid = mobile;
         pn.mobile = mobile;
         pn.name = name;
+        static int i = 0;
+        i++;
+        pn.brief = [NSString stringWithFormat:@"%03i,%@",i,mobile];
         [list addObject:pn];
     }
     
     [tb upinsertObjects:list];
-    //[tb inreplaceObjects:list];
+    [tbext upinsertObjects:list];
 }
 
 
@@ -273,6 +336,12 @@
     cell.detailTextLabel.text = person.mobile;
 }
 
+- (void)configureCellV2:(UITableViewCell *)cell person:(DMPersonVM *)person atIndexPath:(NSIndexPath *)indexPath {
+    
+    cell.textLabel.text = person.name;
+    cell.detailTextLabel.text = person.brief;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellId = @"cell";
@@ -282,7 +351,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellId];
     }
     
-    [self configureCell:cell person:[_fetchController objectAtIndex:indexPath.row] atIndexPath:indexPath];
+    [self configureCellV2:cell person:[_fetchController objectAtIndex:indexPath.row] atIndexPath:indexPath];
 
     return cell;
 }
@@ -312,11 +381,15 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         //[tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        DMPerson *person = [_fetchController objectAtIndex:indexPath.row];
+        DMPersonVM *person = [_fetchController objectAtIndex:indexPath.row];
         
         SSNDB *db = [[SSNDBPool shareInstance] dbWithScope:[DMSignEngine sharedInstance].loginId];
         SSNDBTable *tb = [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPerson class]) templateName:nil];
+        SSNDBTable *tbext = [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPersonExt class]) templateName:nil];
+        
+        [tbext deleteObject:person];
         [tb deleteObject:person];
+        
     }
     
 }

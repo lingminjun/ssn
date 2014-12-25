@@ -18,6 +18,8 @@
 #import "SSNDBBound.h"
 #import "SSNBound.h"
 
+#import "SSNRouter.h"
+
 
 @interface DMSessionViewController ()<SSNDBFetchControllerDelegate>
 
@@ -33,13 +35,14 @@
     if (self)
     {
         SSNDB *db = [[SSNDBPool shareInstance] dbWithScope:[DMSignEngine sharedInstance].loginId];
-        SSNDBTable *tb = [SSNDBTable tableWithDB:db name:NSStringFromClass([DMSession class]) templateName:nil];
+        
+        [SSNDBTable tableWithDB:db name:NSStringFromClass([DMSession class]) templateName:nil];
         
         NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"modifiedAt" ascending:NO];
         
-        SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMSession class] sortDescriptors:@[ sort ] predicate:nil offset:0 limit:0];
+        SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMSession class] sortDescriptors:@[ sort ] predicate:nil offset:0 limit:0 fromTable:NSStringFromClass([DMSession class])];
         
-        _fetchController = [SSNDBFetchController fetchControllerWithDB:db table:tb fetch:fetch];
+        _fetchController = [SSNDBFetchController fetchControllerWithDB:db fetch:fetch];
         [_fetchController setDelegate:self];
     }
     return self;

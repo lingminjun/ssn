@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-@class SSNDB,SSNDBTable,SSNDBFetch;
-@protocol SSNDBFetchControllerDelegate;
+@class SSNDB;
+@protocol SSNDBFetchRequest,SSNDBFetchControllerDelegate;
 
 /**
  *  查询结果集管理器
@@ -18,9 +18,8 @@
 @interface SSNDBFetchController : NSObject
 
 @property (nonatomic, strong, readonly) SSNDB *db;//依赖的数据库
-@property (nonatomic, strong, readonly) SSNDBTable *table;//查询数据表
 
-@property (nonatomic, copy) SSNDBFetch *fetch;//查询描述，重置后将全部清空结果集
+@property (nonatomic, copy) id<SSNDBFetchRequest> fetch;//查询描述，重置后将全部清空结果集
 
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;//委托执行队列，默认为主线程队列
 
@@ -41,8 +40,8 @@
 
 #pragma mark init
 
-- (instancetype)initWithDB:(SSNDB *)db table:(SSNDBTable *)table fetch:(SSNDBFetch *)fetch;
-+ (instancetype)fetchControllerWithDB:(SSNDB *)db table:(SSNDBTable *)table fetch:(SSNDBFetch *)fetch;
+- (instancetype)initWithDB:(SSNDB *)db fetch:(id<SSNDBFetchRequest>)fetch;
++ (instancetype)fetchControllerWithDB:(SSNDB *)db fetch:(id<SSNDBFetchRequest>)fetch;
 
 #pragma mark object manager
 - (NSUInteger)count;//数据集大小
