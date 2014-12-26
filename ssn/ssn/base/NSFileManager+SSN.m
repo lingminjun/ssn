@@ -90,4 +90,31 @@
     return path;
 }
 
+- (NSString *)pathTemporaryDirectoryWithPathComponents:(NSString *)pathComponents {
+    if (!pathComponents)
+    {
+        return nil;
+    }
+    
+    NSString *tmpDir =  NSTemporaryDirectory();
+    NSString *path = [tmpDir stringByAppendingPathComponent:pathComponents];
+    
+    @autoreleasepool
+    {
+        NSError *error = nil;
+        if (![self fileExistsAtPath:path])
+        {
+            [self createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error];
+        }
+        
+        if (error)
+        {
+            ssn_log("create tmp dir %s error:[%s]", [path UTF8String], [[error description] UTF8String]);
+            return nil;
+        }
+    }
+    
+    return path;
+}
+
 @end

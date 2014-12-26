@@ -21,4 +21,10 @@
  */
 + (instancetype)cacheStoreWithScope:(NSString *)scope;
 
+
+/**
+ @brief tmp/ssnstore/[scope]目录下缓存
+ */
++ (instancetype)temporaryStoreWithScope:(NSString *)scope;
+
 @end

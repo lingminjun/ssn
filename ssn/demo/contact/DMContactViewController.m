@@ -88,7 +88,7 @@
         //SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMPerson class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:1 limit:4 fromTable:NSStringFromClass([DMPerson class])];
         
         //级联测试
-        SSNDBCascadeFetch *fetch = [SSNDBCascadeFetch fetchWithEntity:[DMPersonVM class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:1 limit:4 fromTable:NSStringFromClass([DMPerson class])];
+        SSNDBCascadeFetch *fetch = [SSNDBCascadeFetch fetchWithEntity:[DMPersonVM class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:0 limit:0 fromTable:NSStringFromClass([DMPerson class])];
         
         [fetch setQueryColumnDescriptors:@[
                                            @"uid",

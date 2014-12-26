@@ -18,4 +18,7 @@
 //将在Library/Caches中创建对应的目录，多级目录创建，创建失败返回nil
 - (NSString *)pathCachesDirectoryWithPathComponents:(NSString *)pathComponents;
 
+//将在tmp中创建对应的目录，多级目录创建，创建失败返回nil
+- (NSString *)pathTemporaryDirectoryWithPathComponents:(NSString *)pathComponents;
+
 @end
