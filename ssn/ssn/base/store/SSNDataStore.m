@@ -80,50 +80,11 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
  @return 返回找到的数据，可能返回nil
  */
 - (NSData *)dataForKey:(NSString *)key {
-    SSNDataStoreCacheBox *box = [_cache objectForKey:key];
-    
-    if (box && box.expire == 0) {//直接返回，不需要检查
-        return box.data;
-    }
-    
-    int64_t now = [self getNowTime];
-    
-    //有效
-    if (box.expire > 0) {
-        box.visitAt = now;
-        
-        BOOL expired = box.expire + box.visitAt > now;
-        pthread_rwlock_wrlock(&_rwlock);
-        if (expired) {//过期删除
-            [_cache removeObjectForKey:key];
-            [self removeFileForKey:key];
-            box.data = nil;
-        }
-        else {//未过期更新时间
-            NSString *filepath = [self dataPathForKey:key];
-            [self updateTailExpire:box.expire visitAt:now atFilePath:filepath];//传入零删除日志文件
-        }
-        pthread_rwlock_unlock(&_rwlock);
-        
-        return box.data;
-    }
-    
-    uint64_t expire = 0;
     BOOL isExpired = NO;
+    NSData *data = [self innerDataForKey:key isExpired:&isExpired updateVisitAt:YES];
     
-    //需要从文件中获取
-    pthread_rwlock_wrlock(&_rwlock);
-    NSData *data = [self dataFromFileForKey:key expire:&expire saveAt:NULL visitAt:now isExpired:&isExpired readonly:NO];
-    pthread_rwlock_unlock(&_rwlock);
-    
-    if (data && !isExpired) {
-        SSNDataStoreCacheBox *box = [SSNDataStoreCacheBox boxWithData:data];
-        box.expire = expire;
-        box.visitAt = now;
-        [_cache setObject:box forKey:key cost:[data length]];
-    }
-    else {//过期的不返回
-        data = nil;
+    if (isExpired) {
+        return nil;
     }
     
     return data;
@@ -135,47 +96,11 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
  @return 返回找到的数据，可能返回nil
  */
 - (NSData *)accessDataForKey:(NSString *)key {
-    SSNDataStoreCacheBox *box = [_cache objectForKey:key];
-    
-    if (box && box.expire == 0) {//直接返回，不需要检查
-        return box.data;
-    }
-    
-    int64_t now = [self getNowTime];
-    
-    //有效
-    if (box.expire > 0) {
-        box.visitAt = now;
-        
-        BOOL expired = box.expire + box.visitAt > now;
-        pthread_rwlock_wrlock(&_rwlock);
-        if (expired) {//过期删除
-            [_cache removeObjectForKey:key];
-            [self removeFileForKey:key];
-            box.data = nil;
-        }
-        pthread_rwlock_unlock(&_rwlock);
-        
-        return box.data;
-    }
-    
-    uint64_t expire = 0;
-    int64_t saveAt = 0;
     BOOL isExpired = NO;
+    NSData *data = [self innerDataForKey:key isExpired:&isExpired updateVisitAt:NO];
     
-    //需要从文件中获取
-    pthread_rwlock_wrlock(&_rwlock);
-    NSData *data = [self dataFromFileForKey:key expire:&expire saveAt:&saveAt visitAt:now isExpired:&isExpired readonly:YES];
-    pthread_rwlock_unlock(&_rwlock);
-    
-    if (data && !isExpired) {
-        SSNDataStoreCacheBox *box = [SSNDataStoreCacheBox boxWithData:data];
-        box.expire = expire;
-        box.visitAt = saveAt;
-        [_cache setObject:box forKey:key cost:[data length]];
-    }
-    else {
-        data = nil;
+    if (isExpired) {
+        return nil;
     }
     
     return data;
@@ -188,6 +113,20 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
  @return 返回找到的数据，可能返回nil
  */
 - (NSData *)dataForKey:(NSString *)key isExpired:(BOOL *)isExpired {
+    return [self innerDataForKey:key isExpired:isExpired updateVisitAt:YES];
+}
+
+/**
+ @brief key对应的存储的文件内容，数据过期仍然返回，将在isExpired中标识过期，不更新数据访问实效性
+ @param key 需要寻找的key
+ @param isExpired 数据是否过期
+ @return 返回找到的数据，可能返回nil，找到过期仍然返回
+ */
+- (NSData *)accessDataForKey:(NSString *)key isExpired:(BOOL *)isExpired {
+    return [self innerDataForKey:key isExpired:isExpired updateVisitAt:NO];
+}
+
+- (NSData *)innerDataForKey:(NSString *)key isExpired:(BOOL *)isExpired updateVisitAt:(BOOL)update {
     SSNDataStoreCacheBox *box = [_cache objectForKey:key];
     
     if (box && box.expire == 0) {//直接返回，不需要检查
@@ -201,9 +140,11 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
     
     //有效
     if (box.expire > 0) {
-        box.visitAt = now;
-        
         BOOL expired = box.expire + box.visitAt > now;
+        
+        if (update) {
+            box.visitAt = now;
+        }
         
         if (isExpired) {
             *isExpired = expired;
@@ -215,68 +156,10 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
             [self removeFileForKey:key];
         }
         else {//未过期更新时间
-            NSString *filepath = [self dataPathForKey:key];
-            [self updateTailExpire:box.expire visitAt:now atFilePath:filepath];//传入零删除日志文件
-        }
-        pthread_rwlock_unlock(&_rwlock);
-        
-        return box.data;
-    }
-    
-    uint64_t expire = 0;
-    BOOL tmpIsExpired = NO;
-    
-    //需要从文件中获取
-    pthread_rwlock_wrlock(&_rwlock);
-    NSData *data = [self dataFromFileForKey:key expire:&expire saveAt:NULL visitAt:now isExpired:&tmpIsExpired readonly:NO];
-    pthread_rwlock_unlock(&_rwlock);
-    
-    if (isExpired) {//标记已经过期
-        *isExpired = tmpIsExpired;
-    }
-    
-    if (data && !isExpired) {
-        SSNDataStoreCacheBox *box = [SSNDataStoreCacheBox boxWithData:data];
-        box.expire = expire;
-        box.visitAt = now;
-        [_cache setObject:box forKey:key cost:[data length]];
-    }
-    
-    return data;
-}
-
-/**
- @brief key对应的存储的文件内容，文件过期仍然返回，将在isExpired中标识，更新文件访问实效性
- @param key 需要寻找的key
- @param isExpired 数据是否过期
- @return 返回找到的数据，可能返回nil
- */
-- (NSData *)accessDataForKey:(NSString *)key isExpired:(BOOL *)isExpired {
-    SSNDataStoreCacheBox *box = [_cache objectForKey:key];
-    
-    if (box && box.expire == 0) {//直接返回，不需要检查
-        if (isExpired) {
-            *isExpired = NO;
-        }
-        return box.data;
-    }
-    
-    int64_t now = [self getNowTime];
-    
-    //有效
-    if (box.expire > 0) {
-        box.visitAt = now;
-        
-        BOOL expired = box.expire + box.visitAt > now;
-        
-        if (isExpired) {
-            *isExpired = expired;
-        }
-        
-        pthread_rwlock_wrlock(&_rwlock);
-        if (expired) {//过期删除
-            [_cache removeObjectForKey:key];
-            [self removeFileForKey:key];
+            if (update) {
+                NSString *filepath = [self dataPathForKey:key];
+                [self updateTailExpire:box.expire visitAt:now atFilePath:filepath];//传入零删除日志文件
+            }
         }
         pthread_rwlock_unlock(&_rwlock);
         
@@ -289,17 +172,22 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
     
     //需要从文件中获取
     pthread_rwlock_wrlock(&_rwlock);
-    NSData *data = [self dataFromFileForKey:key expire:&expire saveAt:&saveAt visitAt:now isExpired:&tmpIsExpired readonly:YES];
+    NSData *data = [self dataFromFileForKey:key expire:&expire saveAt:&saveAt visitAt:now isExpired:&tmpIsExpired readonly:!update];
     pthread_rwlock_unlock(&_rwlock);
     
-    if (isExpired) {
+    if (isExpired) {//标记已经过期
         *isExpired = tmpIsExpired;
     }
     
     if (data && !isExpired) {
         SSNDataStoreCacheBox *box = [SSNDataStoreCacheBox boxWithData:data];
         box.expire = expire;
-        box.visitAt = saveAt;
+        if (update) {
+            box.visitAt = now;
+        }
+        else {
+            box.visitAt = saveAt;
+        }
         [_cache setObject:box forKey:key cost:[data length]];
     }
     
@@ -389,7 +277,7 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
             pthread_rwlock_wrlock(&_rwlock);
             
             NSString *tailpath = [_path stringByAppendingPathComponent:subPath];
-            BOOL isExpired = [self checkExpired:NULL saveAt:NULL visitAt:now atTailPath:tailpath];
+            BOOL isExpired = [self checkExpired:NULL saveAt:NULL visitAt:now atTailPath:tailpath updateVisitAt:NO];
             if (isExpired) {
                 NSUInteger index = [tailpath length] - [@".tail" length];
                 NSString *filepath = [tailpath substringToIndex:index];
@@ -440,9 +328,16 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
     }
 }
 
-- (BOOL)updateCheckExpired:(uint64_t *)expire saveAt:(int64_t *)saveAt visitAt:(int64_t)visitAt atTailPath:(NSString *)tailpath {
+- (BOOL)checkExpired:(uint64_t *)expire saveAt:(int64_t *)saveAt visitAt:(int64_t)visitAt atTailPath:(NSString *)tailpath updateVisitAt:(BOOL)updateVisitAt {
     
-    FILE *fp = fopen([tailpath UTF8String], "rt+");//读写不创建
+    FILE *fp = NULL;
+    if (updateVisitAt) {
+        fp = fopen([tailpath UTF8String], "rt+");//读写不创建
+    }
+    else {
+        fp = fopen([tailpath UTF8String], "rt");//只读
+    }
+    
     if (fp == NULL ) {//文件不存在，永不过期
         if (expire) {
             *expire = 0;
@@ -473,53 +368,15 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
     BOOL isExpired = (o_expire + o_visitAt <= visitAt);
     
     if (isExpired) {//过期删除
-        fclose(fp);
+        fclose(fp);//先关闭再移除
         unlink([tailpath UTF8String]);
     }
     else {
-        fprintf(fp, "%lld,%llu",visitAt, o_expire);
-        fflush(fp);//效率稍微稍微收到影响
-        fclose(fp);
-    }
-    
-    return isExpired;
-}
-
-- (BOOL)checkExpired:(uint64_t *)expire saveAt:(int64_t *)saveAt visitAt:(int64_t)visitAt atTailPath:(NSString *)tailpath {
-    FILE *fp = fopen([tailpath UTF8String], "rt");//只读
-    if (fp == NULL ) {//文件不存在，永不过期
-        if (expire) {
-            *expire = 0;
+        if (updateVisitAt) {//需要更新时效
+            fprintf(fp, "%lld,%llu",visitAt, o_expire);
+            fflush(fp);//效率稍微稍微收到影响
         }
-        return NO;
-    }
-    
-    char tailInfo[32] = {'\0'};
-    fgets(tailInfo, 32, fp);
-    
-    char *p = strchr(tailInfo, ',');
-    if (p) {
-        *p = '\0';
-        p++;
-    }
-    
-    int64_t o_visitAt = atoll(tailInfo);
-    uint64_t o_expire = atoll(p);
-    
-    if (saveAt) {
-        *saveAt = o_visitAt;
-    }
-    
-    if (expire) {
-        *expire = o_expire;
-    }
-    
-    fclose(fp);
-    
-    BOOL isExpired = (o_expire + o_visitAt <= visitAt);
-    
-    if (isExpired) {//过期删除
-        unlink([tailpath UTF8String]);
+        fclose(fp);
     }
     
     return isExpired;
@@ -547,12 +404,8 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
     
     BOOL expired = NO;
     NSString *tailpath = [self dataTailForDataPath:filepath];
-    if (readonly) {
-        expired = [self checkExpired:expire saveAt:saveAt visitAt:visitAt atTailPath:tailpath];
-    }
-    else {
-        expired = [self updateCheckExpired:expire saveAt:saveAt visitAt:visitAt atTailPath:tailpath];
-    }
+    
+    expired = [self checkExpired:expire saveAt:saveAt visitAt:visitAt atTailPath:tailpath updateVisitAt:!readonly];
     
     NSError *error = nil;
     if (isExpired) {//过期删除文件
