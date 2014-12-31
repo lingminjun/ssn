@@ -22,7 +22,6 @@
 #import "DMChatViewController.h"
 #import "DMProfileViewController.h"
 
-
 #import "NSObject+SSNTracking.h"
 
 #import "SSNDataStore+Factory.h"

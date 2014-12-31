@@ -50,6 +50,18 @@
 		538E384719986A3B0061692E /* DMContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384619986A3B0061692E /* DMContactViewController.m */; };
 		538E384A19986A560061692E /* DMSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384919986A560061692E /* DMSessionViewController.m */; };
 		538E384D19986A700061692E /* DMSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384C19986A700061692E /* DMSettingViewController.m */; };
+		53A1BA161A52A14C00C76844 /* SSNPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA151A52A14C00C76844 /* SSNPanel.m */; };
+		53A1BA171A52A14C00C76844 /* SSNPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA151A52A14C00C76844 /* SSNPanel.m */; };
+		53A1BA1A1A52A1D000C76844 /* SSNUILayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA191A52A1D000C76844 /* SSNUILayout.m */; };
+		53A1BA1B1A52A1D000C76844 /* SSNUILayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA191A52A1D000C76844 /* SSNUILayout.m */; };
+		53A1BA1E1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA1D1A52B6F700C76844 /* UIView+SSNUIFrame.m */; };
+		53A1BA1F1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA1D1A52B6F700C76844 /* UIView+SSNUIFrame.m */; };
+		53A1BA231A52F85100C76844 /* unicode_to_pinyin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53A1BA211A52F85100C76844 /* unicode_to_pinyin.txt */; };
+		53A1BA241A52F85100C76844 /* unicode_to_pinyin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53A1BA211A52F85100C76844 /* unicode_to_pinyin.txt */; };
+		53A1BA251A52F85100C76844 /* unicode_to_pinyin_tone.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */; };
+		53A1BA261A52F85100C76844 /* unicode_to_pinyin_tone.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */; };
+		53A1BA2D1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */; };
+		53A1BA2E1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */; };
 		53BB50C01A1441F50070B67D /* ssn_json_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BB50BF1A1441F50070B67D /* ssn_json_test.m */; };
 		53BC52FA1A485E6E0044C238 /* ssndiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52871A485E6E0044C238 /* ssndiff.c */; };
 		53BC52FB1A485E6E0044C238 /* ssndiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52871A485E6E0044C238 /* ssndiff.c */; };
@@ -240,6 +252,16 @@
 		538E384919986A560061692E /* DMSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSessionViewController.m; sourceTree = "<group>"; };
 		538E384B19986A700061692E /* DMSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSettingViewController.h; sourceTree = "<group>"; };
 		538E384C19986A700061692E /* DMSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DMSettingViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		53A1BA141A52A14C00C76844 /* SSNPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNPanel.h; sourceTree = "<group>"; };
+		53A1BA151A52A14C00C76844 /* SSNPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNPanel.m; sourceTree = "<group>"; };
+		53A1BA181A52A1D000C76844 /* SSNUILayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUILayout.h; sourceTree = "<group>"; };
+		53A1BA191A52A1D000C76844 /* SSNUILayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNUILayout.m; sourceTree = "<group>"; };
+		53A1BA1C1A52B6F700C76844 /* UIView+SSNUIFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SSNUIFrame.h"; sourceTree = "<group>"; };
+		53A1BA1D1A52B6F700C76844 /* UIView+SSNUIFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SSNUIFrame.m"; sourceTree = "<group>"; };
+		53A1BA211A52F85100C76844 /* unicode_to_pinyin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unicode_to_pinyin.txt; sourceTree = "<group>"; };
+		53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unicode_to_pinyin_tone.txt; sourceTree = "<group>"; };
+		53A1BA2B1A52F8B100C76844 /* NSString+SSNPinyin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSNPinyin.h"; sourceTree = "<group>"; };
+		53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSNPinyin.m"; sourceTree = "<group>"; };
 		53BB50BF1A1441F50070B67D /* ssn_json_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_json_test.m; sourceTree = "<group>"; };
 		53BC52871A485E6E0044C238 /* ssndiff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssndiff.c; sourceTree = "<group>"; };
 		53BC52881A485E6E0044C238 /* ssndiff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssndiff.h; sourceTree = "<group>"; };
@@ -496,6 +518,30 @@
 			path = tab;
 			sourceTree = "<group>";
 		};
+		53A1BA131A52A12A00C76844 /* kit */ = {
+			isa = PBXGroup;
+			children = (
+				53A1BA141A52A14C00C76844 /* SSNPanel.h */,
+				53A1BA151A52A14C00C76844 /* SSNPanel.m */,
+				53A1BA181A52A1D000C76844 /* SSNUILayout.h */,
+				53A1BA191A52A1D000C76844 /* SSNUILayout.m */,
+				53A1BA1C1A52B6F700C76844 /* UIView+SSNUIFrame.h */,
+				53A1BA1D1A52B6F700C76844 /* UIView+SSNUIFrame.m */,
+			);
+			path = kit;
+			sourceTree = "<group>";
+		};
+		53A1BA201A52F85100C76844 /* pinyin */ = {
+			isa = PBXGroup;
+			children = (
+				53A1BA211A52F85100C76844 /* unicode_to_pinyin.txt */,
+				53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */,
+				53A1BA2B1A52F8B100C76844 /* NSString+SSNPinyin.h */,
+				53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */,
+			);
+			path = pinyin;
+			sourceTree = "<group>";
+		};
 		53BC527C1A485E6E0044C238 /* base */ = {
 			isa = PBXGroup;
 			children = (
@@ -692,6 +738,7 @@
 		53BC52E41A485E6E0044C238 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				53A1BA131A52A12A00C76844 /* kit */,
 				53BC52E51A485E6E0044C238 /* Navigator介绍.txt */,
 				53BC52E61A485E6E0044C238 /* NiceQueue.h */,
 				53BC52E71A485E6E0044C238 /* NiceQueue.m */,
@@ -826,6 +873,7 @@
 		53D1641B191A66B500AD4C81 /* ssn */ = {
 			isa = PBXGroup;
 			children = (
+				53A1BA201A52F85100C76844 /* pinyin */,
 				53BC527C1A485E6E0044C238 /* base */,
 				53BC52AA1A485E6E0044C238 /* bound */,
 				53BC52AF1A485E6E0044C238 /* db */,
@@ -909,6 +957,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53A1BA251A52F85100C76844 /* unicode_to_pinyin_tone.txt in Resources */,
 				533121851A4BE87D000F456E /* DMPersonExt.json in Resources */,
 				53BC53421A485E6E0044C238 /* Navigator介绍.txt in Resources */,
 				533BE3A81A2B070800E07FF0 /* dm_default_avatar@2x.png in Resources */,
@@ -917,6 +966,7 @@
 				533BE3B21A2B0C0D00E07FF0 /* Default-568h@2x.png in Resources */,
 				533BE3B91A2B0DC900E07FF0 /* DMPerson.json in Resources */,
 				533BE3B61A2B0C0D00E07FF0 /* Default@2x.png in Resources */,
+				53A1BA231A52F85100C76844 /* unicode_to_pinyin.txt in Resources */,
 				53D163EE191A629C00AD4C81 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -929,7 +979,9 @@
 				53D78574199F1564004D9D62 /* TestUser.json in Resources */,
 				53D78576199F15A9004D9D62 /* TestUser2.json in Resources */,
 				53BC53431A485E6E0044C238 /* Navigator介绍.txt in Resources */,
+				53A1BA241A52F85100C76844 /* unicode_to_pinyin.txt in Resources */,
 				533BE3B71A2B0C0D00E07FF0 /* Default@2x.png in Resources */,
+				53A1BA261A52F85100C76844 /* unicode_to_pinyin_tone.txt in Resources */,
 				533BE3B51A2B0C0D00E07FF0 /* Default.png in Resources */,
 				533BE3BA1A2B0DC900E07FF0 /* DMPerson.json in Resources */,
 				533BE3961A2AC43800E07FF0 /* TestPerson.json in Resources */,
@@ -960,6 +1012,7 @@
 				53BC53261A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
 				5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */,
 				53BC530E1A485E6E0044C238 /* SSNRigidCache.m in Sources */,
+				53A1BA1E1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */,
 				53BC53141A485E6E0044C238 /* SSNSafeSet.m in Sources */,
 				53BC53341A485E6E0044C238 /* SSNHostingTaskTail.m in Sources */,
 				53BC530A1A485E6E0044C238 /* ssnbase.m in Sources */,
@@ -976,6 +1029,7 @@
 				53BC53001A485E6E0044C238 /* ssnlog.c in Sources */,
 				533BE3A41A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
 				538E3844199869F90061692E /* DMSignViewController.m in Sources */,
+				53A1BA161A52A14C00C76844 /* SSNPanel.m in Sources */,
 				53BC534C1A485E6E0044C238 /* SSNNavigationController.m in Sources */,
 				53BC530C1A485E6E0044C238 /* SSNCuteSerialQueue.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
@@ -997,12 +1051,14 @@
 				538E3841199869E00061692E /* DMSignNavController.m in Sources */,
 				538E3838199869880061692E /* DMContactNavController.m in Sources */,
 				53BC53361A485E6E0044C238 /* SSNJson.m in Sources */,
+				53A1BA1A1A52A1D000C76844 /* SSNUILayout.m in Sources */,
 				53BC52FA1A485E6E0044C238 /* ssndiff.c in Sources */,
 				53BC533A1A485E6E0044C238 /* inet.cpp in Sources */,
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
 				53BC53101A485E6E0044C238 /* SSNSafeArray.m in Sources */,
 				53BC53461A485E6E0044C238 /* NSURL+Router.m in Sources */,
 				53BC52FE1A485E6E0044C238 /* ssncop.c in Sources */,
+				53A1BA2D1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */,
 				53BC53061A485E6E0044C238 /* NSFileManager+SSN.m in Sources */,
 				538E3835199869430061692E /* DMTabViewController.m in Sources */,
 				53BC53481A485E6E0044C238 /* SSNRouter.m in Sources */,
@@ -1022,6 +1078,7 @@
 				53BC53111A485E6E0044C238 /* SSNSafeArray.m in Sources */,
 				53BC533B1A485E6E0044C238 /* inet.cpp in Sources */,
 				53BC531B1A485E6E0044C238 /* SSNBound.m in Sources */,
+				53A1BA171A52A14C00C76844 /* SSNPanel.m in Sources */,
 				533F4FD51A35997F009D29C6 /* ssn_datastore_test.m in Sources */,
 				53BC52FD1A485E6E0044C238 /* NSObject+SSNTracking.m in Sources */,
 				53BC53291A485E6E0044C238 /* SSNDBTable.m in Sources */,
@@ -1073,6 +1130,7 @@
 				53D24645199C83B400EFDF29 /* DMSignViewController.h in Sources */,
 				530187981A3FFF0700E2CB5D /* ssn_lcs_test.m in Sources */,
 				53BC53091A485E6E0044C238 /* NSString+SSN.m in Sources */,
+				53A1BA1F1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */,
 				53BC533D1A485E6E0044C238 /* lock.cpp in Sources */,
 				53BC53371A485E6E0044C238 /* SSNJson.m in Sources */,
 				53D24646199C83B400EFDF29 /* DMSignViewController.m in Sources */,
@@ -1084,6 +1142,7 @@
 				53D6626B1A0BC50D008D2296 /* ssnDictionaryTest.m in Sources */,
 				533BE39E1A2AFF7800E07FF0 /* DMSession.m in Sources */,
 				53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */,
+				53A1BA1B1A52A1D000C76844 /* SSNUILayout.m in Sources */,
 				53BC531D1A485E6E0044C238 /* SSNKVOBound.m in Sources */,
 				53BC53331A485E6E0044C238 /* SSNHostingTask.m in Sources */,
 				533BE3941A2AC30500E07FF0 /* ssn_fetch_test.m in Sources */,
@@ -1091,6 +1150,7 @@
 				53D9A1971A2CC66F009F777D /* ssn_log_test.m in Sources */,
 				53BC533F1A485E6E0044C238 /* stt.cpp in Sources */,
 				53D16412191A629C00AD4C81 /* ssnTests.mm in Sources */,
+				53A1BA2E1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
