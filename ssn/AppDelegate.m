@@ -73,18 +73,8 @@
         [self.ssn_router openURL:[NSURL URLWithString:@"app://login"]]; //转到重定向中加载ui
     }
     
-    UIView *view1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 100)];
-    [self.window addSubview:view1];
-    
-    UIView *view2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-    [view1 addSubview:view2];
 
     [self.window makeKeyAndVisible];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.window addSubview:view2];
-    });
-    
     return YES;
 }
 
