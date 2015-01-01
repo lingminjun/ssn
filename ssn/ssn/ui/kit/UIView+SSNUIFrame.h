@@ -75,5 +75,23 @@
  */
 @property (nonatomic) CGFloat ssn_center_y;
 
+/**
+ *  view的左上角
+ */
+@property (nonatomic) CGPoint ssn_top_left_corner;
 
+/**
+ *  view的右上角
+ */
+@property (nonatomic) CGPoint ssn_top_right_corner;
+
+/**
+ *  view的右下角
+ */
+@property (nonatomic) CGPoint ssn_bottom_right_corner;
+
+/**
+ *  view的左下角
+ */
+@property (nonatomic) CGPoint ssn_bottom_left_corner;
 @end

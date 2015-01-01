@@ -22,12 +22,12 @@
 
 static char *ssn_dbfetch_rowid_key = NULL;
 - (int64_t)ssn_dbfetch_rowid {
-    NSNumber *v = objc_getAssociatedObject(self, ssn_dbfetch_rowid_key);
+    NSNumber *v = objc_getAssociatedObject(self, &ssn_dbfetch_rowid_key);
     return [v longLongValue];
 }
 
 - (void)setSsn_dbfetch_rowid:(int64_t)ssn_dbfetch_rowid {
-    objc_setAssociatedObject(self, ssn_dbfetch_rowid_key, @(ssn_dbfetch_rowid), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &ssn_dbfetch_rowid_key, @(ssn_dbfetch_rowid), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

@@ -125,4 +125,50 @@
     self.center = center;
 }
 
+- (CGPoint)ssn_top_left_corner {
+    return self.frame.origin;
+}
+- (void)setSsn_top_left_corner:(CGPoint)ssn_top_left_corner {
+    CGRect frame = self.frame;
+    frame.origin = ssn_top_left_corner;
+    self.frame = frame;
+}
+
+- (CGPoint)ssn_top_right_corner {
+    CGRect frame = self.frame;
+    frame.origin.x += frame.size.width;
+    return frame.origin;
+}
+- (void)setSsn_top_right_corner:(CGPoint)ssn_top_right_corner {
+    CGRect frame = self.frame;
+    frame.origin.x = ssn_top_right_corner.x - frame.size.width;
+    frame.origin.y = ssn_top_right_corner.y;
+    self.frame = frame;
+}
+
+- (CGPoint)ssn_bottom_right_corner {
+    CGRect frame = self.frame;
+    frame.origin.x += frame.size.width;
+    frame.origin.y += frame.size.height;
+    return frame.origin;
+}
+- (void)setSsn_bottom_right_corner:(CGPoint)ssn_bottom_right_corner {
+    CGRect frame = self.frame;
+    frame.origin.x = ssn_bottom_right_corner.x - frame.size.width;
+    frame.origin.y = ssn_bottom_right_corner.y - frame.size.height;
+    self.frame = frame;
+}
+
+- (CGPoint)ssn_bottom_left_corner {
+    CGRect frame = self.frame;
+    frame.origin.y += frame.size.height;
+    return frame.origin;
+}
+- (void)setSsn_bottom_left_corner:(CGPoint)ssn_bottom_left_corner {
+    CGRect frame = self.frame;
+    frame.origin.x = ssn_bottom_left_corner.x;
+    frame.origin.y = ssn_bottom_left_corner.y - frame.size.height;
+    self.frame = frame;
+}
+
 @end

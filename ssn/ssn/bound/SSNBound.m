@@ -23,7 +23,7 @@
 static char *ssn_bound_dictionary_key = NULL;
 - (SSNSafeDictionary *)ssn_bound_dictionary {
     
-    SSNSafeDictionary *dic = objc_getAssociatedObject(self, ssn_bound_dictionary_key);
+    SSNSafeDictionary *dic = objc_getAssociatedObject(self, &ssn_bound_dictionary_key);
     if (dic) {
         return dic;
     }
@@ -31,7 +31,7 @@ static char *ssn_bound_dictionary_key = NULL;
     @synchronized(self) {
         if (!dic) {
             dic = [[SSNSafeDictionary alloc] initWithCapacity:1];
-            objc_setAssociatedObject(self, ssn_bound_dictionary_key, dic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(self, &ssn_bound_dictionary_key, dic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         }
     }
     
@@ -44,7 +44,7 @@ static char *ssn_bound_dictionary_key = NULL;
 static char *ssn_bound_dictionary_tail_key = NULL;
 - (SSNSafeDictionary *)ssn_bound_dictionary_tail {
     
-    SSNSafeDictionary *dic = objc_getAssociatedObject(self, ssn_bound_dictionary_tail_key);
+    SSNSafeDictionary *dic = objc_getAssociatedObject(self, &ssn_bound_dictionary_tail_key);
     if (dic) {
         return dic;
     }
@@ -52,7 +52,7 @@ static char *ssn_bound_dictionary_tail_key = NULL;
     @synchronized(self) {
         if (!dic) {
             dic = [[SSNSafeDictionary alloc] initWithCapacity:1];
-            objc_setAssociatedObject(self, ssn_bound_dictionary_tail_key, dic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(self, &ssn_bound_dictionary_tail_key, dic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         }
     }
     
