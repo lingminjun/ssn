@@ -171,4 +171,153 @@
     self.frame = frame;
 }
 
+- (CGPoint)ssn_top_center {
+    CGRect frame = self.frame;
+    frame.origin.x += (frame.size.width)/2;
+    return frame.origin;
+}
+- (void)setSsn_top_center:(CGPoint)ssn_top_center {
+    CGRect frame = self.frame;
+    frame.origin.x = ssn_top_center.x - (frame.size.width)/2;
+    frame.origin.y = ssn_top_center.y;
+    self.frame = frame;
+}
+
+- (CGPoint)ssn_right_center {
+    CGRect frame = self.frame;
+    frame.origin.x += frame.size.width;
+    frame.origin.y += (frame.size.height)/2;
+    return frame.origin;
+}
+- (void)setSsn_right_center:(CGPoint)ssn_right_center {
+    CGRect frame = self.frame;
+    frame.origin.x = ssn_right_center.x - frame.size.width;
+    frame.origin.y = ssn_right_center.y - (frame.size.height)/2;
+    self.frame = frame;
+}
+
+- (CGPoint)ssn_bottom_center {
+    CGRect frame = self.frame;
+    frame.origin.x += (frame.size.width)/2;
+    frame.origin.y += frame.size.height;
+    return frame.origin;
+}
+- (void)setSsn_bottom_center:(CGPoint)ssn_bottom_center {
+    CGRect frame = self.frame;
+    frame.origin.x = ssn_bottom_center.x - (frame.size.width)/2;
+    frame.origin.y = ssn_bottom_center.y - frame.size.height;
+    self.frame = frame;
+}
+
+- (CGPoint)ssn_left_center {
+    CGRect frame = self.frame;
+    frame.origin.y += (frame.size.height)/2;
+    return frame.origin;
+}
+- (void)setSsn_left_center:(CGPoint)ssn_left_center {
+    CGRect frame = self.frame;
+    frame.origin.x = ssn_left_center.x;
+    frame.origin.y = ssn_left_center.y - (frame.size.height)/2;
+    self.frame = frame;
+}
+
 @end
+
+/**
+ *  左上角
+ *
+ *  @param rect 矩形区域
+ *
+ *  @return 左上角坐标
+ */
+CGPoint ssn_top_left_corner(CGRect rect) {
+    return rect.origin;
+}
+
+/**
+ *  右上角
+ *
+ *  @param rect 矩形区域
+ *
+ *  @return 右上角坐标
+ */
+CGPoint ssn_top_right_corner(CGRect rect) {
+    return CGPointMake(rect.origin.x + rect.size.width, rect.origin.y);
+}
+
+/**
+ *  右下角
+ *
+ *  @param rect 矩形区域
+ *
+ *  @return 右下角坐标
+ */
+CGPoint ssn_bottom_right_corner(CGRect rect) {
+    return CGPointMake(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
+}
+
+/**
+ *  左下角
+ *
+ *  @param rect 矩形区域
+ *
+ *  @return 左下角坐标
+ */
+CGPoint ssn_bottom_left_corner(CGRect rect) {
+    return CGPointMake(rect.origin.x, rect.origin.y + rect.size.height);
+}
+
+/**
+ *  中心点
+ *
+ *  @param rect 矩形区域
+ *
+ *  @return 中心点坐标
+ */
+CGPoint ssn_center(CGRect rect) {
+    return CGPointMake(rect.origin.x + (rect.size.width)/2, rect.origin.y + (rect.size.height)/2);
+}
+
+/**
+ *  上边线中心点
+ *
+ *  @param CGRect 矩形区域
+ *
+ *  @return 上边线中心点坐标
+ */
+CGPoint ssn_top_center(CGRect rect) {
+    return CGPointMake(rect.origin.x + (rect.size.width)/2, rect.origin.y);
+}
+
+/**
+ *  右边线中心点
+ *
+ *  @param rect 矩形区域
+ *
+ *  @return 右边线中心点坐标
+ */
+CGPoint ssn_right_center(CGRect rect) {
+    return CGPointMake(rect.origin.x + rect.size.width, rect.origin.y + (rect.size.height)/2);
+}
+
+/**
+ *  底边线中心点
+ *
+ *  @param rect 矩形区域
+ *
+ *  @return 底边线中心点坐标
+ */
+CGPoint ssn_bottom_center(CGRect rect) {
+    return CGPointMake(rect.origin.x + (rect.size.width)/2, rect.origin.y + rect.size.height);
+}
+
+/**
+ *  左边线中心点
+ *
+ *  @param rect 矩形区域
+ *
+ *  @return 左边线中心点坐标
+ */
+CGPoint ssn_left_center(CGRect rect) {
+    return CGPointMake(rect.origin.x, rect.origin.y + (rect.size.height)/2);
+}

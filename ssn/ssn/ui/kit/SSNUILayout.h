@@ -153,7 +153,7 @@ typedef NS_ENUM(NSInteger, SSNUILayoutOrientation){
 - (void)moveOutSubviewForKey:(NSString *)key;
 
 /**
- *  画布边界预留值，根据不同布局模型发生起作用，默认值UIEdgeInsetsZero.
+ *  画布边界预留值，根据不同布局模型发生起作用，默认值UIEdgeInsetsZero. 所有值需大于等于零
  */
 @property (nonatomic) UIEdgeInsets contentInset;
 
@@ -165,7 +165,7 @@ typedef NS_ENUM(NSInteger, SSNUILayoutOrientation){
 /**
  *  布局"x"轴逆向执行
  */
-@property (nonatomic) BOOL isReverse;
+@property (nonatomic) BOOL isXReverse;
 
 /**
  *  布局所有子view

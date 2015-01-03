@@ -118,7 +118,12 @@ static char *ssn_layouts_dictionary_key = NULL;
  */
 - (void)ssn_insertSubview:(UIView *)view atIndex:(NSInteger)index forKey:(NSString *)key {
     NSMutableDictionary *dic = [self ssn_subviews_dictionary];
-    [self insertSubview:view atIndex:index];
+    if (index > [[self subviews] count]) {
+        [self addSubview:view];
+    }
+    else {
+        [self insertSubview:view atIndex:index];
+    }
     [dic setObject:view forKey:key];
 }
 

@@ -14,6 +14,9 @@ FOUNDATION_EXTERN NSString *const SSNQuantumObjectsKey;
 
 @protocol SSNQuantumDelegate;
 
+/**
+ *  量子播发器
+ */
 @interface SSNQuantum : NSObject
 
 @property (nonatomic, readonly) NSTimeInterval interval;//间隔时间

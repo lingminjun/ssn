@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		530187981A3FFF0700E2CB5D /* ssn_lcs_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */; };
+		5312CAC21A57E983009C32B1 /* DMLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */; };
+		5312CAC31A57E983009C32B1 /* DMLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */; };
 		533121821A4BE85E000F456E /* DMPersonExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 533121811A4BE85E000F456E /* DMPersonExt.m */; };
 		533121831A4BE85E000F456E /* DMPersonExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 533121811A4BE85E000F456E /* DMPersonExt.m */; };
 		533121851A4BE87D000F456E /* DMPersonExt.json in Resources */ = {isa = PBXBuildFile; fileRef = 533121841A4BE87D000F456E /* DMPersonExt.json */; };
@@ -203,6 +205,8 @@
 
 /* Begin PBXFileReference section */
 		530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_lcs_test.m; sourceTree = "<group>"; };
+		5312CAC01A57E983009C32B1 /* DMLayoutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLayoutViewController.h; sourceTree = "<group>"; };
+		5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLayoutViewController.m; sourceTree = "<group>"; };
 		533121801A4BE85E000F456E /* DMPersonExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPersonExt.h; sourceTree = "<group>"; };
 		533121811A4BE85E000F456E /* DMPersonExt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPersonExt.m; sourceTree = "<group>"; };
 		533121841A4BE87D000F456E /* DMPersonExt.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DMPersonExt.json; sourceTree = "<group>"; };
@@ -492,6 +496,8 @@
 				538E383D199869BF0061692E /* DMSettingNavController.m */,
 				538E384B19986A700061692E /* DMSettingViewController.h */,
 				538E384C19986A700061692E /* DMSettingViewController.m */,
+				5312CAC01A57E983009C32B1 /* DMLayoutViewController.h */,
+				5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */,
 			);
 			path = setting;
 			sourceTree = "<group>";
@@ -1000,6 +1006,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
+				5312CAC21A57E983009C32B1 /* DMLayoutViewController.m in Sources */,
 				53BC53221A485E6E0044C238 /* SSNDBColumn.m in Sources */,
 				53BC533C1A485E6E0044C238 /* lock.cpp in Sources */,
 				53BC53241A485E6E0044C238 /* SSNDBPool.m in Sources */,
@@ -1095,6 +1102,7 @@
 				53D24636199C83B400EFDF29 /* DMTabViewController.m in Sources */,
 				53BC52FB1A485E6E0044C238 /* ssndiff.c in Sources */,
 				53BC530F1A485E6E0044C238 /* SSNRigidCache.m in Sources */,
+				5312CAC31A57E983009C32B1 /* DMLayoutViewController.m in Sources */,
 				53D24637199C83B400EFDF29 /* DMContactNavController.h in Sources */,
 				53BC53151A485E6E0044C238 /* SSNSafeSet.m in Sources */,
 				53BC530D1A485E6E0044C238 /* SSNCuteSerialQueue.m in Sources */,

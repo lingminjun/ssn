@@ -69,6 +69,15 @@ void ssn_diff_results_iterator_fun(void *from, void *to, const size_t f_idx, con
     ssn_diff(s1, s2, strlen(s1), strlen(s2), ssn_diff_element_is_equal_fun, ssn_diff_results_iterator_fun, NULL);
 }
 
+- (void)test_Array_Over {
+    NSMutableArray *ary = [NSMutableArray arrayWithObjects:@"1",@"2", nil];
+    
+    [ary insertObject:@"3" atIndex:2];
+    
+    //[ary insertObject:@"4" atIndex:5];
+}
+
+
 - (void)testPerformanceExample {
     // This is an example of a performance test case.
     [self measureBlock:^{

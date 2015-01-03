@@ -25,6 +25,8 @@
 #import "SSNKVOBound.h"
 #import "SSNDBBound.h"
 
+//#import "DMProfileViewController.h"
+
 @interface DMPersonVM : NSObject<SSNDBFetchObject>
 @property (nonatomic,copy) NSString *uid;
 @property (nonatomic,copy) NSString *name;
@@ -360,6 +362,13 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     DMPerson *person = [_fetchController objectAtIndex:indexPath.row];
+    
+//    DMProfileViewController *vc = [[DMProfileViewController alloc] init];
+//    //vc.view;
+//    vc.hidesBottomBarWhenPushed = YES;
+//    
+//    [self.navigationController pushViewController:vc animated:YES];
+    
     [self openRelativePath:@"../profile" query:@{@"uid":person.uid,@"person":person}];
     //[self openRelativePath:@"../profile" query:@{@"uid":person.uid}];
 }
@@ -451,7 +460,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-            [self configureCell:cell person:(DMPerson *)object atIndexPath:indexPath];
+            [self configureCellV2:cell person:(DMPersonVM *)object atIndexPath:indexPath];
         }
             break;
         default:

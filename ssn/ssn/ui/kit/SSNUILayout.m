@@ -154,7 +154,12 @@ static char *ssn_dependent_layout_key = NULL;
  */
 - (void)insertSubview:(UIView *)view atIndex:(NSInteger)index forKey:(NSString *)key {
     [_subviews removeObject:view];
-    [_subviews insertObject:view atIndex:index];
+    if (index > [_subviews count]) {
+        [_subviews addObject:view];
+    }
+    else {
+        [_subviews insertObject:view atIndex:index];
+    }
     
     //关联子view
     SSNUILayoutWeakBox *box = [SSNUILayoutWeakBox boxWithLayout:self];
@@ -207,6 +212,14 @@ static char *ssn_dependent_layout_key = NULL;
     [_subviews removeObject:subview];
 }
 
+- (void)setContentInset:(UIEdgeInsets)contentInset {
+    _contentInset.top = contentInset.top > 0 ? contentInset.top : 0;
+    _contentInset.bottom = contentInset.bottom > 0 ? contentInset.bottom : 0;
+    _contentInset.left = contentInset.left > 0 ? contentInset.left : 0;
+    _contentInset.right = contentInset.right > 0 ? contentInset.right : 0;
+    
+}
+
 /**
  *  布局所有子view
  */
@@ -215,36 +228,177 @@ static char *ssn_dependent_layout_key = NULL;
 }
 
 /**
- *  布局向量
+ *  在一固定的rect中布局一个元素
  *
- *  @return 布局向量(1,1),(-1,1),(-1,-1),(1,-1)
+ *  @param view        需要布局的元素
+ *  @param rect        行尺寸
+ *  @param contentMode 数据依靠点
  */
-- (CGPoint)layoutVector {
-    CGPoint vector = CGPointZero;
-    switch (self.orientation) {
+- (void)layoutSubview:(UIView *)view inRect:(CGRect)rect contentMode:(SSNUIContentMode)contentMode {
+    switch (contentMode) {
+        case SSNUIContentModeTopLeft: {
+            view.ssn_top_left_corner = ssn_top_left_corner(rect);
+        } break;
+        case SSNUIContentModeTopRight: {
+            view.ssn_top_right_corner = ssn_top_right_corner(rect);
+        } break;
+        case SSNUIContentModeBottomLeft: {
+            view.ssn_bottom_left_corner = ssn_bottom_left_corner(rect);
+        } break;
+        case SSNUIContentModeBottomRight: {
+            view.ssn_bottom_right_corner = ssn_bottom_right_corner(rect);
+        } break;
+        case SSNUIContentModeScaleToFill: {
+            view.ssn_center = ssn_center(rect);//后期根据需要优化
+        } break;
+        case SSNUIContentModeCenter: {
+            view.ssn_center = ssn_center(rect);
+        } break;
+        case SSNUIContentModeTop: {
+            view.ssn_top_center = ssn_top_center(rect);
+        } break;
+        case SSNUIContentModeBottom: {
+            view.ssn_bottom_center = ssn_bottom_center(rect);
+        } break;
+        case SSNUIContentModeLeft: {
+            view.ssn_left_center = ssn_left_center(rect);
+        } break;
+        case SSNUIContentModeRight: {
+            view.ssn_right_center = ssn_right_center(rect);
+        } break;
+        default:
+            break;
+    }
+}
+
+/**
+ *  是否按照水平方向计算行
+ *
+ *  @return 如果x方向是行的话返回YES，否则返回NO
+ */
+- (BOOL)isHOR {
+    if (self.orientation == SSNUILayoutOrientationLandscapeLeft
+        || self.orientation == SSNUILayoutOrientationLandscapeRight) {
+        return NO;
+    }
+    return YES;
+}
+
+/**
+ *  行方向上是否递增
+ *
+ *  @return 行是否递增排列
+ */
+- (BOOL)isRowASC {
+    switch (_orientation) {
         case SSNUILayoutOrientationPortrait:
-            vector.x = _isReverse ? -1 : 1;
-            vector.y = 1;
+            return YES;
             break;
         case SSNUILayoutOrientationPortraitUpsideDown:
-            vector.x = -1;
-            vector.y = -1;
+            return NO;
             break;
         case SSNUILayoutOrientationLandscapeLeft:
-            vector.x = -1;
-            vector.y = 1;
+            return NO;
             break;
         case SSNUILayoutOrientationLandscapeRight:
-            vector.x = -1;
-            vector.y = 1;
+            return YES;
             break;
         default:
             break;
     }
-    return vector;
+    return NO;
 }
 
-- (NSInteger)layout_max_width {
+/**
+ *  列方向上是否为递增
+ *
+ *  @return 列方是否为递增
+ */
+- (BOOL)isColumnASC {
+    switch (_orientation) {
+        case SSNUILayoutOrientationPortrait:
+            return !_isXReverse;
+            break;
+        case SSNUILayoutOrientationPortraitUpsideDown:
+            return _isXReverse;
+            break;
+        case SSNUILayoutOrientationLandscapeLeft:
+            return !_isXReverse;
+            break;
+        case SSNUILayoutOrientationLandscapeRight:
+            return _isXReverse;
+            break;
+        default:
+            break;
+    }
+    return NO;
+}
+
+/**
+ *  返回第一行的rect坐标
+ *
+ *  @return 返回第一行的rect坐标
+ */
+- (CGRect)firstRowRectWithRowHeight:(NSUInteger)rowHeight {
+    UIView *superview = [self panel];
+    
+    CGRect rect = CGRectZero;
+    
+    switch (_orientation) {
+        case SSNUILayoutOrientationPortrait: {
+            
+            rect.size.height = rowHeight;
+            
+            if (_contentInset.left + _contentInset.right < superview.ssn_width) {//超出就为0
+                rect.size.width = superview.ssn_width - (_contentInset.left + _contentInset.right);
+            }
+            
+            rect.origin.x = _contentInset.left;//不论是否inset是否超出宽度，都取left
+            rect.origin.y = _contentInset.top;
+        } break;
+        case SSNUILayoutOrientationPortraitUpsideDown: {
+            rect.size.height = rowHeight;
+
+            if (_contentInset.left + _contentInset.right < superview.ssn_width) {
+                rect.size.width = superview.ssn_width - (_contentInset.left + _contentInset.right);
+            }
+            
+            rect.origin.x = _contentInset.left;
+            rect.origin.y = superview.ssn_height - _contentInset.bottom - rect.size.height;
+
+        } break;
+        case SSNUILayoutOrientationLandscapeLeft: {
+            rect.size.width = rowHeight;
+            
+            if (_contentInset.top + _contentInset.bottom < superview.ssn_height) {
+                rect.size.height = superview.ssn_height - (_contentInset.top + _contentInset.bottom);
+            }
+            
+            rect.origin.x = superview.ssn_width - _contentInset.right - rect.size.width;
+            rect.origin.y = _contentInset.top;
+        } break;
+        case SSNUILayoutOrientationLandscapeRight: {
+            rect.size.width = rowHeight;
+            
+            if (_contentInset.top + _contentInset.bottom < superview.ssn_height) {
+                rect.size.height = superview.ssn_height - (_contentInset.top + _contentInset.bottom);
+            }
+            
+            rect.origin.x = _contentInset.left;
+            rect.origin.y = _contentInset.top;
+        } break;
+        default:
+            break;
+    }
+    return rect;
+}
+
+/**
+ *  返回行款
+ *
+ *  @return 返回行款
+ */
+- (NSInteger)row_width {
     UIView *superview = [self panel];
     
     CGSize size = superview.ssn_size;
@@ -260,6 +414,10 @@ static char *ssn_dependent_layout_key = NULL;
         max_width = size.height - (self.contentInset.top + self.contentInset.bottom);
     }
     
+    if (max_width < 0) {
+        max_width = 0;
+    }
+    
     return max_width;
 }
 
@@ -271,6 +429,182 @@ static char *ssn_dependent_layout_key = NULL;
 
 
 @implementation SSNUIFlowLayout
+
+- (void)layoutRowviews:(NSArray *)subviews inRow:(CGRect)rect sumViewWidth:(CGFloat)sumViewWidth isHOR:(BOOL)isHOR {
+    __block CGRect row_rect = rect;
+    
+    NSInteger view_count = [subviews count];
+    
+    BOOL isReverse = YES;//是否需要反向排列
+    SSNUIContentMode contentMode = _contentMode;
+    switch (_contentMode) {
+        case SSNUIContentModeTopLeft: {
+            isReverse = NO;
+        } break;
+        case SSNUIContentModeTopRight: {
+            if (isHOR) {
+                isReverse = YES;
+            }else {
+                isReverse = NO;
+            }
+        } break;
+        case SSNUIContentModeBottomLeft: {
+            if (isHOR) {
+                isReverse = NO;
+            }else {
+                isReverse = YES;
+            }
+        } break;
+        case SSNUIContentModeBottomRight: {
+            if (isHOR) {
+                isReverse = YES;
+            }else {
+                isReverse = YES;
+            }
+        } break;
+        case SSNUIContentModeScaleToFill:
+        case SSNUIContentModeCenter: {//需要转换成依赖左边布局
+            if (isHOR) {
+                isReverse = NO;
+                
+                contentMode = SSNUIContentModeLeft;
+                
+                if (row_rect.size.width >= sumViewWidth + ((view_count - 1)*_spacing)) {
+                    row_rect.origin.x += (row_rect.size.width - (sumViewWidth + (view_count - 1)*_spacing))/2;
+                    row_rect.size.width = sumViewWidth + ((view_count - 1)*_spacing);
+                }
+                else {//肯定只有一个元素的情况
+                    row_rect.origin.x -= ((sumViewWidth + (view_count - 1)*_spacing) - row_rect.size.width)/2;
+                }
+            }
+            else {
+                isReverse = NO;
+                
+                contentMode = SSNUIContentModeTop;
+                
+                if (row_rect.size.height >= sumViewWidth + ((view_count - 1)*_spacing)) {
+                    row_rect.origin.y += (row_rect.size.height - (sumViewWidth + (view_count - 1)*_spacing))/2;
+                    row_rect.size.height = sumViewWidth + ((view_count - 1)*_spacing);
+                }
+                else {//肯定只有一个元素的情况
+                    row_rect.origin.y -= ((sumViewWidth + (view_count - 1)*_spacing) - row_rect.size.height)/2;
+                }
+            }
+        } break;
+        case SSNUIContentModeTop: {
+            if (isHOR) {
+                isReverse = NO;
+                
+                contentMode = SSNUIContentModeTopLeft;
+                
+                if (row_rect.size.width >= sumViewWidth + ((view_count - 1)*_spacing)) {
+                    row_rect.origin.x += (row_rect.size.width - (sumViewWidth + (view_count - 1)*_spacing))/2;
+                    row_rect.size.width = sumViewWidth + ((view_count - 1)*_spacing);
+                }
+                else {//肯定只有一个元素的情况
+                    row_rect.origin.x -= ((sumViewWidth + (view_count - 1)*_spacing) - row_rect.size.width)/2;
+                }
+            }
+            else {
+                isReverse = NO;
+            }
+        } break;
+        case SSNUIContentModeBottom: {
+            if (isHOR) {
+                isReverse = NO;
+                
+                contentMode = SSNUIContentModeBottomLeft;
+                
+                if (row_rect.size.width >= sumViewWidth + ((view_count - 1)*_spacing)) {
+                    row_rect.origin.x += (row_rect.size.width - (sumViewWidth + (view_count - 1)*_spacing))/2;
+                    row_rect.size.width = sumViewWidth + ((view_count - 1)*_spacing);
+                }
+                else {//肯定只有一个元素的情况
+                    row_rect.origin.x -= ((sumViewWidth + (view_count - 1)*_spacing) - row_rect.size.width)/2;
+                }
+            }
+            else {
+                isReverse = YES;
+            }
+        } break;
+        case SSNUIContentModeLeft: {
+            if (isHOR) {
+                isReverse = NO;
+            }
+            else {
+                isReverse = NO;
+                
+                contentMode = SSNUIContentModeTopLeft;
+                
+                if (row_rect.size.height >= sumViewWidth + ((view_count - 1)*_spacing)) {
+                    row_rect.origin.y += (row_rect.size.height - (sumViewWidth + (view_count - 1)*_spacing))/2;
+                    row_rect.size.height = sumViewWidth + ((view_count - 1)*_spacing);
+                }
+                else {//肯定只有一个元素的情况
+                    row_rect.origin.y -= ((sumViewWidth + (view_count - 1)*_spacing) - row_rect.size.height)/2;
+                }
+            }
+        } break;
+        case SSNUIContentModeRight: {
+            if (isHOR) {
+                isReverse = YES;
+            }
+            else {
+                isReverse = NO;
+                
+                contentMode = SSNUIContentModeTopRight;
+                
+                if (row_rect.size.height >= sumViewWidth + ((view_count - 1)*_spacing)) {
+                    row_rect.origin.y += (row_rect.size.height - (sumViewWidth + (view_count - 1)*_spacing))/2;
+                    row_rect.size.height = sumViewWidth + ((view_count - 1)*_spacing);
+                }
+                else {//肯定只有一个元素的情况
+                    row_rect.origin.y -= ((sumViewWidth + (view_count - 1)*_spacing) - row_rect.size.height)/2;
+                }
+            }
+        } break;
+        default:
+            break;
+    }
+    
+    NSArray *rowviews = subviews;
+    if (self.isXReverse) {
+        rowviews = [[subviews reverseObjectEnumerator] allObjects];
+    }
+    
+    void (^block)(UIView *view, NSUInteger idx, BOOL *stop) = ^(UIView *view, NSUInteger idx, BOOL *stop) {
+        [self layoutSubview:view inRect:row_rect contentMode:contentMode];
+        
+        if (isHOR) {
+            row_rect.size.width -= view.ssn_width + _spacing;
+        }
+        else {
+            row_rect.size.height -= view.ssn_height + _spacing;
+        }
+        
+        if (!isReverse) {
+            if (isHOR) {
+                row_rect.origin.x += view.ssn_width + _spacing;
+            }
+            else {
+                row_rect.origin.y += view.ssn_height + _spacing;
+            }
+        }
+    };
+    
+    if (isReverse) {
+        [rowviews enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:block];
+    }
+    else {
+        [rowviews enumerateObjectsUsingBlock:block];
+    }
+}
+
+#define SSNUILayoutRowRectNext(rect,hor,asc,height) do{\
+if (hor)    { if (asc) { rect.origin.y += height; } else { rect.origin.y -= height; } }\
+else        { if (asc) { rect.origin.x += height; } else { rect.origin.x -= height; } }\
+}while(0)
+
 /**
  *  布局所有子view，overwite
  */
@@ -281,18 +615,60 @@ static char *ssn_dependent_layout_key = NULL;
         return ;
     }
     
-    //先计算x,y的移动向量
-    CGPoint vector = [self layoutVector];
+    NSInteger row_width = [self row_width];
     
+    //布局
+    CGRect rect = [self firstRowRectWithRowHeight:_rowHeight];
+    BOOL isHOR = [self isHOR];
+    BOOL isRowASC = [self isRowASC];
+
     //布局所有的子view
     NSArray *subviews = [self subviews];
     
-    CGPoint origin = CGPointZero;
+    NSInteger cost_width = 0;
     
-    NSInteger max_width = [self layout_max_width];
+    NSMutableArray *rowviews = [NSMutableArray array];//用于存放一行的数据
+    NSInteger sum_view_width = 0;
     
     for (UIView *view in subviews) {
-        //
+
+    SSN_GOTO_FLAG:
+        
+        cost_width += isHOR ? view.ssn_width : view.ssn_height;
+        
+        if (cost_width >= row_width) {//换行
+            
+            BOOL reCheck = YES;
+            if (cost_width == row_width || [rowviews count] == 0) {
+                sum_view_width += isHOR ? view.ssn_width : view.ssn_height;
+                [rowviews addObject:view];
+                
+                reCheck = NO;
+            }
+            
+            //处理当前行
+            [self layoutRowviews:rowviews inRow:rect sumViewWidth:sum_view_width isHOR:isHOR];
+            
+            //换行处理
+            SSNUILayoutRowRectNext(rect, isHOR, isRowASC, _rowHeight);
+            cost_width = 0;
+            sum_view_width = 0;
+            [rowviews removeAllObjects];
+            
+            if (reCheck) {//直接到下一行处理
+                goto SSN_GOTO_FLAG;
+            }
+        }
+        else {//不换行
+            cost_width += _spacing;//加上间距
+            sum_view_width += isHOR ? view.ssn_width : view.ssn_height;
+            [rowviews addObject:view];
+        }
+    }
+    
+    //处理最后剩余部分
+    if ([rowviews count]) {
+        [self layoutRowviews:rowviews inRow:rect sumViewWidth:sum_view_width isHOR:isHOR];
     }
 }
 @end

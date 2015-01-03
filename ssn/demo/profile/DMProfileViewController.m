@@ -17,6 +17,8 @@
 #import "SSNKVOBound.h"
 #import "SSNBound.h"
 
+#import "SSNRouter.h"
+
 @interface DMProfileViewController ()
 
 @property (nonatomic,strong) DMPerson *person;
@@ -27,6 +29,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+//    self.hidesBottomBarWhenPushed = YES;
+    
     // Do any additional setup after loading the view.
     
     self.title = [NSString stringWithFormat:@"个人信息(%@)",self.person.name];
