@@ -98,6 +98,29 @@ static char *ssn_layouts_dictionary_key = NULL;
 }
 
 /**
+ *  返回subview对应的key
+ *
+ *  @param subview 寻找的subview
+ *
+ *  @return 返回subview对应的key，不在此view或者找不到返回nil
+ */
+- (NSString *)ssn_keyOfSubview:(UIView *)subview {
+    if (subview.superview != self) {
+        return nil;
+    }
+    
+    NSMutableDictionary *dic = [self ssn_subviews_dictionary];
+    for (NSString *key in [dic allKeys]) {
+        UIView *view = [dic objectForKey:key];
+        if (view == subview) {
+            return key;
+        }
+    }
+    
+    return nil;
+}
+
+/**
  *  添加子view，默认采用SSNUISiteLayout布局
  *
  *  @param view 添加的子view
@@ -116,7 +139,7 @@ static char *ssn_layouts_dictionary_key = NULL;
  *  @param index 子view的层级
  *  @param key  子view对应key
  */
-- (void)ssn_insertSubview:(UIView *)view atIndex:(NSInteger)index forKey:(NSString *)key {
+- (void)ssn_insertSubview:(UIView *)view atIndex:(NSUInteger)index forKey:(NSString *)key {
     NSMutableDictionary *dic = [self ssn_subviews_dictionary];
     if (index > [[self subviews] count]) {
         [self addSubview:view];

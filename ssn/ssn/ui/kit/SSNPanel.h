@@ -24,6 +24,15 @@
 - (UIView *)ssn_subviewForKey:(NSString *)key;
 
 /**
+ *  返回subview对应的key
+ *
+ *  @param subview 寻找的subview
+ *
+ *  @return 返回subview对应的key，不在此view或者找不到返回nil
+ */
+- (NSString *)ssn_keyOfSubview:(UIView *)subview;
+
+/**
  *  添加子view，默认采用SSNUISiteLayout布局
  *
  *  @param view 添加的子view
@@ -38,7 +47,7 @@
  *  @param index 子view的层级
  *  @param key  子view对应key
  */
-- (void)ssn_insertSubview:(UIView *)view atIndex:(NSInteger)index forKey:(NSString *)key;
+- (void)ssn_insertSubview:(UIView *)view atIndex:(NSUInteger)index forKey:(NSString *)key;
 
 /**
  *  移除一个子view
