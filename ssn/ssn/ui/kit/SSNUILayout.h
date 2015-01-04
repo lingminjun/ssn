@@ -13,7 +13,7 @@
  */
 typedef NS_ENUM(NSUInteger, SSNUIContentMode){
     /**
-     *  默认以来，默认一般使用SSNUIContentModeTopLeft
+     *  默认依赖，如果默认实际使用SSNUIContentModeTopLeft
      */
     SSNUIContentModeNan,
     /**
