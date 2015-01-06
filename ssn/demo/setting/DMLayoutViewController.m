@@ -83,28 +83,112 @@
 //    }
     
    
+//    {
+//        SSNUITableLayout *layout = [self.view ssn_tableLayout];
+//        
+//        layout.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
+//        layout.defaultRowHeight = 30;
+//        layout.columnCount = 8;
+//        layout.contentMode = SSNUIContentModeScaleToFill;
+//        
+//        for (int i = 0; i<19; i++) {
+//            UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+//            view.backgroundColor = [UIColor colorWithRed:0.380 + 0.008 * i green:0.267 + 0.05 * i blue:0.996 alpha:1.000];
+//            view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+//            [layout addSubview:view forKey:[NSString stringWithFormat:@"t1x%i",i]];
+//        }
+//    }
+    
     {
-        SSNUITableLayout *layout = [self.view ssn_tableLayout];
+        UIView *testPanel1 = [[UIView alloc] initWithFrame:CGRectMake(10, 164, 180, 240)];
+        [self.view addSubview:testPanel1];
         
-        layout.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
-        layout.rowHeight = 30;
-        layout.columnCount = 8;
+        SSNUITableLayout *layout = [testPanel1 ssn_tableLayout];
+        
+        layout.rowCount = 2;
+        layout.columnCount = 2;
         layout.contentMode = SSNUIContentModeScaleToFill;
         
-        for (int i = 0; i<19; i++) {
+        for (int i = 0; i<4; i++) {
             UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
-            view.backgroundColor = [UIColor colorWithRed:0.380 + 0.008 * i green:0.267 + 0.05 * i blue:0.996 alpha:1.000];
+            if (i == 0) {
+                view.backgroundColor = [UIColor redColor];
+            }
+            else if (i == 1) {
+                view.backgroundColor = [UIColor yellowColor];
+            }
+            else if (i == 2) {
+                view.backgroundColor = [UIColor blueColor];
+            }
+            else {
+                view.backgroundColor = [UIColor greenColor];
+            }
             view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-            [layout addSubview:view forKey:[NSString stringWithFormat:@"t1x%i",i]];
+            [layout addSubview:view forKey:[NSString stringWithFormat:@"x%i",i]];
         }
+        
+        SSNUITableLayout *layout2 = [testPanel1 ssn_tableLayout];
+        layout2.rowCount = 2;
+        layout2.columnCount = 2;
+        
+        UIView *icon = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+        icon.backgroundColor = [UIColor blackColor];
+        
+        SSNUITableCellInfo *cellInfo = [[SSNUITableCellInfo alloc] init];
+        cellInfo.contentInset = UIEdgeInsetsMake(0, 10, 10, 0);
+        cellInfo.contentMode = SSNUIContentModeBottomLeft;
+        
+        [layout2 insertSubview:icon atIndex:1 cellInfo:cellInfo forKey:@"icon"];
     }
     
+    {
+        UIView *testPanel1 = [[UIView alloc] initWithFrame:CGRectMake(198, 164, 120, 160)];
+        [self.view addSubview:testPanel1];
+        
+        SSNUITableLayout *layout = [testPanel1 ssn_tableLayout];
+        
+        layout.rowCount = 2;
+        layout.columnCount = 2;
+        layout.contentMode = SSNUIContentModeScaleToFill;
+        
+        for (int i = 0; i<4; i++) {
+            UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+            if (i == 0) {
+                view.backgroundColor = [UIColor redColor];
+            }
+            else if (i == 1) {
+                view.backgroundColor = [UIColor yellowColor];
+            }
+            else if (i == 2) {
+                view.backgroundColor = [UIColor blueColor];
+            }
+            else {
+                view.backgroundColor = [UIColor greenColor];
+            }
+            view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+            [layout addSubview:view forKey:[NSString stringWithFormat:@"x%i",i]];
+        }
+        
+        SSNUITableLayout *layout2 = [testPanel1 ssn_tableLayout];
+        layout2.rowCount = 2;
+        layout2.columnCount = 2;
+        
+        UIView *icon = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+        icon.backgroundColor = [UIColor blackColor];
+        
+        SSNUITableCellInfo *cellInfo = [[SSNUITableCellInfo alloc] init];
+        cellInfo.contentInset = UIEdgeInsetsMake(0, 10, 10, 0);
+        cellInfo.contentMode = SSNUIContentModeBottomLeft;
+        
+        [layout2 insertSubview:icon atIndex:1 cellInfo:cellInfo forKey:@"icon"];
+    }
     
+    /*
     {
         SSNUITableLayout *layout = [self.view ssn_tableLayout];
         
         layout.contentInset = UIEdgeInsetsMake(164, 0, 0, 0);
-        layout.rowHeight = 30;
+        layout.defaultRowHeight = 30;
         layout.columnCount = 8;
         
         for (int i = 0; i<19; i++) {
@@ -122,7 +206,7 @@
         SSNUITableLayout *layout = [self.view ssn_tableLayout];
         
         layout.contentInset = UIEdgeInsetsMake(264, 0, 0, 0);
-        layout.rowHeight = 30;
+        layout.defaultRowHeight = 30;
         layout.columnCount = 8;
         layout.orientation = SSNUILayoutOrientationLandscapeLeft;
         layout.isRowReverse = YES;
@@ -136,7 +220,7 @@
             [layout insertSubview:view atIndex:i cellInfo:cellInfo forKey:[NSString stringWithFormat:@"txt1x%i",i]];
         }
     }
-
+     */
 }
 
 @end

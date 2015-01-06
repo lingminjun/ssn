@@ -154,6 +154,12 @@
 		53C84C6F1A5B887C008AB7C8 /* UILabel+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C6E1A5B887C008AB7C8 /* UILabel+SSNUIKit.m */; };
 		53C84C721A5B9586008AB7C8 /* NSString+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C711A5B9586008AB7C8 /* NSString+SSNUIKit.m */; };
 		53C84C751A5BB355008AB7C8 /* UIView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C741A5BB355008AB7C8 /* UIView+SSNUIKit.m */; };
+		53C84C781A5BBE88008AB7C8 /* SSNUISiteLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C771A5BBE88008AB7C8 /* SSNUISiteLayout.m */; };
+		53C84C791A5BBE88008AB7C8 /* SSNUISiteLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C771A5BBE88008AB7C8 /* SSNUISiteLayout.m */; };
+		53C84C7C1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7B1A5BBED1008AB7C8 /* SSNUIFlowLayout.m */; };
+		53C84C7D1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7B1A5BBED1008AB7C8 /* SSNUIFlowLayout.m */; };
+		53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */; };
+		53C84C811A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */; };
 		53D163E4191A629C00AD4C81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E3191A629C00AD4C81 /* Foundation.framework */; };
 		53D163E6191A629C00AD4C81 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E5191A629C00AD4C81 /* CoreGraphics.framework */; };
 		53D163E8191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
@@ -365,6 +371,13 @@
 		53C84C711A5B9586008AB7C8 /* NSString+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSNUIKit.m"; sourceTree = "<group>"; };
 		53C84C731A5BB355008AB7C8 /* UIView+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SSNUIKit.h"; sourceTree = "<group>"; };
 		53C84C741A5BB355008AB7C8 /* UIView+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SSNUIKit.m"; sourceTree = "<group>"; };
+		53C84C761A5BBE88008AB7C8 /* SSNUISiteLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUISiteLayout.h; sourceTree = "<group>"; };
+		53C84C771A5BBE88008AB7C8 /* SSNUISiteLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNUISiteLayout.m; sourceTree = "<group>"; };
+		53C84C7A1A5BBED1008AB7C8 /* SSNUIFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUIFlowLayout.h; sourceTree = "<group>"; };
+		53C84C7B1A5BBED1008AB7C8 /* SSNUIFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNUIFlowLayout.m; sourceTree = "<group>"; };
+		53C84C7E1A5BBF7C008AB7C8 /* SSNUITableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUITableLayout.h; sourceTree = "<group>"; };
+		53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNUITableLayout.m; sourceTree = "<group>"; };
+		53C84C821A5BC03E008AB7C8 /* SSNUILayout+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNUILayout+Private.h"; sourceTree = "<group>"; };
 		53D163E0191A629C00AD4C81 /* ssn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ssn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D163E3191A629C00AD4C81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		53D163E5191A629C00AD4C81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -552,6 +565,13 @@
 				53A1BA191A52A1D000C76844 /* SSNUILayout.m */,
 				53A1BA1C1A52B6F700C76844 /* UIView+SSNUIFrame.h */,
 				53A1BA1D1A52B6F700C76844 /* UIView+SSNUIFrame.m */,
+				53C84C761A5BBE88008AB7C8 /* SSNUISiteLayout.h */,
+				53C84C771A5BBE88008AB7C8 /* SSNUISiteLayout.m */,
+				53C84C7A1A5BBED1008AB7C8 /* SSNUIFlowLayout.h */,
+				53C84C7B1A5BBED1008AB7C8 /* SSNUIFlowLayout.m */,
+				53C84C7E1A5BBF7C008AB7C8 /* SSNUITableLayout.h */,
+				53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */,
+				53C84C821A5BC03E008AB7C8 /* SSNUILayout+Private.h */,
 			);
 			path = kit;
 			sourceTree = "<group>";
@@ -1056,6 +1076,7 @@
 				53BC52FC1A485E6E0044C238 /* NSObject+SSNTracking.m in Sources */,
 				53BC53261A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
 				5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */,
+				53C84C7C1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */,
 				53BC530E1A485E6E0044C238 /* SSNRigidCache.m in Sources */,
 				53A1BA1E1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */,
 				53BC53141A485E6E0044C238 /* SSNSafeSet.m in Sources */,
@@ -1070,6 +1091,7 @@
 				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,
 				53BC53181A485E6E0044C238 /* SSNDataStore.m in Sources */,
 				53BC532A1A485E6E0044C238 /* db.md in Sources */,
+				53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */,
 				53BC53081A485E6E0044C238 /* NSString+SSN.m in Sources */,
 				53BC53001A485E6E0044C238 /* ssnlog.c in Sources */,
 				533BE3A41A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
@@ -1085,6 +1107,7 @@
 				53BC53381A485E6E0044C238 /* buffer.cpp in Sources */,
 				53BC53321A485E6E0044C238 /* SSNHostingTask.m in Sources */,
 				53BC534A1A485E6E0044C238 /* SSNVC+Router.m in Sources */,
+				53C84C781A5BBE88008AB7C8 /* SSNUISiteLayout.m in Sources */,
 				53BC53511A486DA30044C238 /* ssnbase64.c in Sources */,
 				53BC53121A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
 				53BC53401A485E6E0044C238 /* SSNQuantum.m in Sources */,
@@ -1155,6 +1178,7 @@
 				53D24639199C83B400EFDF29 /* DMContactViewController.h in Sources */,
 				53D2463A199C83B400EFDF29 /* DMContactViewController.m in Sources */,
 				53D2463B199C83B400EFDF29 /* DMSessionNavController.h in Sources */,
+				53C84C811A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */,
 				53F5F1541A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */,
 				53D2463C199C83B400EFDF29 /* DMSessionNavController.m in Sources */,
 				53BC531F1A485E6E0044C238 /* SSNDBBound.m in Sources */,
@@ -1194,11 +1218,13 @@
 				53D6626B1A0BC50D008D2296 /* ssnDictionaryTest.m in Sources */,
 				533BE39E1A2AFF7800E07FF0 /* DMSession.m in Sources */,
 				53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */,
+				53C84C7D1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */,
 				53A1BA1B1A52A1D000C76844 /* SSNUILayout.m in Sources */,
 				53BC531D1A485E6E0044C238 /* SSNKVOBound.m in Sources */,
 				53BC53331A485E6E0044C238 /* SSNHostingTask.m in Sources */,
 				533BE3941A2AC30500E07FF0 /* ssn_fetch_test.m in Sources */,
 				53BC530B1A485E6E0044C238 /* ssnbase.m in Sources */,
+				53C84C791A5BBE88008AB7C8 /* SSNUISiteLayout.m in Sources */,
 				53D9A1971A2CC66F009F777D /* ssn_log_test.m in Sources */,
 				53BC533F1A485E6E0044C238 /* stt.cpp in Sources */,
 				53D16412191A629C00AD4C81 /* ssnTests.mm in Sources */,

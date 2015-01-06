@@ -223,7 +223,7 @@ static char *ssn_layouts_dictionary_key = NULL;
  *  @return 返回并创建一个表格布局
  */
 - (SSNUITableLayout *)ssn_tableLayout {
-    return [self ssn_tableLayoutWithRowHeight:44 columnCount:1];
+    return [self ssn_tableLayoutWithRowHeight:0 rowCount:0 columnCount:1];
 }
 
 /**
@@ -234,10 +234,11 @@ static char *ssn_layouts_dictionary_key = NULL;
  *
  *  @return 返回并创建一个表格布局
  */
-- (SSNUITableLayout *)ssn_tableLayoutWithRowHeight:(NSUInteger)rowHeight columnCount:(NSUInteger)columnCount {
+- (SSNUITableLayout *)ssn_tableLayoutWithRowHeight:(NSUInteger)rowHeight rowCount:(NSUInteger)rowCount columnCount:(NSUInteger)columnCount {
     SSNUITableLayout *layout = [[SSNUITableLayout alloc] initWithPanel:self];
-    layout.rowHeight = rowHeight;
+    layout.defaultRowHeight = rowHeight;
     layout.columnCount = columnCount;
+    layout.rowCount = rowCount;
     [[self ssn_layouts_dictionary] setObject:layout forKey:[layout layoutID]];
     return layout;
 }

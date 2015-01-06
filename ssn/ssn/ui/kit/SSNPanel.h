@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "SSNUILayout.h"
+#import "SSNUISiteLayout.h"
+#import "SSNUIFlowLayout.h"
+#import "SSNUITableLayout.h"
 
 /**
  *  实现快速布局，以及所有子元素采用key方式获取，主要应用于视觉布局绑定
@@ -100,10 +103,11 @@
  *  创建一个表格布局
  *
  *  @param rowHeight   行高
+ *  @param rowCount    行数，填零表示不限制
  *  @param columnCount 不能小于1
  *
  *  @return 返回并创建一个表格布局
  */
-- (SSNUITableLayout *)ssn_tableLayoutWithRowHeight:(NSUInteger)rowHeight columnCount:(NSUInteger)columnCount;
+- (SSNUITableLayout *)ssn_tableLayoutWithDefaultRowHeight:(NSUInteger)rowHeight rowCount:(NSUInteger)rowCount columnCount:(NSUInteger)columnCount;
 
 @end
