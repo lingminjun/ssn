@@ -1,0 +1,263 @@
+//
+//  UIImage+SSNUIColor.m
+//  ssn
+//
+//  Created by lingminjun on 15/1/5.
+//  Copyright (c) 2015年 lingminjun. All rights reserved.
+//
+
+#import "UIImage+SSNUIColor.h"
+
+@implementation UIImage (SSNUIColor)
+
+/**
+ *  返回一像素（size(1,1)）这个color颜色的图片
+ *
+ *  @param color 一个颜色指标【不能为nil】
+ *
+ *  @return 图片
+ */
++ (UIImage *)ssn_imageWithColor:(UIColor *)color {
+    CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
+    
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+/**
+ *  返回一个size为给定size的color颜色图片
+ *
+ *  @param size   size大小
+ *  @param color  填充色颜色
+ *  @param radius 圆角半径
+ *
+ *  @return 图片
+ */
++ (UIImage *)ssn_imageWithSize:(CGSize)size color:(UIColor *)color cornerRadius:(CGFloat)radius {
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    
+    UIBezierPath* roundedRectanglePath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
+    
+    [color setFill];
+    [roundedRectanglePath fill];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+/**
+ *  返回一个size为给定size的color颜色带with宽边线和borderColor颜色的图片
+ *
+ *  @param size        size大小
+ *  @param color       填充色颜色
+ *  @param width       边线宽度
+ *  @param borderColor 边线颜色
+ *  @param radius      圆角半径
+ *
+ *  @return 图片
+ */
++ (UIImage *)ssn_imageWithSize:(CGSize)size color:(UIColor *)color border:(CGFloat)width color:(UIColor *)borderColor cornerRadius:(CGFloat)radius {
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    
+    UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
+    
+    UIBezierPath *fillPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(width, width, size.width - width * 2, size.height - width * 2) cornerRadius:radius - width];
+    
+    [borderColor setFill];
+    [borderPath fill];
+    
+    [color setFill];
+    [fillPath fill];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+/**
+ *  返回一个size为给定size的渐变颜色从from到to的图片
+ *
+ *  @param size   size大小
+ *  @param from   起始颜色，位置在top
+ *  @param to     终止颜色，位置在bottom
+ *  @param radius 圆角半径
+ *
+ *  @return 图片
+ */
++ (UIImage *)ssn_imageWithSize:(CGSize)size gradientColor:(UIColor *)from to:(UIColor *)to cornerRadius:(CGFloat)radius {
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    NSArray *aColors = @[(id)(from.CGColor),(id)(to.CGColor)];
+    CGFloat aLocations[2] = {0.0f,1.0f};
+    
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)aColors, aLocations);
+    
+    UIBezierPath *roundedRectanglePath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
+    CGContextSaveGState(context);
+    [roundedRectanglePath addClip];
+    CGContextDrawLinearGradient(context, gradient, CGPointMake(size.width / 2, 0), CGPointMake(size.width / 2, size.height), 0);
+    CGContextRestoreGState(context);
+    
+    CGGradientRelease(gradient);
+    CGColorSpaceRelease(colorSpace);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+/**
+ *  返回一个size为给定size的渐变颜色从from到to的带with宽边线和borderColor颜色的图片
+ *
+ *  @param size        size大小
+ *  @param from        起始颜色，位置在top
+ *  @param to          终止颜色，位置在bottom
+ *  @param width       边线宽度
+ *  @param borderColor 边线颜色
+ *  @param radius      圆角半径
+ *
+ *  @return 图片
+ */
++ (UIImage *)ssn_imageWithSize:(CGSize)size gradientColor:(UIColor *)from to:(UIColor *)to border:(CGFloat)width color:(UIColor *)borderColor cornerRadius:(CGFloat)radius {
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    NSArray *aColors = @[(id)(from.CGColor),(id)(to.CGColor)];
+    CGFloat aLocations[2] = {0.0f,1.0f};
+    
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)aColors, aLocations);
+    
+    UIBezierPath *roundedRectanglePath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
+    CGContextSaveGState(context);
+    [roundedRectanglePath addClip];
+    CGContextDrawLinearGradient(context, gradient, CGPointMake(size.width / 2, 0), CGPointMake(size.width / 2, size.height), 0);
+    CGContextRestoreGState(context);
+    
+    [borderColor setStroke];
+    roundedRectanglePath.lineWidth = width;
+    [roundedRectanglePath stroke];
+    
+    CGGradientRelease(gradient);
+    CGColorSpaceRelease(colorSpace);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+/**
+ *  返回一个size为给定size的渐变颜色从from到to的带with宽边线和borderColor颜色的图片
+ *
+ *  @param size        size大小
+ *  @param from        起始颜色，位置在top
+ *  @param to          终止颜色，位置在bottom
+ *  @param width       边线宽度
+ *  @param borderColor 边线颜色
+ *  @param blendingWidth 边缘配色宽度，使得绘制出的图片渐变更自然
+ *  @param blendingColor 边缘配色，使得绘制出的图片渐变更自然
+ *  @param radius      圆角半径
+ *
+ *  @return 图片
+ */
++ (UIImage *)ssn_imageWithSize:(CGSize)size gradientColor:(UIColor *)from to:(UIColor *)to border:(CGFloat)width color:(UIColor *)borderColor blending:(CGFloat)blendingWidth color:(UIColor *)blendingColor cornerRadius:(CGFloat)radius {
+    
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    NSArray *aColors = @[(id)(from.CGColor),(id)(to.CGColor)];
+    CGFloat aLocations[2] = {0.0f,1.0f};
+    
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)aColors, aLocations);
+    
+    //TODO:If I use '[borderPath stroke]' when setting the path width to 0.5, it will look aliasing on its corner. So I use two rounded rectangle path to draw the image, one for border, the other for fill color. It looks good, but you will find the rgb value of the image corner is different using PhotoShop. -- By QingShan
+    
+    UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
+    UIBezierPath *fillPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(width, width, size.width - width * 2, size.height - width * 2) cornerRadius:radius - width];
+    
+    //fill borderPath
+    [borderColor setFill];
+    [borderPath fill];
+    //fill fillPath
+    [blendingColor setFill];
+    [fillPath fill];
+    //draw gradient in fillPath
+    CGContextSaveGState(context);
+    [fillPath addClip];
+    CGContextDrawLinearGradient(context, gradient, CGPointMake(size.width / 2, width + blendingWidth), CGPointMake(size.width / 2, size.height - width), 0);
+    CGContextRestoreGState(context);
+    
+    CGGradientRelease(gradient);
+    CGColorSpaceRelease(colorSpace);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+/**
+ *  返回一个size为给定size的渐变颜色带with宽边线和borderColor颜色的图片
+ *
+ *  @param size         size大小
+ *  @param colors       渐变颜色序列，元素为UIColor
+ *  @param locations    渐变位置数组元素为CGFloat，取值[0~1]
+ *  @param width         边框宽度
+ *  @param borderColor   变宽颜色
+ *  @param blendingWidth 配色宽度
+ *  @param blendingColor 配色颜色
+ *  @param radius        圆角半径
+ *
+ *  @return 图片
+ */
++ (UIImage *)ssn_imageWithSize:(CGSize)size gradientColors:(NSArray *)colors gradientLocations:(const CGFloat [])locations border:(CGFloat)width color:(UIColor *)borderColor blending:(CGFloat)blendingWidth color:(UIColor *)blendingColor cornerRadius:(CGFloat)radius {
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    NSMutableArray *aColors = [NSMutableArray array];
+    for (UIColor *color in colors) {
+        [aColors addObject:(id)(color.CGColor)];
+    }
+    
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)aColors, locations);
+    
+    //TODO:If I use '[borderPath stroke]' when setting the path width to 0.5, it will look aliasing on its corner. So I use two rounded rectangle path to draw the image, one for border, the other for fill color. It looks good, but you will find the rgb value of the image corner is different using PhotoShop. -- By QingShan
+    
+    UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
+    UIBezierPath *fillPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(width, width, size.width - width * 2, size.height - width * 2) cornerRadius:radius - width];
+    
+    //fill borderPath
+    [borderColor setFill];
+    [borderPath fill];
+    //fill fillPath
+    [blendingColor setFill];
+    [fillPath fill];
+    //draw gradient in fillPath
+    CGContextSaveGState(context);
+    [fillPath addClip];
+    CGContextDrawLinearGradient(context, gradient, CGPointMake(size.width / 2, width + blendingWidth), CGPointMake(size.width / 2, size.height - width), 0);
+    CGContextRestoreGState(context);
+    
+    CGGradientRelease(gradient);
+    CGColorSpaceRelease(colorSpace);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+@end
