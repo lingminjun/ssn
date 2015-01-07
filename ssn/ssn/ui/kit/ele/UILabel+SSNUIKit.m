@@ -14,51 +14,21 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 #endif
+#import "UIView+SSNUIKit.h"
 
 @implementation UILabel (SSNUIKit)
 
 //宽度是否可伸缩
-static char *ssn_label_width_scalable_key = NULL;
-- (BOOL)ssn_width_scalable {
-    NSNumber *v = objc_getAssociatedObject(self, &ssn_label_width_scalable_key);
-    return [v boolValue];
-}
-- (void)setSsn_width_scalable:(BOOL)ssn_width_scalable {
-    objc_setAssociatedObject(self, &ssn_label_width_scalable_key, @(ssn_width_scalable), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
+ssn_uikit_value_synthesize(int, ssn_width_scalable, Ssn_width_scalable)
 
 //最小宽度
-static char *ssn_label_min_width_key = NULL;
-- (CGFloat)ssn_min_width {
-    NSNumber *v = objc_getAssociatedObject(self, &ssn_label_min_width_key);
-    return [v floatValue];
-}
-- (void)setSsn_min_width:(CGFloat)ssn_min_width {
-    objc_setAssociatedObject(self, &ssn_label_min_width_key, @(ssn_min_width), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
+ssn_uikit_value_synthesize(float,ssn_min_width,Ssn_min_width)
 
 //最大宽度
-static char *ssn_label_max_width_key = NULL;
-- (CGFloat)ssn_max_width {
-    NSNumber *v = objc_getAssociatedObject(self, &ssn_label_max_width_key);
-    return [v floatValue];
-}
-- (void)setSsn_max_width:(CGFloat)ssn_max_width {
-    objc_setAssociatedObject(self, &ssn_label_max_width_key, @(ssn_max_width), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
+ssn_uikit_value_synthesize(float,ssn_max_width,Ssn_max_width)
 
 //行数可调整
-static char *ssn_label_multi_line_key = NULL;
-- (BOOL)ssn_multi_line {
-    NSNumber *v = objc_getAssociatedObject(self, &ssn_label_multi_line_key);
-    return [v boolValue];
-}
-- (void)setSsn_multi_line:(BOOL)ssn_multi_line {
-    if (ssn_multi_line) {
-        self.numberOfLines = 0;
-    }
-    objc_setAssociatedObject(self, &ssn_label_multi_line_key, @(ssn_multi_line), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
+ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
 
 + (instancetype)ssn_labelWithWidthMin:(CGFloat)min max:(CGFloat)max widthScalable:(BOOL)widthScalable font:(UIFont *)font color:(UIColor *)color backgroud:(UIColor *)backgroud alignment:(NSTextAlignment)alignment multiLine:(BOOL)multiLine {
     
@@ -125,8 +95,9 @@ static char *ssn_label_multi_line_key = NULL;
  */
 - (void)ssn_sizeToFit {
     
-    NSNumber *v = objc_getAssociatedObject(self, &ssn_label_width_scalable_key);
-    if (!v) {
+    BOOL multiLine = [self ssn_multi_line];
+    BOOL widthScalable = [self ssn_width_scalable];
+    if (!multiLine && !widthScalable) {
         [self sizeToFit];
         return ;
     }
@@ -140,9 +111,6 @@ static char *ssn_label_multi_line_key = NULL;
     
     CGFloat maxWidth = [self ssn_max_width];
     CGFloat minWidth = [self ssn_min_width];
-    
-    BOOL multiLine = [self ssn_multi_line];
-    BOOL widthScalable = [self ssn_width_scalable];
     
     CGSize size = [text ssn_sizeWithFont:self.font maxWidth:maxWidth];
     

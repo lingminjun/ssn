@@ -199,6 +199,8 @@
 		53D898E91A0FA0C800CE63E0 /* ssn_safe_set_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */; };
 		53D9A1971A2CC66F009F777D /* ssn_log_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9A1961A2CC66F009F777D /* ssn_log_test.m */; };
 		53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DBD62719EA610100728F96 /* ssnDTTest.m */; };
+		53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
+		53E517551A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
 		53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
 		53F5F1531A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F5F1521A5ACD27009EE27A /* UIColor+SSNUIHex.m */; };
 		53F5F1541A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F5F1521A5ACD27009EE27A /* UIColor+SSNUIHex.m */; };
@@ -402,6 +404,8 @@
 		53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_safe_set_test.m; sourceTree = "<group>"; };
 		53D9A1961A2CC66F009F777D /* ssn_log_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_log_test.m; sourceTree = "<group>"; };
 		53DBD62719EA610100728F96 /* ssnDTTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssnDTTest.m; sourceTree = "<group>"; };
+		53E517521A5BECDF00CF47AC /* UIButton+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+SSNUIKit.h"; sourceTree = "<group>"; };
+		53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+SSNUIKit.m"; sourceTree = "<group>"; };
 		53ECB175191FC11500BEB29D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		53F5F1501A5ACC8F009EE27A /* SSNUIEle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUIEle.h; sourceTree = "<group>"; };
 		53F5F1511A5ACD27009EE27A /* UIColor+SSNUIHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+SSNUIHex.h"; sourceTree = "<group>"; };
@@ -945,6 +949,8 @@
 				53C84C711A5B9586008AB7C8 /* NSString+SSNUIKit.m */,
 				53C84C731A5BB355008AB7C8 /* UIView+SSNUIKit.h */,
 				53C84C741A5BB355008AB7C8 /* UIView+SSNUIKit.m */,
+				53E517521A5BECDF00CF47AC /* UIButton+SSNUIKit.h */,
+				53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */,
 			);
 			path = ele;
 			sourceTree = "<group>";
@@ -1091,6 +1097,7 @@
 				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,
 				53BC53181A485E6E0044C238 /* SSNDataStore.m in Sources */,
 				53BC532A1A485E6E0044C238 /* db.md in Sources */,
+				53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */,
 				53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */,
 				53BC53081A485E6E0044C238 /* NSString+SSN.m in Sources */,
 				53BC53001A485E6E0044C238 /* ssnlog.c in Sources */,
@@ -1154,6 +1161,7 @@
 				533F4FD51A35997F009D29C6 /* ssn_datastore_test.m in Sources */,
 				53BC52FD1A485E6E0044C238 /* NSObject+SSNTracking.m in Sources */,
 				53BC53291A485E6E0044C238 /* SSNDBTable.m in Sources */,
+				53E517551A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */,
 				53BC53131A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
 				53BC534D1A485E6E0044C238 /* SSNNavigationController.m in Sources */,
 				53F5F1581A5ACECD009EE27A /* UIImage+SSNUIColor.m in Sources */,
