@@ -9,6 +9,8 @@
 #import "DMLayoutViewController.h"
 #import "SSNPanel.h"
 
+#import "SSNUIEle.h"
+
 @implementation DMLayoutViewController
 
 - (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query
@@ -21,6 +23,12 @@
     [super viewDidLoad];
     
     self.title = @"Layout";
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 80, 300, 40)];
+    imageView.backgroundColor = [UIColor redColor];
+    imageView.image = [UIImage ssn_lineWithColor:[UIColor blackColor] orientation:UIInterfaceOrientationPortrait];
+    imageView.contentMode = UIViewContentModeCenter;
+    [self.view addSubview:imageView];
 
 //    {
 //        SSNUIFlowLayout *layout = [self.view ssn_flowLayout];

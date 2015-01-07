@@ -101,4 +101,15 @@
  */
 + (UIImage *)ssn_imageWithSize:(CGSize)size gradientColors:(NSArray *)colors gradientLocations:(const CGFloat [])locations border:(CGFloat)width color:(UIColor *)borderColor blending:(CGFloat)blendingWidth color:(UIColor *)blendingColor cornerRadius:(CGFloat)radius;
 
+
+/**
+ *  一像素线图片，实际是1x2或者1x3的图片，根据屏幕scale决定
+ *
+ *  @param color       线的颜色
+ *  @param orientation 透明像素填充方向
+ *
+ *  @return 一像素线图片
+ */
++ (UIImage *)ssn_lineWithColor:(UIColor *)color orientation:(UIInterfaceOrientation)orientation;
+
 @end

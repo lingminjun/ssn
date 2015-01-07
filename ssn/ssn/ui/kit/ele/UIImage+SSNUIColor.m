@@ -260,4 +260,72 @@
     return image;
 }
 
+/**
+ *  一像素线图片，实际是1x2或者1x3的图片，根据屏幕scale决定
+ *
+ *  @param orientation 透明像素填充方向
+ *
+ *  @return 一像素线图片
+ */
++ (UIImage *)ssn_lineWithColor:(UIColor *)color orientation:(UIInterfaceOrientation)orientation {
+    
+    CGFloat widthpx = [UIScreen mainScreen].scale; //px
+    
+    CGSize size = CGSizeZero;
+    
+    if (UIInterfaceOrientationLandscapeLeft == orientation || UIInterfaceOrientationLandscapeRight == orientation) {
+        size.width = widthpx;
+        size.height = 1;
+    }
+    else {
+        size.width = 1;
+        size.height = widthpx;
+    }
+    
+    UIGraphicsBeginImageContextWithOptions(size, NO, 1);
+    
+    [color set];
+    switch (orientation) {
+        case UIInterfaceOrientationPortrait:
+            UIRectFill(CGRectMake(0, 0, 1, 1));
+            if (widthpx > 1) {
+                [[UIColor clearColor] set];
+                UIRectFill(CGRectMake(0, 1, 1, widthpx - 1));
+            }
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            UIRectFill(CGRectMake(0, widthpx - 1, 1, 1));
+            if (widthpx > 1) {
+                [[UIColor clearColor] set];
+                UIRectFill(CGRectMake(0, 0, 1, widthpx - 1));
+            }
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            UIRectFill(CGRectMake(widthpx - 1, 0, 1, 1));
+            if (widthpx > 1) {
+                [[UIColor clearColor] set];
+                UIRectFill(CGRectMake(0, 0, widthpx - 1, 1));
+            }
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            UIRectFill(CGRectMake(0, 0, 1, 1));
+            if (widthpx > 1) {
+                [[UIColor clearColor] set];
+                UIRectFill(CGRectMake(1, 0, widthpx - 1, 1));
+            }
+            break;
+        default:
+            UIRectFill(CGRectMake(0, 0, 1, 1));
+            if (widthpx > 1) {
+                [[UIColor clearColor] set];
+                UIRectFill(CGRectMake(0, 1, 1, widthpx - 1));
+            }
+            break;
+    }
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
 @end

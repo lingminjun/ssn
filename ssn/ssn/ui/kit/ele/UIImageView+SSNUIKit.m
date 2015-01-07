@@ -93,5 +93,4 @@
 //+ (instancetype)ssn_downLineWithWidth:(CGFloat)width color:(UIColor *)color {
 //    return [self ssn_lineWithWidth:width color:color orientation:UIInterfaceOrientationPortraitUpsideDown];
 //}
-
 @end
