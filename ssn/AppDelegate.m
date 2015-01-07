@@ -22,6 +22,9 @@
 #import "DMChatViewController.h"
 #import "DMProfileViewController.h"
 
+#import "DMLayoutViewController.h"
+#import "DMUIDicViewController.h"
+
 #import "NSObject+SSNTracking.h"
 
 #import "SSNDataStore+Factory.h"
@@ -55,6 +58,9 @@
     
     [self.ssn_router addComponent:@"chat" pageClass:[DMChatViewController class]];
     [self.ssn_router addComponent:@"profile" pageClass:[DMProfileViewController class]];
+    
+    [self.ssn_router addComponent:@"layout" pageClass:[DMLayoutViewController class]];
+    [self.ssn_router addComponent:@"uidic" pageClass:[DMUIDicViewController class]];
 
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];

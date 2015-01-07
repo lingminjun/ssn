@@ -56,4 +56,42 @@
     return [self ssn_imageViewWithSize:image.size image:image];
 }
 
+//
+//+ (instancetype)ssn_lineWithWidth:(CGFloat)width color:(UIColor *)color orientation:(UIInterfaceOrientation)orientation {
+////    CGRect frame = CGRectZero;
+////    frame.size.width = (size.width <= 0.0f ? 40.0f : size.width);
+////    frame.size.height = (size.height <= 0.0f ? 40.0f : size.height);
+////    
+////    UIImageView *imageView = [[[self class] alloc] initWithFrame:frame];
+////    imageView.clipsToBounds = YES;
+////    imageView.backgroundColor = [UIColor clearColor];
+////    imageView.image = image;
+////    return imageView;
+//    return nil;
+//}
+//
+///**
+// *  一个一像素高度的线，内部根据当前分辨率扩充其透明线
+// *
+// *  @param width 边框，默认值1
+// *  @param color 线的颜色
+// *
+// *  @return 一个线的view
+// */
+//+ (instancetype)ssn_upLineWithWidth:(CGFloat)width color:(UIColor *)color {
+//    return [self ssn_lineWithWidth:width color:color orientation:UIInterfaceOrientationPortrait];
+//}
+//
+///**
+// *  一个一像素高度的线，内部根据当前分辨率扩充其透明线
+// *
+// *  @param width 边框，默认值1
+// *  @param color 线的颜色
+// *
+// *  @return 一个线的view
+// */
+//+ (instancetype)ssn_downLineWithWidth:(CGFloat)width color:(UIColor *)color {
+//    return [self ssn_lineWithWidth:width color:color orientation:UIInterfaceOrientationPortraitUpsideDown];
+//}
+
 @end

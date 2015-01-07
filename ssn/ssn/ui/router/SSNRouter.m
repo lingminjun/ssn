@@ -489,6 +489,26 @@
     return [self.ssn_router searchURLWithPage:(id<SSNPage>)self];
 }
 
+// open url接口，与app不符的scheme将提交给Application打开
+- (BOOL)openURL:(NSURL *)url {
+    return [[self ssn_router] openURL:url];
+}
+- (BOOL)openURL:(NSURL *)url query:(NSDictionary *)query {
+    return [[self ssn_router] openURL:url query:query];
+}
+- (BOOL)openURL:(NSURL *)url query:(NSDictionary *)query animated:(BOOL)animated {
+    return [[self ssn_router] openURL:url query:query animated:animated];
+}
+
+//与url对应的page发送消息
+- (BOOL)noticeURL:(NSURL *)url query:(NSDictionary *)query {
+    return [[self ssn_router] noticeURL:url query:query];
+}
+
+//从当前目录打开url，path格式定义如：“/component1/component2”，你也可以使用NSURLComponents方法生产
+- (BOOL)openRelativePath:(NSString *)path {
+    return [self openRelativePath:path query:nil];
+}
 
 //从当前目录打开url，path格式定义如：“/component1/component2”，你也可以使用NSURLComponents方法生产
 - (BOOL)openRelativePath:(NSString *)path query:(NSDictionary *)query {

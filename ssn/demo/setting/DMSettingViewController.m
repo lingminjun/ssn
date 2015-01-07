@@ -8,7 +8,6 @@
 
 #import "DMSettingViewController.h"
 #import "SSNRouter.h"
-#import "DMLayoutViewController.h"
 
 @interface DMSettingViewController ()
 
@@ -67,7 +66,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 1;
+    return 2;
 }
 
 
@@ -78,7 +77,12 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellId];
     }
-    cell.textLabel.text = @"UILayout";
+    if (indexPath.row == 0) {
+        cell.textLabel.text = @"UIDic";
+    }
+    else {
+        cell.textLabel.text = @"UILayout";
+    }
 
     return cell;
 }
@@ -86,8 +90,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    DMLayoutViewController *vc = [[DMLayoutViewController alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
+    if (indexPath.row == 0) {
+        [self openRelativePath:@"../uidic" query:nil];
+    }
+    else {
+        [self openRelativePath:@"../layout" query:nil];
+    }
 }
 
 /*

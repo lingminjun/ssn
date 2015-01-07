@@ -12,6 +12,7 @@
 		5312CAC31A57E983009C32B1 /* DMLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */; };
 		531324811A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
 		531324821A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
+		531324861A5D35710038256F /* DMUIDicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324851A5D35710038256F /* DMUIDicViewController.m */; };
 		533121821A4BE85E000F456E /* DMPersonExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 533121811A4BE85E000F456E /* DMPersonExt.m */; };
 		533121831A4BE85E000F456E /* DMPersonExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 533121811A4BE85E000F456E /* DMPersonExt.m */; };
 		533121851A4BE87D000F456E /* DMPersonExt.json in Resources */ = {isa = PBXBuildFile; fileRef = 533121841A4BE87D000F456E /* DMPersonExt.json */; };
@@ -227,6 +228,8 @@
 		5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLayoutViewController.m; sourceTree = "<group>"; };
 		5313247F1A5CFEAA0038256F /* UIImageView+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+SSNUIKit.h"; sourceTree = "<group>"; };
 		531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+SSNUIKit.m"; sourceTree = "<group>"; };
+		531324841A5D35710038256F /* DMUIDicViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMUIDicViewController.h; sourceTree = "<group>"; };
+		531324851A5D35710038256F /* DMUIDicViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMUIDicViewController.m; sourceTree = "<group>"; };
 		533121801A4BE85E000F456E /* DMPersonExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPersonExt.h; sourceTree = "<group>"; };
 		533121811A4BE85E000F456E /* DMPersonExt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPersonExt.m; sourceTree = "<group>"; };
 		533121841A4BE87D000F456E /* DMPersonExt.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DMPersonExt.json; sourceTree = "<group>"; };
@@ -451,6 +454,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		531324831A5D35530038256F /* uidic */ = {
+			isa = PBXGroup;
+			children = (
+				531324841A5D35710038256F /* DMUIDicViewController.h */,
+				531324851A5D35710038256F /* DMUIDicViewController.m */,
+			);
+			path = uidic;
+			sourceTree = "<group>";
+		};
 		533BE39A1A2AFF5300E07FF0 /* model */ = {
 			isa = PBXGroup;
 			children = (
@@ -496,6 +508,7 @@
 		538E382D199868710061692E /* demo */ = {
 			isa = PBXGroup;
 			children = (
+				531324831A5D35530038256F /* uidic */,
 				533BE3A61A2B070800E07FF0 /* images */,
 				533BE39A1A2AFF5300E07FF0 /* model */,
 				5388C5981A0499AA0072C3F9 /* chat */,
@@ -1099,6 +1112,7 @@
 				53A1BA1E1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */,
 				53BC53141A485E6E0044C238 /* SSNSafeSet.m in Sources */,
 				53BC53341A485E6E0044C238 /* SSNHostingTaskTail.m in Sources */,
+				531324861A5D35710038256F /* DMUIDicViewController.m in Sources */,
 				53BC530A1A485E6E0044C238 /* ssnbase.m in Sources */,
 				53BC533E1A485E6E0044C238 /* stt.cpp in Sources */,
 				538E384D19986A700061692E /* DMSettingViewController.m in Sources */,

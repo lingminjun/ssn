@@ -56,7 +56,16 @@
 
 - (NSURL *)ssn_currentURLPath; //当前url路径,注册进入的实例才会找到
 
+// open url接口，与app不符的scheme将提交给Application打开
+- (BOOL)openURL:(NSURL *)url; //如果url query中没有animated，默认有动画
+- (BOOL)openURL:(NSURL *)url query:(NSDictionary *)query;//如果url query中没有animated，默认有动画
+- (BOOL)openURL:(NSURL *)url query:(NSDictionary *)query animated:(BOOL)animated;
+
+//与url对应的page发送消息
+- (BOOL)noticeURL:(NSURL *)url query:(NSDictionary *)query;
+
 //从当前目录打开url，path格式定义如：“/component1/component2”，你也可以使用NSURLComponents方法生产
+- (BOOL)openRelativePath:(NSString *)path;
 - (BOOL)openRelativePath:(NSString *)path query:(NSDictionary *)query;
 - (BOOL)openRelativePath:(NSString *)path query:(NSDictionary *)query animated:(BOOL)animated;
 

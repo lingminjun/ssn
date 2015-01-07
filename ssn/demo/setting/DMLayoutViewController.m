@@ -11,6 +11,11 @@
 
 @implementation DMLayoutViewController
 
+- (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query
+{
+    return YES;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];

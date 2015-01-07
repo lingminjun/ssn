@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ssn/ssn/ui/kit/SSNUITableLayout.m"
-            timestampString = "442228082.913532"
+            filePath = "ssn/demo/setting/DMLayoutViewController.m"
+            timestampString = "442316390.626833"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "603"
-            endingLineNumber = "603"
-            landmarkName = "-layoutSubviews"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "-ssn_canRespondURL:query:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
