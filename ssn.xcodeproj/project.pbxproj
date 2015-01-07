@@ -10,6 +10,8 @@
 		530187981A3FFF0700E2CB5D /* ssn_lcs_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */; };
 		5312CAC21A57E983009C32B1 /* DMLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */; };
 		5312CAC31A57E983009C32B1 /* DMLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */; };
+		531324811A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
+		531324821A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
 		533121821A4BE85E000F456E /* DMPersonExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 533121811A4BE85E000F456E /* DMPersonExt.m */; };
 		533121831A4BE85E000F456E /* DMPersonExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 533121811A4BE85E000F456E /* DMPersonExt.m */; };
 		533121851A4BE87D000F456E /* DMPersonExt.json in Resources */ = {isa = PBXBuildFile; fileRef = 533121841A4BE87D000F456E /* DMPersonExt.json */; };
@@ -223,6 +225,8 @@
 		530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_lcs_test.m; sourceTree = "<group>"; };
 		5312CAC01A57E983009C32B1 /* DMLayoutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLayoutViewController.h; sourceTree = "<group>"; };
 		5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLayoutViewController.m; sourceTree = "<group>"; };
+		5313247F1A5CFEAA0038256F /* UIImageView+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+SSNUIKit.h"; sourceTree = "<group>"; };
+		531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+SSNUIKit.m"; sourceTree = "<group>"; };
 		533121801A4BE85E000F456E /* DMPersonExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPersonExt.h; sourceTree = "<group>"; };
 		533121811A4BE85E000F456E /* DMPersonExt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPersonExt.m; sourceTree = "<group>"; };
 		533121841A4BE87D000F456E /* DMPersonExt.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DMPersonExt.json; sourceTree = "<group>"; };
@@ -956,6 +960,8 @@
 				53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */,
 				53DB120A1A5CE6E200B119BA /* UITextField+SSNUIKit.h */,
 				53DB120B1A5CE6E200B119BA /* UITextField+SSNUIKit.m */,
+				5313247F1A5CFEAA0038256F /* UIImageView+SSNUIKit.h */,
+				531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */,
 			);
 			path = ele;
 			sourceTree = "<group>";
@@ -1088,6 +1094,7 @@
 				53BC53261A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
 				5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */,
 				53C84C7C1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */,
+				531324811A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */,
 				53BC530E1A485E6E0044C238 /* SSNRigidCache.m in Sources */,
 				53A1BA1E1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */,
 				53BC53141A485E6E0044C238 /* SSNSafeSet.m in Sources */,
@@ -1214,6 +1221,7 @@
 				53BC53051A485E6E0044C238 /* NSData+SSNBase64.m in Sources */,
 				53D24643199C83B400EFDF29 /* DMSignNavController.h in Sources */,
 				53BC53391A485E6E0044C238 /* buffer.cpp in Sources */,
+				531324821A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */,
 				53BC53071A485E6E0044C238 /* NSFileManager+SSN.m in Sources */,
 				53D24644199C83B400EFDF29 /* DMSignNavController.m in Sources */,
 				53BC53191A485E6E0044C238 /* SSNDataStore.m in Sources */,

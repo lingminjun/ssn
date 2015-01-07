@@ -31,6 +31,7 @@
  *
  *  @param min               最小宽度，默认值为0，若min大于max将被忽略
  *  @param max               最大宽度，默认值为300
+ *  @param edge              边距宽度，默认值为10
  *  @param height            高度，默认值40
  *  @param font              字体大小，默认值为14
  *  @param color             字体颜色，默认值为黑色
@@ -42,7 +43,7 @@
  *
  *  @return button
  */
-+ (instancetype)ssn_buttonWithWidthMin:(CGFloat)min max:(CGFloat)max height:(CGFloat)height font:(UIFont *)font color:(UIColor *)color selected:(UIColor *)selectedColor disabled:(UIColor *)disabledColor backgroud:(UIImage *)backgroud selected:(UIImage *)selectedBackgroud disabled:(UIImage *)disabledBackgroud;
++ (instancetype)ssn_buttonWithWidthMin:(CGFloat)min max:(CGFloat)max edge:(CGFloat)edge height:(CGFloat)height font:(UIFont *)font color:(UIColor *)color selected:(UIColor *)selectedColor disabled:(UIColor *)disabledColor backgroud:(UIImage *)backgroud selected:(UIImage *)selectedBackgroud disabled:(UIImage *)disabledBackgroud;
 
 
 /**
