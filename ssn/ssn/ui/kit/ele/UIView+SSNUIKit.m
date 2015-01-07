@@ -90,5 +90,11 @@ static char *ssn_uikit_enable_theme_key = NULL;
     }
 }
 
+/**
+ *  重新改变尺寸
+ */
+- (void)ssn_sizeToFit {
+    
+}
 
 @end

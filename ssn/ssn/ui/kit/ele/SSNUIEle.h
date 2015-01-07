@@ -10,3 +10,4 @@
 #import "UIView+SSNUIKit.h"
 #import "UIImage+SSNUIColor.h"
 #import "NSString+SSNUIKit.h"
+#import "UIButton+SSNUIKit.h"

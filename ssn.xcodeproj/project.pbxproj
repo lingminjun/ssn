@@ -198,6 +198,7 @@
 		53D898E71A0F12DE00CE63E0 /* ssn_safe_array_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D898E61A0F12DE00CE63E0 /* ssn_safe_array_test.m */; };
 		53D898E91A0FA0C800CE63E0 /* ssn_safe_set_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */; };
 		53D9A1971A2CC66F009F777D /* ssn_log_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9A1961A2CC66F009F777D /* ssn_log_test.m */; };
+		53DB120C1A5CE6E200B119BA /* UITextField+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DB120B1A5CE6E200B119BA /* UITextField+SSNUIKit.m */; };
 		53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DBD62719EA610100728F96 /* ssnDTTest.m */; };
 		53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
 		53E517551A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
@@ -403,6 +404,8 @@
 		53D898E61A0F12DE00CE63E0 /* ssn_safe_array_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_safe_array_test.m; sourceTree = "<group>"; };
 		53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_safe_set_test.m; sourceTree = "<group>"; };
 		53D9A1961A2CC66F009F777D /* ssn_log_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_log_test.m; sourceTree = "<group>"; };
+		53DB120A1A5CE6E200B119BA /* UITextField+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+SSNUIKit.h"; sourceTree = "<group>"; };
+		53DB120B1A5CE6E200B119BA /* UITextField+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextField+SSNUIKit.m"; sourceTree = "<group>"; };
 		53DBD62719EA610100728F96 /* ssnDTTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssnDTTest.m; sourceTree = "<group>"; };
 		53E517521A5BECDF00CF47AC /* UIButton+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+SSNUIKit.h"; sourceTree = "<group>"; };
 		53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+SSNUIKit.m"; sourceTree = "<group>"; };
@@ -951,6 +954,8 @@
 				53C84C741A5BB355008AB7C8 /* UIView+SSNUIKit.m */,
 				53E517521A5BECDF00CF47AC /* UIButton+SSNUIKit.h */,
 				53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */,
+				53DB120A1A5CE6E200B119BA /* UITextField+SSNUIKit.h */,
+				53DB120B1A5CE6E200B119BA /* UITextField+SSNUIKit.m */,
 			);
 			path = ele;
 			sourceTree = "<group>";
@@ -1123,6 +1128,7 @@
 				5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */,
 				53BC531C1A485E6E0044C238 /* SSNKVOBound.m in Sources */,
 				53C84C751A5BB355008AB7C8 /* UIView+SSNUIKit.m in Sources */,
+				53DB120C1A5CE6E200B119BA /* UITextField+SSNUIKit.m in Sources */,
 				533121821A4BE85E000F456E /* DMPersonExt.m in Sources */,
 				538E384719986A3B0061692E /* DMContactViewController.m in Sources */,
 				538E3841199869E00061692E /* DMSignNavController.m in Sources */,

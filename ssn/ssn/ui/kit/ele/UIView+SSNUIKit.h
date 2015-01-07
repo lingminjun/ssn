@@ -42,6 +42,12 @@ UIKIT_EXTERN NSString *const SSNUIThemeUserInfoKey;//NSDictionary主题包
  */
 + (void)ssn_setTheme:(NSDictionary *)themeInfo;
 
+
+/**
+ *  重新改变尺寸
+ */
+- (void)ssn_sizeToFit;
+
 @end
 
 

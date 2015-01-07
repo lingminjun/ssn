@@ -13,14 +13,14 @@
 /**
  *  生产一个button，可配置的主题
  *
- *  @param size              大小
- *  @param font              字体大小
- *  @param color             字体颜色
- *  @param selectedColor     字体选中颜色（兼高亮）
- *  @param disabledColor     不可用颜色
- *  @param backgroud         背景图
- *  @param selectedBackgroud 选中背景图
- *  @param disabledBackgroud 不可用背景图
+ *  @param size              大小，默认值CGSize(60,40)
+ *  @param font              字体大小，默认值为14
+ *  @param color             字体颜色，默认值为黑色
+ *  @param selectedColor     字体选中颜色（兼高亮），默认nil
+ *  @param disabledColor     不可用颜色，默认nil
+ *  @param backgroud         背景图，默认纯白
+ *  @param selectedBackgroud 选中背景图，默认nil
+ *  @param disabledBackgroud 不可用背景图，默认nil
  *
  *  @return button
  */
@@ -29,19 +29,25 @@
 /**
  *  生产一个button，可配置的主题
  *
- *  @param min               最小宽度
- *  @param max               最大宽度
- *  @param height            高度
- *  @param font              字体大小
- *  @param color             字体颜色
- *  @param selectedColor     字体选中颜色（兼高亮）
- *  @param disabledColor     不可用颜色
- *  @param backgroud         背景图
- *  @param selectedBackgroud 选中背景图
- *  @param disabledBackgroud 不可用背景图
+ *  @param min               最小宽度，默认值为0，若min大于max将被忽略
+ *  @param max               最大宽度，默认值为300
+ *  @param height            高度，默认值40
+ *  @param font              字体大小，默认值为14
+ *  @param color             字体颜色，默认值为黑色
+ *  @param selectedColor     字体选中颜色（兼高亮），默认nil
+ *  @param disabledColor     不可用颜色，默认nil
+ *  @param backgroud         背景图，默认纯白
+ *  @param selectedBackgroud 选中背景图，默认nil
+ *  @param disabledBackgroud 不可用背景图，默认nil
  *
  *  @return button
  */
 + (instancetype)ssn_buttonWithWidthMin:(CGFloat)min max:(CGFloat)max height:(CGFloat)height font:(UIFont *)font color:(UIColor *)color selected:(UIColor *)selectedColor disabled:(UIColor *)disabledColor backgroud:(UIImage *)backgroud selected:(UIImage *)selectedBackgroud disabled:(UIImage *)disabledBackgroud;
+
+
+/**
+ *  重新改变尺寸
+ */
+- (void)ssn_sizeToFit;
 
 @end
