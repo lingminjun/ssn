@@ -30,7 +30,7 @@ ssn_uikit_value_synthesize(float,ssn_max_width,Ssn_max_width)
 //最大宽度
 ssn_uikit_value_synthesize(float,ssn_edge_width,Ssn_edge_width)
 
-#define ssn_uikit_stret_image(image) [image stretchableImageWithLeftCapWidth:ceilf(image.size.width/2) topCapHeight:ceilf(image.size.width/2)]
+#define ssn_uikit_stret_image(image) [image stretchableImageWithLeftCapWidth:ceilf(image.size.width/2) topCapHeight:ceilf(image.size.height/2)]
 
 + (instancetype)ssn_buttonWithWidthMin:(CGFloat)min max:(CGFloat)max edge:(CGFloat)edge widthScalable:(BOOL)widthScalable height:(CGFloat)height font:(UIFont *)font color:(UIColor *)color selected:(UIColor *)selectedColor disabled:(UIColor *)disabledColor backgroud:(UIImage *)backgroud selected:(UIImage *)selectedBackgroud disabled:(UIImage *)disabledBackgroud {
     

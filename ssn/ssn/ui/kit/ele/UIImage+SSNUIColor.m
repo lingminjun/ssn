@@ -40,16 +40,7 @@
  *  @return 图片
  */
 + (UIImage *)ssn_imageWithSize:(CGSize)size color:(UIColor *)color cornerRadius:(CGFloat)radius {
-    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
-    
-    UIBezierPath* roundedRectanglePath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
-    
-    [color setFill];
-    [roundedRectanglePath fill];
-    
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return image;
+    return [self ssn_imageWithSize:size color:color border:0.0f color:nil cornerRadius:radius];
 }
 
 /**
@@ -66,12 +57,19 @@
 + (UIImage *)ssn_imageWithSize:(CGSize)size color:(UIColor *)color border:(CGFloat)width color:(UIColor *)borderColor cornerRadius:(CGFloat)radius {
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
     
-    UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
+    UIBezierPath *borderPath = nil;//
+    CGFloat border_width = ceilf(width);
     
-    UIBezierPath *fillPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(width, width, size.width - width * 2, size.height - width * 2) cornerRadius:radius - width];
+    if (border_width > 0.0f) {//
+        borderPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
+    }
     
-    [borderColor setFill];
-    [borderPath fill];
+    UIBezierPath *fillPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(border_width, border_width, size.width - border_width * 2, size.height - border_width * 2) cornerRadius:radius - border_width];
+    
+    if (borderPath) {
+        [borderColor setFill];
+        [borderPath fill];
+    }
     
     [color setFill];
     [fillPath fill];
