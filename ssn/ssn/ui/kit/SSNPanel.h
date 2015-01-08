@@ -111,3 +111,18 @@
 - (SSNUITableLayout *)ssn_tableLayoutWithDefaultRowHeight:(NSUInteger)rowHeight rowCount:(NSUInteger)rowCount columnCount:(NSUInteger)columnCount;
 
 @end
+
+
+/**
+ *  控制器布局委托
+ */
+@interface UIViewController (SSNUILayout)
+
+/**
+ *  viewDidLoad后，viewWillAppear前调用，建议在方法中加载想要的布局
+ *  被调用次数和viewDidLoad一直
+ *  viewController中什么也没做
+ */
+- (void)ssn_layoutDidLoad;
+
+@end

@@ -14,6 +14,18 @@
 #import <objc/message.h>
 #endif
 
+#define ssn_uilayout_value_synthesize(type,get,set) _ssn_uilayout_value_synthesize_(type,get,set)
+
+#define _ssn_uilayout_value_synthesize_(t,g,s) \
+static char * g ## _key = NULL;\
+- (t) g { \
+NSNumber *v = objc_getAssociatedObject(self, &(g ## _key)); \
+return [v t ## Value ]; \
+} \
+- (void) set ## s :(t) g { \
+objc_setAssociatedObject(self, &(g ## _key), @( g ), OBJC_ASSOCIATION_RETAIN_NONATOMIC); \
+}
+
 @interface SSNUILayout ()
 
 - (instancetype)initWithPanel:(UIView *)panel;
@@ -63,6 +75,12 @@ static char *ssn_layouts_dictionary_key = NULL;
     return dic;
 }
 
+//防止重复压栈问题
+ssn_uilayout_value_synthesize(int, ssn_layout_called_flag, Ssn_layout_called_flag)
+
+//控制已经加载layout
+ssn_uilayout_value_synthesize(int, ssn_layout_did_load, Ssn_layout_did_load)
+
 /**
  *  元素被移除
  */
@@ -78,11 +96,28 @@ static char *ssn_layouts_dictionary_key = NULL;
  *  元素需要布局
  */
 - (void)ssn_layoutSubviews {
+    int flag = [self ssn_layout_called_flag];
+    if (flag) {
+        return ;
+    }
+    
+    self.ssn_layout_called_flag = 1;
+    
+    id obj = self.nextResponder;
+    if ([obj isKindOfClass:[UIViewController class]]) {
+        if (!self.ssn_layout_did_load) {
+            [(UIViewController *)obj ssn_layoutDidLoad];
+            self.ssn_layout_did_load = 1;
+        }
+    }
+    
     NSMutableDictionary *dic = [self ssn_layouts_dictionary];
     for (SSNUILayout *layout in [dic allValues]) {
         [layout layoutSubviews];//开始布局所有的子view
     }
     [self ssn_layoutSubviews];//继续调用原来的方法
+    
+    self.ssn_layout_called_flag = 0;
 }
 
 
@@ -242,5 +277,19 @@ static char *ssn_layouts_dictionary_key = NULL;
     [[self ssn_layouts_dictionary] setObject:layout forKey:[layout layoutID]];
     return layout;
 }
+
+@end
+
+
+/**
+ *  控制器布局委托
+ */
+@implementation UIViewController (SSNUILayout)
+
+/**
+ *  viewDidLoad后，viewWillAppear前调用，建议在方法中加载想要的布局
+ *  被调用次数和viewDidLoad一直
+ */
+- (void)ssn_layoutDidLoad {}
 
 @end
