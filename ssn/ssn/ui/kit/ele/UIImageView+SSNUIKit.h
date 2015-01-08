@@ -37,24 +37,16 @@
  */
 + (instancetype)ssn_imageViewWithImage:(UIImage *)image;
 
-///**
-// *  一个一像素高度的线，内部根据当前分辨率扩充其透明线
-// *
-// *  @param width 边框，默认值1
-// *  @param color 线的颜色，不能为空
-// *
-// *  @return 一个线的view
-// */
-//+ (instancetype)ssn_upLineWithWidth:(CGFloat)width color:(UIColor *)color;
-//
-///**
-// *  一个一像素高度的线，内部根据当前分辨率扩充其透明线
-// *
-// *  @param width 边框，默认值1
-// *  @param color 线的颜色，不能为空
-// *
-// *  @return 一个线的view
-// */
-//+ (instancetype)ssn_downLineWithWidth:(CGFloat)width color:(UIColor *)color;
+/**
+ *  一个一像素高度的线，内部根据当前分辨率扩充其透明线
+ *
+ *  @param width        边框，默认值40
+ *  @param color        线的颜色，不能为空
+ *  @param orientation  线的方向
+ *
+ *  @return 一个线的view
+ */
++ (instancetype)ssn_lineWithWidth:(CGFloat)width color:(UIColor *)color orientation:(UIInterfaceOrientation)orientation;
+
 
 @end
