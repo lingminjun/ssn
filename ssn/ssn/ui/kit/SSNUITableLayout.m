@@ -600,7 +600,7 @@ SSNUITableLayoutSynthesize(cellInfos)
         
         NSUInteger row = (index / _columnCount);
         CGRect row_rect = rect;
-        for (NSInteger idx = 1; idx <= row; idx++) {
+        for (NSUInteger idx = 1; idx <= row; idx++) {
             NSInteger rowHeight = [self rowHeightWithRow:idx rowInfos:rows];
             SSNUILayoutRowRectNext(row_rect, isHOR, isRowASC, rowHeight);
         }

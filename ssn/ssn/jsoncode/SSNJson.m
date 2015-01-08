@@ -50,7 +50,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
             unsigned int outCount;
             objc_property_t *c_properties = class_copyPropertyList(p_cls, &outCount);
             
-            for (int i = 0; i < outCount; i++)
+            for (unsigned int i = 0; i < outCount; i++)
             {
                 @autoreleasepool {
                     objc_property_t property = c_properties[i];

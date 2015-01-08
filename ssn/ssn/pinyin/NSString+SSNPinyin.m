@@ -73,7 +73,7 @@ NSString *const SSNUnicodeToPinyinKey = @"ssn";
         NSUInteger len = [txt length];
         NSDictionary *dic = [NSString unicodeToPinyinDictionary];
         NSMutableString *py = [NSMutableString string];
-        for (NSInteger idx = 0; idx < len; idx++) {
+        for (NSUInteger idx = 0; idx < len; idx++) {
             unichar c = [txt characterAtIndex:idx];
             NSString *fpy = [dic objectForKey:@(c)][0];
             if (fpy) {
@@ -95,7 +95,7 @@ NSString *const SSNUnicodeToPinyinKey = @"ssn";
         NSUInteger len = [txt length];
         NSDictionary *dic = [NSString unicodeToPinyinDictionary];
         NSMutableString *py = [NSMutableString string];
-        for (NSInteger idx = 0; idx < len; idx++) {
+        for (NSUInteger idx = 0; idx < len; idx++) {
             unichar c = [txt characterAtIndex:idx];
             NSString *fpy = [dic objectForKey:@(c)][0];
             if (fpy) {
@@ -141,7 +141,7 @@ NSString *const SSNUnicodeToPinyinKey = @"ssn";
         NSMutableArray *fscomps = [NSMutableArray array];
         NSMutableString *comp = nil;
         
-        for (NSInteger idx = 0; idx < len; idx++) { @autoreleasepool {
+        for (NSUInteger idx = 0; idx < len; idx++) { @autoreleasepool {
             unichar c = [txt characterAtIndex:idx];
             
             NSArray *pys = [dic objectForKey:@(c)];
