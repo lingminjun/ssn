@@ -246,7 +246,7 @@
             [self layoutRowviews:rowviews inRow:rect sumViewWidth:sum_view_width isHOR:isHOR];
             
             //换行处理
-            SSNUILayoutRowRectNext(rect, isHOR, isRowASC, _rowHeight);
+            ssn_ui_layout_next_row_rect(rect, isHOR, isRowASC, _rowHeight);
             cost_width = 0;
             sum_view_width = 0;
             [rowviews removeAllObjects];

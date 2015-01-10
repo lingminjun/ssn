@@ -8,14 +8,9 @@
 
 #import "SSNUILayout.h"
 
-#define SSNUILayoutRowRectNext(rect,hor,asc,height) do{\
-if (hor)    { if (asc) { rect.origin.y += height; } else { rect.origin.y -= height; } }\
-else        { if (asc) { rect.origin.x += height; } else { rect.origin.x -= height; } }\
-}while(0)
-
-#define SSNUILayoutRowRectAtRow(rect,hor,asc,height,row) do{\
-if (hor)    { if (asc) { rect.origin.y += height * (row); } else { rect.origin.y -= height * (row); } }\
-else        { if (asc) { rect.origin.x += height * (row); } else { rect.origin.x -= height * (row); } }\
+#define ssn_ui_layout_next_row_rect(rect,hor,asc,hgt) do{\
+if (hor)    { if (asc) { rect.origin.y += rect.size.height; } else { rect.origin.y -= rect.size.height; } rect.size.height = hgt; }\
+else        { if (asc) { rect.origin.x += rect.size.width; } else { rect.origin.x -= rect.size.width; } rect.size.width = hgt; }\
 }while(0)
 
 

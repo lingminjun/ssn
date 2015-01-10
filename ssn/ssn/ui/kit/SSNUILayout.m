@@ -287,6 +287,10 @@ static char *ssn_dependent_layout_key = NULL;
     //NSLog(@"nothing to do")
 }
 
+- (UIView *)objectForKeyedSubscript:(NSString *)key {
+    return [self subviewForKey:key];
+}
+
 /**
  *  在一固定的rect中布局一个元素
  *

@@ -206,5 +206,15 @@ typedef NS_ENUM(NSUInteger, SSNUILayoutOrientation){
  */
 - (void)layoutSubviews;
 
+#pragma mark 增加脚本
+/**
+ *  返回此布局中的subview
+ *
+ *  @param key subview的key
+ *
+ *  @return 在此布局中的subview，找不到返回nil
+ */
+- (UIView *)objectForKeyedSubscript:(NSString *)key;
+
 @end
 

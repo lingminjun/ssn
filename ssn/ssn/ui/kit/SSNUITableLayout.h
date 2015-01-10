@@ -110,6 +110,15 @@
  */
 @property (nonatomic) NSUInteger height;
 
+/**
+ *  返回一个表布局行属性
+ *
+ *  @param height       行高
+ *
+ *  @return 列属性
+ */
++ (instancetype)infoWithHeight:(NSUInteger)height;
+
 @end
 
 
@@ -128,6 +137,16 @@
  *  da
  */
 @property (nonatomic) SSNUIContentMode contentMode;
+
+/**
+ *  返回一个表布局列属性
+ *
+ *  @param width       列宽度
+ *  @param contentMode 列元素依赖
+ *
+ *  @return 列属性
+ */
++ (instancetype)infoWithWidth:(NSUInteger)width contentMode:(SSNUIContentMode)contentMode;
 
 @end
 
@@ -160,6 +179,16 @@
  *  @return 当前单元格的subview
  */
 - (UIView *)subview;
+
+/**
+ *  返回一个表布局列单元格属性
+ *
+ *  @param contentInset 单元格内边距
+ *  @param contentMode 单元格元素依赖
+ *
+ *  @return 单元格属性
+ */
++ (instancetype)infoWithContentInset:(UIEdgeInsets)contentInset contentMode:(SSNUIContentMode)contentMode;
 
 @end
 

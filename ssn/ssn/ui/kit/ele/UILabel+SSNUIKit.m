@@ -51,6 +51,9 @@ ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
     
     label.ssn_width_scalable = widthScalable;
     label.ssn_multi_line = multiLine;
+    if (multiLine) {
+        label.numberOfLines = 0;
+    }
     label.ssn_min_width = ceilf(min > aMax ? aMax : min);
     label.ssn_max_width = ceilf(max);
     
@@ -129,6 +132,7 @@ ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
     //多行处理
     if (multiLine) {
         frame.size.height = size.height;
+        self.numberOfLines = 0;
     }
     
     self.frame = frame;

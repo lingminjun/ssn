@@ -12,6 +12,14 @@
 #import "SSNUIFlowLayout.h"
 #import "SSNUITableLayout.h"
 
+#ifndef _ssn_panel_snippet_
+#define _ssn_panel_snippet_
+
+#define ssn_panel_set(v,s,p) [(v) ssn_addSubview:(s) forKey: @#p ]
+#define ssn_panel_get(t,v,p) ((t *)[(v) ssn_subviewForKey: @#p ])
+
+#endif
+
 /**
  *  实现快速布局，以及所有子元素采用key方式获取，主要应用于视觉布局绑定
  */

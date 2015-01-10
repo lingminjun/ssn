@@ -602,7 +602,7 @@ SSNUITableLayoutSynthesize(cellInfos)
         CGRect row_rect = rect;
         for (NSUInteger idx = 1; idx <= row; idx++) {
             NSInteger rowHeight = [self rowHeightWithRow:idx rowInfos:rows];
-            SSNUILayoutRowRectNext(row_rect, isHOR, isRowASC, rowHeight);
+            ssn_ui_layout_next_row_rect(row_rect, isHOR, isRowASC, rowHeight);
         }
         
         SSNUITableCellInfo *cellInfo = [_cellInfos objectForKey:numIndex];
@@ -623,6 +623,19 @@ SSNUITableLayoutSynthesize(cellInfos)
     return cp;
 }
 
+/**
+ *  返回一个表布局行属性
+ *
+ *  @param height       行高
+ *
+ *  @return 列属性
+ */
++ (instancetype)infoWithHeight:(NSUInteger)height {
+    SSNUITableRowInfo *info = [[SSNUITableRowInfo alloc] init];
+    info.height = height;
+    return info;
+}
+
 @end
 
 
@@ -633,6 +646,21 @@ SSNUITableLayoutSynthesize(cellInfos)
     cp.width = self.width;
     cp.contentMode = self.contentMode;
     return cp;
+}
+
+/**
+ *  返回一个表布局列属性
+ *
+ *  @param width       列宽度
+ *  @param contentMode 列元素依赖
+ *
+ *  @return 列属性
+ */
++ (instancetype)infoWithWidth:(NSUInteger)width contentMode:(SSNUIContentMode)contentMode {
+    SSNUITableColumnInfo *info = [[SSNUITableColumnInfo alloc] init];
+    info.width = width;
+    info.contentMode = contentMode;
+    return info;
 }
 
 @end
@@ -679,6 +707,21 @@ SSNUITableLayoutSynthesize(cellInfos)
     NSArray *cols = [layout columnInfosWithRowWidth:row_width];
     
     return [layout cellRectWithIndex:self.index columnInfos:cols rowRect:rect rowWidth:row_width isHOR:isHOR isRowASC:isRowASC isColumnASC:isColumnASC contentMode:NULL ];
+}
+
+/**
+ *  返回一个表布局列单元格属性
+ *
+ *  @param contentInset 单元格内边距
+ *  @param contentMode 单元格元素依赖
+ *
+ *  @return 单元格属性
+ */
++ (instancetype)infoWithContentInset:(UIEdgeInsets)contentInset contentMode:(SSNUIContentMode)contentMode {
+    SSNUITableCellInfo *info = [[SSNUITableCellInfo alloc] init];
+    info.contentInset = contentInset;
+    info.contentMode = contentMode;
+    return info;
 }
 
 @end
