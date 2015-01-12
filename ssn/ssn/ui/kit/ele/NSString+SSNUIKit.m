@@ -15,7 +15,10 @@
     CGSize goal_size = CGSizeMake(maxWidth, 3000);
     if ([self respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
         NSDictionary *attributes = @{ NSFontAttributeName:font };
-        CGRect rect = [self boundingRectWithSize:goal_size options:NSStringDrawingUsesLineFragmentOrigin attributes:attributes context:nil];
+        CGRect rect = [self boundingRectWithSize:goal_size
+                                         options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                      attributes:attributes
+                                         context:nil];
         return CGSizeMake(ceilf(rect.size.width), ceilf(rect.size.height));
     }
     
@@ -25,6 +28,19 @@
     return CGSizeMake(ceilf(size.width), ceilf(size.height));
 #pragma clang diagnostic pop
     
+}
+
+@end
+
+
+@implementation NSAttributedString (SSNUIKit)
+
+- (CGSize)ssn_sizeWithMaxWidth:(CGFloat)maxWidth {
+    CGSize goal_size = CGSizeMake(maxWidth, 3000);
+    CGRect rect = [self boundingRectWithSize:goal_size
+                                     options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                     context:nil];
+    return CGSizeMake(ceilf(rect.size.width), ceilf(rect.size.height));
 }
 
 @end

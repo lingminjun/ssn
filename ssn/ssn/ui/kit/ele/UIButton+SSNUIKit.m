@@ -163,4 +163,36 @@ ssn_uikit_value_synthesize(float,ssn_edge_width,Ssn_edge_width)
     self.frame = frame;
 }
 
+static char * ssn_hit_edge_outsets_key = NULL;
+@dynamic hitEdgeOutsets;
+- (void)setHitEdgeOutsets:(UIEdgeInsets)hitEdgeOutsets
+{
+    NSValue *value = [NSValue valueWithUIEdgeInsets:hitEdgeOutsets];
+    objc_setAssociatedObject(self, &ssn_hit_edge_outsets_key, value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UIEdgeInsets)hitEdgeOutsets
+{
+    NSValue * value = objc_getAssociatedObject(self, &ssn_hit_edge_outsets_key);
+    if(value) {
+        return [value UIEdgeInsetsValue];
+    }
+    return UIEdgeInsetsZero;
+}
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+    if (UIEdgeInsetsEqualToEdgeInsets(self.hitEdgeOutsets, UIEdgeInsetsZero) || !self.enabled || self.hidden) {
+        return [super pointInside:point withEvent:event];
+    }
+    UIEdgeInsets edge = self.hitEdgeOutsets;
+    edge.top = -edge.top;
+    edge.bottom = -edge.bottom;
+    edge.left = -edge.left;
+    edge.right = -edge.right;
+    CGRect hitFrame = UIEdgeInsetsInsetRect(self.bounds, edge);
+    return CGRectContainsPoint(hitFrame, point);
+}
+
+
 @end

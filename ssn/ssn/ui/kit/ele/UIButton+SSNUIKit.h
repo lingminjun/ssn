@@ -51,4 +51,9 @@
  */
 - (void)ssn_sizeToFit;
 
+/**
+ *  扩大按钮的点击范围（outsets表示自己frame向外延生部分，superview要足够大）
+ */
+@property(nonatomic) UIEdgeInsets hitEdgeOutsets;
+
 @end

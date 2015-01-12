@@ -104,18 +104,24 @@ ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
         [self sizeToFit];
         return ;
     }
-    
-    NSString *text = self.text;
-    if (!text) {
-        text = @"";
-    }
-    
     CGRect frame = self.frame;
     
     CGFloat maxWidth = [self ssn_max_width];
     CGFloat minWidth = [self ssn_min_width];
     
-    CGSize size = [text ssn_sizeWithFont:self.font maxWidth:maxWidth];
+    CGSize size = CGSizeZero;
+    
+    //先判断可变字体
+    if ([self.attributedText length]) {
+        size = [self.attributedText ssn_sizeWithMaxWidth:maxWidth];
+    }
+    else {
+        NSString *text = self.text;
+        if (!text) {
+            text = @"";
+        }
+        size = [text ssn_sizeWithFont:self.font maxWidth:maxWidth];
+    }
     
     if (widthScalable) {//宽度需要调整
         if (size.width < minWidth) {
@@ -136,6 +142,7 @@ ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
     }
     
     self.frame = frame;
+
 }
 
 @end

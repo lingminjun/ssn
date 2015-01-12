@@ -15,8 +15,27 @@
 #ifndef _ssn_panel_snippet_
 #define _ssn_panel_snippet_
 
-#define ssn_panel_set(v,s,p) [(v) ssn_addSubview:(s) forKey: @#p ]
-#define ssn_panel_get(t,v,p) ((t *)[(v) ssn_subviewForKey: @#p ])
+#define ssn_panel_set(panel, subview, property) ssn_panel_set_(panel,subview,property)
+#define ssn_panel_get(type, panel, property) ssn_panel_get_(type,panel,property)
+
+#define ssn_layout_into(layout, index, property) ssn_layout_into_(layout,index,property)
+#define ssn_layout_add(layout, subview, index, property) ssn_layout_add_(layout, subview, index, property)
+#define ssn_layout_add_v2(layout, subview, index, cell, property) ssn_layout_add_v2_(layout, subview, index, cell, property)
+
+#define ssn_layout_table_column(width,mode) [SSNUITableColumnInfo infoWithWidth:(width) contentMode:(mode)]
+#define ssn_layout_table_column_v2(width) [SSNUITableColumnInfo infoWithWidth:(width) contentMode:SSNUIContentModeNan]
+
+#define ssn_layout_table_row(height) [SSNUITableRowInfo infoWithHeight:(height)]
+
+#define ssn_layout_table_cell(top, left, bottom, right, mode) [SSNUITableCellInfo infoWithContentInset:UIEdgeInsetsMake(top, left, bottom, right) contentMode:mode]
+#define ssn_layout_table_cell_v2(mode) [SSNUITableCellInfo infoWithContentInset:UIEdgeInsetsZero contentMode:mode]
+
+#define ssn_panel_set_(v,s,p) [(v) ssn_addSubview:(s) forKey: @#p ]
+#define ssn_panel_get_(t,v,p) ((t *)[(v) ssn_subviewForKey: @#p ])
+
+#define ssn_layout_into_(l,i,p) [(l) moveSubviewToIndex:(i) forKey: @#p ]
+#define ssn_layout_add_(l,s,i,p) [(l) insertSubview:(s) atIndex:(i) forKey: @#p ]
+#define ssn_layout_add_v2_(l, s, i, c, p) [(l) insertSubview:(s) atIndex:(i) cellInfo:(c) forKey: @#p ]
 
 #endif
 

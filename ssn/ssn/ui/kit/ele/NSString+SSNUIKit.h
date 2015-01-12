@@ -21,3 +21,17 @@
 - (CGSize)ssn_sizeWithFont:(UIFont *)font maxWidth:(CGFloat)maxWidth;
 
 @end
+
+
+@interface NSAttributedString (SSNUIKit)
+
+/**
+ *  返回字体所占用得尺寸
+ *
+ *  @param maxWidth 最大宽度
+ *
+ *  @return 返回合适的尺寸
+ */
+- (CGSize)ssn_sizeWithMaxWidth:(CGFloat)maxWidth;
+
+@end
