@@ -198,6 +198,7 @@
 		53D78574199F1564004D9D62 /* TestUser.json in Resources */ = {isa = PBXBuildFile; fileRef = 53D78573199F1564004D9D62 /* TestUser.json */; };
 		53D78576199F15A9004D9D62 /* TestUser2.json in Resources */ = {isa = PBXBuildFile; fileRef = 53D78575199F15A9004D9D62 /* TestUser2.json */; };
 		53D7D0C319A8F5A90025A2E2 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D7D0C219A8F5A90025A2E2 /* libstdc++.dylib */; };
+		53D82B8E1A6550AE005C2958 /* NSObject+SSNBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D82B8D1A6550AE005C2958 /* NSObject+SSNBlock.m */; };
 		53D898E71A0F12DE00CE63E0 /* ssn_safe_array_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D898E61A0F12DE00CE63E0 /* ssn_safe_array_test.m */; };
 		53D898E91A0FA0C800CE63E0 /* ssn_safe_set_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */; };
 		53D9A1971A2CC66F009F777D /* ssn_log_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9A1961A2CC66F009F777D /* ssn_log_test.m */; };
@@ -408,6 +409,8 @@
 		53D78573199F1564004D9D62 /* TestUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestUser.json; sourceTree = "<group>"; };
 		53D78575199F15A9004D9D62 /* TestUser2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestUser2.json; sourceTree = "<group>"; };
 		53D7D0C219A8F5A90025A2E2 /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
+		53D82B8C1A6550AE005C2958 /* NSObject+SSNBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SSNBlock.h"; sourceTree = "<group>"; };
+		53D82B8D1A6550AE005C2958 /* NSObject+SSNBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SSNBlock.m"; sourceTree = "<group>"; };
 		53D898E61A0F12DE00CE63E0 /* ssn_safe_array_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_safe_array_test.m; sourceTree = "<group>"; };
 		53D898E81A0FA0C800CE63E0 /* ssn_safe_set_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_safe_set_test.m; sourceTree = "<group>"; };
 		53D9A1961A2CC66F009F777D /* ssn_log_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_log_test.m; sourceTree = "<group>"; };
@@ -637,6 +640,8 @@
 				53BC52A31A485E6E0044C238 /* SSNSafeSet.h */,
 				53BC52A41A485E6E0044C238 /* SSNSafeSet.m */,
 				53BC52A51A485E6E0044C238 /* store */,
+				53D82B8C1A6550AE005C2958 /* NSObject+SSNBlock.h */,
+				53D82B8D1A6550AE005C2958 /* NSObject+SSNBlock.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -1126,6 +1131,7 @@
 				53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */,
 				53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */,
 				53BC53081A485E6E0044C238 /* NSString+SSN.m in Sources */,
+				53D82B8E1A6550AE005C2958 /* NSObject+SSNBlock.m in Sources */,
 				53BC53001A485E6E0044C238 /* ssnlog.c in Sources */,
 				533BE3A41A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
 				538E3844199869F90061692E /* DMSignViewController.m in Sources */,

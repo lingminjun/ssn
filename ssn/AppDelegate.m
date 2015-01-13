@@ -32,6 +32,8 @@
 #import "SSNPanel.h"
 #import "SSNUILayout.h"
 
+#import "NSObject+SSNBlock.h"
+
 @interface AppDelegate ()<SSNRouterDelegate>
 @end
 
