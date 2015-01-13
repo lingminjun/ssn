@@ -197,6 +197,11 @@ ssn_uilayout_value_synthesize(int, ssn_layout_did_load, Ssn_layout_did_load)
     [subview removeFromSuperview];
 }
 
+//一个私有接口实现
+- (void)ssn_setLayout:(SSNUILayout *)layout forID:(NSString *)layoutId {
+    [[self ssn_layouts_dictionary] setObject:layout forKey:layoutId];
+}
+
 /**
  *  返回已创建的布局
  *
@@ -248,7 +253,7 @@ ssn_uilayout_value_synthesize(int, ssn_layout_did_load, Ssn_layout_did_load)
     SSNUIFlowLayout *layout = [[SSNUIFlowLayout alloc] initWithPanel:self];
     layout.rowHeight = rowHeight;
     layout.spacing = spacing;
-    [[self ssn_layouts_dictionary] setObject:layout forKey:[layout layoutID]];
+    [self ssn_setLayout:layout forID:[layout layoutID]];
     return layout;
 }
 
@@ -274,7 +279,7 @@ ssn_uilayout_value_synthesize(int, ssn_layout_did_load, Ssn_layout_did_load)
     layout.defaultRowHeight = rowHeight;
     layout.columnCount = columnCount;
     layout.rowCount = rowCount;
-    [[self ssn_layouts_dictionary] setObject:layout forKey:[layout layoutID]];
+    [self ssn_setLayout:layout forID:[layout layoutID]];
     return layout;
 }
 

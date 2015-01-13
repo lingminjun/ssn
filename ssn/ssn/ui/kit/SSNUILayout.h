@@ -94,6 +94,15 @@ typedef NS_ENUM(NSUInteger, SSNUILayoutOrientation){
 - (NSString *)layoutID;
 
 /**
+ *  设置当前layout的id
+ *
+ *  @param layoutID 设置的id
+ *
+ *  @return 设置成功返回yes，设置失败返回no
+ */
+- (BOOL)setLayoutID:(NSString *)layoutID;
+
+/**
  *  一个布局只能应用于一个view上面
  *
  *  @return 返回作用的view上面
@@ -206,7 +215,6 @@ typedef NS_ENUM(NSUInteger, SSNUILayoutOrientation){
  */
 - (void)layoutSubviews;
 
-#pragma mark 增加脚本
 /**
  *  返回此布局中的subview
  *
@@ -215,6 +223,5 @@ typedef NS_ENUM(NSUInteger, SSNUILayoutOrientation){
  *  @return 在此布局中的subview，找不到返回nil
  */
 - (UIView *)objectForKeyedSubscript:(NSString *)key;
-
 @end
 

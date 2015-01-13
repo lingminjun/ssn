@@ -34,6 +34,10 @@
 }
 @end
 
+@interface UIView ()
+- (void)ssn_setLayout:(SSNUILayout *)layout forID:(NSString *)layoutId;
+@end
+
 /**
  *  子view关联布局对象
  */
@@ -93,6 +97,36 @@ static char *ssn_dependent_layout_key = NULL;
  */
 - (NSString *)layoutID {
     return _layoutID;
+}
+
+/**
+ *  设置当前layout的id
+ *
+ *  @param layoutID 设置的id
+ *
+ *  @return 设置成功返回yes，设置失败返回no
+ */
+- (BOOL)setLayoutID:(NSString *)layoutID {
+    if ([layoutID length] == 0) {
+        return NO;
+    }
+    
+    UIView *panel = [self panel];
+    
+    //若已经有一个layout了，则不能被设置
+    SSNUILayout *layout = [panel ssn_layoutForID:layoutID];
+    if (layout && layout != self) {
+        return NO;
+    }
+    else if (layout == self) {//一样返回yes
+        return YES;
+    }
+    
+    //设置新的key
+    _layoutID = layoutID;
+    [panel ssn_setLayout:self forID:_layoutID];
+    
+    return YES;
 }
 
 /**
