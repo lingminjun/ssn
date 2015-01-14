@@ -109,18 +109,21 @@ ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
     CGFloat maxWidth = [self ssn_max_width];
     CGFloat minWidth = [self ssn_min_width];
     
-    CGSize size = CGSizeZero;
-    
-    //先判断可变字体
-    if ([self.attributedText length]) {
-        size = [self.attributedText ssn_sizeWithMaxWidth:maxWidth];
+    //可变字体和不可变字体都应该计算后取最大的
+    CGSize size1 = CGSizeZero;
+    if (self.attributedText) {
+        size1 = [self.attributedText ssn_sizeWithMaxWidth:maxWidth];
     }
-    else {
-        NSString *text = self.text;
-        if (!text) {
-            text = @"";
-        }
-        size = [text ssn_sizeWithFont:self.font maxWidth:maxWidth];
+    
+    NSString *text = self.text;
+    if (!text) {
+        text = @"";
+    }
+    CGSize size2 = [text ssn_sizeWithFont:self.font maxWidth:maxWidth];
+    
+    CGSize size = size1;
+    if (size2.height > size.height) {
+        size = size2;
     }
     
     if (widthScalable) {//宽度需要调整

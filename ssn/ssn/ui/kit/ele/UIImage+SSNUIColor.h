@@ -112,4 +112,16 @@
  */
 + (UIImage *)ssn_lineWithColor:(UIColor *)color orientation:(UIInterfaceOrientation)orientation;
 
+
+/**
+ *  绘制一个圆形线圈
+ *
+ *  @param diameter    直径
+ *  @param width       线宽
+ *  @param borderColor 线颜色
+ *
+ *  @return 绘制一个圆形线圈
+ */
++ (UIImage *)ssn_circleLineWithDiameter:(CGFloat)diameter border:(CGFloat)width color:(UIColor *)borderColor;
+
 @end

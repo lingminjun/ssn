@@ -59,7 +59,6 @@
     
     UIBezierPath *borderPath = nil;//
     CGFloat border_width = ceilf(width);
-    
     if (border_width > 0.0f) {//
         borderPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
     }
@@ -320,6 +319,42 @@
             }
             break;
     }
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+#define   ssn_pi (3.14159265359)
+#define   ssn_degrees_to_radians(degrees)  ((ssn_pi * degrees)/ 180)
+
+/**
+ *  绘制一个圆形线圈
+ *
+ *  @param diameter    直径
+ *  @param width       线宽
+ *  @param borderColor 线颜色
+ *
+ *  @return 绘制一个圆形线圈
+ */
++ (UIImage *)ssn_circleLineWithDiameter:(CGFloat)diameter border:(CGFloat)width color:(UIColor *)borderColor {
+    
+    CGSize size = CGSizeMake(diameter, diameter);
+    CGFloat radius = floorf(diameter/2.0f);
+    
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    UIBezierPath* borderPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(radius, radius)
+                                                              radius:radius
+                                                          startAngle:0
+                                                            endAngle:ssn_degrees_to_radians(360)
+                                                           clockwise:YES];
+    
+    borderPath.lineWidth = width;
+    borderPath.lineCapStyle = kCGLineCapRound; //线条拐角
+    borderPath.lineJoinStyle = kCGLineCapRound; //终点处理
+    
+    [borderColor setStroke]; //设置线条颜色
+    [borderPath stroke];
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

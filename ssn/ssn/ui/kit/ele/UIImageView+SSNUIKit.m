@@ -76,11 +76,11 @@
     
     if (UIInterfaceOrientationLandscapeLeft == orientation || UIInterfaceOrientationLandscapeRight == orientation) {
         frame.size.height = aWidth;
-        frame.size.width = image.size.width;
+        frame.size.width = 1;
     }
     else {
         frame.size.width = aWidth;
-        frame.size.height = image.size.height;
+        frame.size.height = 1;
     }
     
     UIImageView *imageView = [[[self class] alloc] initWithFrame:frame];

@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol SSNCancelable;
+
 /**
  *  主要替换如下过程：
  dispatch_async(dispatch_get_main_queue(), ^{
@@ -34,4 +36,25 @@
  */
 - (void)ssn_mainThreadAsyncBlock:(dispatch_block_t)block;
 
+/**
+ *  到主线程中异步执行block
+ *
+ *  @param block 执行的block
+ */
+- (id<SSNCancelable>)ssn_handlerMainThreadAsyncBlock:(dispatch_block_t)block;
+
 @end
+
+
+/**
+ *  可取消异步调用回调
+ */
+@protocol SSNCancelable <NSObject>
+
+/**
+ *  取消回调
+ */
+- (void)cancel;
+
+@end
+
