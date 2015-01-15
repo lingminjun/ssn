@@ -253,10 +253,28 @@ ssn_uilayout_value_synthesize(int, ssn_view_controller_layout_did_load, Ssn_view
 /**
  *  创建一个流式布局
  *
+ *  @param rowHeight 行高
+ *  @param rowCount  行数
+ *  @param spacing   间距
+ *
+ *  @return 返回并创建一个流式布局
+ */
+- (SSNUIFlowLayout *)ssn_flowLayoutWithRowHeight:(NSUInteger)rowHeight rowCount:(NSUInteger)rowCount spacing:(NSUInteger)spacing {
+    SSNUIFlowLayout *layout = [[SSNUIFlowLayout alloc] initWithPanel:self];
+    layout.rowCount = rowCount;
+    layout.rowHeight = rowHeight;
+    layout.spacing = spacing;
+    [self ssn_setLayout:layout forID:[layout layoutID]];
+    return layout;
+}
+
+/**
+ *  创建一个流式布局
+ *
  *  @return 返回并创建一个流式布局
  */
 - (SSNUIFlowLayout *)ssn_flowLayout {
-    return [self ssn_flowLayoutWithRowHeight:44 spacing:8];
+    return [self ssn_flowLayoutWithRowHeight:0 rowCount:0 spacing:8];
 }
 
 /**
@@ -268,12 +286,39 @@ ssn_uilayout_value_synthesize(int, ssn_view_controller_layout_did_load, Ssn_view
  *  @return 返回并创建一个流式布局
  */
 - (SSNUIFlowLayout *)ssn_flowLayoutWithRowHeight:(NSUInteger)rowHeight spacing:(NSUInteger)spacing {
-    SSNUIFlowLayout *layout = [[SSNUIFlowLayout alloc] initWithPanel:self];
-    layout.rowHeight = rowHeight;
-    layout.spacing = spacing;
+    return [self ssn_flowLayoutWithRowHeight:rowHeight rowCount:0 spacing:spacing];
+}
+
+/**
+ *  创建一个流式布局
+ *
+ *  @param rowCount 行数
+ *  @param spacing  间距
+ *
+ *  @return 返回并创建一个流式布局
+ */
+- (SSNUIFlowLayout *)ssn_flowLayoutWithRowCount:(NSUInteger)rowCount spacing:(NSUInteger)spacing {
+    return [self ssn_flowLayoutWithRowHeight:0 rowCount:rowCount spacing:spacing];
+}
+
+/**
+ *  创建一个表格布局
+ *
+ *  @param rowHeight   行高
+ *  @param rowCount    行数，填零表示不限制
+ *  @param columnCount 不能小于1
+ *
+ *  @return 返回并创建一个表格布局
+ */
+- (SSNUITableLayout *)ssn_tableLayoutWithDefaultRowHeight:(NSUInteger)rowHeight rowCount:(NSUInteger)rowCount columnCount:(NSUInteger)columnCount {
+    SSNUITableLayout *layout = [[SSNUITableLayout alloc] initWithPanel:self];
+    layout.defaultRowHeight = rowHeight;
+    layout.columnCount = columnCount;
+    layout.rowCount = rowCount;
     [self ssn_setLayout:layout forID:[layout layoutID]];
     return layout;
 }
+
 
 /**
  *  创建一个表格布局
@@ -292,13 +337,20 @@ ssn_uilayout_value_synthesize(int, ssn_view_controller_layout_did_load, Ssn_view
  *
  *  @return 返回并创建一个表格布局
  */
-- (SSNUITableLayout *)ssn_tableLayoutWithDefaultRowHeight:(NSUInteger)rowHeight rowCount:(NSUInteger)rowCount columnCount:(NSUInteger)columnCount {
-    SSNUITableLayout *layout = [[SSNUITableLayout alloc] initWithPanel:self];
-    layout.defaultRowHeight = rowHeight;
-    layout.columnCount = columnCount;
-    layout.rowCount = rowCount;
-    [self ssn_setLayout:layout forID:[layout layoutID]];
-    return layout;
+- (SSNUITableLayout *)ssn_tableLayoutWithDefaultRowHeight:(NSUInteger)rowHeight columnCount:(NSUInteger)columnCount {
+    return [self ssn_tableLayoutWithDefaultRowHeight:rowHeight rowCount:0 columnCount:columnCount];
+}
+
+/**
+ *  创建一个表格布局
+ *
+ *  @param rowCount    行数，填零表示不限制
+ *  @param columnCount 不能小于1
+ *
+ *  @return 返回并创建一个表格布局
+ */
+- (SSNUITableLayout *)ssn_tableLayoutWithRowCount:(NSUInteger)rowCount columnCount:(NSUInteger)columnCount {
+    return [self ssn_tableLayoutWithDefaultRowHeight:0 rowCount:rowCount columnCount:columnCount];
 }
 
 

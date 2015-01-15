@@ -120,6 +120,16 @@
 - (SSNUIFlowLayout *)ssn_flowLayoutWithRowHeight:(NSUInteger)rowHeight spacing:(NSUInteger)spacing;
 
 /**
+ *  创建一个流式布局
+ *
+ *  @param rowCount 行数
+ *  @param spacing  间距
+ *
+ *  @return 返回并创建一个流式布局
+ */
+- (SSNUIFlowLayout *)ssn_flowLayoutWithRowCount:(NSUInteger)rowCount spacing:(NSUInteger)spacing;
+
+/**
  *  创建一个表格布局
  *
  *  @return 返回并创建一个表格布局
@@ -130,13 +140,21 @@
  *  创建一个表格布局
  *
  *  @param rowHeight   行高
+ *  @param columnCount 不能小于1
+ *
+ *  @return 返回并创建一个表格布局
+ */
+- (SSNUITableLayout *)ssn_tableLayoutWithDefaultRowHeight:(NSUInteger)rowHeight columnCount:(NSUInteger)columnCount;
+
+/**
+ *  创建一个表格布局
+ *
  *  @param rowCount    行数，填零表示不限制
  *  @param columnCount 不能小于1
  *
  *  @return 返回并创建一个表格布局
  */
-- (SSNUITableLayout *)ssn_tableLayoutWithDefaultRowHeight:(NSUInteger)rowHeight rowCount:(NSUInteger)rowCount columnCount:(NSUInteger)columnCount;
-
+- (SSNUITableLayout *)ssn_tableLayoutWithRowCount:(NSUInteger)rowCount columnCount:(NSUInteger)columnCount;
 
 /**
  *  view 加载布局的实际，一个view此方法只会调用一次

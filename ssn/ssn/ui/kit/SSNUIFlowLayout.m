@@ -12,13 +12,20 @@
 
 @implementation SSNUIFlowLayout
 
-- (void)setRowHeight:(NSUInteger)rowHeight {
-    if (rowHeight == 0) {
-        _rowHeight = 44;
+- (NSUInteger)rowHeight {
+    if (_rowCount == 0) {//不限行数，默认值为44，限制行数后，要计算得出
+        if (_rowHeight == 0) {
+            return 44;
+        }
     }
     else {
-        _rowHeight = rowHeight;
+        if (_rowHeight == 0) {
+            NSUInteger panel_height = [self column_width];
+            return floorf((panel_height * 1.0f)/_rowCount);
+        }
     }
+    
+    return _rowHeight;
 }
 
 - (void)setSpacing:(NSUInteger)spacing {
@@ -213,8 +220,10 @@
     
     NSInteger row_width = [self row_width];
     
+    NSUInteger rowHeight = self.rowHeight;
+    
     //布局
-    CGRect rect = [self firstRowRectWithRowHeight:_rowHeight];
+    CGRect rect = [self firstRowRectWithRowHeight:rowHeight];
     BOOL isHOR = [self isHOR];
     BOOL isRowASC = [self isRowASC];
     
@@ -246,7 +255,7 @@
             [self layoutRowviews:rowviews inRow:rect sumViewWidth:sum_view_width isHOR:isHOR];
             
             //换行处理
-            ssn_ui_layout_next_row_rect(rect, isHOR, isRowASC, _rowHeight);
+            ssn_ui_layout_next_row_rect(rect, isHOR, isRowASC, rowHeight);
             cost_width = 0;
             sum_view_width = 0;
             [rowviews removeAllObjects];
