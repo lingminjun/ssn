@@ -81,6 +81,9 @@ ssn_uilayout_value_synthesize(int, ssn_layout_called_flag, Ssn_layout_called_fla
 //控制已经加载layout
 ssn_uilayout_value_synthesize(int, ssn_layout_did_load, Ssn_layout_did_load)
 
+//控制依赖控制器已经加载layout
+ssn_uilayout_value_synthesize(int, ssn_view_controller_layout_did_load, Ssn_view_controller_layout_did_load)
+
 /**
  *  元素被移除
  */
@@ -103,19 +106,34 @@ ssn_uilayout_value_synthesize(int, ssn_layout_did_load, Ssn_layout_did_load)
     
     self.ssn_layout_called_flag = 1;
     
+    [self ssn_layoutSubviews];//继续调用原来的方法
+    
     id obj = self.nextResponder;
     if ([obj isKindOfClass:[UIViewController class]]) {
-        if (!self.ssn_layout_did_load) {
+        if (!self.ssn_view_controller_layout_did_load) {
+            self.ssn_view_controller_layout_did_load = 1;
+            
+            //可以回调此方法
+            self.ssn_layout_called_flag = 0;
             [(UIViewController *)obj ssn_layoutDidLoad];
-            self.ssn_layout_did_load = 1;
+            self.ssn_layout_called_flag = 1;
         }
     }
+    
+    if (!self.ssn_layout_did_load) {
+        self.ssn_layout_did_load = 1;
+        
+        //可以回调此方法
+        self.ssn_layout_called_flag = 0;
+        [self ssn_layoutDidLoad];
+        self.ssn_layout_called_flag = 1;
+    }
+    
     
     NSMutableDictionary *dic = [self ssn_layouts_dictionary];
     for (SSNUILayout *layout in [dic allValues]) {
         [layout layoutSubviews];//开始布局所有的子view
     }
-    [self ssn_layoutSubviews];//继续调用原来的方法
     
     self.ssn_layout_called_flag = 0;
 }
@@ -282,6 +300,12 @@ ssn_uilayout_value_synthesize(int, ssn_layout_did_load, Ssn_layout_did_load)
     [self ssn_setLayout:layout forID:[layout layoutID]];
     return layout;
 }
+
+
+/**
+ *  view 加载布局的实际，一个view此方法只会调用一次
+ */
+- (void)ssn_layoutDidLoad {}
 
 @end
 

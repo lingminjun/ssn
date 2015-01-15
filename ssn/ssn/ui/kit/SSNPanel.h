@@ -137,6 +137,13 @@
  */
 - (SSNUITableLayout *)ssn_tableLayoutWithDefaultRowHeight:(NSUInteger)rowHeight rowCount:(NSUInteger)rowCount columnCount:(NSUInteger)columnCount;
 
+
+/**
+ *  view 加载布局的实际，一个view此方法只会调用一次
+ *  UIView中此方法什么也没做
+ */
+- (void)ssn_layoutDidLoad;
+
 @end
 
 
@@ -148,7 +155,7 @@
 /**
  *  viewDidLoad后，viewWillAppear前调用，建议在方法中加载想要的布局
  *  被调用次数和viewDidLoad一直
- *  viewController中什么也没做
+ *  viewController中此方法什么也没做
  */
 - (void)ssn_layoutDidLoad;
 
