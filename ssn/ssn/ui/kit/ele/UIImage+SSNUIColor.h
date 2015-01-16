@@ -20,7 +20,7 @@
 + (UIImage *)ssn_imageWithColor:(UIColor *)color;
 
 /**
- *  返回一个size(radius+1,radius+1)的color颜色图片，
+ *  返回一个size(radius+3,radius+3)的color颜色图片，
  *
  *  @param size   size大小
  *  @param color  填充色颜色
@@ -31,7 +31,7 @@
 + (UIImage *)ssn_imageWithColor:(UIColor *)color cornerRadius:(CGFloat)radius;
 
 /**
- *  返回一个size(radius+width+1,radius+width+1)的color颜色带with宽边线和borderColor颜色的图片
+ *  返回一个size(radius+width+3,radius+width+3)的color颜色带with宽边线和borderColor颜色的图片
  *
  *  @param color       填充色颜色
  *  @param width       边线宽度

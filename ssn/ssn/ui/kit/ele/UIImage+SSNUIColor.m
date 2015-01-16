@@ -40,7 +40,7 @@
  *  @return 图片
  */
 + (UIImage *)ssn_imageWithColor:(UIColor *)color cornerRadius:(CGFloat)radius {
-    CGFloat width = radius + 1;
+    CGFloat width = radius + 3;
     return [self ssn_imageWithSize:CGSizeMake(width, width) color:color border:0.0f color:nil cornerRadius:radius];
 }
 
@@ -56,7 +56,7 @@
  *  @return 图片
  */
 + (UIImage *)ssn_imageWithColor:(UIColor *)color border:(CGFloat)width color:(UIColor *)borderColor cornerRadius:(CGFloat)radius {
-    CGFloat awidth = radius + width + 1;
+    CGFloat awidth = radius + width + 3;
     return [self ssn_imageWithSize:CGSizeMake(awidth, awidth) color:color border:width color:borderColor cornerRadius:radius];
 }
 
