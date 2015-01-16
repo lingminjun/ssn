@@ -39,8 +39,25 @@
  *
  *  @return 图片
  */
-+ (UIImage *)ssn_imageWithSize:(CGSize)size color:(UIColor *)color cornerRadius:(CGFloat)radius {
-    return [self ssn_imageWithSize:size color:color border:0.0f color:nil cornerRadius:radius];
++ (UIImage *)ssn_imageWithColor:(UIColor *)color cornerRadius:(CGFloat)radius {
+    CGFloat width = radius + 1;
+    return [self ssn_imageWithSize:CGSizeMake(width, width) color:color border:0.0f color:nil cornerRadius:radius];
+}
+
+
+/**
+ *  返回一个size为给定size的color颜色带with宽边线和borderColor颜色的图片
+ *
+ *  @param color       填充色颜色
+ *  @param width       边线宽度
+ *  @param borderColor 边线颜色
+ *  @param radius      圆角半径
+ *
+ *  @return 图片
+ */
++ (UIImage *)ssn_imageWithColor:(UIColor *)color border:(CGFloat)width color:(UIColor *)borderColor cornerRadius:(CGFloat)radius {
+    CGFloat awidth = radius + width + 1;
+    return [self ssn_imageWithSize:CGSizeMake(awidth, awidth) color:color border:width color:borderColor cornerRadius:radius];
 }
 
 /**
@@ -359,6 +376,13 @@
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return image;
+}
+
+- (UIImage *)ssn_centerStretchImage {
+    CGSize size = self.size;
+    CGFloat half_width = floorf(size.width/2);
+    CGFloat half_height = floorf(size.height/2);
+    return [self resizableImageWithCapInsets:UIEdgeInsetsMake(half_height, half_width, half_height, half_width)];
 }
 
 @end

@@ -20,7 +20,7 @@
 + (UIImage *)ssn_imageWithColor:(UIColor *)color;
 
 /**
- *  返回一个size为给定size的color颜色图片
+ *  返回一个size(radius+1,radius+1)的color颜色图片，
  *
  *  @param size   size大小
  *  @param color  填充色颜色
@@ -28,12 +28,11 @@
  *
  *  @return 图片
  */
-+ (UIImage *)ssn_imageWithSize:(CGSize)size color:(UIColor *)color cornerRadius:(CGFloat)radius;
++ (UIImage *)ssn_imageWithColor:(UIColor *)color cornerRadius:(CGFloat)radius;
 
 /**
- *  返回一个size为给定size的color颜色带with宽边线和borderColor颜色的图片
+ *  返回一个size(radius+width+1,radius+width+1)的color颜色带with宽边线和borderColor颜色的图片
  *
- *  @param size        size大小
  *  @param color       填充色颜色
  *  @param width       边线宽度
  *  @param borderColor 边线颜色
@@ -41,7 +40,7 @@
  *
  *  @return 图片
  */
-+ (UIImage *)ssn_imageWithSize:(CGSize)size color:(UIColor *)color border:(CGFloat)width color:(UIColor *)borderColor cornerRadius:(CGFloat)radius;
++ (UIImage *)ssn_imageWithColor:(UIColor *)color border:(CGFloat)width color:(UIColor *)borderColor cornerRadius:(CGFloat)radius;
 
 /**
  *  返回一个size为给定size的渐变颜色从from到to的图片
@@ -123,5 +122,9 @@
  *  @return 绘制一个圆形线圈
  */
 + (UIImage *)ssn_circleLineWithDiameter:(CGFloat)diameter border:(CGFloat)width color:(UIColor *)borderColor;
+
+#pragma mark other
+
+- (UIImage *)ssn_centerStretchImage;
 
 @end
