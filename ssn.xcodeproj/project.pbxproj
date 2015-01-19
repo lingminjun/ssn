@@ -42,6 +42,7 @@
 		533BE3C21A2B150B00E07FF0 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */; };
 		533F4FD51A35997F009D29C6 /* ssn_datastore_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 533F4FD41A35997F009D29C6 /* ssn_datastore_test.m */; };
 		534B4AA919C04E4B00698137 /* KKObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B4AA819C04E4B00698137 /* KKObj.m */; };
+		534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 534CA1641A6CAC9500CB55B3 /* SSNJob.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
 		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
 		5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C5961A0498290072C3F9 /* DMProfileViewController.m */; };
@@ -255,6 +256,8 @@
 		533F4FD41A35997F009D29C6 /* ssn_datastore_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_datastore_test.m; sourceTree = "<group>"; };
 		534B4AA719C04E4B00698137 /* KKObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKObj.h; sourceTree = "<group>"; };
 		534B4AA819C04E4B00698137 /* KKObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKObj.m; sourceTree = "<group>"; };
+		534CA1631A6CAC9500CB55B3 /* SSNJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNJob.h; sourceTree = "<group>"; };
+		534CA1641A6CAC9500CB55B3 /* SSNJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNJob.m; sourceTree = "<group>"; };
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		537064961A2A032700287199 /* TSUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUser.h; sourceTree = "<group>"; };
 		537064971A2A032700287199 /* TSUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUser.m; sourceTree = "<group>"; };
@@ -490,6 +493,15 @@
 			path = images;
 			sourceTree = "<group>";
 		};
+		534CA1621A6CAC7A00CB55B3 /* job */ = {
+			isa = PBXGroup;
+			children = (
+				534CA1631A6CAC9500CB55B3 /* SSNJob.h */,
+				534CA1641A6CAC9500CB55B3 /* SSNJob.m */,
+			);
+			path = job;
+			sourceTree = "<group>";
+		};
 		5388C5941A0497FF0072C3F9 /* profile */ = {
 			isa = PBXGroup;
 			children = (
@@ -617,6 +629,7 @@
 		53BC527C1A485E6E0044C238 /* base */ = {
 			isa = PBXGroup;
 			children = (
+				534CA1621A6CAC7A00CB55B3 /* job */,
 				53BC534E1A486DA30044C238 /* bbox */,
 				53BC52861A485E6E0044C238 /* diff */,
 				53BC52891A485E6E0044C238 /* dt */,
@@ -1109,6 +1122,7 @@
 				53BC531A1A485E6E0044C238 /* SSNBound.m in Sources */,
 				53F5F1571A5ACECD009EE27A /* UIImage+SSNUIColor.m in Sources */,
 				53BC52FC1A485E6E0044C238 /* NSObject+SSNTracking.m in Sources */,
+				534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */,
 				53BC53261A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
 				5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */,
 				53C84C7C1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */,
