@@ -72,3 +72,11 @@ static char * g ## _key = NULL;\
 - (void) set ## s :(t) g { \
     objc_setAssociatedObject(self, &(g ## _key), ( g ), OBJC_ASSOCIATION_RETAIN_NONATOMIC); \
 }
+
+#if defined(__LP64__) && __LP64__
+# define ssn_ceil(value) ceil(value)
+# define ssn_floor(value) floor(value)
+#else
+# define ssn_ceil(value) ceilf(value)
+# define ssn_floor(value) floorf(value)
+#endif

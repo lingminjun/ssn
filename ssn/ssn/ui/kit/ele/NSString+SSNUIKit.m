@@ -7,6 +7,7 @@
 //
 
 #import "NSString+SSNUIKit.h"
+#import "UIView+SSNUIKit.h"
 
 @implementation NSString (SSNUIKit)
 
@@ -19,13 +20,13 @@
                                          options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
                                       attributes:attributes
                                          context:nil];
-        return CGSizeMake(ceilf(rect.size.width), ceilf(rect.size.height));
+        return CGSizeMake(ssn_ceil(rect.size.width), ssn_ceil(rect.size.height));
     }
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
     CGSize size = [self sizeWithFont:font constrainedToSize:goal_size lineBreakMode:NSLineBreakByWordWrapping];
-    return CGSizeMake(ceilf(size.width), ceilf(size.height));
+    return CGSizeMake(ssn_ceil(size.width), ssn_ceil(size.height));
 #pragma clang diagnostic pop
     
 }
@@ -40,7 +41,7 @@
     CGRect rect = [self boundingRectWithSize:goal_size
                                      options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
                                      context:nil];
-    return CGSizeMake(ceilf(rect.size.width), ceilf(rect.size.height));
+    return CGSizeMake(ssn_ceil(rect.size.width), ssn_ceil(rect.size.height));
 }
 
 @end

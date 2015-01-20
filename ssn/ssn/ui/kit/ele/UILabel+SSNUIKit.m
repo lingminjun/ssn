@@ -39,9 +39,9 @@ ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
     
     CGRect frame = CGRectZero;
     
-    CGFloat aMax = ceilf( max < 0.0f ? 300.0f : max );
+    CGFloat aMax = ssn_ceil( max < 0.0f ? 300.0f : max );
     frame.size.width = aMax;
-    frame.size.height = ceilf(aFont.lineHeight);
+    frame.size.height = ssn_ceil(aFont.lineHeight);
     
     UILabel *label = [[[UILabel class] alloc] initWithFrame:frame];
     label.font = aFont;
@@ -54,8 +54,8 @@ ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
     if (multiLine) {
         label.numberOfLines = 0;
     }
-    label.ssn_min_width = ceilf(min > aMax ? aMax : min);
-    label.ssn_max_width = ceilf(max);
+    label.ssn_min_width = ssn_ceil(min > aMax ? aMax : min);
+    label.ssn_max_width = ssn_ceil(max);
     
     return label;
 }

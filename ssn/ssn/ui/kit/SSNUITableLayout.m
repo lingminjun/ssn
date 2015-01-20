@@ -181,7 +181,7 @@ SSNUITableLayoutSynthesize(cellInfos)
         SSNUITableCellInfo *cell = [_cellInfos objectForKey:index];
         
         if ([cell.key isEqualToString:key]) {
-            return [index longLongValue];
+            return [index unsignedIntegerValue];
         }
     }
     
@@ -204,7 +204,7 @@ SSNUITableLayoutSynthesize(cellInfos)
         SSNUITableCellInfo *cell = [_cellInfos objectForKey:index];
         
         if (cell.subview == subview) {
-            return [index longLongValue];
+            return [index unsignedIntegerValue];
         }
     }
     
@@ -596,7 +596,7 @@ SSNUITableLayoutSynthesize(cellInfos)
     
     //遍历所有位置
     for (NSNumber *numIndex in [_cellInfos allKeys]) {
-        NSUInteger index = [numIndex longLongValue];
+        NSUInteger index = [numIndex unsignedIntegerValue];
         
         NSUInteger row = (index / _columnCount);
         CGRect row_rect = rect;

@@ -7,6 +7,7 @@
 //
 
 #import "UIImage+SSNUIColor.h"
+#import "UIView+SSNUIKit.h"
 
 @implementation UIImage (SSNUIColor)
 
@@ -75,7 +76,7 @@
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
     
     UIBezierPath *borderPath = nil;//
-    CGFloat border_width = ceilf(width);
+    CGFloat border_width = ssn_ceil(width);
     if (border_width > 0.0f) {//
         borderPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
     }
@@ -357,7 +358,7 @@
 + (UIImage *)ssn_circleLineWithDiameter:(CGFloat)diameter border:(CGFloat)width color:(UIColor *)borderColor {
     
     CGSize size = CGSizeMake(diameter, diameter);
-    CGFloat radius = floorf(diameter/2.0f);
+    CGFloat radius = ssn_floor(diameter/2.0f);
     
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
     UIBezierPath* borderPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(radius, radius)
@@ -380,8 +381,8 @@
 
 - (UIImage *)ssn_centerStretchImage {
     CGSize size = self.size;
-    CGFloat half_width = floorf(size.width/2);
-    CGFloat half_height = floorf(size.height/2);
+    CGFloat half_width = ssn_floor(size.width/2);
+    CGFloat half_height = ssn_floor(size.height/2);
     return [self resizableImageWithCapInsets:UIEdgeInsetsMake(half_height, half_width, half_height, half_width)];
 }
 

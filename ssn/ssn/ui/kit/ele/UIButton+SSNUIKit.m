@@ -39,9 +39,9 @@ ssn_uikit_value_synthesize(float,ssn_edge_width,Ssn_edge_width)
     
     CGRect frame = CGRectZero;
     
-    CGFloat aMax = ceilf( max < 0.0f ? 300.0f : max );
+    CGFloat aMax = ssn_ceil( max < 0.0f ? 300.0f : max );
     frame.size.width = aMax;
-    frame.size.height = ceilf( height < 0.0f ? 40.0f : height );
+    frame.size.height = ssn_ceil( height < 0.0f ? 40.0f : height );
     
     UIButton *button = [[[UIButton class] alloc] initWithFrame:frame];
     button.titleLabel.font = aFont;
@@ -75,10 +75,10 @@ ssn_uikit_value_synthesize(float,ssn_edge_width,Ssn_edge_width)
     }
     
     button.ssn_width_scalable = widthScalable;
-    button.ssn_min_width = ceilf(min > aMax ? aMax : min);
-    button.ssn_max_width = ceilf(max);
+    button.ssn_min_width = ssn_ceil(min > aMax ? aMax : min);
+    button.ssn_max_width = ssn_ceil(max);
     if (widthScalable) {
-        button.ssn_edge_width = ceilf(edge < 0.0f ? 10.0f : edge);
+        button.ssn_edge_width = ssn_ceil(edge < 0.0f ? 10.0f : edge);
     }
     
     return button;

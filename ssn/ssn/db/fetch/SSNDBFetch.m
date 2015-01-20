@@ -109,7 +109,7 @@ static char *ssn_dbfetch_rowid_key = NULL;
 
 - (NSString *)sqlLimitStatement {
     if (_limit > 0) {
-        return [NSString stringWithFormat:@" LIMIT %lu, %lu", _offset, _limit];
+        return [NSString stringWithFormat:@" LIMIT %@, %@", @(_offset), @(_limit)];
     }
     return nil;
 }
