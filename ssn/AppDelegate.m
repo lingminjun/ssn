@@ -34,6 +34,8 @@
 
 #import "NSObject+SSNBlock.h"
 
+#import "SSNCrashReport.h"
+
 @interface AppDelegate ()<SSNRouterDelegate>
 @end
 
@@ -84,7 +86,19 @@
 
     [self.window makeKeyAndVisible];
     
+    if ([SSNCrashReport hasCrashLog]) {//如果有crash，就直接发邮件出来
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"警告" message:@"上次异常退出，请处理异常" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        alert.tag = 'crsh';
+        [alert show];
+    }
+    
     return YES;
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (alertView.tag) {
+        [SSNCrashReport reportCrash];
+    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

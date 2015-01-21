@@ -73,22 +73,29 @@
  *  @return 图片
  */
 + (UIImage *)ssn_imageWithSize:(CGSize)size color:(UIColor *)color border:(CGFloat)width color:(UIColor *)borderColor cornerRadius:(CGFloat)radius {
+    
+    UIColor *bcolor = color;
+    if (!color) {
+        bcolor = [UIColor clearColor];
+    }
+    
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
     
     UIBezierPath *borderPath = nil;//
     CGFloat border_width = ssn_ceil(width);
     if (border_width > 0.0f) {//
         borderPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
+        borderPath.lineWidth = border_width;
     }
     
     UIBezierPath *fillPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(border_width, border_width, size.width - border_width * 2, size.height - border_width * 2) cornerRadius:radius - border_width];
     
     if (borderPath) {
-        [borderColor setFill];
-        [borderPath fill];
+        [borderColor setStroke];
+        [borderPath stroke];
     }
     
-    [color setFill];
+    [bcolor setFill];
     [fillPath fill];
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();

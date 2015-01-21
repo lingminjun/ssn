@@ -112,8 +112,8 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
  @param isExpired 数据是否过期
  @return 返回找到的数据，可能返回nil
  */
-- (NSData *)dataForKey:(NSString *)key isExpired:(BOOL *)isExpired {
-    return [self innerDataForKey:key isExpired:isExpired updateVisitAt:YES];
+- (NSData *)dataForKey:(NSString *)key isExpired:(BOOL *)pIsExpired {
+    return [self innerDataForKey:key isExpired:pIsExpired updateVisitAt:YES];
 }
 
 /**
@@ -122,36 +122,37 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
  @param isExpired 数据是否过期
  @return 返回找到的数据，可能返回nil，找到过期仍然返回
  */
-- (NSData *)accessDataForKey:(NSString *)key isExpired:(BOOL *)isExpired {
-    return [self innerDataForKey:key isExpired:isExpired updateVisitAt:NO];
+- (NSData *)accessDataForKey:(NSString *)key isExpired:(BOOL *)pIsExpired {
+    return [self innerDataForKey:key isExpired:pIsExpired updateVisitAt:NO];
 }
 
-- (NSData *)innerDataForKey:(NSString *)key isExpired:(BOOL *)isExpired updateVisitAt:(BOOL)update {
+- (NSData *)innerDataForKey:(NSString *)key isExpired:(BOOL *)pIsExpired updateVisitAt:(BOOL)update {
     SSNDataStoreCacheBox *box = [_cache objectForKey:key];
     
     if (box && box.expire == 0) {//直接返回，不需要检查
-        if (isExpired) {
-            *isExpired = NO;
+        if (pIsExpired) {
+            *pIsExpired = NO;
         }
         return box.data;
     }
     
     int64_t now = [self getNowTime];
+    BOOL isExpired = NO;
     
     //有效
     if (box.expire > 0) {
-        BOOL expired = box.expire + box.visitAt > now;
+        isExpired = box.expire + box.visitAt > now;
         
         if (update) {
             box.visitAt = now;
         }
         
-        if (isExpired) {
-            *isExpired = expired;
+        if (pIsExpired) {
+            *pIsExpired = isExpired;
         }
         
         pthread_rwlock_wrlock(&_rwlock);
-        if (expired) {//过期删除
+        if (isExpired) {//过期删除
             [_cache removeObjectForKey:key];
             [self removeFileForKey:key];
         }
@@ -168,18 +169,17 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
     
     uint64_t expire = 0;
     int64_t saveAt = 0;
-    BOOL tmpIsExpired = NO;
     
     //需要从文件中获取
     pthread_rwlock_wrlock(&_rwlock);
-    NSData *data = [self dataFromFileForKey:key expire:&expire saveAt:&saveAt visitAt:now isExpired:&tmpIsExpired readonly:!update];
+    NSData *data = [self dataFromFileForKey:key expire:&expire saveAt:&saveAt visitAt:now isExpired:&isExpired readonly:!update];
     pthread_rwlock_unlock(&_rwlock);
     
-    if (isExpired) {//标记已经过期
-        *isExpired = tmpIsExpired;
+    if (pIsExpired) {//标记已经过期
+        *pIsExpired = isExpired;
     }
     
-    if (data && !isExpired) {
+    if (data && !isExpired) {//未过期文件，内存缓存下
         SSNDataStoreCacheBox *box = [SSNDataStoreCacheBox boxWithData:data];
         box.expire = expire;
         if (update) {
@@ -397,19 +397,21 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
     [data writeToFile:filepath atomically:YES];
 }
 
-- (NSData *)dataFromFileForKey:(NSString *)key expire:(uint64_t *)expire saveAt:(int64_t *)saveAt visitAt:(int64_t)visitAt isExpired:(BOOL *)isExpired readonly:(BOOL)readonly {
+- (NSData *)dataFromFileForKey:(NSString *)key expire:(uint64_t *)expire saveAt:(int64_t *)saveAt visitAt:(int64_t)visitAt isExpired:(BOOL *)pIsExpired readonly:(BOOL)readonly {
     NSFileManager *manager = [NSFileManager ssn_fileManager];
     NSString *filepath = [self dataPathForKey:key];
     NSData *data = [manager contentsAtPath:filepath];
     
-    BOOL expired = NO;
     NSString *tailpath = [self dataTailForDataPath:filepath];
     
-    expired = [self checkExpired:expire saveAt:saveAt visitAt:visitAt atTailPath:tailpath updateVisitAt:!readonly];
+    BOOL isExpired = [self checkExpired:expire saveAt:saveAt visitAt:visitAt atTailPath:tailpath updateVisitAt:!readonly];
     
     NSError *error = nil;
-    if (isExpired) {//过期删除文件
-        *isExpired = expired;
+    if (pIsExpired) {//过期删除文件
+        *pIsExpired = isExpired;
+    }
+    
+    if (isExpired) {//文件确实过期，删除掉
         [manager removeItemAtPath:filepath error:&error];
     }
     
