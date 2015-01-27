@@ -6,7 +6,7 @@
 //  Copyright (c) 2014年 lingminjun. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 /**
  *  元素布局模型
