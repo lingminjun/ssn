@@ -9,6 +9,12 @@
 #import "SSNRouter.h"
 #import "NSURL+Router.h"
 #import "SSNVC+Router.h"
+#if TARGET_IPHONE_SIMULATOR
+#import <objc/objc-runtime.h>
+#else
+#import <objc/runtime.h>
+#import <objc/message.h>
+#endif
 
 @interface SSNSearchResult : NSObject
 
@@ -243,6 +249,8 @@
         return NO;
     }
     
+    result.targetPage.ssn_query = query;//参数赋值
+    
     //notice该对象
     if ([result.targetPage respondsToSelector:@selector(ssn_handleNoticeURL:query:)]) {
         [result.targetPage ssn_handleNoticeURL:url query:query];
@@ -367,10 +375,14 @@
         Class class = [self.map objectForKey:result.lastPath];
         
         result.targetPage = [[class alloc] init];
+        result.targetPage.ssn_query = query;//参数赋值
         
         if ([result.targetPage respondsToSelector:@selector(ssn_handleOpenURL:query:)]) {
             [result.targetPage ssn_handleOpenURL:url query:query];
         }
+    }
+    else {
+        result.targetPage.ssn_query = query;//参数赋值
     }
     
     return result;
@@ -543,5 +555,20 @@
 
 @end
 
+@implementation NSObject (SSNPage)
+
+/**
+ *  query参数
+ */
+@dynamic ssn_query;
+static char * ssn_router_query_key = NULL;
+- (NSDictionary *)ssn_query {
+    return objc_getAssociatedObject(self, &ssn_router_query_key);
+}
+- (void)setSsn_query:(NSDictionary *)ssn_query {
+    objc_setAssociatedObject(self, &ssn_router_query_key, ssn_query, OBJC_ASSOCIATION_COPY_NONATOMIC); 
+}
+
+@end
 
 

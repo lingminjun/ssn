@@ -46,6 +46,8 @@
     [self.view addSubview:avatar];
     
     [self.person ssn_boundObject:avatar forField:@"text" tieField:@"avatar"];
+    
+    NSLog(@"[[[%@]]]",self.ssn_query);
 }
 
 - (void)dealloc {

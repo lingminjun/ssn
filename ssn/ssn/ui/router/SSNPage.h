@@ -14,7 +14,10 @@
 @protocol SSNPage <NSObject>
 
 @required
-- (id<SSNParentPage>)ssn_parentPage;
+- (id<SSNParentPage>)ssn_parentPage;//
+
+//新建一个page时将被自动赋值
+@property (nonatomic,copy) NSDictionary *ssn_query;
 
 @optional
 

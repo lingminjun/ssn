@@ -74,6 +74,15 @@
 
 @end
 
+@interface NSObject (SSNPage)
+
+/**
+ *  query参数，当新建一个page时，参数自动被填充
+ */
+@property (nonatomic,copy) NSDictionary *ssn_query;
+
+@end
+
 
 // open 流程控制
 @protocol SSNRouterDelegate<NSObject>
