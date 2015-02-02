@@ -8,6 +8,7 @@
 
 #import "UIImage+SSNUIColor.h"
 #import "UIView+SSNUIKit.h"
+#import <Accelerate/Accelerate.h>
 
 @implementation UIImage (SSNUIColor)
 
@@ -392,5 +393,153 @@
     CGFloat half_height = ssn_floor(size.height/2);
     return [self resizableImageWithCapInsets:UIEdgeInsetsMake(half_height, half_width, half_height, half_width)];
 }
+
+#pragma mark 毛玻璃绘制
+void ssn_ImageBufferInitialized(vImage_Buffer *buffer, CGImageRef image) {
+    memset(buffer, 0, sizeof(vImage_Buffer));
+    
+    buffer->width = CGImageGetWidth( image );
+    buffer->height = CGImageGetHeight( image );
+    buffer->rowBytes = CGImageGetBytesPerRow( image );
+    buffer->data = malloc( buffer->rowBytes * buffer->height );
+}
+
+- (UIImage *)ssn_scaleImage {
+    CGSize selfSize = self.size;
+    CGFloat selfScale = self.scale;
+    CGFloat screenScale = [UIScreen mainScreen].scale;
+    CGSize targetSize = CGSizeMake(ssn_floor(selfSize.width * selfScale / screenScale), ssn_floor(selfSize.height * selfScale / screenScale));
+    UIGraphicsBeginImageContextWithOptions(targetSize, NO, screenScale);
+    [self drawInRect:CGRectMake(0, 0, targetSize.width, targetSize.height)];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+- (UIImage *)ssn_gaussianBlurImage {
+    
+    uint32_t radius = 5;
+    uint8_t iterations = 5;
+    
+    return [self ssn_gaussianBlurImageWithRadius:radius iterations:iterations];
+}
+
+/**
+ *  绘制毛玻璃
+ *
+ *  @param complete 绘制完
+ */
+- (void)ssn_gaussianBlurImageComplete:(void(^)(UIImage *image))complete {
+    __weak typeof(self) w_self = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{__strong typeof(w_self) self = w_self;
+        if (!self) {
+            return ;
+        }
+        UIImage *image = [self ssn_gaussianBlurImage];
+        if (complete) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                complete(image);
+            });
+        }
+    });
+}
+
+/**
+ *  绘制毛玻璃
+ *
+ *  @param radius     渲染半径
+ *  @param iterations 重复渲染次数
+ *
+ *  @return 渲染后图片
+ */
+- (UIImage *)ssn_gaussianBlurImageWithRadius:(NSUInteger)radius iterations:(NSUInteger)iterations {
+    
+    UIImage *image = [self ssn_scaleImage];//先矫正图片
+    
+    CGImageRef cgimage = image.CGImage;
+    
+    vImage_Buffer tempImageBuffer;
+    vImage_Buffer finalImageBuffer;
+    
+    ssn_ImageBufferInitialized(&tempImageBuffer, cgimage);
+    ssn_ImageBufferInitialized(&finalImageBuffer, cgimage);
+    
+    CFDataRef dataSource = CGDataProviderCopyData( CGImageGetDataProvider( cgimage ));
+    memcpy( tempImageBuffer.data, CFDataGetBytePtr( dataSource ), tempImageBuffer.rowBytes * tempImageBuffer.height );
+    memcpy( finalImageBuffer.data, CFDataGetBytePtr( dataSource ), finalImageBuffer.rowBytes * finalImageBuffer.height );
+    CFRelease(dataSource);
+    
+    // Radius must be an odd integer, or we'll get a kvImageInvalidKernelSize error. See
+    // vImageBoxConvolve_ARGB8888 documentation for a better discussion
+    uint32_t finalRadius = ( uint32_t )( radius * image.scale );
+    if(( finalRadius & 1 ) == 0 ) {
+        ++finalRadius;
+    }
+    
+    // The reason of the loop below is that many convolve iterations generate a better blurred image
+    // than applying a greater convolve radius
+    for( uint16_t i = 0 ; i < iterations ; ++i )
+    {
+        vImage_Error error = vImageBoxConvolve_ARGB8888( &tempImageBuffer, &finalImageBuffer, NULL, 0, 0, finalRadius, finalRadius, NULL, kvImageEdgeExtend );
+        if( error != kvImageNoError )
+        {
+            return nil;
+        }
+        
+        void *temp = tempImageBuffer.data;
+        tempImageBuffer.data = finalImageBuffer.data;
+        finalImageBuffer.data = temp;
+    }
+    
+    // The last processed image is being hold by tempImageBuffer. So let's fix it
+    // by swaping buffers again
+    void *temp = tempImageBuffer.data;
+    tempImageBuffer.data = finalImageBuffer.data;
+    finalImageBuffer.data = temp;
+    
+    CGColorSpaceRef colorSpace = CGImageGetColorSpace( cgimage );
+    CGBitmapInfo info = CGImageGetBitmapInfo( cgimage );
+    CGContextRef finalImageContext = CGBitmapContextCreate(finalImageBuffer.data,
+                                                           finalImageBuffer.width,
+                                                           finalImageBuffer.height,
+                                                           8,
+                                                           finalImageBuffer.rowBytes,
+                                                           colorSpace,
+                                                           info);
+    
+    // TODO : Here we could call a delegate with the context, so we could do a post process. Or
+    // we could receive a block to do the same
+    // ...
+    
+    CGImageRef finalImageRef = CGBitmapContextCreateImage( finalImageContext );
+    UIImage *finalImage = [UIImage imageWithCGImage:finalImageRef scale:image.scale orientation: image.imageOrientation];
+    CGImageRelease( finalImageRef );
+    CGContextRelease( finalImageContext );
+    //
+    return finalImage;
+}
+
+/**
+ *  绘制毛玻璃
+ *
+ *  @param radius     渲染半径
+ *  @param iterations 重复渲染次数
+ *  @param complete   渲染完成回调
+ */
+- (void)ssn_gaussianBlurImageWithRadius:(NSUInteger)radius iterations:(NSUInteger)iterations complete:(void(^)(UIImage *image))complete {
+    __weak typeof(self) w_self = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{__strong typeof(w_self) self = w_self;
+        if (!self) {
+            return ;
+        }
+        UIImage *image = [self ssn_gaussianBlurImageWithRadius:radius iterations:iterations];
+        if (complete) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                complete(image);
+            });
+        }
+    });
+}
+
 
 @end

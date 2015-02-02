@@ -124,7 +124,46 @@
 + (UIImage *)ssn_circleLineWithDiameter:(CGFloat)diameter border:(CGFloat)width color:(UIColor *)borderColor;
 
 #pragma mark other
-
+/**
+ *  中间拉伸图
+ *
+ *  @return 中间拉伸图
+ */
 - (UIImage *)ssn_centerStretchImage;
+
+
+#pragma mark 绘制模糊玻璃
+/**
+ *  绘制毛玻璃
+ *
+ *  @return 绘制毛玻璃
+ */
+- (UIImage *)ssn_gaussianBlurImage;
+
+/**
+ *  绘制毛玻璃
+ *
+ *  @param complete 绘制完
+ */
+- (void)ssn_gaussianBlurImageComplete:(void(^)(UIImage *image))complete;
+
+/**
+ *  绘制毛玻璃
+ *
+ *  @param radius     渲染半径
+ *  @param iterations 重复渲染次数
+ *
+ *  @return 渲染后图片
+ */
+- (UIImage *)ssn_gaussianBlurImageWithRadius:(NSUInteger)radius iterations:(NSUInteger)iterations;
+
+/**
+ *  绘制毛玻璃
+ *
+ *  @param radius     渲染半径
+ *  @param iterations 重复渲染次数
+ *  @param complete   渲染完成回调
+ */
+- (void)ssn_gaussianBlurImageWithRadius:(NSUInteger)radius iterations:(NSUInteger)iterations complete:(void(^)(UIImage *image))complete;
 
 @end

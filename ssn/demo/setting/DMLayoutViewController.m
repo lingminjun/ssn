@@ -24,7 +24,7 @@
     
     self.title = @"Layout";
     
-    NSString *str = [NSString stringWithUTF8String:nil];
+//    NSString *str = [NSString stringWithUTF8String:nil];
     
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 80, 300, 40)];
     imageView.backgroundColor = [UIColor redColor];
