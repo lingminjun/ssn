@@ -45,6 +45,7 @@ ssn_uikit_value_synthesize(float,ssn_edge_width,Ssn_edge_width)
     
     UIButton *button = [[[UIButton class] alloc] initWithFrame:frame];
     button.titleLabel.font = aFont;
+    button.exclusiveTouch = YES;
     
     if (color) {
         [button setTitleColor:color forState:UIControlStateNormal];

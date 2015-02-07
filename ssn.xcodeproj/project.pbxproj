@@ -17,6 +17,7 @@
 		533121831A4BE85E000F456E /* DMPersonExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 533121811A4BE85E000F456E /* DMPersonExt.m */; };
 		533121851A4BE87D000F456E /* DMPersonExt.json in Resources */ = {isa = PBXBuildFile; fileRef = 533121841A4BE87D000F456E /* DMPersonExt.json */; };
 		533121861A4BE87D000F456E /* DMPersonExt.json in Resources */ = {isa = PBXBuildFile; fileRef = 533121841A4BE87D000F456E /* DMPersonExt.json */; };
+		5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5335EBE41A83A77D007B9DC9 /* SSNToast.m */; };
 		533BE3941A2AC30500E07FF0 /* ssn_fetch_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3931A2AC30500E07FF0 /* ssn_fetch_test.m */; };
 		533BE3961A2AC43800E07FF0 /* TestPerson.json in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3951A2AC43800E07FF0 /* TestPerson.json */; };
 		533BE3991A2AC4B400E07FF0 /* TSPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3981A2AC4B400E07FF0 /* TSPerson.m */; };
@@ -236,6 +237,8 @@
 		533121801A4BE85E000F456E /* DMPersonExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPersonExt.h; sourceTree = "<group>"; };
 		533121811A4BE85E000F456E /* DMPersonExt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPersonExt.m; sourceTree = "<group>"; };
 		533121841A4BE87D000F456E /* DMPersonExt.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DMPersonExt.json; sourceTree = "<group>"; };
+		5335EBE31A83A77D007B9DC9 /* SSNToast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNToast.h; sourceTree = "<group>"; };
+		5335EBE41A83A77D007B9DC9 /* SSNToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNToast.m; sourceTree = "<group>"; };
 		533BE3931A2AC30500E07FF0 /* ssn_fetch_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_fetch_test.m; sourceTree = "<group>"; };
 		533BE3951A2AC43800E07FF0 /* TestPerson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestPerson.json; sourceTree = "<group>"; };
 		533BE3971A2AC4B400E07FF0 /* TSPerson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPerson.h; sourceTree = "<group>"; };
@@ -470,6 +473,15 @@
 				531324851A5D35710038256F /* DMUIDicViewController.m */,
 			);
 			path = uidic;
+			sourceTree = "<group>";
+		};
+		5335EBE21A83A609007B9DC9 /* toast */ = {
+			isa = PBXGroup;
+			children = (
+				5335EBE31A83A77D007B9DC9 /* SSNToast.h */,
+				5335EBE41A83A77D007B9DC9 /* SSNToast.m */,
+			);
+			path = toast;
 			sourceTree = "<group>";
 		};
 		533BE39A1A2AFF5300E07FF0 /* model */ = {
@@ -837,6 +849,7 @@
 		53BC52E41A485E6E0044C238 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				5335EBE21A83A609007B9DC9 /* toast */,
 				53A1BA131A52A12A00C76844 /* kit */,
 				53BC52E51A485E6E0044C238 /* Navigator介绍.txt */,
 				53BC52E61A485E6E0044C238 /* NiceQueue.h */,
@@ -1127,6 +1140,7 @@
 				5312CAC21A57E983009C32B1 /* DMLayoutViewController.m in Sources */,
 				53BC53221A485E6E0044C238 /* SSNDBColumn.m in Sources */,
 				53BC533C1A485E6E0044C238 /* lock.cpp in Sources */,
+				5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */,
 				5397B5D41A6FA10700CD6AFC /* SSNCrashReport.m in Sources */,
 				53BC53241A485E6E0044C238 /* SSNDBPool.m in Sources */,
 				53BC532C1A485E6E0044C238 /* SSNDBFetch.m in Sources */,

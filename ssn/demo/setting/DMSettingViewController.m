@@ -8,6 +8,7 @@
 
 #import "DMSettingViewController.h"
 #import "SSNRouter.h"
+#import "SSNToast.h"
 
 @interface DMSettingViewController ()
 
@@ -41,7 +42,10 @@
 }
 
 - (void)logout {
-    [[self ssn_router] openURL:[NSURL URLWithString:@"app://login"]];
+    [SSNToast showTarget:self progressLoadingAtGoldenSection:@"正在注销。。。"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[self ssn_router] openURL:[NSURL URLWithString:@"app://login"]];
+    });
 }
 
 - (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query

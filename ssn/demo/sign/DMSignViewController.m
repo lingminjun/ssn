@@ -8,6 +8,7 @@
 
 #import "DMSignViewController.h"
 #import "DMSignEngine.h"
+#import "SSNToast.h"
 
 @interface DMSignViewController ()
 
@@ -36,18 +37,34 @@
                                                                               style:UIBarButtonItemStylePlain
                                                                              target:self
                                                                              action:@selector(doneAction:)];
+    
+    UITextField *text = [[UITextField alloc] initWithFrame:CGRectMake(10, 100, 200, 44)];
+    text.backgroundColor = [UIColor yellowColor];
+    [self.view addSubview:text];
+    [text becomeFirstResponder];
 }
 
 - (void)doneAction:(id)sender
 {
-    [DMSignEngine sharedInstance].loginId = @"18758014247";
-    [self.ssn_router openURL:[NSURL URLWithString:@"app://default"]];
+    [SSNToast showTarget:self progressLoadingAtGoldenSection:@"正在登录。。。"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [DMSignEngine sharedInstance].loginId = @"18758014247";
+        [self.ssn_router openURL:[NSURL URLWithString:@"app://default"]];
+    });
+}
+
+- (void)testButtonAction:(id)sender {
+    NSLog(@">>>>>>>>>>>>>>>>>>");
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)dealloc {
+    NSLog(@"===========================");
 }
 
 /*
