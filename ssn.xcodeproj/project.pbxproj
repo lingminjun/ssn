@@ -166,6 +166,7 @@
 		53C84C7D1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7B1A5BBED1008AB7C8 /* SSNUIFlowLayout.m */; };
 		53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */; };
 		53C84C811A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */; };
+		53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */; };
 		53D163E4191A629C00AD4C81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E3191A629C00AD4C81 /* Foundation.framework */; };
 		53D163E6191A629C00AD4C81 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E5191A629C00AD4C81 /* CoreGraphics.framework */; };
 		53D163E8191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
@@ -398,6 +399,8 @@
 		53C84C7E1A5BBF7C008AB7C8 /* SSNUITableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUITableLayout.h; sourceTree = "<group>"; };
 		53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNUITableLayout.m; sourceTree = "<group>"; };
 		53C84C821A5BC03E008AB7C8 /* SSNUILayout+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNUILayout+Private.h"; sourceTree = "<group>"; };
+		53CB29F81A89ECA700509148 /* UIApplication+SSNCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+SSNCategory.h"; sourceTree = "<group>"; };
+		53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+SSNCategory.m"; sourceTree = "<group>"; };
 		53D163E0191A629C00AD4C81 /* ssn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ssn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D163E3191A629C00AD4C81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		53D163E5191A629C00AD4C81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -849,6 +852,7 @@
 		53BC52E41A485E6E0044C238 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				53CB29F71A89EB8200509148 /* category */,
 				5335EBE21A83A609007B9DC9 /* toast */,
 				53A1BA131A52A12A00C76844 /* kit */,
 				53BC52E51A485E6E0044C238 /* Navigator介绍.txt */,
@@ -882,6 +886,15 @@
 				53BC53501A486DA30044C238 /* ssnbase64.h */,
 			);
 			path = bbox;
+			sourceTree = "<group>";
+		};
+		53CB29F71A89EB8200509148 /* category */ = {
+			isa = PBXGroup;
+			children = (
+				53CB29F81A89ECA700509148 /* UIApplication+SSNCategory.h */,
+				53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */,
+			);
+			path = category;
 			sourceTree = "<group>";
 		};
 		53D163D7191A629C00AD4C81 = {
@@ -1196,6 +1209,7 @@
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
 				5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */,
 				53BC531C1A485E6E0044C238 /* SSNKVOBound.m in Sources */,
+				53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */,
 				53C84C751A5BB355008AB7C8 /* UIView+SSNUIKit.m in Sources */,
 				53DB120C1A5CE6E200B119BA /* UITextField+SSNUIKit.m in Sources */,
 				533121821A4BE85E000F456E /* DMPersonExt.m in Sources */,
