@@ -25,6 +25,8 @@
 #import "SSNKVOBound.h"
 #import "SSNDBBound.h"
 
+#import "UITableView+SSNPullRefresh.h"
+
 //#import "DMProfileViewController.h"
 
 @interface DMPersonVM : NSObject<SSNDBFetchObject>
@@ -137,8 +139,29 @@
 
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"添加" style:UIBarButtonItemStylePlain target:self action:@selector(addPerson:)];
+    
+//    self.tableView.ssn_pullRefreshEnabled = YES;
+//    self.tableView.ssn_loadMoreEnabled = YES;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.tableView.ssn_pullRefreshEnabled = YES;
+    self.tableView.ssn_loadMoreEnabled = YES;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    //self.tableView.ssn_loadMoreEnabled = YES;
+    
+    NSLog(@"<<<<%f,%f>>>>",self.tableView.contentInset.top,self.tableView.contentInset.bottom);
+}
+
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+//{
+//    NSLog(@"-------------");
+//}
 
 - (void)addPerson:(id)sender {
     ABPeoplePickerNavigationController *ppnc = [[ABPeoplePickerNavigationController alloc] init];
@@ -373,6 +396,7 @@
     //[self openRelativePath:@"../profile" query:@{@"uid":person.uid}];
 }
 
+
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -475,6 +499,11 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 
 - (void)ssndb_controllerDidChange:(SSNDBFetchController *)controller {
     [self.tableView endUpdates];
+}
+
+#pragma mark SSNPullRefreshDelegate
+- (void)ssn_pullRefreshViewDidTriggerRefresh:(SSNPullRefreshView *)view {
+    NSLog(@"开始加载数据");
 }
 
 @end

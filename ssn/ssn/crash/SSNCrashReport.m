@@ -86,7 +86,7 @@ static UIView *crash_report_view = nil;
         crash_report_view = panel;
         
         [[[UIApplication sharedApplication].windows firstObject] addSubview:panel];
-
+        [[UIApplication sharedApplication] resignFirstResponder];
     });
     
 }

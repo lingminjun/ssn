@@ -20,6 +20,20 @@
                ReferencedContainer = "container:ssn.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "53D16403191A629C00AD4C81"
+               BuildableName = "ssnTests.xctest"
+               BlueprintName = "ssnTests"
+               ReferencedContainer = "container:ssn.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
