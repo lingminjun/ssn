@@ -65,4 +65,5 @@
  *  @return section info 实例
  */
 + (instancetype)sectionInfoWithIdentify:(NSString *)identify title:(NSString *)title;
+
 @end

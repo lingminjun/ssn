@@ -16,6 +16,56 @@
  *  cell model协议（给定view model概念）
  */
 @protocol SSNCellModel <NSObject>
+
+/**
+ *  元素的hash值
+ */
+@property (readonly) NSUInteger hash;
+
+/**
+ *  数据
+ *
+ *  @param model 另一个数据
+ *
+ *  @return 返回是否相等
+ */
+- (BOOL)isEqual:(id<SSNCellModel>)model;
+
+/**
+ *  对应得cell 类型
+ */
+@property (nonatomic,strong,readonly) Class<SSNVMCellProtocol> cellClass;
+
+/**
+ *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
+ */
+@property (nonatomic,copy,readonly) NSString *cellIdentify;
+
+@optional
+/**
+ *  具备排序能力，请实现view model排序规则
+ *
+ *  实例代码
+ 
+//排序实现
+- (NSComparisonResult)ssn_compare:(SSNVMCellItem *)model {
+    if (self == model) {
+        return NSOrderedSame;
+    }
+    
+    if (![model isKindOfClass:[SSNVMCellItem class]]) {
+        return NSOrderedAscending;
+    }
+    
+    return [self.identify compare:model.identify];
+}
+
+ *
+ *  @param model 另一个数据
+ *
+ *  @return 返回大小关系
+ */
+- (NSComparisonResult)ssn_compare:(id<SSNCellModel>)model;
 @end
 
 /**

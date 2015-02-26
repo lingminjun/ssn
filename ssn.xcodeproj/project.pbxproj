@@ -179,6 +179,8 @@
 		53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */; };
 		53CE03261A9AD99D00E30E0D /* SSNVMSectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03251A9AD99D00E30E0D /* SSNVMSectionInfo.m */; };
 		53CE03291A9AE13700E30E0D /* SSNVMCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03281A9AE13700E30E0D /* SSNVMCellItem.m */; };
+		53CE032C1A9EEF2100E30E0D /* SSNListFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE032B1A9EEF2100E30E0D /* SSNListFetchController.m */; };
+		53CE03321A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */; };
 		53D163E4191A629C00AD4C81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E3191A629C00AD4C81 /* Foundation.framework */; };
 		53D163E6191A629C00AD4C81 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E5191A629C00AD4C81 /* CoreGraphics.framework */; };
 		53D163E8191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
@@ -430,6 +432,10 @@
 		53CE03251A9AD99D00E30E0D /* SSNVMSectionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMSectionInfo.m; sourceTree = "<group>"; };
 		53CE03271A9AE13700E30E0D /* SSNVMCellItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNVMCellItem.h; sourceTree = "<group>"; };
 		53CE03281A9AE13700E30E0D /* SSNVMCellItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMCellItem.m; sourceTree = "<group>"; };
+		53CE032A1A9EEF2100E30E0D /* SSNListFetchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNListFetchController.h; sourceTree = "<group>"; };
+		53CE032B1A9EEF2100E30E0D /* SSNListFetchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNListFetchController.m; sourceTree = "<group>"; };
+		53CE03301A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SSNTableViewEasyConfigure.h"; sourceTree = "<group>"; };
+		53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SSNTableViewEasyConfigure.m"; sourceTree = "<group>"; };
 		53D163E0191A629C00AD4C81 /* ssn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ssn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D163E3191A629C00AD4C81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		53D163E5191A629C00AD4C81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -521,6 +527,10 @@
 				53CE03251A9AD99D00E30E0D /* SSNVMSectionInfo.m */,
 				53CE03271A9AE13700E30E0D /* SSNVMCellItem.h */,
 				53CE03281A9AE13700E30E0D /* SSNVMCellItem.m */,
+				53CE032A1A9EEF2100E30E0D /* SSNListFetchController.h */,
+				53CE032B1A9EEF2100E30E0D /* SSNListFetchController.m */,
+				53CE03301A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.h */,
+				53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */,
 			);
 			path = table;
 			sourceTree = "<group>";
@@ -1237,6 +1247,7 @@
 				53BC531A1A485E6E0044C238 /* SSNBound.m in Sources */,
 				533164FD1A8B4375007223DC /* SSNPullRefreshView.m in Sources */,
 				53F5F1571A5ACECD009EE27A /* UIImage+SSNUIColor.m in Sources */,
+				53CE032C1A9EEF2100E30E0D /* SSNListFetchController.m in Sources */,
 				53BC52FC1A485E6E0044C238 /* NSObject+SSNTracking.m in Sources */,
 				534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */,
 				53BC53261A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
@@ -1256,6 +1267,7 @@
 				53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */,
 				53BC53161A485E6E0044C238 /* SSNDataStore+Factory.m in Sources */,
 				53BC53041A485E6E0044C238 /* NSData+SSNBase64.m in Sources */,
+				53CE03321A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m in Sources */,
 				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,
 				53CE03291A9AE13700E30E0D /* SSNVMCellItem.m in Sources */,
 				53BC53181A485E6E0044C238 /* SSNDataStore.m in Sources */,
