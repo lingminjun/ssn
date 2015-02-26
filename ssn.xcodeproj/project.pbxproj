@@ -177,6 +177,8 @@
 		53C84C811A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */; };
 		53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */; };
 		53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */; };
+		53CE03261A9AD99D00E30E0D /* SSNVMSectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03251A9AD99D00E30E0D /* SSNVMSectionInfo.m */; };
+		53CE03291A9AE13700E30E0D /* SSNVMCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03281A9AE13700E30E0D /* SSNVMCellItem.m */; };
 		53D163E4191A629C00AD4C81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E3191A629C00AD4C81 /* Foundation.framework */; };
 		53D163E6191A629C00AD4C81 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E5191A629C00AD4C81 /* CoreGraphics.framework */; };
 		53D163E8191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
@@ -424,6 +426,10 @@
 		53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+SSNCategory.m"; sourceTree = "<group>"; };
 		53CE03211A9A11C800E30E0D /* SSNMessageInterceptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNMessageInterceptor.h; sourceTree = "<group>"; };
 		53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNMessageInterceptor.m; sourceTree = "<group>"; };
+		53CE03241A9AD99D00E30E0D /* SSNVMSectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNVMSectionInfo.h; sourceTree = "<group>"; };
+		53CE03251A9AD99D00E30E0D /* SSNVMSectionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMSectionInfo.m; sourceTree = "<group>"; };
+		53CE03271A9AE13700E30E0D /* SSNVMCellItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNVMCellItem.h; sourceTree = "<group>"; };
+		53CE03281A9AE13700E30E0D /* SSNVMCellItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMCellItem.m; sourceTree = "<group>"; };
 		53D163E0191A629C00AD4C81 /* ssn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ssn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D163E3191A629C00AD4C81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		53D163E5191A629C00AD4C81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -511,6 +517,10 @@
 				533164FC1A8B4375007223DC /* SSNPullRefreshView.m */,
 				53D9ED851A8DE20900CAFADE /* UITableView+SSNPullRefresh.h */,
 				53D9ED861A8DE20900CAFADE /* UITableView+SSNPullRefresh.m */,
+				53CE03241A9AD99D00E30E0D /* SSNVMSectionInfo.h */,
+				53CE03251A9AD99D00E30E0D /* SSNVMSectionInfo.m */,
+				53CE03271A9AE13700E30E0D /* SSNVMCellItem.h */,
+				53CE03281A9AE13700E30E0D /* SSNVMCellItem.m */,
 			);
 			path = table;
 			sourceTree = "<group>";
@@ -1247,6 +1257,7 @@
 				53BC53161A485E6E0044C238 /* SSNDataStore+Factory.m in Sources */,
 				53BC53041A485E6E0044C238 /* NSData+SSNBase64.m in Sources */,
 				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,
+				53CE03291A9AE13700E30E0D /* SSNVMCellItem.m in Sources */,
 				53BC53181A485E6E0044C238 /* SSNDataStore.m in Sources */,
 				53BC532A1A485E6E0044C238 /* db.md in Sources */,
 				53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */,
@@ -1275,6 +1286,7 @@
 				53F5F1531A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */,
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
 				5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */,
+				53CE03261A9AD99D00E30E0D /* SSNVMSectionInfo.m in Sources */,
 				53BC531C1A485E6E0044C238 /* SSNKVOBound.m in Sources */,
 				53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */,
 				53C84C751A5BB355008AB7C8 /* UIView+SSNUIKit.m in Sources */,
