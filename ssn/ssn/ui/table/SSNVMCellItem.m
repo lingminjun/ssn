@@ -30,11 +30,17 @@
     return _userInfo;
 }
 
+@synthesize disabledSelect = _disabledSelect;
+- (BOOL)isDisabledSelect {
+    return _disabledSelect;
+}
+
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.height = SSN_VM_CELL_ITEM_DEFAULT_HEIGHT;
+        self.cellHeight = SSN_VM_CELL_ITEM_DEFAULT_HEIGHT;
+        self.cellIdentify = NSStringFromClass([self class]);
     }
     return self;
 }

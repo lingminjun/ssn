@@ -9,8 +9,12 @@
 #import "DMSettingViewController.h"
 #import "SSNRouter.h"
 #import "SSNToast.h"
+#import "SSNListFetchController.h"
+#import "UIViewController+SSNTableViewEasyConfigure.h"
+#import "DMSettingCellItem.h"
+#import "DMSectionCellItem.h"
 
-@interface DMSettingViewController ()
+@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate>
 
 @end
 
@@ -34,11 +38,12 @@
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"退出" style:UIBarButtonItemStyleDone target:self action:@selector(logout)];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.tableView.ssn_pullRefreshEnabled = YES;
+    self.ssn_tableViewConfigurator.tableView = self.tableView;
+    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;
+    
+    //开始加载数据
+    [self.ssn_tableViewConfigurator.listFetchController loadData];
 }
 
 - (void)logout {
@@ -60,47 +65,47 @@
 }
 
 #pragma mark - Table view data source
+//
+//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+//{
+//    // Return the number of sections.
+//    return 1;
+//}
+//
+//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+//{
+//    // Return the number of rows in the section.
+//    return 2;
+//}
+//
+//
+//- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    static NSString *cellId = @"cell";
+//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
+//    if (!cell) {
+//        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellId];
+//    }
+//    if (indexPath.row == 0) {
+//        cell.textLabel.text = @"UIDic";
+//    }
+//    else {
+//        cell.textLabel.text = @"UILayout";
+//    }
+//
+//    return cell;
+//}
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Return the number of rows in the section.
-    return 2;
-}
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSString *cellId = @"cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellId];
-    }
-    if (indexPath.row == 0) {
-        cell.textLabel.text = @"UIDic";
-    }
-    else {
-        cell.textLabel.text = @"UILayout";
-    }
-
-    return cell;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    if (indexPath.row == 0) {
-        [self openRelativePath:@"../uidic" query:nil];
-    }
-    else {
-        [self openRelativePath:@"../layout" query:nil];
-    }
-}
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+//    
+//    if (indexPath.row == 0) {
+//        [self openRelativePath:@"../uidic" query:nil];
+//    }
+//    else {
+//        [self openRelativePath:@"../layout" query:nil];
+//    }
+//}
 
 /*
 // Override to support conditional editing of the table view.
@@ -152,5 +157,54 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     // Pass the selected object to the new view controller.
 }
 */
+- (void)ssn_configurator:(SSNTableViewConfigurator *)configurator controller:(SSNListFetchController *)controller loadDataWithOffset:(NSUInteger)offset limit:(NSUInteger)limit userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion {
+    
+    NSMutableArray *ary = [NSMutableArray array];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UIDic"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    [ary addObject:[DMSettingCellItem itemWithTitle:@"xxxxxxxx"]];
+    [ary addObject:[DMSectionCellItem item]];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        completion(ary,YES,nil,YES);
+    });
+}
 
+- (void)ssn_configurator:(SSNTableViewConfigurator *)configurator tableView:(UITableView *)tableView didSelectModel:(DMSettingCellItem *)model atIndexPath:(NSIndexPath *)indexPath {
+    if ([model.title isEqualToString:@"UIDic"]) {
+        [self openRelativePath:@"../uidic" query:nil];
+    }
+    else {
+        [self openRelativePath:@"../layout" query:nil];
+    }
+}
 @end

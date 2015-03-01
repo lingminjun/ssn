@@ -12,6 +12,7 @@
 
 @protocol SSNListFetchControllerDelegate,SSNListFetchControllerDataSource,SSNCellModel;
 
+
 /**
  *  简单的列表结果集管理控制器
  *  注意：此简单结果集管理器只能在主线程中使用
@@ -43,10 +44,26 @@
  */
 @property (nonatomic) BOOL isMandatorySorting;
 
+
+/**
+ *  是否分组展示，也就是有多个section的意思
+ */
+@property (nonatomic,readonly) BOOL isGrouping;
+
+
 /**
  *  每次拉取数据大小，默认为20，设置为零时一般表示不限制大小，请在reload接口调用前设置
  */
 @property (nonatomic) NSUInteger limit;
+
+/**
+ *  初始化fetch
+ *
+ *  @param grouping 是否分组
+ *
+ *  @return 返回当前实例
+ */
+- (instancetype)initWithGrouping:(BOOL)grouping;
 
 /**
  *  更新所有数据，默认offset被重置为0，正在加载时忽略调用
@@ -60,13 +77,37 @@
 - (void)loadMoreData;
 
 #pragma mark object manager
-- (NSUInteger)count;//数据集大小
+/**
+ *  数据集大小
+ *
+ *  @return 数据集大小
+ */
+- (NSUInteger)count;
 
+/**
+ *  返回所有当前数据 若简单list类型，返回 SSNCellModel @see SSNCellModel；若Group类型，返回 SSNVMSectionInfo @see SSNVMSectionInfo
+ *
+ *  @return 返回所有当前数据
+ */
 - (NSArray *)objects;//返回所有当前数据 @see SSNCellModel
 
-- (id<SSNCellModel>)objectAtIndex:(NSUInteger)index;//小于count，否则出现越界异常
+/**
+ *  返回数据
+ *
+ *  @param index 所在位置
+ *
+ *  @return 返回数据
+ */
+- (id<SSNCellModel>)objectAtIndex:(NSUInteger)index;
 
-- (NSUInteger)indexOfObject:(id<SSNCellModel>)object;//如果结果集中没找到返回NSNotFound
+/**
+ *  获取数据位置，如果结果集中没找到返回NSNotFound
+ *
+ *  @param object 数据
+ *
+ *  @return 位置
+ */
+- (NSUInteger)indexOfObject:(id<SSNCellModel>)object;//
 
 #pragma mark 数据集局部改变通知接口
 /**

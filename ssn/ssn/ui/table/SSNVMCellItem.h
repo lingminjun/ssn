@@ -6,7 +6,7 @@
 //  Copyright (c) 2015年 lingminjun. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #define SSN_VM_CELL_ITEM_DEFAULT_HEIGHT (44)
 
@@ -40,6 +40,26 @@
  *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
  */
 @property (nonatomic,copy,readonly) NSString *cellIdentify;
+
+/**
+ *  行高
+ */
+@property (nonatomic,readonly) CGFloat cellHeight;
+
+/**
+ *  是否被禁用选择
+ */
+@property (nonatomic,readonly) BOOL isDisabledSelect;
+
+/**
+ *  是否滑动删除，且删除文案配置，若返回nil表示不支持删除
+ */
+@property (nonatomic,copy,readonly) NSString *cellDeleteConfirmationButtonTitle;
+
+/**
+ *  用于分组的key
+ */
+@property (nonatomic,copy,readonly) NSString *cellGroupKey;
 
 @optional
 /**
@@ -92,7 +112,17 @@
 /**
  *  cell 高度
  */
-@property (nonatomic) CGFloat height;
+@property (nonatomic) CGFloat cellHeight;
+
+/**
+ *  是否被禁用选择
+ */
+@property (nonatomic,getter=isDisabledSelect) BOOL disabledSelect;
+
+/**
+ *  是否滑动删除，且删除文案配置，若返回nil表示不支持删除
+ */
+@property (nonatomic,copy) NSString *cellDeleteConfirmationButtonTitle;
 
 /**
  *  对应得cell 类型
@@ -125,7 +155,7 @@
 @interface UITableViewCell (SSNVMCellProtocol)
 
 /**
- *  do noting
+ *  do nothing
  *
  *  @param model     用view model配置cell
  *  @param indexPath 数据位置

@@ -57,6 +57,15 @@
 - (id)objectAtIndex:(NSUInteger)index;
 
 /**
+ *  返回元素所在位置，如果结果集中没找到返回NSNotFound
+ *
+ *  @param object 元素
+ *
+ *  @return 位置
+ */
+- (NSUInteger)indexOfObject:(id)object;
+
+/**
  *  工程方法
  *
  *  @param identify id，根据需要来设置

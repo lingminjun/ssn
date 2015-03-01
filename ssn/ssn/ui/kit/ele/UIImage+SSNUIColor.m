@@ -404,6 +404,15 @@ void ssn_ImageBufferInitialized(vImage_Buffer *buffer, CGImageRef image) {
     buffer->data = malloc( buffer->rowBytes * buffer->height );
 }
 
+void ssn_ImageBufferDestory(vImage_Buffer *buffer) {
+    if (buffer->data) {
+        free(buffer->data);
+        buffer->data = NULL;
+    }
+    
+    memset(buffer, 0, sizeof(vImage_Buffer));
+}
+
 - (UIImage *)ssn_scaleImage {
     CGSize selfSize = self.size;
     CGFloat selfScale = self.scale;
@@ -515,7 +524,11 @@ void ssn_ImageBufferInitialized(vImage_Buffer *buffer, CGImageRef image) {
     UIImage *finalImage = [UIImage imageWithCGImage:finalImageRef scale:image.scale orientation: image.imageOrientation];
     CGImageRelease( finalImageRef );
     CGContextRelease( finalImageContext );
-    //
+    
+    //释放
+    ssn_ImageBufferDestory(&tempImageBuffer);
+    ssn_ImageBufferDestory(&finalImageBuffer);
+    
     return finalImage;
 }
 

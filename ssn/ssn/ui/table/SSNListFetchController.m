@@ -9,6 +9,7 @@
 #import "SSNListFetchController.h"
 #import "SSNVMCellItem.h"
 #import "ssndiff.h"
+#import "NSObject+SSNBlock.h"
 
 #if DEBUG
 #define ssn_fetch_log(s, ...) printf(s, ##__VA_ARGS__)
@@ -43,14 +44,19 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 
 @implementation SSNListFetchController
 
-- (instancetype)init
-{
+- (instancetype)initWithGrouping:(BOOL)grouping {
     self = [super init];
     if (self) {
+        _isGrouping = grouping;
         _results = [[NSMutableArray alloc] initWithCapacity:1];
         _limit = SSN_LIST_FETCH_CONTROLLER_DEFAULT_LIMIT;
     }
     return self;
+}
+
+- (instancetype)init
+{
+    return [self initWithGrouping:NO];
 }
 
 /**
@@ -81,7 +87,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         self.userInfo = userInfo;
         
         //重置数据
-        [self addResults:results];
+        [self resetResults:results];
     };
     
     [self.dataSource ssnlist_controller:self loadDataWithOffset:0 limit:_limit userInfo:_userInfo completion:block];
@@ -96,7 +102,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         return ;
     }
     
-    if (_hasMore) {
+    if (!_hasMore) {
         return ;
     }
     
@@ -120,19 +126,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         self.hasMore = hasMore;
         self.userInfo = userInfo;
         
-        NSArray *t_results = results;
-        if ([t_results count] > 0 && [self.dataSource respondsToSelector:@selector(ssnlist_controller:constructObjectsFromResults:)]) {
-            t_results = [self.dataSource ssnlist_controller:self constructObjectsFromResults:results];
-        }
-        
-        //这里需要做数据merge
-        if (t_results) {
-            [self.results setArray:t_results];
-        }
-        else {
-            [self.results removeAllObjects];
-        }
-        
+        [self addResults:results];
     };
     
     [self.dataSource ssnlist_controller:self loadDataWithOffset:count limit:_limit userInfo:_userInfo completion:block];
@@ -367,7 +361,8 @@ void list_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t
         
     };
     
-    dispatch_async(dispatch_get_main_queue(), block);
+    [self ssn_mainThreadAsyncBlock:block];
+    //dispatch_async(dispatch_get_main_queue(), block);
 }
 
 

@@ -50,7 +50,7 @@ typedef NS_ENUM(NSUInteger, SSNPullRefreshState){
 
 #define SSNPullRefreshAnimationDuration    (0.18f)
 
-#define SSNPullRefreshArrowImage           [UIImage imageNamed:@"blueArrow"]
+#define SSNPullRefreshArrowImage           [UIImage imageNamed:@"ssn_pull_refresh_blue_arrow"]
 
 #define SSNPullRefreshHeaderPullingCopywriting   @"松开即可刷新..."
 #define SSNPullRefreshHeaderNarmalCopywriting    @"下拉可以刷新..."
@@ -59,6 +59,11 @@ typedef NS_ENUM(NSUInteger, SSNPullRefreshState){
 #define SSNPullRefreshFooterPullingCopywriting   @"松开即可加载更多..."
 #define SSNPullRefreshFooterNarmalCopywriting    @"上拉可以加载更多..."
 #define SSNPullRefreshFooterLoadingCopywriting   @"加载中..."
+
+#define SSNPullRefreshHeaderTriggerHeight        (60)
+#define SSNPullRefreshFooterTriggerHeight        (44)
+
+#define SSNPullRefreshLabelSpaceHeight           (0)
 
 @protocol SSNPullRefreshDelegate;
 
@@ -75,7 +80,7 @@ typedef NS_ENUM(NSUInteger, SSNPullRefreshState){
 /**
  *  委托
  */
-@property(nonatomic,weak,readonly) id <SSNPullRefreshDelegate> delegate;
+@property(nonatomic,weak) id<SSNPullRefreshDelegate> delegate;
 
 /**
  *  是否在加载
@@ -97,6 +102,12 @@ typedef NS_ENUM(NSUInteger, SSNPullRefreshState){
  */
 @property (nonatomic) CGFloat triggerHeight;
 
+/**
+ *  起始的偏移值，此值自动获取
+ *  表示所依赖tableView.contentInset.top的值
+ *  而loadMore则表示tableView.contentInset.bottom
+ */
+@property (nonatomic,readonly) CGFloat startOffset;
 
 /**
  *  结束加载过程
@@ -118,6 +129,7 @@ typedef NS_ENUM(NSUInteger, SSNPullRefreshState){
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
 
 @end
 
@@ -138,9 +150,10 @@ typedef NS_ENUM(NSUInteger, SSNPullRefreshState){
  *  loading过程中文案提示（最后更新时间）
  *
  *  @param view
+ *  @param time 最后更新时间
  *
  *  @return 返回文案
  */
-- (NSString *)ssn_pullRefreshViewLastUpdatedCopywriting:(SSNPullRefreshView *)view;
+- (NSString *)ssn_pullRefreshView:(SSNPullRefreshView *)view copywritingAtLatestUpdatedTime:(NSDate *)time;
 
 @end

@@ -63,6 +63,10 @@
     return [self.objects objectAtIndex:index];
 }
 
+- (NSUInteger)indexOfObject:(id)object {
+    return [self.objects indexOfObject:object];
+}
+
 + (instancetype)sectionInfoWithIdentify:(NSString *)identify title:(NSString *)title {
     SSNVMSectionInfo *info = [[SSNVMSectionInfo alloc] init];
     info.identify = identify;

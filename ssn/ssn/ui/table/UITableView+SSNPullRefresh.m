@@ -60,13 +60,6 @@ static char * table_footer_load_more_key = NULL;
         }
         
         self.tableFooterView = subview;
-//        CGRect frame = subview.frame;
-//        frame.origin.y = (self.bounds.size.height + self.contentInset.bottom);
-////        subview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-//        subview.frame = frame;
-//        NSLog(@"====================");
-//        NSLog(@"%@|||%f,%f",self,self.contentInset.top,self.contentInset.bottom);
-//        [self addSubview:subview];
     }
     else if (!ssn_loadMoreEnabled && subview) {
         self.tableFooterView = nil;

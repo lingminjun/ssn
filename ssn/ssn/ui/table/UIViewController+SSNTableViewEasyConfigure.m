@@ -14,45 +14,66 @@
 #import <objc/message.h>
 #endif
 
-@implementation UIViewController (SSNTableViewEasyConfigure)
-#pragma mark list fetch controller
-static char * ssn_list_fetch_controller_key = NULL;
-- (SSNListFetchController *)ssn_listFetchController {
-    SSNListFetchController *controller = objc_getAssociatedObject(self, &(ssn_list_fetch_controller_key));
-    if (controller) {
-        return controller;
+
+@interface SSNTableViewConfigurator ()
+@end
+
+
+@implementation SSNTableViewConfigurator
+
+@synthesize listFetchController = _listFetchController;
+- (SSNListFetchController *)listFetchController {
+    if (_listFetchController) {
+        return _listFetchController;
     }
     
-    controller = [SSNListFetchController fetchControllerWithDelegate:self dataSource:nil];
-    
-    objc_setAssociatedObject(self, &(ssn_list_fetch_controller_key),controller, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    
-    return controller;
+    _listFetchController = [SSNListFetchController fetchControllerWithDelegate:self dataSource:self];
+    return _listFetchController;
 }
 
-static char * ssn_list_fetch_table_key = NULL;
-@dynamic ssn_resultsTableView;
-- (UITableView *)ssn_resultsTableView {
-    return objc_getAssociatedObject(self, &(ssn_list_fetch_table_key));
-}
-- (void)setSsn_resultsTableView:(UITableView *)ssn_resultsTableView {
-    objc_setAssociatedObject(self, &(ssn_list_fetch_table_key),ssn_resultsTableView, OBJC_ASSOCIATION_ASSIGN);
+- (void)setTableView:(UITableView *)tableView {
+    
+    if (tableView.delegate != self) {//不相等时再赋值，setDelegate会触发内部检查一些委托方法是否实现问题
+        tableView.delegate = self;
+    }
+    
+    if (tableView.dataSource != self) {//不相等时再赋值，setDataSource会触发内部检查一些委托方法是否实现问题
+        tableView.dataSource = self;
+    }
+    
+    tableView.ssn_headerPullRefreshView.delegate = self;
+    tableView.ssn_footerLoadMoreView.delegate = self;
+    
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    
+    _tableView = tableView;
 }
 
 #pragma mark - UITableViewDataSource
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (tableView != self.ssn_resultsTableView) {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    if (tableView != self.tableView) {
         return 0;
     }
-    return [self.ssn_listFetchController count];
+    
+    return 1;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (tableView != self.ssn_resultsTableView) {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if (tableView != self.tableView) {
+        return 0;
+    }
+    return [self.listFetchController count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView != self.tableView) {
         return [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
     
-    id<SSNCellModel> model = [self.ssn_listFetchController objectAtIndex:indexPath.row];
+    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
     
     NSString *cellId = [model cellIdentify];
     if (!cellId) {
@@ -69,15 +90,161 @@ static char * ssn_list_fetch_table_key = NULL;
         }
     }
     
+    if (model.isDisabledSelect) {
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
+    else {
+        cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+    }
+    
     [cell ssn_configureCellWithModel:model atIndexPath:indexPath inTableView:tableView];
     
     return cell;
-
+    
 }
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (tableView != self.tableView) {
+        return SSN_VM_CELL_ITEM_DEFAULT_HEIGHT;
+    }
+    
+    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
+    return [model cellHeight];
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView != self.tableView) {
+        return UITableViewCellEditingStyleNone;
+    }
+    
+    //仅仅支持删除
+    return UITableViewCellEditingStyleDelete;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView != self.tableView) {
+        return ;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(ssn_configurator:tableView:commitEditingStyle:forRowAtIndexPath:)]) {
+        [self.delegate ssn_configurator:self tableView:tableView commitEditingStyle:editingStyle forRowAtIndexPath:indexPath];
+    }
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView != self.tableView) {
+        return nil;
+    }
+    
+    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
+    return [model cellDeleteConfirmationButtonTitle];
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (tableView != self.tableView) {
+        return NO;
+    }
+    
+    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
+    return [model cellDeleteConfirmationButtonTitle] > 0;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (tableView != self.tableView) {
+        return ;
+    }
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
+    if (model.isDisabledSelect) {
+        return ;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(ssn_configurator:tableView:didSelectModel:atIndexPath:)]) {
+        [self.delegate ssn_configurator:self tableView:tableView didSelectModel:model atIndexPath:indexPath];
+    }
+}
+
+#pragma mark - uiscroll view delegate 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (scrollView != self.tableView) {
+        return ;
+    }
+    
+    UITableView *tableView = self.tableView;
+    
+    [tableView.ssn_headerPullRefreshView scrollViewDidScroll:scrollView];
+    [tableView.ssn_footerLoadMoreView scrollViewDidScroll:scrollView];
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (scrollView != self.tableView) {
+        return ;
+    }
+    
+    UITableView *tableView = self.tableView;
+    
+    [tableView.ssn_headerPullRefreshView scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+    [tableView.ssn_footerLoadMoreView scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if (scrollView != self.tableView) {
+        return ;
+    }
+    
+    UITableView *tableView = self.tableView;
+    [tableView.ssn_footerLoadMoreView scrollViewDidEndDecelerating:scrollView];
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if (scrollView != self.tableView) {
+        return ;
+    }
+    
+    UITableView *tableView = self.tableView;
+    
+    [tableView.ssn_headerPullRefreshView scrollViewWillBeginDragging:scrollView];
+    [tableView.ssn_footerLoadMoreView scrollViewWillBeginDragging:scrollView];
+}
+
+#pragma mark - pull refresh delegate
+/**
+ *  将要触发动作
+ *
+ *  @param view
+ */
+- (void)ssn_pullRefreshViewDidTriggerRefresh:(SSNPullRefreshView *)view {
+    if (view == self.tableView.ssn_headerPullRefreshView) {
+        [self.listFetchController loadData];
+    }
+    else if (view == self.tableView.ssn_footerLoadMoreView) {
+        [self.listFetchController loadMoreData];
+    }
+}
+
+- (NSString *)ssn_pullRefreshView:(SSNPullRefreshView *)view copywritingAtLatestUpdatedTime:(NSDate *)time {
+    if (view == self.tableView.ssn_headerPullRefreshView) {
+        if (time) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            return [NSString stringWithFormat:@"最后更新: %@", [formatter stringFromDate:time]];
+        }
+    }
+    else if (view == self.tableView.ssn_footerLoadMoreView) {
+        //
+    }
+    return nil;
+}
+
 
 #pragma mark - list fetch controller delegate
 - (void)ssnlist_controller:(SSNListFetchController *)controller didChangeObject:(id<SSNCellModel>)object atIndex:(NSUInteger)index forChangeType:(SSNListFetchedChangeType)type newIndex:(NSUInteger)newIndex {
-    if (controller != self.ssn_listFetchController) {
+    if (controller != self.listFetchController) {
         return ;
     }
     
@@ -85,28 +252,28 @@ static char * ssn_list_fetch_table_key = NULL;
         case SSNListFetchedChangeInsert:
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            [self.ssn_resultsTableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
             break;
         case SSNListFetchedChangeDelete:
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            [self.ssn_resultsTableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
             break;
         case SSNListFetchedChangeMove:
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            [self.ssn_resultsTableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
             indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
-            [self.ssn_resultsTableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
             break;
         case SSNListFetchedChangeUpdate:
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
-            UITableViewCell *cell = [self.ssn_resultsTableView cellForRowAtIndexPath:indexPath];
-            [cell ssn_configureCellWithModel:object atIndexPath:indexPath inTableView:self.ssn_resultsTableView];
+            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+            [cell ssn_configureCellWithModel:object atIndexPath:indexPath inTableView:self.tableView];
         }
             break;
         default:
@@ -116,19 +283,98 @@ static char * ssn_list_fetch_table_key = NULL;
 }
 
 - (void)ssnlist_controllerWillChange:(SSNListFetchController *)controller {
-    if (controller != self.ssn_listFetchController) {
+    if (controller != self.listFetchController) {
         return ;
     }
     
-    [self.ssn_resultsTableView beginUpdates];
+    [self.tableView beginUpdates];
 }
 
 - (void)ssnlist_controllerDidChange:(SSNListFetchController *)controller {
-    if (controller != self.ssn_listFetchController) {
+    if (controller != self.listFetchController) {
         return ;
     }
     
-    [self.ssn_resultsTableView endUpdates];
+    [self.tableView endUpdates];
+}
+
+#pragma mark - list fetch controller datasource
+
+- (void)ssnlist_controller:(SSNListFetchController *)controller loadDataWithOffset:(NSUInteger)offset limit:(NSUInteger)limit userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion
+{
+    if (controller != self.listFetchController) {
+        return ;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:loadDataWithOffset:limit:userInfo:completion:)]) {
+        
+        void (^block)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
+            
+            if (offset == 0) {
+                [self.tableView.ssn_headerPullRefreshView finishedLoading];
+            }
+            else {
+                [self.tableView.ssn_footerLoadMoreView finishedLoading];
+            }
+            
+            if (self.isAutoEnabledLoadMore) {
+                self.tableView.ssn_loadMoreEnabled = hasMore;
+                _tableView.ssn_footerLoadMoreView.delegate = self;
+            }
+            
+            if (completion) {
+                completion(results,hasMore,userInfo,finished);
+            }
+        };
+        
+        [self.delegate ssn_configurator:self controller:controller loadDataWithOffset:offset limit:limit userInfo:userInfo completion:block];
+    }
+}
+
+
+- (NSArray *)ssnlist_controller:(SSNListFetchController *)controller constructObjectsFromResults:(NSArray *)results
+{
+    if (controller != self.listFetchController) {
+        return results;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:constructObjectsFromResults:)]) {
+        return [self.delegate ssn_configurator:self controller:controller constructObjectsFromResults:results];
+    }
+    
+    return results;
+}
+
+@end
+
+
+@implementation UIViewController (SSNTableViewEasyConfigure)
+#pragma mark list fetch controller
+static char * ssn_table_configurator_key = NULL;
+- (SSNTableViewConfigurator *)ssn_tableViewConfigurator {
+    SSNTableViewConfigurator *configurator = objc_getAssociatedObject(self, &(ssn_table_configurator_key));
+    if (configurator) {
+        return configurator;
+    }
+    
+    configurator = [[SSNTableViewConfigurator alloc] init];
+    configurator.delegate = self;
+    
+    objc_setAssociatedObject(self, &(ssn_table_configurator_key),configurator, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    return configurator;
+}
+
+#pragma mark - 委托默认实现
+- (void)ssn_configurator:(SSNTableViewConfigurator *)configurator tableView:(UITableView *)tableView didSelectModel:(id<SSNCellModel>)model atIndexPath:(NSIndexPath *)indexPath {
+}
+
+- (void)ssn_configurator:(SSNTableViewConfigurator *)configurator controller:(SSNListFetchController *)controller loadDataWithOffset:(NSUInteger)offset limit:(NSUInteger)limit userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion {
+    
+    if (completion) {
+        completion(nil,NO,userInfo,YES);
+    }
+    
 }
 
 @end

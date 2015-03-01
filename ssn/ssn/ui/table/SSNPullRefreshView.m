@@ -11,15 +11,17 @@
 @interface SSNPullRefreshView ()
 {
     
-    __weak id _delegate;
+    __weak id<SSNPullRefreshDelegate> _delegate;
     
-    UIScrollView *_scrollView;
+    __weak UIScrollView *_scrollView;
     
     SSNPullRefreshState _state;
     
-    NSString *_lastUpdatedTimestamp;
+    NSDate *_lastUpdatedTimestamp;
     
     UIImage *_arrowImage;
+    
+    UIView *_contentView;
     
     UILabel *_lastUpdatedLabel;
     UILabel *_statusLabel;
@@ -44,63 +46,84 @@
         _delegate = delegate;
         _isLoading = NO;
         
-        self.backgroundColor = SSNPullRefreshBackgroudColor;
-        
-        self.arrowImage = SSNPullRefreshArrowImage;
-        
-        CGFloat midY = frame.size.height - _arrowImage.size.height/2;
-        if (_style == SSNPullRefreshFooterLoadMore) {
-            midY = _arrowImage.size.height/2;
+        if (_style == SSNPullRefreshHeaderRefresh) {
+            _triggerHeight = SSNPullRefreshHeaderTriggerHeight;
+        }
+        else {
+            _triggerHeight = SSNPullRefreshFooterTriggerHeight;
         }
         
+        self.backgroundColor = SSNPullRefreshBackgroudColor;
+        self.arrowImage = SSNPullRefreshArrowImage;
+        
+        //展示区域
         if (_style == SSNPullRefreshHeaderRefresh) {
-            /* Config Last Updated Label */
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, midY, self.frame.size.width, 20.0f)];
-            label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-            label.font = [UIFont systemFontOfSize:12.0f];
-            label.textColor = SSNPullRefreshTextColor;
-            label.backgroundColor = [UIColor clearColor];
-            label.textAlignment = NSTextAlignmentCenter;
-            [self addSubview:label];
-            _lastUpdatedLabel=label;
+            _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, frame.size.height - _triggerHeight, frame.size.width, _triggerHeight)];
+            _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+        }
+        else {
+            _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, _triggerHeight)];
+            _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        }
+        [self addSubview:_contentView];
+        
+        
+        CGRect content_frame = _contentView.bounds;
+        CGFloat status_label_height = 20.0f;
+        CGFloat date_label_height = 20.0f;
+        CGFloat label_space_height = SSNPullRefreshLabelSpaceHeight;
+        
+        CGFloat label_sum_height = date_label_height + label_space_height + status_label_height;
+        if (_style == SSNPullRefreshFooterLoadMore) {//load more 只有一个文案需要显示
+            date_label_height = 0;
+            label_space_height = 0;
+            label_sum_height = date_label_height + label_space_height + status_label_height;
         }
         
         /* Config Status Updated Label */
-        CGFloat status_y = midY - 18;
-        if (_style == SSNPullRefreshFooterLoadMore) {
-            status_y = midY - 10;
-        }
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, status_y, self.frame.size.width, 20.0f)];
+        CGFloat status_label_y = (content_frame.size.height-label_sum_height)/2;
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, status_label_y, content_frame.size.width, status_label_height)];
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         label.textColor = SSNPullRefreshTextColor;
         label.font = [UIFont boldSystemFontOfSize:13.0f];
         label.backgroundColor = [UIColor clearColor];
         label.textAlignment = NSTextAlignmentCenter;
-        [self addSubview:label];
+        [_contentView addSubview:label];
         _statusLabel=label;
         
-        /* Config Arrow Image */
-        CGFloat layer_y = midY - 35;
-        if (_style == SSNPullRefreshFooterLoadMore) {
-            layer_y = midY - 20;
+        if (_style == SSNPullRefreshHeaderRefresh) {
+            /* Config Last Updated Label */
+            CGFloat date_label_y = (content_frame.size.height-label_sum_height)/2 + label_space_height + status_label_height;
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, date_label_y, content_frame.size.width, date_label_height)];
+            label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            label.font = [UIFont systemFontOfSize:12.0f];
+            label.textColor = SSNPullRefreshTextColor;
+            label.backgroundColor = [UIColor clearColor];
+            label.textAlignment = NSTextAlignmentCenter;
+            [_contentView addSubview:label];
+            _lastUpdatedLabel=label;
         }
+        
+        /* Config Arrow Image */
+        CGSize image_size = self.arrowImage.size;
         CALayer *layer = [[CALayer alloc] init];
-        layer.frame = CGRectMake(25.0f,layer_y, 30.0f, 55.0f);
+        layer.frame = CGRectMake(25.0f,(content_frame.size.height - image_size.height)/2, image_size.width, image_size.height);
         layer.contentsGravity = kCAGravityResizeAspect;
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40000
         if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
             layer.contentsScale = [[UIScreen mainScreen] scale];
         }
 #endif
-        [[self layer] addSublayer:layer];
+        [[_contentView layer] addSublayer:layer];
         _arrowImageLayer=layer;
-         _arrowImageLayer.contents = (id)(self.arrowImage.CGImage);
+        _arrowImageLayer.contents = (id)(self.arrowImage.CGImage);
         
         
         /* Config activity indicator */
+        CGSize activity_size = CGSizeMake(20, 20);
         UIActivityIndicatorView *view = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:SSNPullRefreshActivityIndicatorStyle];
-        view.frame = CGRectMake(25.0f,midY - 8, 20.0f, 20.0f);
-        [self addSubview:view];
+        view.frame = CGRectMake(25.0f,(content_frame.size.height - activity_size.height)/2, activity_size.width, activity_size.height);
+        [_contentView addSubview:view];
         _activityView = view;
         
         [self setState:SSNPullRefreshNarmal];
@@ -166,22 +189,39 @@
 }
 
 - (void)refreshLastUpdatedDate {
-    NSInteger img_height = _arrowImage.size.height;
     
-    NSString *string = _lastUpdatedTimestamp;
-    if ([_delegate respondsToSelector:@selector(ssn_pullRefreshViewLastUpdatedCopywriting:)]) {
-        string = [_delegate ssn_pullRefreshViewLastUpdatedCopywriting:self];
+    NSString *string = nil;
+    if ([_delegate respondsToSelector:@selector(ssn_pullRefreshView:copywritingAtLatestUpdatedTime:)]) {
+        string = [_delegate ssn_pullRefreshView:self copywritingAtLatestUpdatedTime:_lastUpdatedTimestamp];
+    }
+    else {
+        if (_lastUpdatedTimestamp) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//            [formatter setAMSymbol:@"AM"];
+//            [formatter setPMSymbol:@"PM"];
+            [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            string = [NSString stringWithFormat:@"最后更新: %@", [formatter stringFromDate:_lastUpdatedTimestamp]];
+        }
     }
     _lastUpdatedLabel.text = string;
         
     // Center the status label if the lastupdate is not available
-    CGFloat midY = self.frame.size.height - img_height/2;
-    if(![_lastUpdatedLabel.text length]) {
-        _statusLabel.frame = CGRectMake(0.0f, midY - 8, self.frame.size.width, 20.0f);
-    } else {
-        _statusLabel.frame = CGRectMake(0.0f, midY - 18, self.frame.size.width, 20.0f);
+    if (_style == SSNPullRefreshHeaderRefresh) {
+        
+        CGRect content_frame = _contentView.bounds;
+        CGFloat status_label_height = _statusLabel.frame.size.height;
+        CGFloat date_label_height = _lastUpdatedLabel.frame.size.height;
+        CGFloat label_space_height = SSNPullRefreshLabelSpaceHeight;
+        CGFloat label_sum_height = date_label_height + label_space_height + status_label_height;
+        CGFloat status_label_y = (content_frame.size.height-label_sum_height)/2;
+        
+        if([_lastUpdatedLabel.text length] > 0) {
+            status_label_y = (content_frame.size.height-label_sum_height)/2;
+        } else {
+            status_label_y = (content_frame.size.height-status_label_height)/2;
+        }
+        _statusLabel.frame = CGRectMake(0.0f, status_label_y, _statusLabel.frame.size.width, status_label_height);
     }
-    
 }
 
 - (void)setState:(SSNPullRefreshState)aState{
@@ -197,7 +237,12 @@
             }
             [CATransaction begin];
             [CATransaction setAnimationDuration:SSNPullRefreshAnimationDuration];
-            _arrowImageLayer.transform = CATransform3DMakeRotation((M_PI / 180.0) * 180.0f, 0.0f, 0.0f, 1.0f);
+            if (_style == SSNPullRefreshHeaderRefresh) {
+                _arrowImageLayer.transform = CATransform3DMakeRotation((M_PI / 180.0) * 180.0f, 0.0f, 0.0f, 1.0f);
+            }
+            else {
+                _arrowImageLayer.transform = CATransform3DIdentity;
+            }
             [CATransaction commit];
             
             break;
@@ -206,7 +251,12 @@
             if (_state == SSNPullRefreshPulling) {
                 [CATransaction begin];
                 [CATransaction setAnimationDuration:SSNPullRefreshAnimationDuration];
-                _arrowImageLayer.transform = CATransform3DIdentity;
+                if (_style == SSNPullRefreshHeaderRefresh) {
+                    _arrowImageLayer.transform = CATransform3DIdentity;
+                }
+                else {
+                    _arrowImageLayer.transform = CATransform3DMakeRotation((M_PI / 180.0) * 180.0f, 0.0f, 0.0f, 1.0f);
+                }
                 [CATransaction commit];
             }
             
@@ -221,7 +271,12 @@
             [CATransaction begin];
             [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
             _arrowImageLayer.hidden = NO;
-            _arrowImageLayer.transform = CATransform3DIdentity;
+            if (_style == SSNPullRefreshHeaderRefresh) {
+                _arrowImageLayer.transform = CATransform3DIdentity;
+            }
+            else {
+                _arrowImageLayer.transform = CATransform3DMakeRotation((M_PI / 180.0) * 180.0f, 0.0f, 0.0f, 1.0f);
+            }
             [CATransaction commit];
             
             [self refreshLastUpdatedDate];
@@ -254,7 +309,7 @@
 #pragma mark - Util
 - (CGFloat)scrollViewOffsetFromBottom:(UIScrollView *) scrollView
 {
-    CGFloat scrollAreaContenHeight = scrollView.contentSize.height;
+    CGFloat scrollAreaContenHeight = scrollView.contentSize.height - _startOffset;
     
     CGFloat visibleTableHeight = MIN(scrollView.bounds.size.height, scrollAreaContenHeight);
     CGFloat scrolledDistance = scrollView.contentOffset.y + visibleTableHeight; // If scrolled all the way down this should add upp to the content heigh.
@@ -267,7 +322,9 @@
 
 - (CGFloat)visibleTableHeightDiffWithBoundsHeight:(UIScrollView *) scrollView
 {
-    return (scrollView.bounds.size.height - MIN(scrollView.bounds.size.height, scrollView.contentSize.height));
+    CGFloat scrollAreaContenHeight = scrollView.contentSize.height - _startOffset;
+    CGFloat visibleTableHeight = MIN(scrollView.bounds.size.height, scrollAreaContenHeight);
+    return visibleTableHeight;
 }
 
 - (CGFloat)valveOffsetWithScrollView:(UIScrollView *) scrollView {
@@ -284,30 +341,22 @@
 - (void)startAnimatingWithScrollView:(UIScrollView *) scrollView {
     _isLoading = YES;
     
-    NSInteger img_height = _arrowImage.size.height;
-    NSInteger trigger_height = img_height + 5;
+    NSInteger trigger_height = _triggerHeight + _startOffset;
     
     [self setState:SSNPullRefreshLoading];
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.2];
-    UIEdgeInsets currentInsets = scrollView.contentInset;
-    if (_style == SSNPullRefreshHeaderRefresh) {
-        currentInsets.top = img_height;
-    }
-    else {
-        currentInsets.bottom = img_height + [self visibleTableHeightDiffWithBoundsHeight:scrollView];
-    }
-    scrollView.contentInset = currentInsets;
-    [UIView commitAnimations];
     
     if (_style == SSNPullRefreshHeaderRefresh) {
-        if(scrollView.contentOffset.y == 0){
-            [scrollView setContentOffset:CGPointMake(scrollView.contentOffset.x, -trigger_height) animated:YES];
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:0.2];
+        UIEdgeInsets currentInsets = scrollView.contentInset;
+        if (_style == SSNPullRefreshHeaderRefresh) {
+            currentInsets.top = trigger_height;
         }
-    }
-    else {
-        if([self scrollViewOffsetFromBottom:scrollView] == 0){
-            [scrollView setContentOffset:CGPointMake(scrollView.contentOffset.x, scrollView.contentOffset.y + trigger_height) animated:YES];
+        scrollView.contentInset = currentInsets;
+        [UIView commitAnimations];
+        
+        if(scrollView.contentOffset.y != -trigger_height){
+            [scrollView setContentOffset:CGPointMake(scrollView.contentOffset.x, -trigger_height) animated:YES];
         }
     }
 }
@@ -315,13 +364,24 @@
 #pragma mark ScrollView Methods
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    printf("%f\n",scrollView.contentOffset.y);
+    
+    
     UIScrollView *scl = [self scrollView];
     if (scrollView != scl) {
         return ;
     }
+    //第一次取_crollview时需要找到偏移值
+    if (_startOffset == 0) {
+        if (_style == SSNPullRefreshHeaderRefresh) {
+            _startOffset = scl.contentInset.top;
+        }
+        else {
+            _startOffset = scl.contentInset.bottom;
+        }
+    }
     
-    CGFloat img_height = _arrowImage.size.height;
-    CGFloat trigger_height = img_height + 5;
+    CGFloat trigger_height = _triggerHeight + _startOffset;
     
     //计算其实offset
     CGFloat valve_offset = [self valveOffsetWithScrollView:scrollView];
@@ -329,40 +389,25 @@
     //开始计算动作
     if (_state == SSNPullRefreshLoading) {
         
-        CGFloat offset = MAX(valve_offset * -1, 0);
-        offset = MIN(offset, img_height);
-        UIEdgeInsets currentInsets = scrollView.contentInset;
-        
-        if (_style == SSNPullRefreshHeaderRefresh) {
-            currentInsets.top = offset;
-        }
-        else {
-            currentInsets.bottom = offset? offset + [self visibleTableHeightDiffWithBoundsHeight:scrollView]: 0;
-        }
-        
-        scrollView.contentInset = currentInsets;
-        
     }
     else if (scrollView.isDragging) {
         
-        if (_state == SSNPullRefreshPulling && valve_offset > -trigger_height && valve_offset < 0.0f && !_isLoading) {
+        if (_state == SSNPullRefreshPulling && valve_offset > - trigger_height && valve_offset < 0.0f && !_isLoading) {
             [self setState:SSNPullRefreshNarmal];
         } else if (_state == SSNPullRefreshNarmal && valve_offset < -trigger_height && !_isLoading) {
             [self setState:SSNPullRefreshPulling];
         }
         
-        UIEdgeInsets currentInsets = scrollView.contentInset;
+        
         if (_style == SSNPullRefreshHeaderRefresh) {
-            if (currentInsets.top != 0) {
-                currentInsets.top = 0;
+            UIEdgeInsets currentInsets = scrollView.contentInset;
+            if (currentInsets.top != _startOffset) {
+                currentInsets.top = _startOffset;
             }
+            scrollView.contentInset = currentInsets;
         }
-        else {
-            if (currentInsets.bottom != 0) {
-                currentInsets.bottom = 0;
-            }
+        else {//footer 不需要处理contentInset
         }
-        scrollView.contentInset = currentInsets;
     }
 }
 
@@ -373,17 +418,43 @@
         return ;
     }
     
-    CGFloat img_height = _arrowImage.size.height;
-    CGFloat trigger_height = img_height + 5;
+    CGFloat trigger_height = _triggerHeight + _startOffset;
     
     //计算其实offset
     CGFloat valve_offset = [self valveOffsetWithScrollView:scrollView];
     
     if (valve_offset <= - trigger_height && !_isLoading) {
+        
         if ([_delegate respondsToSelector:@selector(ssn_pullRefreshViewDidTriggerRefresh:)]) {
+            //先开启动画
+            [self startAnimatingWithScrollView:scrollView];
+            
             [_delegate ssn_pullRefreshViewDidTriggerRefresh:self];
         }
-        [self startAnimatingWithScrollView:scrollView];
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    UIScrollView *scl = [self scrollView];
+    if (scrollView != scl) {
+        return ;
+    }
+    
+    if (_style == SSNPullRefreshFooterLoadMore) {//因为是在foot view上，所以尽量不要显示
+        CGFloat trigger_height = _triggerHeight + _startOffset;
+        
+        //计算其实offset
+        CGFloat valve_offset = [self valveOffsetWithScrollView:scrollView];
+        
+        if (valve_offset <= - trigger_height && !_isLoading) {
+            
+            if ([_delegate respondsToSelector:@selector(ssn_pullRefreshViewDidTriggerRefresh:)]) {
+                //先开启动画
+                [self startAnimatingWithScrollView:scrollView];
+                
+                [_delegate ssn_pullRefreshViewDidTriggerRefresh:self];
+            }
+        }
     }
 }
 
@@ -401,6 +472,10 @@
 
 - (void)finishedLoading {	
     
+    if (_isLoading) {
+        _lastUpdatedTimestamp = [NSDate date];
+    }
+    
     _isLoading = NO;
     
     UIScrollView *scrollView = [self scrollView];
@@ -411,10 +486,10 @@
         [UIView setAnimationDuration:0.3f];
         UIEdgeInsets currentInsets = scrollView.contentInset;
         if (_style == SSNPullRefreshHeaderRefresh) {
-            currentInsets.top = 0;
+            currentInsets.top = _startOffset;
         }
         else {
-            currentInsets.bottom = 0;
+            currentInsets.bottom = _startOffset;
         }
         scrollView.contentInset = currentInsets;
         [UIView commitAnimations];
@@ -422,6 +497,17 @@
     }
     
     [self setState:SSNPullRefreshNarmal];
+    
+    if (_style == SSNPullRefreshHeaderRefresh) {
+        if(scrollView.contentOffset.y != -_startOffset){
+            [scrollView setContentOffset:CGPointMake(scrollView.contentOffset.x, -_startOffset) animated:YES];
+        }
+    }
+    else {
+        if([self scrollViewOffsetFromBottom:scrollView] != _startOffset){
+            [scrollView setContentOffset:CGPointMake(scrollView.contentOffset.x, scrollView.contentOffset.y + _startOffset) animated:YES];
+        }
+    }
 }
 
 @end

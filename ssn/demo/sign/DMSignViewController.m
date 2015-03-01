@@ -47,7 +47,7 @@
 - (void)doneAction:(id)sender
 {
     [SSNToast showTarget:self progressLoadingAtGoldenSection:@"正在登录。。。"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [DMSignEngine sharedInstance].loginId = @"18758014247";
         [self.ssn_router openURL:[NSURL URLWithString:@"app://default"]];
     });
