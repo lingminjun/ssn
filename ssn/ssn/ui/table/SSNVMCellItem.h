@@ -59,7 +59,7 @@
 /**
  *  用于分组的key
  */
-@property (nonatomic,copy,readonly) NSString *cellGroupKey;
+@property (nonatomic,copy,readonly) NSString *cellSectionIdentify;
 
 @optional
 /**
@@ -133,6 +133,11 @@
  *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
  */
 @property (nonatomic,copy) NSString *cellIdentify;
+
+/**
+ *  用于分组需要，默认返回nil
+ */
+@property (nonatomic,copy) NSString *cellSectionIdentify;
 
 @end
 

@@ -27,7 +27,7 @@
         return _listFetchController;
     }
     
-    _listFetchController = [SSNListFetchController fetchControllerWithDelegate:self dataSource:self];
+    _listFetchController = [SSNListFetchController fetchControllerWithDelegate:self dataSource:self isGrouping:NO];
     return _listFetchController;
 }
 
@@ -49,6 +49,16 @@
     _tableView = tableView;
 }
 
+- (void)configureWithTableView:(UITableView *)tableView groupingFetchController:(BOOL)grouping {
+    if (tableView) {
+        self.tableView = tableView;
+    }
+    
+    if (_listFetchController.isGrouping != grouping) {
+        _listFetchController = [SSNListFetchController fetchControllerWithDelegate:self dataSource:self isGrouping:grouping];
+    }
+}
+
 #pragma mark - UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -56,7 +66,7 @@
         return 0;
     }
     
-    return 1;
+    return [self.listFetchController sectionCount];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -64,7 +74,9 @@
     if (tableView != self.tableView) {
         return 0;
     }
-    return [self.listFetchController count];
+    
+    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    return [sec count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -73,7 +85,7 @@
         return [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
     
-    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
+    id<SSNCellModel> model = [self.listFetchController objectAtIndexPath:indexPath];
     
     NSString *cellId = [model cellIdentify];
     if (!cellId) {
@@ -108,7 +120,7 @@
         return SSN_VM_CELL_ITEM_DEFAULT_HEIGHT;
     }
     
-    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
+    id<SSNCellModel> model = [self.listFetchController objectAtIndexPath:indexPath];
     return [model cellHeight];
 }
 
@@ -139,7 +151,7 @@
         return nil;
     }
     
-    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
+    id<SSNCellModel> model = [self.listFetchController objectAtIndexPath:indexPath];
     return [model cellDeleteConfirmationButtonTitle];
 }
 
@@ -148,7 +160,7 @@
         return NO;
     }
     
-    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
+    id<SSNCellModel> model = [self.listFetchController objectAtIndexPath:indexPath];
     return [model cellDeleteConfirmationButtonTitle] > 0;
 }
 
@@ -159,7 +171,7 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    id<SSNCellModel> model = [self.listFetchController objectAtIndex:indexPath.row];
+    id<SSNCellModel> model = [self.listFetchController objectAtIndexPath:indexPath];
     if (model.isDisabledSelect) {
         return ;
     }
@@ -167,6 +179,79 @@
     if ([self.delegate respondsToSelector:@selector(ssn_configurator:tableView:didSelectModel:atIndexPath:)]) {
         [self.delegate ssn_configurator:self tableView:tableView didSelectModel:model atIndexPath:indexPath];
     }
+}
+
+//header
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (tableView != self.tableView) {
+        return nil;
+    }
+    
+    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    if (sec.hiddenHeader) {
+        return nil;
+    }
+    return sec.headerTitle;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if (tableView != self.tableView) {
+        return 0.0f;
+    }
+    
+    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    if (sec.hiddenHeader) {
+        return 0.0f;
+    }
+    return sec.headerHeight;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    if (tableView != self.tableView) {
+        return nil;
+    }
+    
+    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    if (sec.hiddenHeader) {
+        return nil;
+    }
+    return sec.customHeaderView;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    if (tableView != self.tableView) {
+        return nil;
+    }
+    
+    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    if (sec.hiddenFooter) {
+        return nil;
+    }
+    return sec.footerTitle;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    if (tableView != self.tableView) {
+        return 0.0f;
+    }
+    
+    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    if (sec.hiddenFooter) {
+        return 0.0f;
+    }
+    return sec.footerHeight;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    if (tableView != self.tableView) {
+        return nil;
+    }
+    
+    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    if (sec.hiddenFooter) {
+        return nil;
+    }
+    return sec.customFooterView;
 }
 
 #pragma mark - uiscroll view delegate 
@@ -243,7 +328,24 @@
 
 
 #pragma mark - list fetch controller delegate
-- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeObject:(id<SSNCellModel>)object atIndex:(NSUInteger)index forChangeType:(SSNListFetchedChangeType)type newIndex:(NSUInteger)newIndex {
+- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeSection:(SSNVMSectionInfo *)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(SSNListFetchedChangeType)type {
+    if (controller != self.listFetchController) {
+        return ;
+    }
+
+    switch(type) {
+        case SSNListFetchedChangeInsert:
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case SSNListFetchedChangeDelete:
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        default:break;
+    }
+}
+
+- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeObject:(id<SSNCellModel>)object atIndexPath:(NSIndexPath *)indexPath forChangeType:(SSNListFetchedChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
     if (controller != self.listFetchController) {
         return ;
     }
@@ -251,27 +353,22 @@
     switch (type) {
         case SSNListFetchedChangeInsert:
         {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
             [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
             break;
         case SSNListFetchedChangeDelete:
         {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
             break;
         case SSNListFetchedChangeMove:
         {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
             break;
         case SSNListFetchedChangeUpdate:
         {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
             [cell ssn_configureCellWithModel:object atIndexPath:indexPath inTableView:self.tableView];
         }

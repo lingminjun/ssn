@@ -166,4 +166,12 @@
  */
 - (void)ssn_gaussianBlurImageWithRadius:(NSUInteger)radius iterations:(NSUInteger)iterations complete:(void(^)(UIImage *image))complete;
 
+#pragma mark 绘制倒影
+/**
+ *  绘制倒影图片
+ *
+ *  @return 倒影
+ */
+- (UIImage *)ssn_mirroredImage;
+
 @end

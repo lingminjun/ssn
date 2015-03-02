@@ -8,13 +8,19 @@
 
 #import "SSNVMSectionInfo.h"
 
+@interface SSNVMSectionInfo ()
+@property (nonatomic,copy) NSString *identify;
+@end
+
 @implementation SSNVMSectionInfo
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.height = SSN_VM_SECTION_INFO_DEFAULT_HEIGHT;
+        self.headerHeight = SSN_VM_SECTION_INFO_DEFAULT_HEIGHT;
+        self.footerHeight = SSN_VM_SECTION_INFO_DEFAULT_HEIGHT;
+        self.hiddenFooter = YES;
     }
     return self;
 }
@@ -67,10 +73,30 @@
     return [self.objects indexOfObject:object];
 }
 
+- (NSComparisonResult)compare:(SSNVMSectionInfo *)info {
+    if (self == info) {
+        return NSOrderedSame;
+    }
+    
+    if (![info isKindOfClass:[SSNVMSectionInfo class]]) {
+        return NSOrderedAscending;
+    }
+    
+    if (self.sortIndex > info.sortIndex) {
+        return NSOrderedDescending;
+    }
+    else if (self.sortIndex < info.sortIndex) {
+        return NSOrderedAscending;
+    }
+    else {
+        return NSOrderedSame;
+    }
+}
+
 + (instancetype)sectionInfoWithIdentify:(NSString *)identify title:(NSString *)title {
     SSNVMSectionInfo *info = [[SSNVMSectionInfo alloc] init];
     info.identify = identify;
-    info.title = title;
+    info.headerTitle = title;
     return info;
 }
 
@@ -89,5 +115,24 @@
     }
     
     return [self.identify isEqualToString:object.identify];
+}
+
+#pragma mark copy
+- (id)copyWithZone:(NSZone *)zone {
+    SSNVMSectionInfo *copy = [[[self class] alloc] init];
+    
+    copy.headerTitle = self.headerTitle;
+    copy.headerHeight = self.headerHeight;
+    copy.hiddenHeader = self.hiddenHeader;
+    copy.customHeaderView = self.customHeaderView;
+    
+    copy.footerTitle = self.footerTitle;
+    copy.footerHeight = self.footerHeight;
+    copy.hiddenFooter = self.hiddenFooter;
+    copy.customFooterView = self.customFooterView;
+    copy.identify = self.identify;
+    
+    [copy.objects setArray:self.objects];
+    return copy;
 }
 @end

@@ -62,17 +62,17 @@
     return [self.identify isEqualToString:object.identify];
 }
 
-//- (NSComparisonResult)ssn_compare:(SSNVMCellItem *)model {
-//    if (self == model) {
-//        return NSOrderedSame;
-//    }
-//    
-//    if (![model isKindOfClass:[SSNVMCellItem class]]) {
-//        return NSOrderedAscending;
-//    }
-//    
-//    return [self.identify compare:model.identify];
-//}
+- (NSComparisonResult)ssn_compare:(SSNVMCellItem *)model {
+    if (self == model) {
+        return NSOrderedSame;
+    }
+    
+    if (![model isKindOfClass:[SSNVMCellItem class]]) {
+        return NSOrderedAscending;
+    }
+    
+    return [self.identify compare:model.identify];
+}
 
 @end
 

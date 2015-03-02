@@ -10,7 +10,10 @@
 
 #define SSN_LIST_FETCH_CONTROLLER_DEFAULT_LIMIT (20)
 
+FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
+
 @protocol SSNListFetchControllerDelegate,SSNListFetchControllerDataSource,SSNCellModel;
+@class SSNVMSectionInfo;
 
 
 /**
@@ -78,27 +81,77 @@
 
 #pragma mark object manager
 /**
- *  数据集大小
+ *  section个数
  *
- *  @return 数据集大小
+ *  @return section个数
  */
-- (NSUInteger)count;
+- (NSUInteger)sectionCount;
 
 /**
- *  返回所有当前数据 若简单list类型，返回 SSNCellModel @see SSNCellModel；若Group类型，返回 SSNVMSectionInfo @see SSNVMSectionInfo
+ *  所有数据集大小
+ *
+ *  @return 所有数据集大小
+ */
+- (NSUInteger)objectsCount;
+
+/**
+ *  所有sections，返回的数据是不可以修改的，即使修改也不会有任何作用
+ *
+ *  @return 返回所有sections
+ */
+- (NSArray *)sections;
+
+/**
+ *  返回所有当前数据 返回 SSNCellModel @see SSNCellModel
  *
  *  @return 返回所有当前数据
  */
-- (NSArray *)objects;//返回所有当前数据 @see SSNCellModel
+- (NSArray *)objects;
+
+/**
+ *  返回section info
+ *
+ *  @param index 所在位置
+ *
+ *  @return 返回section
+ */
+- (SSNVMSectionInfo *)sectionAtIndex:(NSUInteger)section;
+
+/**
+ *  返回section info
+ *
+ *  @param identify section identify
+ *
+ *  @return 返回section
+ */
+- (SSNVMSectionInfo *)sectionWithSectionIdentify:(NSString *)identify;
+
+/**
+ *  返回section所在位置
+ *
+ *  @param section
+ *
+ *  @return 位置，如果结果集中没找到返回NSNotFound
+ */
+- (NSUInteger)indexWithSection:(SSNVMSectionInfo *)section;
+
+/**
+ *  返回section
+ *
+ *  @param identify section唯一标示
+ *
+ *  @return 获取section
+ */
+- (NSUInteger)indexWithSectionIdentify:(NSString *)identify;
 
 /**
  *  返回数据
  *
- *  @param index 所在位置
+ *  @param indexPath 位置
  *
- *  @return 返回数据
+ *  @return 数据
  */
-- (id<SSNCellModel>)objectAtIndex:(NSUInteger)index;
+- (id<SSNCellModel>)objectAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
  *  获取数据位置，如果结果集中没找到返回NSNotFound
@@ -107,40 +160,29 @@
  *
  *  @return 位置
  */
-- (NSUInteger)indexOfObject:(id<SSNCellModel>)object;//
+- (NSIndexPath *)indexPathOfObject:(id<SSNCellModel>)object;//
 
 #pragma mark 数据集局部改变通知接口
 /**
- *  新增源数据
+ *  新增数据
  *
- *  @param data  新增原始数据
- *  @param index index位置，若大于count，则插入到最后
+ *  @param indexPaths  对应的位置新增，实际位置并不取决于它
  */
-- (void)insertData:(id)data atIndex:(NSUInteger)index;
+- (void)insertDatasAtIndexPaths:(NSArray *)indexPaths;
 
 /**
  *  删除对应位置的数据
  *
- *  @param indexs 数据所在位置
+ *  @param indexPaths NSIndexPaths数据所在位置
  */
-- (void)deleteObjectsAtIndexs:(NSIndexSet *)indexs;
+- (void)deleteDatasAtIndexPaths:(NSArray *)indexPaths;
 
 /**
- *  更新对应位置数据的原始数据
+ *  更新位置的数据，如果对应位置数据没有确实有变化，可能重新排序
  *
- *  @param data  原始数据
- *  @param index 位置
+ *  @param indexPaths 位置
  */
-- (void)updateData:(id)data atIndex:(NSUInteger)index;
-
-
-/**
- *  批量新增源数据
- *
- *  @param datas 所有需要添加的原始数据
- *  @param index index位置，若大于count，则插入到最后
- */
-- (void)insertDatas:(NSArray *)datas atIndex:(NSUInteger)index;
+- (void)updateDatasAtIndexPaths:(NSArray *)indexPaths;
 
 #pragma mark 工厂方法
 /**
@@ -148,10 +190,11 @@
  *
  *  @param delegate   事件委托
  *  @param dataSource 数据源委托
+ *  @param isGrouping 是否为分组
  *
  *  @return SSNListFetchController
  */
-+ (instancetype)fetchControllerWithDelegate:(id<SSNListFetchControllerDelegate>)delegate dataSource:(id<SSNListFetchControllerDataSource>)dataSource;
++ (instancetype)fetchControllerWithDelegate:(id<SSNListFetchControllerDelegate>)delegate dataSource:(id<SSNListFetchControllerDataSource>)dataSource isGrouping:(BOOL)isGrouping;
 @end
 
 
@@ -184,40 +227,50 @@ typedef NS_ENUM(NSUInteger, SSNListFetchedChangeType){
 
 /**
 //实例代码
-- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeObject:(id<SSNCellModel>)object atIndex:(NSUInteger)index forChangeType:(SSNListFetchedChangeType)type newIndex:(NSUInteger)newIndex {
+- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeSection:(SSNVMSectionInfo *)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(SSNListFetchedChangeType)type {
+    switch(type) {
+        case SSNListFetchedChangeInsert:
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case SSNListFetchedChangeDelete:
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        default:break;
+    }
+}
+
+- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeObject:(id<SSNCellModel>)object atIndexPath:(NSIndexPath *)indexPath forChangeType:(SSNListFetchedChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+    if (controller != self.listFetchController) {
+        return ;
+    }
     
     switch (type) {
         case SSNListFetchedChangeInsert:
         {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
             [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
             break;
         case SSNListFetchedChangeDelete:
         {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
             break;
         case SSNListFetchedChangeMove:
         {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
             break;
         case SSNListFetchedChangeUpdate:
         {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
-            UITableViewCell *cell = [self.ssn_resultsTableView cellForRowAtIndexPath:indexPath];
-            [cell ssn_configureCellWithModel:object atIndexPath:indexPath inTableView:self.ssn_resultsTableView];
+            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+            [cell ssn_configureCellWithModel:object atIndexPath:indexPath inTableView:self.tableView];
         }
             break;
         default:
             break;
     }
-    
 }
 
 - (void)ssnlist_controllerWillChange:(SSNListFetchController *)controller {
@@ -229,8 +282,9 @@ typedef NS_ENUM(NSUInteger, SSNListFetchedChangeType){
 }
 */
 @required
-- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeObject:(id<SSNCellModel>)object atIndex:(NSUInteger)index forChangeType:(SSNListFetchedChangeType)type newIndex:(NSUInteger)newIndex;
+- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeSection:(SSNVMSectionInfo *)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(SSNListFetchedChangeType)type;
 
+- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeObject:(id<SSNCellModel>)object atIndexPath:(NSIndexPath *)indexPath forChangeType:(SSNListFetchedChangeType)type newIndexPath:(NSIndexPath *)newIndexPath;
 
 - (void)ssnlist_controllerWillChange:(SSNListFetchController *)controller;
 
@@ -260,6 +314,26 @@ typedef NS_ENUM(NSUInteger, SSNListFetchedChangeType){
 
 
 @optional
+/**
+ *  grouping 结果集，当系统已经构造好了一个空的section时回调通知，你可以在这里配置section，
+ *
+ *  @param controller 当前fetch controller
+ *  @param section    section
+ *  @param identify   section的唯一标示
+ */
+- (void)ssnlist_controller:(SSNListFetchController *)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify;
+
+/**
+ *  重新加载数据委托
+ *  注意：在加载完数据后请务必调用completion通知controller来反馈结果集变化
+ *
+ *  @param controller 当前fetch controller
+ *  @param indexPaths 指定位置加载原始数据
+ *  @param userInfo   其他参数
+ *  @param completion 回调结果 results中存放原始数据集，finished表示此次加载是否正常完结，若错误则需要设置为NO
+ */
+- (void)ssnlist_controller:(SSNListFetchController *)controller loadDataWithIndexPaths:(NSArray *)indexPaths userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion;
+
 /**
  *  对原始数据加工，转换成view model，若不实现此方法，则直接采用原始数据
  *

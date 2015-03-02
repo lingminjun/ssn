@@ -7,6 +7,7 @@
 //
 
 #import "SSNListFetchController.h"
+#import "SSNVMSectionInfo.h"
 #import "SSNVMCellItem.h"
 #import "ssndiff.h"
 #import "NSObject+SSNBlock.h"
@@ -17,9 +18,11 @@
 #define ssn_fetch_log(s, ...) ((void)0)
 #endif
 
+NSString *const SSNFetchDefaultSectionIdentify = @"_$_#_";
+
 const NSUInteger SSNListFetchedChangeNan = 0;
 
-@interface SSNListFetchIndexBox : NSObject
+@interface SSNListFetchChangeLog : NSObject
 @property (nonatomic,strong) id<SSNCellModel> obj;
 @property (nonatomic,strong) id<SSNCellModel> nObj;//新的对象
 @property (nonatomic) SSNListFetchedChangeType changeType;
@@ -27,18 +30,33 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 @property (nonatomic) NSUInteger nIndex;//新的位置
 @end
 
-@implementation SSNListFetchIndexBox
+@implementation SSNListFetchChangeLog
+@end
+
+@interface SSNListFetchSectionChangeLog : NSObject
+@property (nonatomic,strong) SSNVMSectionInfo *section;
+@property (nonatomic,strong) SSNVMSectionInfo *nSection;//新的对象
+@property (nonatomic) SSNListFetchedChangeType changeType;
+@property (nonatomic,strong) NSArray *changes;
+@property (nonatomic) NSUInteger index;
+@property (nonatomic) NSUInteger nIndex;//新的位置
+@end
+
+@implementation SSNListFetchSectionChangeLog
 @end
 
 @interface SSNListFetchController()
 
-@property (nonatomic,strong) NSMutableArray *results;
+@property (nonatomic,strong) NSMutableArray *list;
+@property (nonatomic,strong) NSMutableDictionary *sectionMap;
 
 @property (nonatomic,copy) NSDictionary *userInfo;
 
 @property (nonatomic) BOOL isLoading;
 
 @property (nonatomic) BOOL hasMore;
+
+@property (nonatomic) BOOL dataSourceRespondSectionDidLoad;
 
 @end
 
@@ -48,7 +66,8 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     self = [super init];
     if (self) {
         _isGrouping = grouping;
-        _results = [[NSMutableArray alloc] initWithCapacity:1];
+        _list = [[NSMutableArray alloc] initWithCapacity:1];
+        _sectionMap = [[NSMutableDictionary alloc] initWithCapacity:1];
         _limit = SSN_LIST_FETCH_CONTROLLER_DEFAULT_LIMIT;
     }
     return self;
@@ -57,6 +76,13 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 - (instancetype)init
 {
     return [self initWithGrouping:NO];
+}
+
+- (void)setDataSource:(id<SSNListFetchControllerDataSource>)dataSource {
+    _dataSource = dataSource;
+    
+    //效率考虑，只判断一次
+    _dataSourceRespondSectionDidLoad = [dataSource respondsToSelector:@selector(ssnlist_controller:sectionDidLoad:sectionIdntify:)];
 }
 
 /**
@@ -87,7 +113,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         self.userInfo = userInfo;
         
         //重置数据
-        [self resetResults:results];
+        [self resetResults:results isMerge:NO];
     };
     
     [self.dataSource ssnlist_controller:self loadDataWithOffset:0 limit:_limit userInfo:_userInfo completion:block];
@@ -111,7 +137,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     }
     
     _isLoading = YES;
-    NSUInteger count = [self.results count];
+    NSUInteger count = [_list count];
     
     __weak typeof(self) w_self = self;
     void (^block)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
@@ -126,55 +152,173 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         self.hasMore = hasMore;
         self.userInfo = userInfo;
         
-        [self addResults:results];
+        [self resetResults:results isMerge:YES];
     };
     
     [self.dataSource ssnlist_controller:self loadDataWithOffset:count limit:_limit userInfo:_userInfo completion:block];
 }
 
 #pragma mark object manager
-- (NSUInteger)count {
-    return [self.results count];
+- (NSUInteger)sectionCount {
+    return [_list count];
 }
 
+/**
+ *  所有数据集大小
+ *
+ *  @return 所有数据集大小
+ */
+- (NSUInteger)objectsCount {
+    __block NSUInteger count = 0;
+    [_list enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+        count += [section count];
+    }];
+    return count;
+}
+
+/**
+ *  所有sections，返回的数据是不可以修改的，即使修改也不会有任何作用
+ *
+ *  @return 返回所有sections
+ */
+- (NSArray *)sections {
+    NSMutableArray *sections = [NSMutableArray arrayWithCapacity:1];
+    [_list enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+        [sections addObject:[section copy]];
+    }];
+    return sections;
+}
+
+/**
+ *  返回所有当前数据 返回 SSNCellModel @see SSNCellModel
+ *
+ *  @return 返回所有当前数据
+ */
 - (NSArray *)objects {
-    return [self.results copy];
+    NSMutableArray *objects = [NSMutableArray arrayWithCapacity:1];
+    [_list enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+        [objects addObject:[section objects]];
+    }];
+    return objects;
 }
 
-- (id<SSNCellModel>)objectAtIndex:(NSUInteger)index {
-    if (index >= [self.results count]) {
+/**
+ *  返回section info
+ *
+ *  @param index 所在位置
+ *
+ *  @return 返回数据
+ */
+- (SSNVMSectionInfo *)sectionAtIndex:(NSUInteger)section {
+    if (section >= [_list count]) {
         return nil;
     }
-    return [self.results objectAtIndex:index];
+    return [[_list objectAtIndex:section] copy];
 }
 
-- (NSUInteger)indexOfObject:(id<SSNCellModel>)object {
-    return [self.results indexOfObject:object];
+
+- (SSNVMSectionInfo *)sectionWithSectionIdentify:(NSString *)identify {
+    __block SSNVMSectionInfo *tsection = nil;
+    [_list enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+        if ([section.identify isEqualToString:identify]) {
+            tsection = [section copy];
+            *stop = YES;
+        }
+    }];
+    return tsection;
+}
+
+/**
+ *  返回section所在位置
+ *
+ *  @param section
+ *
+ *  @return 位置，如果结果集中没找到返回NSNotFound
+ */
+- (NSUInteger)indexWithSection:(SSNVMSectionInfo *)section {
+    return [_list indexOfObject:section];
+}
+
+/**
+ *  返回section
+ *
+ *  @param identify section唯一标示
+ *
+ *  @return 获取section
+ */
+- (NSUInteger)indexWithSectionIdentify:(NSString *)identify {
+    __block NSUInteger index = NSNotFound;
+    [_list enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+        if ([section.identify isEqualToString:identify]) {
+            index = idx;
+            *stop = YES;
+        }
+    }];
+    return index;
+}
+
+/**
+ *  返回数据
+ *
+ *  @param indexPath 位置
+ *
+ *  @return 数据
+ */
+- (id<SSNCellModel>)objectAtIndexPath:(NSIndexPath *)indexPath {
+    SSNVMSectionInfo *section = [_list objectAtIndex:indexPath.section];
+    return [section objectAtIndex:indexPath.row];
+}
+
+/**
+ *  获取数据位置，如果结果集中没找到返回NSNotFound
+ *
+ *  @param object 数据
+ *
+ *  @return 位置
+ */
+- (NSIndexPath *)indexPathOfObject:(id<SSNCellModel>)object {
+    __block NSUInteger sec = 0;
+    __block NSUInteger row = NSNotFound;
+    [_list enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+        NSUInteger index = [section indexOfObject:object];
+        if (index != NSNotFound) {
+            sec = idx;
+            row = index;
+            *stop = YES;
+        }
+    }];
+    return [NSIndexPath indexPathForRow:row inSection:sec];
 }
 
 #pragma mark 数据集局部改变通知接口
 
-- (void)insertData:(id)data atIndex:(NSUInteger)index {
-    if (nil == data) {
-        return ;
-    }
+/**
+ *  新增数据
+ *
+ *  @param indexPaths  对应的位置新增，实际位置并不取决于它
+ */
+- (void)insertDatasAtIndexPaths:(NSArray *)indexPaths {
 }
 
-- (void)deleteObjectsAtIndexs:(NSIndexSet *)indexs {
-    
+/**
+ *  删除对应位置的数据
+ *
+ *  @param indexPaths NSIndexPaths数据所在位置
+ */
+- (void)deleteDatasAtIndexPaths:(NSArray *)indexPaths {
 }
 
-- (void)updateData:(id)data atIndex:(NSUInteger)index {
-    
-}
-
-- (void)insertDatas:(NSArray *)datas atIndex:(NSUInteger)index {
-    
+/**
+ *  更新位置的数据，如果对应位置数据没有确实有变化，可能重新排序
+ *
+ *  @param indexPaths 位置
+ */
+- (void)updateDatasAtIndexPaths:(NSArray *)indexPaths {
 }
 
 #pragma mark 工厂方法
-+ (instancetype)fetchControllerWithDelegate:(id<SSNListFetchControllerDelegate>)delegate dataSource:(id<SSNListFetchControllerDataSource>)dataSource {
-    SSNListFetchController *controller = [[SSNListFetchController alloc] init];
++ (instancetype)fetchControllerWithDelegate:(id<SSNListFetchControllerDelegate>)delegate dataSource:(id<SSNListFetchControllerDataSource>)dataSource isGrouping:(BOOL)isGrouping {
+    SSNListFetchController *controller = [[SSNListFetchController alloc] initWithGrouping:isGrouping];
     controller.delegate = delegate;
     controller.dataSource = dataSource;
     return controller;
@@ -182,8 +326,8 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 
 #pragma mark 数据集改变回调
 int list_fetch_elem_equal(void *from, void *to, const size_t f_idx, const size_t t_idx, void *context) {
-    id<SSNCellModel> old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
-    id<SSNCellModel> new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
+    NSObject *old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
+    NSObject *new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
     return [old_obj isEqual:new_obj];
 }
 
@@ -197,7 +341,7 @@ void list_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t
             id<SSNCellModel> old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
             id<SSNCellModel> new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
             if ([indexs containsIndex:f_idx]) {//去重时，可能数据有变化，所以记录update
-                SSNListFetchIndexBox *box = [[SSNListFetchIndexBox alloc] init];
+                SSNListFetchChangeLog *box = [[SSNListFetchChangeLog alloc] init];
                 box.index = f_idx;
                 box.nIndex = t_idx;
                 box.obj = old_obj;
@@ -210,7 +354,7 @@ void list_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t
             break;
         case ssn_diff_insert: {
             id<SSNCellModel> new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
-            SSNListFetchIndexBox *box = [[SSNListFetchIndexBox alloc] init];
+            SSNListFetchChangeLog *box = [[SSNListFetchChangeLog alloc] init];
             box.index = t_idx;
             box.nIndex = t_idx;
             box.nObj = new_obj;
@@ -221,7 +365,7 @@ void list_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t
             break;
         case ssn_diff_delete: {
             id<SSNCellModel> old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
-            SSNListFetchIndexBox *box = [[SSNListFetchIndexBox alloc] init];
+            SSNListFetchChangeLog *box = [[SSNListFetchChangeLog alloc] init];
             box.index = f_idx;
             box.nIndex = NSNotFound;
             box.obj = old_obj;
@@ -235,135 +379,292 @@ void list_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t
     }
 }
 
+void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t_idx, const ssn_diff_change_type type, void *context) {
+    NSMutableDictionary *info = (__bridge NSMutableDictionary *)context;
+    NSMutableArray *changesResult = [info objectForKey:@"changesResult"];
+    NSIndexSet *indexs = [info objectForKey:@"changedIndexs"];
+    NSDictionary *modelChanges = [info objectForKey:@"modelChangedIndexs"];
+    switch (type) {
+        case ssn_diff_no_change: {
+            SSNVMSectionInfo *old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
+            SSNVMSectionInfo *new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
+            if ([indexs containsIndex:f_idx]) {//去重时，可能数据有变化，所以记录update
+                SSNListFetchSectionChangeLog *box = [[SSNListFetchSectionChangeLog alloc] init];
+                box.index = f_idx;
+                box.nIndex = t_idx;
+                box.section = old_obj;
+                box.nSection = new_obj;
+                box.changeType = SSNListFetchedChangeUpdate;
+                
+                NSMutableDictionary *tinfo = [NSMutableDictionary dictionaryWithCapacity:1];
+                NSMutableArray *changes = [NSMutableArray arrayWithCapacity:1];
+                box.changes = changes;
+                [tinfo setValue:changes forKey:@"changesResult"];
+                NSIndexSet *indexs = [modelChanges objectForKey:old_obj.identify];
+                [tinfo setValue:indexs forKey:@"changedIndexs"];
+                
+                ssn_diff((__bridge void *)(old_obj.objects), (__bridge void *)(new_obj.objects), [old_obj.objects count], [new_obj.objects count], list_fetch_elem_equal, list_fetch_chgs_iter, (__bridge void *)tinfo);
+                
+                ssn_fetch_log("\n update section at index = %ld！\n", box.index);
+                [changesResult addObject:box];
+            }
+        }
+            break;
+        case ssn_diff_insert: {
+            SSNVMSectionInfo *new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
+            SSNListFetchSectionChangeLog *box = [[SSNListFetchSectionChangeLog alloc] init];
+            box.index = t_idx;
+            box.nIndex = t_idx;
+            box.nSection = new_obj;
+            box.changeType = SSNListFetchedChangeInsert;
+            ssn_fetch_log("\n insert section at index = %ld！\n", box.nIndex);
+            [changesResult addObject:box];
+        }
+            break;
+        case ssn_diff_delete: {
+            SSNVMSectionInfo *old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
+            SSNListFetchSectionChangeLog *box = [[SSNListFetchSectionChangeLog alloc] init];
+            box.index = f_idx;
+            box.nIndex = NSNotFound;
+            box.section = old_obj;
+            box.changeType = SSNListFetchedChangeDelete;
+            ssn_fetch_log("\n delete section at index = %ld！\n",  box.index);
+            [changesResult addObject:box];
+        }
+            break;
+        default:
+            break;
+    }
+}
+
 //计算出删除，更新，和插入的数据，并且记录第一次插入数据的index
-- (NSArray *)changesFrom:(NSArray *)from to:(NSArray *)to changedIndexs:(NSIndexSet *)indexs{
+- (NSArray *)changesFrom:(NSArray *)from to:(NSArray *)to changedIndexs:(NSIndexSet *)indexs sectionModelChangeIndexs:(NSDictionary *)changes {
     @autoreleasepool {
         NSMutableDictionary *info = [NSMutableDictionary dictionary];
         
         NSMutableArray *changesResult = [[NSMutableArray alloc] initWithCapacity:0];
         [info setValue:changesResult forKey:@"changesResult"];
         [info setValue:indexs forKey:@"changedIndexs"];
+        [info setValue:changes forKey:@"modelChangedIndexs"];
         
-        ssn_diff((__bridge void *)from, (__bridge void *)to, [from count], [to count], list_fetch_elem_equal, list_fetch_chgs_iter, (__bridge void *)info);
+        ssn_diff((__bridge void *)from, (__bridge void *)to, [from count], [to count], list_fetch_elem_equal, list_fetch_sctn_chgs_iter, (__bridge void *)info);
         
         return changesResult;
     }
 }
 
-- (void)resetResults:(NSArray *)datas {
+- (NSArray *)convertModelsFromDatas:(NSArray *)datas {
+    NSMutableArray *array = [NSMutableArray array];
+    
     @autoreleasepool {
-        //记录老数据
-        NSArray *olds = [NSArray arrayWithArray:_results];
         
-        //获得新数据
-        NSMutableArray *news = [NSMutableArray array];
         if ([datas count]) {
             //数据是否需要转化
             if ([self.dataSource respondsToSelector:@selector(ssnlist_controller:constructObjectsFromResults:)]) {
                 NSArray *list = [self.dataSource ssnlist_controller:self constructObjectsFromResults:datas];
                 if (list) {
-                    [news setArray:list];
+                    [array setArray:list];
                 }
             }
             else {
-                [news setArray:datas];
+                [array setArray:datas];
             }
         }
         
-        //排序检查
-        if (_isMandatorySorting && [news count]) {
-            [news sortUsingSelector:@selector(ssn_compare:)];
-        }
-        
-        NSArray *changes = [self changesFrom:olds to:news changedIndexs:nil];
-        
-        //开始第一轮插入所有数据
-        [self processResetObjects:news obeyChanges:changes];
     }
+    
+    return array;
 }
 
-- (void)addResults:(NSArray *)datas {
+- (NSArray *)checkMandatorySortingModels:(NSArray *)models {
+    if (_isMandatorySorting) {
+        return [models sortedArrayUsingSelector:@selector(ssn_compare:)];
+    }
+    return models;
+}
+
+- (SSNVMSectionInfo *)loadSectionWithSectionIdentify:(NSString *)identify {
+    SSNVMSectionInfo *section = [SSNVMSectionInfo sectionInfoWithIdentify:identify title:identify];
+    if (_isGrouping && _dataSourceRespondSectionDidLoad) {
+        [self.dataSource ssnlist_controller:self sectionDidLoad:section sectionIdntify:identify];
+    }
+    
+    if (!_isGrouping) {//非分组类型，section的header和footer都不需要显示
+        section.hiddenHeader = YES;
+        section.hiddenFooter = YES;
+    }
+    
+    return section;
+}
+
+- (void)resetResults:(NSArray *)datas isMerge:(BOOL)isMerge {
     @autoreleasepool {
-        //记录老数据
-        NSArray *olds = [NSArray arrayWithArray:_results];
         
-        //获得新数据
-        NSMutableArray *temp_news = [NSMutableArray array];
-        if ([datas count]) {
-            //数据是否需要转化
-            if ([self.dataSource respondsToSelector:@selector(ssnlist_controller:constructObjectsFromResults:)]) {
-                NSArray *list = [self.dataSource ssnlist_controller:self constructObjectsFromResults:datas];
-                if (list) {
-                    [temp_news setArray:list];
+        //数据转换
+        NSArray *models = [self convertModelsFromDatas:datas];
+        
+        NSArray *news = nil;
+        NSArray *olds = [NSArray arrayWithArray:_list];
+        NSIndexSet *changeSet = nil;
+        NSDictionary *modelChange = nil;
+        
+        NSMutableDictionary *nSections = [NSMutableDictionary dictionaryWithCapacity:1];
+        
+        NSMutableIndexSet *changes = [NSMutableIndexSet indexSet];
+        NSMutableDictionary *uSectionsChanges = [NSMutableDictionary dictionaryWithCapacity:1];
+        
+        [models enumerateObjectsUsingBlock:^(id<SSNCellModel> obj, NSUInteger idx, BOOL *stop) {
+            NSString *sectionIdentify = [obj cellSectionIdentify];
+            if ([sectionIdentify length] == 0) {
+                sectionIdentify = SSNFetchDefaultSectionIdentify;
+            }
+            
+            //生产新的section副本来存放新数据
+            SSNVMSectionInfo *nSection = [nSections objectForKey:sectionIdentify];
+            if (!nSection) {
+                SSNVMSectionInfo *oSection = [_sectionMap objectForKey:sectionIdentify];
+                if (oSection) {
+                    nSection = [oSection copy];
+                    
+                    if (!isMerge) {//老数据需要保留，否则仅仅拷贝section属性
+                        [nSection.objects removeAllObjects];
+                    }
+                    [uSectionsChanges setObject:[NSMutableIndexSet indexSet] forKey:sectionIdentify];
+                    
+                    NSUInteger index = [_list indexOfObject:oSection];
+                    [changes addIndex:index];
                 }
+                else {
+                    nSection = [self loadSectionWithSectionIdentify:sectionIdentify];
+                    [_sectionMap setObject:nSection forKey:sectionIdentify];//直接加到数据集中
+                }
+                
+                [nSections setObject:nSection forKey:sectionIdentify];
+            }
+            
+            //采用后来替换方式加入所有对象
+            if ([nSection.objects containsObject:obj]) {
+                NSUInteger index = [nSection.objects indexOfObject:obj];
+                [nSection.objects replaceObjectAtIndex:index withObject:obj];
+                
+                //注意有变化的位置需要记下来(记老数据位置，主要是要将这部分数据update下，以防止修改不更新)
+                NSMutableIndexSet *set = [uSectionsChanges objectForKey:sectionIdentify];
+                [set addIndex:index];
             }
             else {
-                [temp_news setArray:datas];
-            }
-        }
-        
-        //追加数据，但是需要去重
-        NSMutableIndexSet *sets = [NSMutableIndexSet indexSet];
-        NSMutableArray *news = [NSMutableArray arrayWithArray:_results];
-        [temp_news enumerateObjectsUsingBlock:^(id<SSNCellModel> obj, NSUInteger idx, BOOL *stop) {
-            if (![news containsObject:obj]) {
-                [news addObject:obj];
-            }
-            else {//替换新值
-                NSUInteger index = [news indexOfObject:obj];
-                [sets addIndex:index];
-                [news replaceObjectAtIndex:index withObject:obj];
+                [nSection.objects addObject:obj];
             }
         }];
         
-        //排序检查
-        if (_isMandatorySorting && [news count]) {
-            [news sortUsingSelector:@selector(ssn_compare:)];
+        //将新增的section中数据集排序下
+        if (_isMandatorySorting) {
+            NSArray *values = [nSections allValues];
+            [values enumerateObjectsUsingBlock:^(SSNVMSectionInfo *obj, NSUInteger idx, BOOL *stop) {
+                [obj.objects sortUsingSelector:@selector(ssn_compare:)];
+            }];
         }
         
-        NSArray *changes = [self changesFrom:olds to:news changedIndexs:sets];
+        //若是merge将老的section组合起来
+        if (isMerge) {
+            [olds enumerateObjectsUsingBlock:^(SSNVMSectionInfo *obj, NSUInteger idx, BOOL *stop) {
+                if (![nSections objectForKey:obj.identify]) {//将老的数据加入
+                    [nSections setObject:obj forKey:obj.identify];
+                }
+            }];
+        }
         
-        //开始第一轮插入所有数据
-        [self processResetObjects:news obeyChanges:changes];
+        news = [[nSections allValues] sortedArrayUsingSelector:@selector(compare:)];
+        changeSet = changes;
+        modelChange = uSectionsChanges;
+        
+        
+        //将结果进行比较
+        NSArray *sectionChanges = [self changesFrom:olds to:news changedIndexs:changeSet sectionModelChangeIndexs:modelChange];
+        
+        //计算完changes后，去掉临时用的section
+        NSMutableDictionary *nsectionMap = [NSMutableDictionary dictionaryWithCapacity:1];
+        NSMutableArray *lastNewList = [NSMutableArray arrayWithCapacity:1];
+        
+        [news enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+            SSNVMSectionInfo *origin_section = [_sectionMap objectForKey:section.identify];
+            if (origin_section && origin_section != section) {
+                [origin_section.objects setArray:section.objects];
+                [nsectionMap setObject:origin_section forKey:section.identify];
+                [lastNewList addObject:origin_section];
+            }
+            else {
+                [nsectionMap setObject:section forKey:section.identify];
+                [lastNewList addObject:section];
+            }
+        }];
+        [_sectionMap setDictionary:nsectionMap];
+        
+        [self processReset:lastNewList obeyChanges:sectionChanges];
     }
 }
 
-- (void)processResetObjects:(NSArray *)objs obeyChanges:(NSArray *)changes {
+- (void)processReset:(NSArray *)sections obeyChanges:(NSArray *)changes {
     dispatch_block_t block = ^{
         
         [_delegate ssnlist_controllerWillChange:self];
         
         //删除老数据
-        [changes enumerateObjectsUsingBlock:^(SSNListFetchIndexBox *box, NSUInteger idx, BOOL *stop) {
+        [changes enumerateObjectsUsingBlock:^(SSNListFetchSectionChangeLog *box, NSUInteger idx, BOOL *stop) {
             
             switch (box.changeType) {
-                case SSNListFetchedChangeInsert:
-                    [_delegate ssnlist_controller:self didChangeObject:box.nObj atIndex:box.index forChangeType:SSNListFetchedChangeInsert newIndex:box.nIndex];
+                case SSNListFetchedChangeInsert:{
+                    [_delegate ssnlist_controller:self didChangeSection:box.nSection atIndex:box.index forChangeType:SSNListFetchedChangeInsert];
+                }
                     break;
-                case SSNListFetchedChangeDelete:
-                    [_delegate ssnlist_controller:self didChangeObject:box.obj atIndex:box.index forChangeType:SSNListFetchedChangeDelete newIndex:0];
+                case SSNListFetchedChangeDelete:{
+                    [_delegate ssnlist_controller:self didChangeSection:box.section atIndex:box.index forChangeType:SSNListFetchedChangeDelete];
+                }
                     break;
-                case SSNListFetchedChangeMove:
-                    [_delegate ssnlist_controller:self didChangeObject:box.nObj atIndex:box.index forChangeType:SSNListFetchedChangeMove newIndex:box.nIndex];
-                    break;
-                case SSNListFetchedChangeUpdate:
-                    [_delegate ssnlist_controller:self didChangeObject:box.nObj atIndex:box.index forChangeType:SSNListFetchedChangeUpdate newIndex:box.nIndex];
+                case SSNListFetchedChangeUpdate:{
+                    [_delegate ssnlist_controller:self didChangeSection:box.nSection atIndex:box.nIndex forChangeType:SSNListFetchedChangeUpdate];
+                    [box.changes enumerateObjectsUsingBlock:^(SSNListFetchChangeLog *log, NSUInteger idx, BOOL *stop) {
+                        switch (log.changeType) {
+                            case SSNListFetchedChangeInsert:{
+                                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:log.index inSection:box.nIndex];
+                                [_delegate ssnlist_controller:self didChangeObject:log.nObj atIndexPath:indexPath forChangeType:SSNListFetchedChangeInsert newIndexPath:indexPath];
+                            }
+                                break;
+                            case SSNListFetchedChangeDelete:{
+                                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:log.index inSection:box.nIndex];
+                                [_delegate ssnlist_controller:self didChangeObject:log.obj atIndexPath:indexPath forChangeType:SSNListFetchedChangeDelete newIndexPath:nil];
+                            }
+                                break;
+                            case SSNListFetchedChangeMove:{
+                                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:log.index inSection:box.nIndex];
+                                NSIndexPath *nIndexPath = [NSIndexPath indexPathForRow:log.nIndex inSection:box.nIndex];
+                                [_delegate ssnlist_controller:self didChangeObject:log.nObj atIndexPath:indexPath forChangeType:SSNListFetchedChangeMove newIndexPath:nIndexPath];
+                            }
+                                break;
+                            case SSNListFetchedChangeUpdate:{
+                                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:log.index inSection:box.nIndex];
+                                [_delegate ssnlist_controller:self didChangeObject:log.nObj atIndexPath:indexPath forChangeType:SSNListFetchedChangeUpdate newIndexPath:indexPath];
+                            }
+                                break;
+                            default:
+                                break;
+                        }
+                    }];
+                }
                     break;
                 default:
                     break;
             }
-            
         }];
         
-        [_results setArray:objs];
+        [_list setArray:sections];
         
         [_delegate ssnlist_controllerDidChange:self];
         
     };
     
     [self ssn_mainThreadAsyncBlock:block];
-    //dispatch_async(dispatch_get_main_queue(), block);
 }
+
 
 
 @end

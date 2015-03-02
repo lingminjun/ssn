@@ -554,5 +554,27 @@ void ssn_ImageBufferDestory(vImage_Buffer *buffer) {
     });
 }
 
+#pragma mark 绘制倒影
+/**
+ *  绘制倒影图片
+ *
+ *  @return 倒影
+ */
+- (UIImage *)ssn_mirroredImage {
+    
+    // http://www.360doc.com/content/14/0314/13/16235376_360519517.shtml
+    
+    CGSize pSize = CGSizeMake(CGImageGetWidth(self.CGImage), CGImageGetHeight(self.CGImage));
+    
+    UIGraphicsBeginImageContextWithOptions(pSize, YES, self.scale);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGContextDrawImage(context, CGRectMake(0, 0, pSize.width, pSize.height), self.CGImage);
+    
+    UIImage *mirrored = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return mirrored;
+}
 
 @end

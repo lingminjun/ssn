@@ -40,7 +40,8 @@
 
     self.tableView.ssn_pullRefreshEnabled = YES;
     self.ssn_tableViewConfigurator.tableView = self.tableView;
-    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;
+    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = NO;
+    self.ssn_tableViewConfigurator.listFetchController.isMandatorySorting = NO;
     
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];
@@ -160,39 +161,42 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)ssn_configurator:(SSNTableViewConfigurator *)configurator controller:(SSNListFetchController *)controller loadDataWithOffset:(NSUInteger)offset limit:(NSUInteger)limit userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion {
     
     NSMutableArray *ary = [NSMutableArray array];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UIDic"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
-    [ary addObject:[DMSectionCellItem item]];
-    
-    [ary addObject:[DMSettingCellItem itemWithTitle:@"xxxxxxxx"]];
-    [ary addObject:[DMSectionCellItem item]];
+    static int i = 0;
+    if (i%2 == 0) {
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UIDic"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"xxxxxxxx"]];
+        [ary addObject:[DMSectionCellItem item]];
+    }
+    i++;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         completion(ary,YES,nil,YES);

@@ -364,9 +364,6 @@
 #pragma mark ScrollView Methods
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    printf("%f\n",scrollView.contentOffset.y);
-    
-    
     UIScrollView *scl = [self scrollView];
     if (scrollView != scl) {
         return ;

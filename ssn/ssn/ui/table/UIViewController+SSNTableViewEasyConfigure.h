@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SSNVMCellItem.h"
+#import "SSNVMSectionInfo.h"
 #import "UITableView+SSNPullRefresh.h"
 #import "SSNListFetchController.h"
 
@@ -39,6 +40,14 @@ SSNListFetchControllerDelegate,SSNListFetchControllerDataSource>
  *  自动检查loadMore功能，不需要你处理tableView.ssn_loadMoreEnabled属性，自动检查是否有更多
  */
 @property (nonatomic) BOOL isAutoEnabledLoadMore;
+
+/**
+ *  请务必调用此方法配置你的Configurator
+ *
+ *  @param tableView 需要设置的table
+ *  @param grouping  listFetchController的类型定义
+ */
+- (void)configureWithTableView:(UITableView *)tableView groupingFetchController:(BOOL)grouping;
 
 @end
 
