@@ -33,7 +33,7 @@
 
 //#import "DMProfileViewController.h"
 
-@interface DMContactViewController ()<SSNDBFetchControllerDelegate,ABPeoplePickerNavigationControllerDelegate>
+@interface DMContactViewController ()<ABPeoplePickerNavigationControllerDelegate>
 
 //@property SSNDBFetchController *fetchController;
 

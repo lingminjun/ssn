@@ -141,7 +141,7 @@ NSString *const SSNDataStoreDir = @"ssndatastore";
     
     //有效
     if (box.expire > 0) {
-        isExpired = box.expire + box.visitAt > now;
+        isExpired = (box.expire + box.visitAt <= now);
         
         if (update) {
             box.visitAt = now;
