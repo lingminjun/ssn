@@ -207,8 +207,12 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     if ([model.title isEqualToString:@"UIDic"]) {
         [self openRelativePath:@"../uidic" query:nil];
     }
-    else {
+    else if ([model.title isEqualToString:@"UILayout"]) {
         [self openRelativePath:@"../layout" query:nil];
+    }
+    else {
+        NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
+        [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
     }
 }
 @end

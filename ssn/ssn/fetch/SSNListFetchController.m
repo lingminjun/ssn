@@ -298,6 +298,24 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  @param indexPaths  对应的位置新增，实际位置并不取决于它
  */
 - (void)insertDatasAtIndexPaths:(NSArray *)indexPaths {
+    if ([_dataSource respondsToSelector:@selector(ssnlist_controller:loadDataWithIndexPaths:userInfo:completion:)]) {
+        
+        __weak typeof(self) w_self = self;
+        void (^block)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
+            __strong typeof(w_self) self = w_self; if (!w_self) { return ; }
+            
+            if (!finished) {
+                return ;
+            }
+            
+            self.userInfo = userInfo;
+            
+            //重置数据
+            [self resetResults:results isMerge:YES];
+        };
+        
+        [self.dataSource ssnlist_controller:self loadDataWithIndexPaths:indexPaths userInfo:self.userInfo completion:block];
+    }
 }
 
 /**
@@ -306,6 +324,60 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  @param indexPaths NSIndexPaths数据所在位置
  */
 - (void)deleteDatasAtIndexPaths:(NSArray *)indexPaths {
+    NSMutableIndexSet *changeSectionsSet = [NSMutableIndexSet indexSet];
+    NSMutableDictionary *delIndexs = [NSMutableDictionary dictionaryWithCapacity:1];
+    [indexPaths enumerateObjectsUsingBlock:^(NSIndexPath *path, NSUInteger idx, BOOL *stop) {
+        NSUInteger section = path.section;
+        NSMutableIndexSet *set = [delIndexs objectForKey:@(section)];
+        if (!set) {
+            set = [NSMutableIndexSet indexSet];
+            [delIndexs setObject:set forKey:@(section)];
+            [changeSectionsSet addIndex:section];
+        }
+        
+        [set addIndex:path.row];
+    }];
+    
+    //求出新的list
+    NSMutableArray *news = [NSMutableArray array];
+    [_list enumerateObjectsUsingBlock:^(SSNVMCellItem *section, NSUInteger idx, BOOL *stop) {
+        
+        NSIndexSet *set = [delIndexs objectForKey:@(idx)];
+        if (set) {
+            SSNVMSectionInfo *nSection = [section copy];
+            [nSection.objects removeObjectsAtIndexes:set];
+            if ([nSection.objects count]) {
+                [news addObject:nSection];
+            }
+        }
+        else {
+            [news addObject:section];
+        }
+    }];
+    
+    //将结果进行比较
+    NSArray *olds = [NSArray arrayWithArray:_list];
+    NSArray *sectionChanges = [self changesFrom:olds to:news changedIndexs:changeSectionsSet sectionModelChangeIndexs:nil];
+    
+    //计算完changes后，去掉临时用的section
+    NSMutableDictionary *nsectionMap = [NSMutableDictionary dictionaryWithCapacity:1];
+    NSMutableArray *lastNewList = [NSMutableArray arrayWithCapacity:1];
+    
+    [news enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+        SSNVMSectionInfo *origin_section = [_sectionMap objectForKey:section.identify];
+        if (origin_section && origin_section != section) {
+            [origin_section.objects setArray:section.objects];
+            [nsectionMap setObject:origin_section forKey:section.identify];
+            [lastNewList addObject:origin_section];
+        }
+        else {
+            [nsectionMap setObject:section forKey:section.identify];
+            [lastNewList addObject:section];
+        }
+    }];
+    [_sectionMap setDictionary:nsectionMap];
+    
+    [self processReset:lastNewList obeyChanges:sectionChanges];
 }
 
 /**
@@ -314,6 +386,24 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  @param indexPaths 位置
  */
 - (void)updateDatasAtIndexPaths:(NSArray *)indexPaths {
+    if ([_dataSource respondsToSelector:@selector(ssnlist_controller:loadDataWithIndexPaths:userInfo:completion:)]) {
+        
+        __weak typeof(self) w_self = self;
+        void (^block)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
+            __strong typeof(w_self) self = w_self; if (!w_self) { return ; }
+            
+            if (!finished) {
+                return ;
+            }
+            
+            self.userInfo = userInfo;
+            
+            //重置数据
+            [self resetResults:results isMerge:YES];
+        };
+        
+        [self.dataSource ssnlist_controller:self loadDataWithIndexPaths:indexPaths userInfo:self.userInfo completion:block];
+    }
 }
 
 #pragma mark 工厂方法
