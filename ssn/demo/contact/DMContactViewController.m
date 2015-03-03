@@ -26,48 +26,16 @@
 #import "SSNDBBound.h"
 
 #import "UITableView+SSNPullRefresh.h"
+#import "UIViewController+SSNTableViewDBConfigure.h"
+
+#import "DMPersonCell.h"
+
 
 //#import "DMProfileViewController.h"
 
-@interface DMPersonVM : NSObject<SSNDBFetchObject>
-@property (nonatomic,copy) NSString *uid;
-@property (nonatomic,copy) NSString *name;
-@property (nonatomic,copy) NSString *avatar;
-@property (nonatomic,copy) NSString *mobile;
-@property (nonatomic,copy) NSString *brief;
-@property (nonatomic,copy) NSString *address;
-@end
-
-@implementation DMPersonVM
-@synthesize ssn_dbfetch_rowid = _ssn_dbfetch_rowid;
-
-- (NSUInteger)hash {
-    return [self.uid hash];
-}
-
-- (BOOL)isEqual:(DMPersonVM *)object {
-    if (![object isKindOfClass:[DMPersonVM class]]) {
-        return NO;
-    }
-    return [self.uid isEqualToString:object.uid];
-}
-
-- (id)copyWithZone:(NSZone *)zone {
-    DMPersonVM *copy = [[DMPersonVM alloc] init];
-    copy.ssn_dbfetch_rowid = self.ssn_dbfetch_rowid;
-    copy.uid = self.uid;
-    copy.name = self.name;
-    copy.avatar = self.avatar;
-    copy.mobile = self.mobile;
-    copy.brief = self.brief;
-    copy.address = self.address;
-    return copy;
-}
-@end
-
 @interface DMContactViewController ()<SSNDBFetchControllerDelegate,ABPeoplePickerNavigationControllerDelegate>
 
-@property SSNDBFetchController *fetchController;
+//@property SSNDBFetchController *fetchController;
 
 @end
 
@@ -78,39 +46,41 @@
     self = [super initWithStyle:style];
     if (self)
     {
-        // Custom initialization
-        SSNDB *db = [[SSNDBPool shareInstance] dbWithScope:[DMSignEngine sharedInstance].loginId];
-        
-        //表生成下
-        [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPerson class]) templateName:nil];
-        [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPersonExt class]) templateName:nil];
-        
-        NSSortDescriptor *sort1 = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
-        NSSortDescriptor *sort2 = [NSSortDescriptor sortDescriptorWithKey:@"mobile" ascending:YES];
-        
-        //非级联测试
-        //SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMPerson class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:1 limit:4 fromTable:NSStringFromClass([DMPerson class])];
-        
-        //级联测试
-        SSNDBCascadeFetch *fetch = [SSNDBCascadeFetch fetchWithEntity:[DMPersonVM class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:0 limit:0 fromTable:NSStringFromClass([DMPerson class])];
-        
-        [fetch setQueryColumnDescriptors:@[
-                                           @"uid",
-                                           @"name",
-                                           @"avatar",
-                                           @"mobile",
-                                           @"DMPersonExt.brief AS brief",
-                                           @"DMPersonExt.address AS address"
-                                           ]];
-        
-        [fetch addCascadedTable:NSStringFromClass([DMPersonExt class]) joinedColumn:@"uid" to:@"uid"];
-        
-        _fetchController = [SSNDBFetchController fetchControllerWithDB:db fetch:fetch];
-        
-        [_fetchController setDelegate:self];
+//        [_fetchController setDelegate:self];
         
     }
     return self;
+}
+
+- (SSNDBFetchController *)loadDBFetchController {
+    // Custom initialization
+    SSNDB *db = [[SSNDBPool shareInstance] dbWithScope:[DMSignEngine sharedInstance].loginId];
+    
+    //表生成下
+    [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPerson class]) templateName:nil];
+    [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPersonExt class]) templateName:nil];
+    
+    NSSortDescriptor *sort1 = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+    NSSortDescriptor *sort2 = [NSSortDescriptor sortDescriptorWithKey:@"mobile" ascending:YES];
+    
+    //非级联测试
+    //SSNDBFetch *fetch = [SSNDBFetch fetchWithEntity:[DMPerson class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:1 limit:4 fromTable:NSStringFromClass([DMPerson class])];
+    
+    //级联测试
+    SSNDBCascadeFetch *fetch = [SSNDBCascadeFetch fetchWithEntity:[DMPersonVM class] sortDescriptors:@[ sort1, sort2 ] predicate:nil offset:0 limit:0 fromTable:NSStringFromClass([DMPerson class])];
+    
+    [fetch setQueryColumnDescriptors:@[
+                                       @"uid",
+                                       @"name",
+                                       @"avatar",
+                                       @"mobile",
+                                       @"DMPersonExt.brief AS brief",
+                                       @"DMPersonExt.address AS address"
+                                       ]];
+    
+    [fetch addCascadedTable:NSStringFromClass([DMPersonExt class]) joinedColumn:@"uid" to:@"uid"];
+    
+    return [SSNDBFetchController fetchControllerWithDB:db fetch:fetch];
 }
 
 - (void)viewDidLoad
@@ -132,36 +102,26 @@
         }
     }];
     
-    
-    self.tableView.rowHeight = 60;
-    
-    [_fetchController performFetch];
 
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"添加" style:UIBarButtonItemStylePlain target:self action:@selector(addPerson:)];
     
-//    self.tableView.ssn_pullRefreshEnabled = YES;
-//    self.tableView.ssn_loadMoreEnabled = YES;
+    self.ssn_tableViewDBConfigurator.tableView = self.tableView;
+    self.ssn_tableViewDBConfigurator.dbFetchController = [self loadDBFetchController];
+    
+    //开始加载数据
+    [self.ssn_tableViewDBConfigurator.dbFetchController performFetch];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.tableView.ssn_pullRefreshEnabled = YES;
-    self.tableView.ssn_loadMoreEnabled = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    //self.tableView.ssn_loadMoreEnabled = YES;
-    
-    NSLog(@"<<<<%f,%f>>>>",self.tableView.contentInset.top,self.tableView.contentInset.bottom);
 }
 
-//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-//{
-//    NSLog(@"-------------");
-//}
+
 
 - (void)addPerson:(id)sender {
     ABPeoplePickerNavigationController *ppnc = [[ABPeoplePickerNavigationController alloc] init];
@@ -329,92 +289,20 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-//#warning Potentially incomplete method implementation.
-    // Return the number of sections.
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-//#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-    return [_fetchController count];
-}
-
-- (void)configureCell:(UITableViewCell *)cell person:(DMPerson *)person atIndexPath:(NSIndexPath *)indexPath {
-    
-    [cell.imageView ssn_boundObject:person forField:@"avatar" tieField:@"image" filter:nil map:^id(id obj, NSString *field, id changed_new_value) {
-        if (changed_new_value) {
-            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:changed_new_value]];
-            if (data) {
-                return [UIImage imageWithData:data];
-            }
-        }
-        return [UIImage imageNamed:@"dm_default_avatar"];
-    }];
-    
-    cell.textLabel.text = person.name;
-    cell.detailTextLabel.text = person.mobile;
-}
-
-- (void)configureCellV2:(UITableViewCell *)cell person:(DMPersonVM *)person atIndexPath:(NSIndexPath *)indexPath {
-    
-    cell.textLabel.text = person.name;
-    cell.detailTextLabel.text = person.brief;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *cellId = @"cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
-    // Configure the cell...
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellId];
-    }
-    
-    [self configureCellV2:cell person:[_fetchController objectAtIndex:indexPath.row] atIndexPath:indexPath];
-
-    return cell;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    DMPerson *person = [_fetchController objectAtIndex:indexPath.row];
-    
-//    DMProfileViewController *vc = [[DMProfileViewController alloc] init];
-//    //vc.view;
-//    vc.hidesBottomBarWhenPushed = YES;
-//    
-//    [self.navigationController pushViewController:vc animated:YES];
-    
+#pragma mark - fetch countroller delegate
+- (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator tableView:(UITableView *)tableView didSelectModel:(id<SSNCellModel>)model atIndexPath:(NSIndexPath *)indexPath {
+    DMPerson *person = (DMPerson *)model;
     [self openRelativePath:@"../profile" query:@{@"uid":person.uid,@"person":person}];
-    //[self openRelativePath:@"../profile" query:@{@"uid":person.uid}];
 }
-
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
 
 
 // Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
-forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         //[tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        DMPersonVM *person = [_fetchController objectAtIndex:indexPath.row];
+        DMPersonVM *person = [self.ssn_tableViewDBConfigurator.dbFetchController objectAtIndex:indexPath.row];
         
         SSNDB *db = [[SSNDBPool shareInstance] dbWithScope:[DMSignEngine sharedInstance].loginId];
         SSNDBTable *tb = [SSNDBTable tableWithDB:db name:NSStringFromClass([DMPerson class]) templateName:nil];
@@ -425,85 +313,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         
     }
     
-}
-
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath
-*)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-#pragma mark ssndb fetch delegate
-- (void)ssndb_controller:(SSNDBFetchController *)controller didChangeObject:(id)object atIndex:(NSUInteger)index forChangeType:(SSNDBFetchedChangeType)type newIndex:(NSUInteger)newIndex {
-    
-    switch (type) {
-        case SSNDBFetchedChangeInsert:
-        {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        }
-            break;
-        case SSNDBFetchedChangeDelete:
-        {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        }
-            break;
-        case SSNDBFetchedChangeMove:
-        {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        }
-            break;
-        case SSNDBFetchedChangeUpdate:
-        {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
-            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-            [self configureCellV2:cell person:(DMPersonVM *)object atIndexPath:indexPath];
-        }
-            break;
-        default:
-            break;
-    }
-    
-}
-
-- (void)ssndb_controllerWillChange:(SSNDBFetchController *)controller {
-    [self.tableView beginUpdates];
-}
-
-- (void)ssndb_controllerDidChange:(SSNDBFetchController *)controller {
-    [self.tableView endUpdates];
-}
-
-#pragma mark SSNPullRefreshDelegate
-- (void)ssn_pullRefreshViewDidTriggerRefresh:(SSNPullRefreshView *)view {
-    NSLog(@"开始加载数据");
 }
 
 @end

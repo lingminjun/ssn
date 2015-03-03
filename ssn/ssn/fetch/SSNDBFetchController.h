@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SSNFetchControllerPrototol.h"
 
 @class SSNDB;
 @protocol SSNDBFetchRequest,SSNDBFetchControllerDelegate;
@@ -15,7 +16,7 @@
  *  查询结果集管理器
  *  控制器依赖数据库变更的回调，所以使用者必须注意不要使用非DML语句来操作数据，特别要指出的是，delete语句一定要带上where子句，否则sqlite将优化成truncate
  */
-@interface SSNDBFetchController : NSObject
+@interface SSNDBFetchController : NSObject<SSNFetchControllerPrototol>
 
 @property (nonatomic, strong, readonly) SSNDB *db;//依赖的数据库
 

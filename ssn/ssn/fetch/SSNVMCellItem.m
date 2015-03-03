@@ -8,6 +8,54 @@
 
 #import "SSNVMCellItem.h"
 
+/**
+ *  协议弱化
+ */
+@implementation NSObject (SSNCellModel)
+/**
+ *  对应得cell 类型
+ */
+- (Class<SSNVMCellProtocol>)cellClass {
+    return [UITableViewCell class];
+}
+
+/**
+ *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
+ */
+- (NSString *)cellIdentify {
+    return [NSString stringWithFormat:@"%p",self];
+}
+
+/**
+ *  行高
+ */
+- (CGFloat)cellHeight {
+    return SSN_VM_CELL_ITEM_DEFAULT_HEIGHT;
+}
+
+/**
+ *  是否被禁用选择
+ */
+- (BOOL)isDisabledSelect {
+    return NO;
+}
+
+/**
+ *  是否滑动删除，且删除文案配置，若返回nil表示不支持删除
+ */
+- (NSString *)cellDeleteConfirmationButtonTitle {
+    return nil;
+}
+
+/**
+ *  用于分组的key
+ */
+- (NSString *)cellSectionIdentify {
+    return NSStringFromClass([self class]);
+}
+@end
+
+
 @implementation SSNVMCellItem
 
 @synthesize identify = _identify;

@@ -31,6 +31,13 @@
 		5339FC401AA2B46C0000F6B9 /* ssn_pull_refresh_blue_arrow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5339FC3C1AA2B46C0000F6B9 /* ssn_pull_refresh_blue_arrow@3x.png */; };
 		5339FC411AA2B46C0000F6B9 /* ssn_pull_refresh_gray_arrow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5339FC3D1AA2B46C0000F6B9 /* ssn_pull_refresh_gray_arrow@3x.png */; };
 		5339FC421AA2B46C0000F6B9 /* ssn_pull_refresh_white_arrow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5339FC3E1AA2B46C0000F6B9 /* ssn_pull_refresh_white_arrow@3x.png */; };
+		5339FC7D1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC7C1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m */; };
+		5339FC8B1AA551AA0000F6B9 /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC811AA551AA0000F6B9 /* SSNDBFetch.m */; };
+		5339FC8C1AA551AA0000F6B9 /* SSNDBFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC831AA551AA0000F6B9 /* SSNDBFetchController.m */; };
+		5339FC8D1AA551AA0000F6B9 /* SSNListFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC861AA551AA0000F6B9 /* SSNListFetchController.m */; };
+		5339FC8E1AA551AA0000F6B9 /* SSNVMCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC881AA551AA0000F6B9 /* SSNVMCellItem.m */; };
+		5339FC8F1AA551AA0000F6B9 /* SSNVMSectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC8A1AA551AA0000F6B9 /* SSNVMSectionInfo.m */; };
+		5339FC931AA55BE60000F6B9 /* DMPersonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC921AA55BE60000F6B9 /* DMPersonCell.m */; };
 		533BE3941A2AC30500E07FF0 /* ssn_fetch_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3931A2AC30500E07FF0 /* ssn_fetch_test.m */; };
 		533BE3961A2AC43800E07FF0 /* TestPerson.json in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3951A2AC43800E07FF0 /* TestPerson.json */; };
 		533BE3991A2AC4B400E07FF0 /* TSPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3981A2AC4B400E07FF0 /* TSPerson.m */; };
@@ -134,10 +141,6 @@
 		53BC53291A485E6E0044C238 /* SSNDBTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52BD1A485E6E0044C238 /* SSNDBTable.m */; };
 		53BC532A1A485E6E0044C238 /* db.md in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52BE1A485E6E0044C238 /* db.md */; };
 		53BC532B1A485E6E0044C238 /* db.md in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52BE1A485E6E0044C238 /* db.md */; };
-		53BC532C1A485E6E0044C238 /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52C11A485E6E0044C238 /* SSNDBFetch.m */; };
-		53BC532D1A485E6E0044C238 /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52C11A485E6E0044C238 /* SSNDBFetch.m */; };
-		53BC532E1A485E6E0044C238 /* SSNDBFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52C31A485E6E0044C238 /* SSNDBFetchController.m */; };
-		53BC532F1A485E6E0044C238 /* SSNDBFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52C31A485E6E0044C238 /* SSNDBFetchController.m */; };
 		53BC53301A485E6E0044C238 /* SSNHosting.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52CE1A485E6E0044C238 /* SSNHosting.m */; };
 		53BC53311A485E6E0044C238 /* SSNHosting.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52CE1A485E6E0044C238 /* SSNHosting.m */; };
 		53BC53321A485E6E0044C238 /* SSNHostingTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52D01A485E6E0044C238 /* SSNHostingTask.m */; };
@@ -181,9 +184,6 @@
 		53C84C811A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */; };
 		53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */; };
 		53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */; };
-		53CE03261A9AD99D00E30E0D /* SSNVMSectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03251A9AD99D00E30E0D /* SSNVMSectionInfo.m */; };
-		53CE03291A9AE13700E30E0D /* SSNVMCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03281A9AE13700E30E0D /* SSNVMCellItem.m */; };
-		53CE032C1A9EEF2100E30E0D /* SSNListFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE032B1A9EEF2100E30E0D /* SSNListFetchController.m */; };
 		53CE03321A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */; };
 		53CE03351A9F6B0600E30E0D /* DMSettingCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03341A9F6B0600E30E0D /* DMSettingCellItem.m */; };
 		53CE03381A9F6C4600E30E0D /* DMSectionCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03371A9F6C4600E30E0D /* DMSectionCellItem.m */; };
@@ -275,6 +275,22 @@
 		5339FC3C1AA2B46C0000F6B9 /* ssn_pull_refresh_blue_arrow@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ssn_pull_refresh_blue_arrow@3x.png"; path = "ssn/ssn/ui/table/resources/ssn_pull_refresh_blue_arrow@3x.png"; sourceTree = SOURCE_ROOT; };
 		5339FC3D1AA2B46C0000F6B9 /* ssn_pull_refresh_gray_arrow@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ssn_pull_refresh_gray_arrow@3x.png"; path = "ssn/ssn/ui/table/resources/ssn_pull_refresh_gray_arrow@3x.png"; sourceTree = SOURCE_ROOT; };
 		5339FC3E1AA2B46C0000F6B9 /* ssn_pull_refresh_white_arrow@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ssn_pull_refresh_white_arrow@3x.png"; path = "ssn/ssn/ui/table/resources/ssn_pull_refresh_white_arrow@3x.png"; sourceTree = SOURCE_ROOT; };
+		5339FC7B1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SSNTableViewDBConfigure.h"; sourceTree = "<group>"; };
+		5339FC7C1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SSNTableViewDBConfigure.m"; sourceTree = "<group>"; };
+		5339FC801AA551AA0000F6B9 /* SSNDBFetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBFetch.h; sourceTree = "<group>"; };
+		5339FC811AA551AA0000F6B9 /* SSNDBFetch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBFetch.m; sourceTree = "<group>"; };
+		5339FC821AA551AA0000F6B9 /* SSNDBFetchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBFetchController.h; sourceTree = "<group>"; };
+		5339FC831AA551AA0000F6B9 /* SSNDBFetchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBFetchController.m; sourceTree = "<group>"; };
+		5339FC841AA551AA0000F6B9 /* SSNFetchControllerPrototol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNFetchControllerPrototol.h; sourceTree = "<group>"; };
+		5339FC851AA551AA0000F6B9 /* SSNListFetchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNListFetchController.h; sourceTree = "<group>"; };
+		5339FC861AA551AA0000F6B9 /* SSNListFetchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNListFetchController.m; sourceTree = "<group>"; };
+		5339FC871AA551AA0000F6B9 /* SSNVMCellItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNVMCellItem.h; sourceTree = "<group>"; };
+		5339FC881AA551AA0000F6B9 /* SSNVMCellItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMCellItem.m; sourceTree = "<group>"; };
+		5339FC891AA551AA0000F6B9 /* SSNVMSectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNVMSectionInfo.h; sourceTree = "<group>"; };
+		5339FC8A1AA551AA0000F6B9 /* SSNVMSectionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMSectionInfo.m; sourceTree = "<group>"; };
+		5339FC901AA552CF0000F6B9 /* SSNTableViewConfigureProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNTableViewConfigureProtocol.h; sourceTree = "<group>"; };
+		5339FC911AA55BE60000F6B9 /* DMPersonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPersonCell.h; sourceTree = "<group>"; };
+		5339FC921AA55BE60000F6B9 /* DMPersonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPersonCell.m; sourceTree = "<group>"; };
 		533BE3931A2AC30500E07FF0 /* ssn_fetch_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_fetch_test.m; sourceTree = "<group>"; };
 		533BE3951A2AC43800E07FF0 /* TestPerson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestPerson.json; sourceTree = "<group>"; };
 		533BE3971A2AC4B400E07FF0 /* TSPerson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPerson.h; sourceTree = "<group>"; };
@@ -385,10 +401,6 @@
 		53BC52BC1A485E6E0044C238 /* SSNDBTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBTable.h; sourceTree = "<group>"; };
 		53BC52BD1A485E6E0044C238 /* SSNDBTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBTable.m; sourceTree = "<group>"; };
 		53BC52BE1A485E6E0044C238 /* db.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = db.md; sourceTree = "<group>"; };
-		53BC52C01A485E6E0044C238 /* SSNDBFetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBFetch.h; sourceTree = "<group>"; };
-		53BC52C11A485E6E0044C238 /* SSNDBFetch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBFetch.m; sourceTree = "<group>"; };
-		53BC52C21A485E6E0044C238 /* SSNDBFetchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDBFetchController.h; sourceTree = "<group>"; };
-		53BC52C31A485E6E0044C238 /* SSNDBFetchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDBFetchController.m; sourceTree = "<group>"; };
 		53BC52CD1A485E6E0044C238 /* SSNHosting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNHosting.h; sourceTree = "<group>"; };
 		53BC52CE1A485E6E0044C238 /* SSNHosting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNHosting.m; sourceTree = "<group>"; };
 		53BC52CF1A485E6E0044C238 /* SSNHostingTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNHostingTask.h; sourceTree = "<group>"; };
@@ -438,12 +450,6 @@
 		53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+SSNCategory.m"; sourceTree = "<group>"; };
 		53CE03211A9A11C800E30E0D /* SSNMessageInterceptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNMessageInterceptor.h; sourceTree = "<group>"; };
 		53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNMessageInterceptor.m; sourceTree = "<group>"; };
-		53CE03241A9AD99D00E30E0D /* SSNVMSectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNVMSectionInfo.h; sourceTree = "<group>"; };
-		53CE03251A9AD99D00E30E0D /* SSNVMSectionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMSectionInfo.m; sourceTree = "<group>"; };
-		53CE03271A9AE13700E30E0D /* SSNVMCellItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNVMCellItem.h; sourceTree = "<group>"; };
-		53CE03281A9AE13700E30E0D /* SSNVMCellItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMCellItem.m; sourceTree = "<group>"; };
-		53CE032A1A9EEF2100E30E0D /* SSNListFetchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNListFetchController.h; sourceTree = "<group>"; };
-		53CE032B1A9EEF2100E30E0D /* SSNListFetchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNListFetchController.m; sourceTree = "<group>"; };
 		53CE03301A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SSNTableViewEasyConfigure.h"; sourceTree = "<group>"; };
 		53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SSNTableViewEasyConfigure.m"; sourceTree = "<group>"; };
 		53CE03331A9F6B0600E30E0D /* DMSettingCellItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSettingCellItem.h; sourceTree = "<group>"; };
@@ -537,14 +543,11 @@
 				533164FC1A8B4375007223DC /* SSNPullRefreshView.m */,
 				53D9ED851A8DE20900CAFADE /* UITableView+SSNPullRefresh.h */,
 				53D9ED861A8DE20900CAFADE /* UITableView+SSNPullRefresh.m */,
-				53CE03241A9AD99D00E30E0D /* SSNVMSectionInfo.h */,
-				53CE03251A9AD99D00E30E0D /* SSNVMSectionInfo.m */,
-				53CE03271A9AE13700E30E0D /* SSNVMCellItem.h */,
-				53CE03281A9AE13700E30E0D /* SSNVMCellItem.m */,
-				53CE032A1A9EEF2100E30E0D /* SSNListFetchController.h */,
-				53CE032B1A9EEF2100E30E0D /* SSNListFetchController.m */,
 				53CE03301A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.h */,
 				53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */,
+				5339FC7B1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.h */,
+				5339FC7C1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m */,
+				5339FC901AA552CF0000F6B9 /* SSNTableViewConfigureProtocol.h */,
 			);
 			path = table;
 			sourceTree = "<group>";
@@ -576,6 +579,24 @@
 				5335EBE41A83A77D007B9DC9 /* SSNToast.m */,
 			);
 			path = toast;
+			sourceTree = "<group>";
+		};
+		5339FC7F1AA551AA0000F6B9 /* fetch */ = {
+			isa = PBXGroup;
+			children = (
+				5339FC801AA551AA0000F6B9 /* SSNDBFetch.h */,
+				5339FC811AA551AA0000F6B9 /* SSNDBFetch.m */,
+				5339FC821AA551AA0000F6B9 /* SSNDBFetchController.h */,
+				5339FC831AA551AA0000F6B9 /* SSNDBFetchController.m */,
+				5339FC841AA551AA0000F6B9 /* SSNFetchControllerPrototol.h */,
+				5339FC851AA551AA0000F6B9 /* SSNListFetchController.h */,
+				5339FC861AA551AA0000F6B9 /* SSNListFetchController.m */,
+				5339FC871AA551AA0000F6B9 /* SSNVMCellItem.h */,
+				5339FC881AA551AA0000F6B9 /* SSNVMCellItem.m */,
+				5339FC891AA551AA0000F6B9 /* SSNVMSectionInfo.h */,
+				5339FC8A1AA551AA0000F6B9 /* SSNVMSectionInfo.m */,
+			);
+			path = fetch;
 			sourceTree = "<group>";
 		};
 		533BE39A1A2AFF5300E07FF0 /* model */ = {
@@ -653,6 +674,8 @@
 				538E3837199869880061692E /* DMContactNavController.m */,
 				538E384519986A3B0061692E /* DMContactViewController.h */,
 				538E384619986A3B0061692E /* DMContactViewController.m */,
+				5339FC911AA55BE60000F6B9 /* DMPersonCell.h */,
+				5339FC921AA55BE60000F6B9 /* DMPersonCell.m */,
 			);
 			path = contact;
 			sourceTree = "<group>";
@@ -842,7 +865,6 @@
 				53BC52B01A485E6E0044C238 /* bound */,
 				53BC52B31A485E6E0044C238 /* db */,
 				53BC52BE1A485E6E0044C238 /* db.md */,
-				53BC52BF1A485E6E0044C238 /* fetch */,
 			);
 			path = db;
 			sourceTree = "<group>";
@@ -871,17 +893,6 @@
 				53BC52BD1A485E6E0044C238 /* SSNDBTable.m */,
 			);
 			path = db;
-			sourceTree = "<group>";
-		};
-		53BC52BF1A485E6E0044C238 /* fetch */ = {
-			isa = PBXGroup;
-			children = (
-				53BC52C01A485E6E0044C238 /* SSNDBFetch.h */,
-				53BC52C11A485E6E0044C238 /* SSNDBFetch.m */,
-				53BC52C21A485E6E0044C238 /* SSNDBFetchController.h */,
-				53BC52C31A485E6E0044C238 /* SSNDBFetchController.m */,
-			);
-			path = fetch;
 			sourceTree = "<group>";
 		};
 		53BC52CC1A485E6E0044C238 /* hosting */ = {
@@ -1096,6 +1107,7 @@
 		53D1641B191A66B500AD4C81 /* ssn */ = {
 			isa = PBXGroup;
 			children = (
+				5339FC7F1AA551AA0000F6B9 /* fetch */,
 				5397B5D11A6FA0D300CD6AFC /* crash */,
 				53A1BA201A52F85100C76844 /* pinyin */,
 				53BC527C1A485E6E0044C238 /* base */,
@@ -1266,14 +1278,11 @@
 				5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */,
 				5397B5D41A6FA10700CD6AFC /* SSNCrashReport.m in Sources */,
 				53BC53241A485E6E0044C238 /* SSNDBPool.m in Sources */,
-				53BC532C1A485E6E0044C238 /* SSNDBFetch.m in Sources */,
-				53BC532E1A485E6E0044C238 /* SSNDBFetchController.m in Sources */,
 				533BE3BD1A2B0DDA00E07FF0 /* DMPerson.m in Sources */,
 				53BC53301A485E6E0044C238 /* SSNHosting.m in Sources */,
 				53BC531A1A485E6E0044C238 /* SSNBound.m in Sources */,
 				533164FD1A8B4375007223DC /* SSNPullRefreshView.m in Sources */,
 				53F5F1571A5ACECD009EE27A /* UIImage+SSNUIColor.m in Sources */,
-				53CE032C1A9EEF2100E30E0D /* SSNListFetchController.m in Sources */,
 				53BC52FC1A485E6E0044C238 /* NSObject+SSNTracking.m in Sources */,
 				534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */,
 				53BC53261A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
@@ -1285,6 +1294,7 @@
 				53A1BA1E1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */,
 				53BC53141A485E6E0044C238 /* SSNSafeSet.m in Sources */,
 				53BC53341A485E6E0044C238 /* SSNHostingTaskTail.m in Sources */,
+				5339FC8B1AA551AA0000F6B9 /* SSNDBFetch.m in Sources */,
 				531324861A5D35710038256F /* DMUIDicViewController.m in Sources */,
 				53BC530A1A485E6E0044C238 /* ssnbase.m in Sources */,
 				53BC533E1A485E6E0044C238 /* stt.cpp in Sources */,
@@ -1296,7 +1306,6 @@
 				53BC53041A485E6E0044C238 /* NSData+SSNBase64.m in Sources */,
 				53CE03321A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m in Sources */,
 				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,
-				53CE03291A9AE13700E30E0D /* SSNVMCellItem.m in Sources */,
 				53BC53181A485E6E0044C238 /* SSNDataStore.m in Sources */,
 				53BC532A1A485E6E0044C238 /* db.md in Sources */,
 				53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */,
@@ -1315,18 +1324,19 @@
 				53BC53021A485E6E0044C238 /* SSNLogger.m in Sources */,
 				538E384A19986A560061692E /* DMSessionViewController.m in Sources */,
 				53BC53381A485E6E0044C238 /* buffer.cpp in Sources */,
+				5339FC7D1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m in Sources */,
 				53D9ED871A8DE20900CAFADE /* UITableView+SSNPullRefresh.m in Sources */,
 				53BC53321A485E6E0044C238 /* SSNHostingTask.m in Sources */,
 				53BC534A1A485E6E0044C238 /* SSNVC+Router.m in Sources */,
 				53C84C781A5BBE88008AB7C8 /* SSNUISiteLayout.m in Sources */,
 				53BC53511A486DA30044C238 /* ssnbase64.c in Sources */,
 				53BC53121A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
+				5339FC8E1AA551AA0000F6B9 /* SSNVMCellItem.m in Sources */,
 				53BC53401A485E6E0044C238 /* SSNQuantum.m in Sources */,
 				53F5F1531A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */,
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
 				53CE03351A9F6B0600E30E0D /* DMSettingCellItem.m in Sources */,
 				5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */,
-				53CE03261A9AD99D00E30E0D /* SSNVMSectionInfo.m in Sources */,
 				53BC531C1A485E6E0044C238 /* SSNKVOBound.m in Sources */,
 				53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */,
 				53C84C751A5BB355008AB7C8 /* UIView+SSNUIKit.m in Sources */,
@@ -1337,13 +1347,17 @@
 				538E3838199869880061692E /* DMContactNavController.m in Sources */,
 				53BC53361A485E6E0044C238 /* SSNJson.m in Sources */,
 				53A1BA1A1A52A1D000C76844 /* SSNUILayout.m in Sources */,
+				5339FC8F1AA551AA0000F6B9 /* SSNVMSectionInfo.m in Sources */,
 				53BC52FA1A485E6E0044C238 /* ssndiff.c in Sources */,
 				53BC533A1A485E6E0044C238 /* inet.cpp in Sources */,
 				53C84C6F1A5B887C008AB7C8 /* UILabel+SSNUIKit.m in Sources */,
 				53C84C721A5B9586008AB7C8 /* NSString+SSNUIKit.m in Sources */,
+				5339FC931AA55BE60000F6B9 /* DMPersonCell.m in Sources */,
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
 				53BC53101A485E6E0044C238 /* SSNSafeArray.m in Sources */,
+				5339FC8C1AA551AA0000F6B9 /* SSNDBFetchController.m in Sources */,
 				53BC53461A485E6E0044C238 /* NSURL+Router.m in Sources */,
+				5339FC8D1AA551AA0000F6B9 /* SSNListFetchController.m in Sources */,
 				53BC52FE1A485E6E0044C238 /* ssncop.c in Sources */,
 				53A1BA2D1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */,
 				53BC53061A485E6E0044C238 /* NSFileManager+SSN.m in Sources */,
@@ -1373,7 +1387,6 @@
 				53BC53131A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
 				53BC534D1A485E6E0044C238 /* SSNNavigationController.m in Sources */,
 				53F5F1581A5ACECD009EE27A /* UIImage+SSNUIColor.m in Sources */,
-				53BC532D1A485E6E0044C238 /* SSNDBFetch.m in Sources */,
 				53BC53031A485E6E0044C238 /* SSNLogger.m in Sources */,
 				53BC53171A485E6E0044C238 /* SSNDataStore+Factory.m in Sources */,
 				53BC52FF1A485E6E0044C238 /* ssncop.c in Sources */,
@@ -1430,7 +1443,6 @@
 				537064981A2A032700287199 /* TSUser.m in Sources */,
 				53D898E71A0F12DE00CE63E0 /* ssn_safe_array_test.m in Sources */,
 				534B4AA919C04E4B00698137 /* KKObj.m in Sources */,
-				53BC532F1A485E6E0044C238 /* SSNDBFetchController.m in Sources */,
 				53D576FA1A18EC3F007155B1 /* QuantaTest.m in Sources */,
 				53D6626B1A0BC50D008D2296 /* ssnDictionaryTest.m in Sources */,
 				533BE39E1A2AFF7800E07FF0 /* DMSession.m in Sources */,

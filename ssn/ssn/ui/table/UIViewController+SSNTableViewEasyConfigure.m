@@ -94,8 +94,14 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
     // Configure the cell...
     if (!cell) {
-        if (model.cellClass) {
-            cell = [[(Class)(model.cellClass) alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+        
+        Class clazz = nil;
+        if ([model respondsToSelector:@selector(cellClass)]) {
+            clazz = model.cellClass;
+        }
+        
+        if (clazz) {
+            cell = [[clazz alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
         }
         else {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];

@@ -1,21 +1,21 @@
 //
-//  UIViewController+SSNTableViewEasyConfigure.h
+//  UIViewController+SSNTableViewDBConfigure.h
 //  ssn
 //
-//  Created by lingminjun on 15/2/26.
+//  Created by lingminjun on 15/3/3.
 //  Copyright (c) 2015年 lingminjun. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "SSNListFetchController.h"
 #import "SSNTableViewConfigureProtocol.h"
+#import "SSNDBFetchController.h"
 
-@protocol SSNTableViewConfiguratorDelegate;
+#define SSNDBFetchPageSize (10)
 
 /**
  *  给出一种默认的实现，让控制器变得更佳简介易用
  */
-@interface SSNTableViewConfigurator : NSObject<SSNTableViewConfigurator,UITableViewDelegate,UITableViewDataSource,SSNPullRefreshDelegate,SSNListFetchControllerDelegate,SSNListFetchControllerDataSource>
+@interface SSNTableViewDBConfigurator : NSObject<SSNTableViewConfigurator,UITableViewDelegate,UITableViewDataSource,SSNPullRefreshDelegate,SSNDBFetchControllerDelegate>
 
 /**
  *  委托
@@ -26,7 +26,7 @@
  *  默认ssn_listFetchController的委托是控制器本身
  *  数据源的委托还未指定
  */
-@property (nonatomic,strong,readonly) SSNListFetchController *listFetchController;
+@property (nonatomic,strong) SSNDBFetchController *dbFetchController;
 
 /**
  *  结果呈现的table，此ui应该由ui来把持
@@ -38,13 +38,6 @@
  */
 @property (nonatomic) BOOL isAutoEnabledLoadMore;
 
-/**
- *  请务必调用此方法配置你的Configurator
- *
- *  @param tableView 需要设置的table
- *  @param grouping  listFetchController的类型定义
- */
-- (void)configureWithTableView:(UITableView *)tableView groupingFetchController:(BOOL)grouping;
 
 @end
 
@@ -53,12 +46,13 @@
  *  对简易行的tableView结果集委托有一套默认实现，方便使用者使用
  *  UITableViewDataSource仅仅实现必要委托
  */
-@interface UIViewController (SSNTableViewEasyConfigure) <SSNTableViewConfiguratorDelegate>
+@interface UIViewController (SSNTableViewDBConfigure) <SSNTableViewConfiguratorDelegate>
 
 /**
  *  table配置器
  */
-@property (nonatomic,strong,readonly) SSNTableViewConfigurator *ssn_tableViewConfigurator;
+@property (nonatomic,strong,readonly) SSNTableViewDBConfigurator *ssn_tableViewDBConfigurator;
 
 
 @end
+

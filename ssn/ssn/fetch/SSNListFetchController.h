@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SSNFetchControllerPrototol.h"
 
 #define SSN_LIST_FETCH_CONTROLLER_DEFAULT_LIMIT (20)
 
@@ -20,7 +21,7 @@ FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
  *  简单的列表结果集管理控制器
  *  注意：此简单结果集管理器只能在主线程中使用
  */
-@interface SSNListFetchController : NSObject
+@interface SSNListFetchController : NSObject<SSNFetchControllerPrototol>
 
 /**
  *  刷新委托
