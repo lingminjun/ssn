@@ -107,6 +107,10 @@
         return NO;
     }
     
+    if (self.identify == object.identify) {//效率更高
+        return YES;
+    }
+    
     return [self.identify isEqualToString:object.identify];
 }
 
