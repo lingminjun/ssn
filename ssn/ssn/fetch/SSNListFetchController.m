@@ -89,34 +89,9 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  更新所有数据，默认offset被重置为0，正在加载时忽略调用
  */
 - (void)loadData {
-    if (_isLoading) {
-        return ;
-    }
     
-    if (![self.dataSource respondsToSelector:@selector(ssnlist_controller:loadDataWithOffset:limit:userInfo:completion:)]) {
-        return ;
-    }
+    [self loadDataWithOffset:0 limit:_limit];
     
-    _isLoading = YES;
-    
-    __weak typeof(self) w_self = self;
-    void (^block)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
-        __strong typeof(w_self) self = w_self; if (!w_self) { return ; }
-        
-        self.isLoading = NO;
-        
-        if (!finished) {
-            return ;
-        }
-        
-        self.hasMore = hasMore;
-        self.userInfo = userInfo;
-        
-        //重置数据
-        [self resetResults:results isMerge:NO];
-    };
-    
-    [self.dataSource ssnlist_controller:self loadDataWithOffset:0 limit:_limit userInfo:_userInfo completion:block];
 }
 
 /**
@@ -124,11 +99,17 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  等价与
  */
 - (void)loadMoreData {
-    if (_isLoading) {
+    
+    if (!_hasMore) {
         return ;
     }
     
-    if (!_hasMore) {
+    [self loadDataWithOffset:[_list count] limit:_limit];
+    
+}
+
+- (void)loadDataWithOffset:(NSUInteger)offset limit:(NSUInteger)limit {
+    if (_isLoading) {
         return ;
     }
     
@@ -137,7 +118,6 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     }
     
     _isLoading = YES;
-    NSUInteger count = [_list count];
     
     __weak typeof(self) w_self = self;
     void (^block)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
@@ -152,10 +132,10 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         self.hasMore = hasMore;
         self.userInfo = userInfo;
         
-        [self resetResults:results isMerge:YES];
+        [self resetResults:results isMerge:(offset != 0)];
     };
     
-    [self.dataSource ssnlist_controller:self loadDataWithOffset:count limit:_limit userInfo:_userInfo completion:block];
+    [self.dataSource ssnlist_controller:self loadDataWithOffset:offset limit:limit userInfo:_userInfo completion:block];
 }
 
 #pragma mark object manager

@@ -40,7 +40,7 @@
 
     self.tableView.ssn_pullRefreshEnabled = YES;
     self.ssn_tableViewConfigurator.tableView = self.tableView;
-    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = NO;
+    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;
     self.ssn_tableViewConfigurator.listFetchController.isMandatorySorting = NO;
     
     //开始加载数据
@@ -199,7 +199,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     i++;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        completion(ary,YES,nil,YES);
+        completion(ary,[ary count],nil,YES);
     });
 }
 
