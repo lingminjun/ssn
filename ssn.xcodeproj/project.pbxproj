@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		530187981A3FFF0700E2CB5D /* ssn_lcs_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */; };
 		5312CAC21A57E983009C32B1 /* DMLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */; };
-		5312CAC31A57E983009C32B1 /* DMLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */; };
 		531324811A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
 		531324821A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
 		531324861A5D35710038256F /* DMUIDicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324851A5D35710038256F /* DMUIDicViewController.m */; };
@@ -90,6 +89,25 @@
 		53A1BA261A52F85100C76844 /* unicode_to_pinyin_tone.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */; };
 		53A1BA2D1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */; };
 		53A1BA2E1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */; };
+		53A6E5171AB28D99003BFBCF /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC811AA551AA0000F6B9 /* SSNDBFetch.m */; };
+		53A6E5181AB28D99003BFBCF /* SSNDBFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC831AA551AA0000F6B9 /* SSNDBFetchController.m */; };
+		53A6E5191AB28D99003BFBCF /* SSNListFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC861AA551AA0000F6B9 /* SSNListFetchController.m */; };
+		53A6E51A1AB28D99003BFBCF /* SSNVMCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC881AA551AA0000F6B9 /* SSNVMCellItem.m */; };
+		53A6E51B1AB28D99003BFBCF /* SSNVMSectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC8A1AA551AA0000F6B9 /* SSNVMSectionInfo.m */; };
+		53A6E51C1AB28D99003BFBCF /* SSNCrashReport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5397B5D31A6FA10700CD6AFC /* SSNCrashReport.m */; };
+		53A6E51D1AB28DC7003BFBCF /* SSNMessageInterceptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */; };
+		53A6E51E1AB28DC7003BFBCF /* SSNJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 534CA1641A6CAC9500CB55B3 /* SSNJob.m */; };
+		53A6E51F1AB28DC7003BFBCF /* NSObject+SSNBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D82B8D1A6550AE005C2958 /* NSObject+SSNBlock.m */; };
+		53A6E5201AB28DC7003BFBCF /* SSNPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 533164FC1A8B4375007223DC /* SSNPullRefreshView.m */; };
+		53A6E5211AB28DC7003BFBCF /* UITableView+SSNPullRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9ED861A8DE20900CAFADE /* UITableView+SSNPullRefresh.m */; };
+		53A6E5221AB28DC7003BFBCF /* UIViewController+SSNTableViewEasyConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */; };
+		53A6E5231AB28DC7003BFBCF /* UIViewController+SSNTableViewDBConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC7C1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m */; };
+		53A6E5241AB28DC7003BFBCF /* UIApplication+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */; };
+		53A6E5251AB28DC7003BFBCF /* SSNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5335EBE41A83A77D007B9DC9 /* SSNToast.m */; };
+		53A6E5261AB28DC7003BFBCF /* UILabel+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C6E1A5B887C008AB7C8 /* UILabel+SSNUIKit.m */; };
+		53A6E5271AB28DC7003BFBCF /* NSString+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C711A5B9586008AB7C8 /* NSString+SSNUIKit.m */; };
+		53A6E5281AB28DC7003BFBCF /* UIView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C741A5BB355008AB7C8 /* UIView+SSNUIKit.m */; };
+		53A6E5291AB28DC7003BFBCF /* UITextField+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DB120B1A5CE6E200B119BA /* UITextField+SSNUIKit.m */; };
 		53BB50C01A1441F50070B67D /* ssn_json_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BB50BF1A1441F50070B67D /* ssn_json_test.m */; };
 		53BC52FA1A485E6E0044C238 /* ssndiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52871A485E6E0044C238 /* ssndiff.c */; };
 		53BC52FB1A485E6E0044C238 /* ssndiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52871A485E6E0044C238 /* ssndiff.c */; };
@@ -198,24 +216,14 @@
 		53D16408191A629C00AD4C81 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D163E7191A629C00AD4C81 /* UIKit.framework */; };
 		53D16410191A629C00AD4C81 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53D1640E191A629C00AD4C81 /* InfoPlist.strings */; };
 		53D16412191A629C00AD4C81 /* ssnTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53D16411191A629C00AD4C81 /* ssnTests.mm */; };
-		53D24635199C83B400EFDF29 /* DMTabViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E3833199869430061692E /* DMTabViewController.h */; };
-		53D24636199C83B400EFDF29 /* DMTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3834199869430061692E /* DMTabViewController.m */; };
 		53D24637199C83B400EFDF29 /* DMContactNavController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E3836199869880061692E /* DMContactNavController.h */; };
 		53D24638199C83B400EFDF29 /* DMContactNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3837199869880061692E /* DMContactNavController.m */; };
-		53D24639199C83B400EFDF29 /* DMContactViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E384519986A3B0061692E /* DMContactViewController.h */; };
-		53D2463A199C83B400EFDF29 /* DMContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384619986A3B0061692E /* DMContactViewController.m */; };
 		53D2463B199C83B400EFDF29 /* DMSessionNavController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E3839199869A20061692E /* DMSessionNavController.h */; };
 		53D2463C199C83B400EFDF29 /* DMSessionNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E383A199869A20061692E /* DMSessionNavController.m */; };
-		53D2463D199C83B400EFDF29 /* DMSessionViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E384819986A560061692E /* DMSessionViewController.h */; };
-		53D2463E199C83B400EFDF29 /* DMSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384919986A560061692E /* DMSessionViewController.m */; };
 		53D2463F199C83B400EFDF29 /* DMSettingNavController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E383C199869BF0061692E /* DMSettingNavController.h */; };
 		53D24640199C83B400EFDF29 /* DMSettingNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E383D199869BF0061692E /* DMSettingNavController.m */; };
-		53D24641199C83B400EFDF29 /* DMSettingViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E384B19986A700061692E /* DMSettingViewController.h */; };
-		53D24642199C83B400EFDF29 /* DMSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384C19986A700061692E /* DMSettingViewController.m */; };
 		53D24643199C83B400EFDF29 /* DMSignNavController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E383F199869E00061692E /* DMSignNavController.h */; };
 		53D24644199C83B400EFDF29 /* DMSignNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3840199869E00061692E /* DMSignNavController.m */; };
-		53D24645199C83B400EFDF29 /* DMSignViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 538E3842199869F90061692E /* DMSignViewController.h */; };
-		53D24646199C83B400EFDF29 /* DMSignViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3843199869F90061692E /* DMSignViewController.m */; };
 		53D24676199C83EC00EFDF29 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
 		53D576FA1A18EC3F007155B1 /* QuantaTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D576F91A18EC3F007155B1 /* QuantaTest.m */; };
 		53D6626B1A0BC50D008D2296 /* ssnDictionaryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D6626A1A0BC50D008D2296 /* ssnDictionaryTest.m */; };
@@ -1370,6 +1378,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53A6E51D1AB28DC7003BFBCF /* SSNMessageInterceptor.m in Sources */,
+				53A6E51E1AB28DC7003BFBCF /* SSNJob.m in Sources */,
+				53A6E51F1AB28DC7003BFBCF /* NSObject+SSNBlock.m in Sources */,
+				53A6E5201AB28DC7003BFBCF /* SSNPullRefreshView.m in Sources */,
+				53A6E5211AB28DC7003BFBCF /* UITableView+SSNPullRefresh.m in Sources */,
+				53A6E5221AB28DC7003BFBCF /* UIViewController+SSNTableViewEasyConfigure.m in Sources */,
+				53A6E5231AB28DC7003BFBCF /* UIViewController+SSNTableViewDBConfigure.m in Sources */,
+				53A6E5241AB28DC7003BFBCF /* UIApplication+SSNCategory.m in Sources */,
+				53A6E5251AB28DC7003BFBCF /* SSNToast.m in Sources */,
+				53A6E5261AB28DC7003BFBCF /* UILabel+SSNUIKit.m in Sources */,
+				53A6E5271AB28DC7003BFBCF /* NSString+SSNUIKit.m in Sources */,
+				53A6E5281AB28DC7003BFBCF /* UIView+SSNUIKit.m in Sources */,
+				53A6E5291AB28DC7003BFBCF /* UITextField+SSNUIKit.m in Sources */,
+				53A6E5171AB28D99003BFBCF /* SSNDBFetch.m in Sources */,
+				53A6E5181AB28D99003BFBCF /* SSNDBFetchController.m in Sources */,
+				53A6E5191AB28D99003BFBCF /* SSNListFetchController.m in Sources */,
+				53A6E51A1AB28D99003BFBCF /* SSNVMCellItem.m in Sources */,
+				53A6E51B1AB28D99003BFBCF /* SSNVMSectionInfo.m in Sources */,
+				53A6E51C1AB28D99003BFBCF /* SSNCrashReport.m in Sources */,
 				53BC53211A485E6E0044C238 /* SSNDB.m in Sources */,
 				533BE3991A2AC4B400E07FF0 /* TSPerson.m in Sources */,
 				53BB50C01A1441F50070B67D /* ssn_json_test.m in Sources */,
@@ -1392,20 +1419,15 @@
 				53BC52FF1A485E6E0044C238 /* ssncop.c in Sources */,
 				53D898E91A0FA0C800CE63E0 /* ssn_safe_set_test.m in Sources */,
 				53BC534B1A485E6E0044C238 /* SSNVC+Router.m in Sources */,
-				53D24635199C83B400EFDF29 /* DMTabViewController.h in Sources */,
 				53BC53471A485E6E0044C238 /* NSURL+Router.m in Sources */,
-				53D24636199C83B400EFDF29 /* DMTabViewController.m in Sources */,
 				53BC52FB1A485E6E0044C238 /* ssndiff.c in Sources */,
 				53BC530F1A485E6E0044C238 /* SSNRigidCache.m in Sources */,
-				5312CAC31A57E983009C32B1 /* DMLayoutViewController.m in Sources */,
 				53D24637199C83B400EFDF29 /* DMContactNavController.h in Sources */,
 				53BC53151A485E6E0044C238 /* SSNSafeSet.m in Sources */,
 				53BC530D1A485E6E0044C238 /* SSNCuteSerialQueue.m in Sources */,
 				533BE3BE1A2B0DDA00E07FF0 /* DMPerson.m in Sources */,
 				53BC53351A485E6E0044C238 /* SSNHostingTaskTail.m in Sources */,
 				53D24638199C83B400EFDF29 /* DMContactNavController.m in Sources */,
-				53D24639199C83B400EFDF29 /* DMContactViewController.h in Sources */,
-				53D2463A199C83B400EFDF29 /* DMContactViewController.m in Sources */,
 				53D2463B199C83B400EFDF29 /* DMSessionNavController.h in Sources */,
 				53C84C811A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */,
 				53F5F1541A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */,
@@ -1415,17 +1437,13 @@
 				53BC53491A485E6E0044C238 /* SSNRouter.m in Sources */,
 				53BC53311A485E6E0044C238 /* SSNHosting.m in Sources */,
 				53BC53411A485E6E0044C238 /* SSNQuantum.m in Sources */,
-				53D2463D199C83B400EFDF29 /* DMSessionViewController.h in Sources */,
 				53BC53011A485E6E0044C238 /* ssnlog.c in Sources */,
 				53BC53231A485E6E0044C238 /* SSNDBColumn.m in Sources */,
-				53D2463E199C83B400EFDF29 /* DMSessionViewController.m in Sources */,
 				53BC53271A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
 				533121831A4BE85E000F456E /* DMPersonExt.m in Sources */,
 				53D2463F199C83B400EFDF29 /* DMSettingNavController.h in Sources */,
 				53D24640199C83B400EFDF29 /* DMSettingNavController.m in Sources */,
-				53D24641199C83B400EFDF29 /* DMSettingViewController.h in Sources */,
 				53BC532B1A485E6E0044C238 /* db.md in Sources */,
-				53D24642199C83B400EFDF29 /* DMSettingViewController.m in Sources */,
 				53BC53051A485E6E0044C238 /* NSData+SSNBase64.m in Sources */,
 				53D24643199C83B400EFDF29 /* DMSignNavController.h in Sources */,
 				53BC53391A485E6E0044C238 /* buffer.cpp in Sources */,
@@ -1433,13 +1451,11 @@
 				53BC53071A485E6E0044C238 /* NSFileManager+SSN.m in Sources */,
 				53D24644199C83B400EFDF29 /* DMSignNavController.m in Sources */,
 				53BC53191A485E6E0044C238 /* SSNDataStore.m in Sources */,
-				53D24645199C83B400EFDF29 /* DMSignViewController.h in Sources */,
 				530187981A3FFF0700E2CB5D /* ssn_lcs_test.m in Sources */,
 				53BC53091A485E6E0044C238 /* NSString+SSN.m in Sources */,
 				53A1BA1F1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */,
 				53BC533D1A485E6E0044C238 /* lock.cpp in Sources */,
 				53BC53371A485E6E0044C238 /* SSNJson.m in Sources */,
-				53D24646199C83B400EFDF29 /* DMSignViewController.m in Sources */,
 				537064981A2A032700287199 /* TSUser.m in Sources */,
 				53D898E71A0F12DE00CE63E0 /* ssn_safe_array_test.m in Sources */,
 				534B4AA919C04E4B00698137 /* KKObj.m in Sources */,

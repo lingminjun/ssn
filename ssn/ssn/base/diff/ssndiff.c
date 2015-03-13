@@ -72,18 +72,6 @@ ssn_diff_lcs_table_t *ssn_diff_lcs_table(void *from, void *to, const size_t f_si
         }
     }
     
-#ifdef DEBUG
-//    for (row = 0; row < rowSize; row++)
-//    {
-//        for (col = 0; col < colSize; col++)
-//        {
-//            value0 = ssn_diff_table_value(table, row, col);
-//            printf("%lu ",value0);
-//        }
-//        printf("\n");
-//    }
-#endif
-    
     return table;
 }
 
@@ -113,34 +101,81 @@ void ssn_diff_results_enumerate(ssn_diff_lcs_table_t *table,void *from, void *to
     }
 }
 
-//算法待优化
+//算法待优化//2015-3-13，用空间转换，内存转移到堆中
 void ssn_diff_results_enumerate_v2(ssn_diff_lcs_table_t *table,void *from, void *to, const size_t f_size, const size_t t_size,ssn_diff_results_iterator iterator_func, void *context) {
     
     size_t value0 = 0,value1 = 0, value2 = 0;
+    size_t row = f_size, col = t_size;//游标
     
-    size_t row = 0, col = 0;
+    size_t *row_queue = NULL;
+    size_t *col_queue = NULL;
+    ssn_diff_change_type *type_queue = NULL;
     
-    while (row < f_size || col < t_size) {
-        value0 = ssn_diff_table_value(table, row + 1, col + 1);
-        value1 = ssn_diff_table_value(table, row + 1, col);
-        value2 = ssn_diff_table_value(table, row, col + 1);
-        if (row < f_size && col < t_size && value1 == value2 && value0 > value1) {
-            row++;
-            col++;
-            iterator_func(from, to, row - 1, col - 1, ssn_diff_no_change, context);
+    const size_t max_queue_count = f_size + t_size;
+    
+    size_t queue_index = 0;
+    
+    row_queue = malloc(sizeof(size_t)*max_queue_count);
+    memset(row_queue, 0, sizeof(size_t)*max_queue_count);
+    
+    col_queue = malloc(sizeof(size_t)*max_queue_count);
+    memset(col_queue, 0, sizeof(size_t)*max_queue_count);
+    
+    type_queue = malloc(sizeof(ssn_diff_change_type)*max_queue_count);
+    memset(type_queue, 0, sizeof(ssn_diff_change_type)*max_queue_count);
+    
+    while (row > 0 || col > 0) {
+        
+        //从table中取规划值
+        value0 = ssn_diff_table_value(table, row, col);
+        value1 = ssn_diff_table_value(table, row, col - 1);
+        value2 = ssn_diff_table_value(table, row - 1, col);
+        
+        if (row > 0 && col > 0 && value1 == value2 && value0 > value1) {
+            
+            row--;
+            col--;
+            
+            row_queue[queue_index] = row;
+            col_queue[queue_index] = col;
+            type_queue[queue_index] = ssn_diff_no_change;
+            queue_index++;
         }
-        else if(col > 0 && (row == 0 || value1 >= value2)) {
-            col++;
-            iterator_func(NULL, to, UINT64_MAX, col - 1, ssn_diff_insert, context);
+        else if (col > 0 && (row == 0 || value1 >= value2)) {
+            
+            col--;
+            
+            row_queue[queue_index] = UINT64_MAX;
+            col_queue[queue_index] = col;
+            type_queue[queue_index] = ssn_diff_insert;
+            queue_index++;
         }
         else if (row > 0 && (col == 0 || value1 < value2)) {
-            row++;
-            iterator_func(from, NULL, row - 1, UINT64_MAX, ssn_diff_delete, context);
+            
+            row--;
+            
+            row_queue[queue_index] = row;
+            col_queue[queue_index] = UINT64_MAX;
+            type_queue[queue_index] = ssn_diff_delete;
+            queue_index++;
         }
-//        else {
-//            printf("==========\n");
-//        }
     }
+    
+    for (; queue_index > 0; queue_index--) {
+        if (type_queue[queue_index - 1] == ssn_diff_no_change) {
+            iterator_func(from, to, row_queue[queue_index - 1], col_queue[queue_index - 1], ssn_diff_no_change, context);
+        }
+        else if (type_queue[queue_index - 1] == ssn_diff_insert) {
+            iterator_func(NULL, to, row_queue[queue_index - 1], col_queue[queue_index - 1], ssn_diff_insert, context);
+        }
+        else if (type_queue[queue_index - 1] == ssn_diff_delete) {
+            iterator_func(from, NULL, row_queue[queue_index - 1], col_queue[queue_index - 1], ssn_diff_delete, context);
+        }
+    }
+    
+    free(row_queue);
+    free(col_queue);
+    free(type_queue);
 }
 
 void ssn_diff(void *from, void *to, const size_t f_size, const size_t t_size, ssn_diff_element_is_equal equal_func, ssn_diff_results_iterator iterator_func, void *context) {
@@ -186,9 +221,9 @@ void ssn_diff(void *from, void *to, const size_t f_size, const size_t t_size, ss
         return ;
     }
     
-    ssn_diff_results_enumerate(table, from, to, f_size, t_size, iterator_func, context);
-    //printf("-------------------\n");
-    //ssn_diff_results_enumerate_v2(table, from, to, f_size, t_size, iterator_func);
+    //ssn_diff_results_enumerate(table, from, to, f_size, t_size, iterator_func, context);
+
+    ssn_diff_results_enumerate_v2(table, from, to, f_size, t_size, iterator_func, context);
         
     ssn_diff_destroy_table(table);
 }
