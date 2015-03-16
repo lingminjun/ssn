@@ -40,8 +40,8 @@
 
     self.tableView.ssn_pullRefreshEnabled = YES;
     self.ssn_tableViewConfigurator.tableView = self.tableView;
-    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;
-    self.ssn_tableViewConfigurator.listFetchController.isMandatorySorting = NO;
+//    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = NO;
+//    self.ssn_tableViewConfigurator.listFetchController.isMandatorySorting = NO;
     
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];

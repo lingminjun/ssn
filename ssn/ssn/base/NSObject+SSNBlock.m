@@ -64,12 +64,23 @@
     return obj;
 }
 
+/**
+ *  到主线程中延迟执行block
+ *
+ *  @param block 执行的block
+ */
+- (void)ssn_mainThreadAfter:(NSTimeInterval)after Block:(dispatch_block_t)block {
+    if (block) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(after * NSEC_PER_SEC)), dispatch_get_main_queue(), block);
+    }
+}
+
 @end
 
 
 @implementation SSNCancelable
 
-- (void)cancel {
+- (void)ssn_cancel {
     self.block = nil;
     
     id atarget = self.target;

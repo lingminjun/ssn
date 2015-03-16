@@ -43,6 +43,14 @@
  */
 - (id<SSNCancelable>)ssn_handlerMainThreadAsyncBlock:(dispatch_block_t)block;
 
+/**
+ *  到主线程中延迟执行block
+ *
+ *  @param after 延后时间
+ *  @param block 执行的block
+ */
+- (void)ssn_mainThreadAfter:(NSTimeInterval)after block:(dispatch_block_t)block;
+
 @end
 
 
@@ -54,7 +62,7 @@
 /**
  *  取消回调
  */
-- (void)cancel;
+- (void)ssn_cancel;
 
 @end
 

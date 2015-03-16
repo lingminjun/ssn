@@ -64,6 +64,9 @@
 		534B4AA919C04E4B00698137 /* KKObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B4AA819C04E4B00698137 /* KKObj.m */; };
 		534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 534CA1641A6CAC9500CB55B3 /* SSNJob.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
+		53620B2F1AB3217F00381C3C /* SSNRPCInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */; };
+		53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B311AB53C2200381C3C /* SSNSeqGen.m */; };
+		53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B341AB5D1C300381C3C /* NSThread+SSN.m */; };
 		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
 		5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C5961A0498290072C3F9 /* DMProfileViewController.m */; };
 		5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C59A1A0499B90072C3F9 /* DMChatViewController.m */; };
@@ -323,6 +326,12 @@
 		534CA1631A6CAC9500CB55B3 /* SSNJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNJob.h; sourceTree = "<group>"; };
 		534CA1641A6CAC9500CB55B3 /* SSNJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNJob.m; sourceTree = "<group>"; };
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		53620B2D1AB3217F00381C3C /* SSNRPCInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRPCInvocation.h; sourceTree = "<group>"; };
+		53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRPCInvocation.m; sourceTree = "<group>"; };
+		53620B301AB53C2200381C3C /* SSNSeqGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNSeqGen.h; sourceTree = "<group>"; };
+		53620B311AB53C2200381C3C /* SSNSeqGen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNSeqGen.m; sourceTree = "<group>"; };
+		53620B331AB5D1C300381C3C /* NSThread+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+SSN.h"; sourceTree = "<group>"; };
+		53620B341AB5D1C300381C3C /* NSThread+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+SSN.m"; sourceTree = "<group>"; };
 		537064961A2A032700287199 /* TSUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUser.h; sourceTree = "<group>"; };
 		537064971A2A032700287199 /* TSUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUser.m; sourceTree = "<group>"; };
 		5388C5951A0498290072C3F9 /* DMProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProfileViewController.h; sourceTree = "<group>"; };
@@ -779,6 +788,15 @@
 			path = pinyin;
 			sourceTree = "<group>";
 		};
+		53A6E52A1AB2ED2C003BFBCF /* rpc */ = {
+			isa = PBXGroup;
+			children = (
+				53620B2D1AB3217F00381C3C /* SSNRPCInvocation.h */,
+				53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */,
+			);
+			path = rpc;
+			sourceTree = "<group>";
+		};
 		53BC527C1A485E6E0044C238 /* base */ = {
 			isa = PBXGroup;
 			children = (
@@ -810,6 +828,10 @@
 				53BC52A51A485E6E0044C238 /* store */,
 				53D82B8C1A6550AE005C2958 /* NSObject+SSNBlock.h */,
 				53D82B8D1A6550AE005C2958 /* NSObject+SSNBlock.m */,
+				53620B301AB53C2200381C3C /* SSNSeqGen.h */,
+				53620B311AB53C2200381C3C /* SSNSeqGen.m */,
+				53620B331AB5D1C300381C3C /* NSThread+SSN.h */,
+				53620B341AB5D1C300381C3C /* NSThread+SSN.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -1115,6 +1137,7 @@
 		53D1641B191A66B500AD4C81 /* ssn */ = {
 			isa = PBXGroup;
 			children = (
+				53A6E52A1AB2ED2C003BFBCF /* rpc */,
 				5339FC7F1AA551AA0000F6B9 /* fetch */,
 				5397B5D11A6FA0D300CD6AFC /* crash */,
 				53A1BA201A52F85100C76844 /* pinyin */,
@@ -1286,6 +1309,7 @@
 				5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */,
 				5397B5D41A6FA10700CD6AFC /* SSNCrashReport.m in Sources */,
 				53BC53241A485E6E0044C238 /* SSNDBPool.m in Sources */,
+				53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */,
 				533BE3BD1A2B0DDA00E07FF0 /* DMPerson.m in Sources */,
 				53BC53301A485E6E0044C238 /* SSNHosting.m in Sources */,
 				53BC531A1A485E6E0044C238 /* SSNBound.m in Sources */,
@@ -1330,6 +1354,7 @@
 				53BC53201A485E6E0044C238 /* SSNDB.m in Sources */,
 				53BC531E1A485E6E0044C238 /* SSNDBBound.m in Sources */,
 				53BC53021A485E6E0044C238 /* SSNLogger.m in Sources */,
+				53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */,
 				538E384A19986A560061692E /* DMSessionViewController.m in Sources */,
 				53BC53381A485E6E0044C238 /* buffer.cpp in Sources */,
 				5339FC7D1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m in Sources */,
@@ -1366,6 +1391,7 @@
 				5339FC8C1AA551AA0000F6B9 /* SSNDBFetchController.m in Sources */,
 				53BC53461A485E6E0044C238 /* NSURL+Router.m in Sources */,
 				5339FC8D1AA551AA0000F6B9 /* SSNListFetchController.m in Sources */,
+				53620B2F1AB3217F00381C3C /* SSNRPCInvocation.m in Sources */,
 				53BC52FE1A485E6E0044C238 /* ssncop.c in Sources */,
 				53A1BA2D1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */,
 				53BC53061A485E6E0044C238 /* NSFileManager+SSN.m in Sources */,
