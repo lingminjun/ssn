@@ -146,7 +146,7 @@
 
 
 - (UIViewController *)ssn_presentingViewController {
-    if (![self.superview isKindOfClass:[UITableView class]]) {
+    if (!self.superview) {
         return nil;
     }
     
@@ -155,7 +155,21 @@
         return nil;
     }
     
-    UIResponder *responder = self.superview;
+    UIView *view = self.superview;
+    UITableView *suptable = nil;
+    do {
+        if ([view isKindOfClass:[UITableView class]]) {
+            suptable = (UITableView *)view;
+            break ;
+        }
+        view = view.superview;
+    } while (view && view != window);
+    
+    if (!suptable) {
+        return nil;
+    }
+    
+    UIResponder *responder = suptable;
     do {
         responder = responder.nextResponder;
         if ([responder isKindOfClass:[UIViewController class]]) {
