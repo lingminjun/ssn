@@ -25,6 +25,10 @@
     return [UITableViewCell class];
 }
 
+- (NSString *)cellNibName {
+    return nil;
+}
+
 /**
  *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
  */

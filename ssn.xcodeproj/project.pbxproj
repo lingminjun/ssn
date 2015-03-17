@@ -111,6 +111,7 @@
 		53A6E5271AB28DC7003BFBCF /* NSString+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C711A5B9586008AB7C8 /* NSString+SSNUIKit.m */; };
 		53A6E5281AB28DC7003BFBCF /* UIView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C741A5BB355008AB7C8 /* UIView+SSNUIKit.m */; };
 		53A6E5291AB28DC7003BFBCF /* UITextField+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DB120B1A5CE6E200B119BA /* UITextField+SSNUIKit.m */; };
+		53B5F5031AB7FCAF00149F3A /* DMNibCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 53B5F5021AB7FCAF00149F3A /* DMNibCell.xib */; };
 		53BB50C01A1441F50070B67D /* ssn_json_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BB50BF1A1441F50070B67D /* ssn_json_test.m */; };
 		53BC52FA1A485E6E0044C238 /* ssndiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52871A485E6E0044C238 /* ssndiff.c */; };
 		53BC52FB1A485E6E0044C238 /* ssndiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52871A485E6E0044C238 /* ssndiff.c */; };
@@ -368,6 +369,7 @@
 		53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unicode_to_pinyin_tone.txt; sourceTree = "<group>"; };
 		53A1BA2B1A52F8B100C76844 /* NSString+SSNPinyin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSNPinyin.h"; sourceTree = "<group>"; };
 		53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSNPinyin.m"; sourceTree = "<group>"; };
+		53B5F5021AB7FCAF00149F3A /* DMNibCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DMNibCell.xib; sourceTree = "<group>"; };
 		53BB50BF1A1441F50070B67D /* ssn_json_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_json_test.m; sourceTree = "<group>"; };
 		53BC52871A485E6E0044C238 /* ssndiff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssndiff.c; sourceTree = "<group>"; };
 		53BC52881A485E6E0044C238 /* ssndiff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssndiff.h; sourceTree = "<group>"; };
@@ -721,6 +723,7 @@
 				53CE03341A9F6B0600E30E0D /* DMSettingCellItem.m */,
 				53CE03361A9F6C4600E30E0D /* DMSectionCellItem.h */,
 				53CE03371A9F6C4600E30E0D /* DMSectionCellItem.m */,
+				53B5F5021AB7FCAF00149F3A /* DMNibCell.xib */,
 			);
 			path = setting;
 			sourceTree = "<group>";
@@ -1248,6 +1251,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53B5F5031AB7FCAF00149F3A /* DMNibCell.xib in Resources */,
 				53A1BA251A52F85100C76844 /* unicode_to_pinyin_tone.txt in Resources */,
 				533164F31A8B41DF007223DC /* ssn_pull_refresh_black_arrow.png in Resources */,
 				533121851A4BE87D000F456E /* DMPersonExt.json in Resources */,

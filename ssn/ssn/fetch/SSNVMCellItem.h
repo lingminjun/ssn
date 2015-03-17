@@ -32,9 +32,14 @@
 - (BOOL)isEqual:(id<SSNCellModel>)model;
 
 /**
- *  对应得cell 类型
+ *  对应的cell 类型
  */
 @property (nonatomic,strong,readonly) Class<SSNVMCellProtocol> cellClass;
+
+/**
+ *  对应的cell nib 文件名
+ */
+@property (nonatomic,copy,readonly) NSString *cellNibName;
 
 /**
  *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
@@ -92,35 +97,6 @@
  *  协议弱化
  */
 @interface NSObject (SSNCellModel)<SSNCellModel>
-/**
- *  对应得cell 类型
- */
-@property (nonatomic,strong,readonly) Class<SSNVMCellProtocol> cellClass;
-
-/**
- *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
- */
-@property (nonatomic,copy,readonly) NSString *cellIdentify;
-
-/**
- *  行高
- */
-@property (nonatomic,readonly) CGFloat cellHeight;
-
-/**
- *  是否被禁用选择
- */
-@property (nonatomic,readonly) BOOL isDisabledSelect;
-
-/**
- *  是否滑动删除，且删除文案配置，若返回nil表示不支持删除
- */
-@property (nonatomic,copy,readonly) NSString *cellDeleteConfirmationButtonTitle;
-
-/**
- *  用于分组的key
- */
-@property (nonatomic,copy,readonly) NSString *cellSectionIdentify;
 
 @end
 
@@ -164,6 +140,12 @@
  *  对应得cell 类型
  */
 @property (nonatomic,strong) Class<SSNVMCellProtocol> cellClass;
+
+/**
+ *  对应的cell nib 文件名
+ */
+@property (nonatomic,copy) NSString *cellNibName;
+
 
 /**
  *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字

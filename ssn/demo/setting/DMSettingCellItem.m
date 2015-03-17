@@ -15,6 +15,7 @@
     self = [super init];
     if (self) {
         self.cellClass = [DMSettingCell class];
+        self.cellNibName = @"DMNibCell";
         self.cellHeight = 60;
         self.cellDeleteConfirmationButtonTitle = @"删除";
     }
@@ -32,7 +33,13 @@
 @implementation DMSettingCell
 
 - (void)ssn_configureCellWithModel:(DMSettingCellItem *)model atIndexPath:(NSIndexPath *)indexPath inTableView:(UITableView *)tableView {
-    self.textLabel.text = model.title;
+    if (self.label) {
+        self.label.text = model.title;
+    }
+    else {
+        self.textLabel.text = model.title;
+    }
+    
 }
 
 @end

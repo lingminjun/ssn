@@ -18,4 +18,6 @@
 
 @interface DMSettingCell : UITableViewCell<SSNVMCellProtocol>
 
+@property (nonatomic,weak) IBOutlet UILabel *label;
+
 @end

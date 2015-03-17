@@ -79,6 +79,45 @@
     return [sec count];
 }
 
+- (UITableViewCell *)loadCellWithTableView:(UITableView *)tableView cellModel:(id<SSNCellModel>)cellModel {
+    NSString *cellId = [cellModel cellIdentify];
+    if (!cellId) {
+        cellId = @"cell";
+    }
+    
+    //先取复用队列
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
+    if (cell) {
+        return cell;
+    }
+    
+    //优先从nib加载
+    if ([cellModel.cellNibName length] > 0) {
+        NSArray *views =  [[NSBundle mainBundle] loadNibNamed:cellModel.cellNibName owner:nil options:nil];
+        cell = (UITableViewCell *)[views objectAtIndex:0];
+    }
+    if (cell) {
+        return cell;
+    }
+    
+    //自己创建
+    Class clazz = nil;
+    if ([cellModel respondsToSelector:@selector(cellClass)]) {
+        clazz = cellModel.cellClass;
+    }
+    
+    if (clazz) {
+        cell = [[clazz alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+    }
+    if (cell) {
+        return cell;
+    }
+    
+    //默认返回
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+    return cell;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (tableView != self.tableView) {
@@ -87,26 +126,8 @@
     
     id<SSNCellModel> model = [self.listFetchController objectAtIndexPath:indexPath];
     
-    NSString *cellId = [model cellIdentify];
-    if (!cellId) {
-        cellId = @"cell";
-    }
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
-    // Configure the cell...
-    if (!cell) {
-        
-        Class clazz = nil;
-        if ([model respondsToSelector:@selector(cellClass)]) {
-            clazz = model.cellClass;
-        }
-        
-        if (clazz) {
-            cell = [[clazz alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
-        }
-        else {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
-        }
-    }
+    //加载cell
+    UITableViewCell *cell = [self loadCellWithTableView:tableView cellModel:model];
     
     cell.ssn_cellModel = model;
     
