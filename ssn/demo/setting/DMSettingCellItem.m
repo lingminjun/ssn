@@ -16,6 +16,7 @@
     if (self) {
         self.cellClass = [DMSettingCell class];
         self.cellHeight = 60;
+        self.cellDeleteConfirmationButtonTitle = @"删除";
     }
     return self;
 }

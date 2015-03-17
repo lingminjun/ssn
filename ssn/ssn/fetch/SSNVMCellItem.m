@@ -7,6 +7,12 @@
 //
 
 #import "SSNVMCellItem.h"
+#if TARGET_IPHONE_SIMULATOR
+#import <objc/objc-runtime.h>
+#else
+#import <objc/runtime.h>
+#import <objc/message.h>
+#endif
 
 /**
  *  协议弱化
@@ -132,6 +138,39 @@
 
 - (void)ssn_configureCellWithModel:(id<SSNCellModel>)model atIndexPath:(NSIndexPath *)indexPath inTableView:(UITableView *)tableView {
     //do nothing 
+}
+
+
+- (UIViewController *)ssn_presentingViewController {
+    if (![self.superview isKindOfClass:[UITableView class]]) {
+        return nil;
+    }
+    
+    UIWindow *window = self.window;
+    if (window == nil) {
+        return nil;
+    }
+    
+    UIResponder *responder = self.superview;
+    do {
+        responder = responder.nextResponder;
+        if ([responder isKindOfClass:[UIViewController class]]) {
+            return (UIViewController *)responder;
+        }
+    } while (responder && responder != window);
+    
+    return nil;
+}
+
+@dynamic ssn_cellModel;
+static char *ssn_cell_model_key = NULL;
+- (void)setSsn_cellModel:(id<SSNCellModel>)cellModel {
+    objc_setAssociatedObject(self, &ssn_cell_model_key, cellModel, OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (id<SSNCellModel>)ssn_cellModel {
+    /*此方法有点不带*/
+    return objc_getAssociatedObject(self, &ssn_cell_model_key);
 }
 
 @end

@@ -163,6 +163,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     NSMutableArray *ary = [NSMutableArray array];
     static int i = 0;
     if (i%2 == 0) {
+        
         [ary addObject:[DMSettingCellItem itemWithTitle:@"UIDic"]];
         [ary addObject:[DMSectionCellItem item]];
         
@@ -211,8 +212,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         [self openRelativePath:@"../layout" query:nil];
     }
     else {
-        NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
-        [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
+        //tableView.editing = YES;
+//        NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
+//        [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
     }
 }
 @end

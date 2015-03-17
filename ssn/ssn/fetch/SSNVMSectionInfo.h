@@ -6,7 +6,7 @@
 //  Copyright (c) 2015年 lingminjun. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #define SSN_VM_SECTION_INFO_DEFAULT_HEIGHT (20)
 

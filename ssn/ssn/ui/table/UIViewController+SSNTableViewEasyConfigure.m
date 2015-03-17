@@ -108,6 +108,8 @@
         }
     }
     
+    cell.ssn_cellModel = model;
+    
     if (model.isDisabledSelect) {
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
@@ -116,6 +118,8 @@
     }
     
     [cell ssn_configureCellWithModel:model atIndexPath:indexPath inTableView:tableView];
+    
+    cell.ssn_cellModel = model;
     
     return cell;
     

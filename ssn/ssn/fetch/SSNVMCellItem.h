@@ -191,6 +191,21 @@
  */
 - (void)ssn_configureCellWithModel:(id<SSNCellModel>)model atIndexPath:(NSIndexPath *)indexPath inTableView:(UITableView *)tableView;
 
+/**
+ *  呈现cell的viewController，若cell没有被呈现到界面，或者没有直接或者间接呈现于viewController中，此接口将返回nil
+ *
+ *  @return 返回呈现cell的控制器
+ */
+- (UIViewController *)ssn_presentingViewController;
+
+
+/**
+ *  配置cell的cellModel，若此时cell不在界面，此方法将返回nil
+ *
+ *  @return cellModel
+ */
+- (id<SSNCellModel>)ssn_cellModel;
+
 @end
 
 @interface UITableViewCell (SSNVMCellProtocol)
@@ -203,5 +218,19 @@
  *  @param tableView 所在的tableView
  */
 - (void)ssn_configureCellWithModel:(id<SSNCellModel>)model atIndexPath:(NSIndexPath *)indexPath inTableView:(UITableView *)tableView;
+
+/**
+ *  呈现cell的viewController，若cell没有被呈现到界面，或者没有直接或者间接呈现于viewController中，此接口将返回nil (此方法必须实时获取)
+ *
+ *  @return 返回呈现cell的控制器
+ */
+- (UIViewController *)ssn_presentingViewController;
+
+/**
+ *  配置cell的cellModel，若此时cell不在界面，此方法将返回nil (此方法必须实时获取)
+ *
+ *  @return cellModel
+ */
+@property (nonatomic,weak) id<SSNCellModel> ssn_cellModel;
 
 @end
