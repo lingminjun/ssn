@@ -69,7 +69,7 @@
  *
  *  @param block 执行的block
  */
-- (void)ssn_mainThreadAfter:(NSTimeInterval)after Block:(dispatch_block_t)block {
+- (void)ssn_mainThreadAfter:(NSTimeInterval)after block:(dispatch_block_t)block {
     if (block) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(after * NSEC_PER_SEC)), dispatch_get_main_queue(), block);
     }
