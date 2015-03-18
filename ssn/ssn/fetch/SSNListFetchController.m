@@ -342,11 +342,12 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     //计算完changes后，去掉临时用的section
     NSMutableDictionary *nsectionMap = [NSMutableDictionary dictionaryWithCapacity:1];
     NSMutableArray *lastNewList = [NSMutableArray arrayWithCapacity:1];
+    NSMutableDictionary *sectionToValues = [NSMutableDictionary dictionaryWithCapacity:1];
     
     [news enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
         SSNVMSectionInfo *origin_section = [_sectionMap objectForKey:section.identify];
         if (origin_section && origin_section != section) {
-            [origin_section.objects setArray:section.objects];
+            [sectionToValues setObject:section.objects forKey:section.identify];
             [nsectionMap setObject:origin_section forKey:section.identify];
             [lastNewList addObject:origin_section];
         }
@@ -357,7 +358,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     }];
     [_sectionMap setDictionary:nsectionMap];
     
-    [self processReset:lastNewList obeyChanges:sectionChanges];
+    [self processReset:lastNewList sectionToValues:sectionToValues obeyChanges:sectionChanges];
 }
 
 /**
@@ -655,10 +656,14 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
         NSMutableDictionary *nsectionMap = [NSMutableDictionary dictionaryWithCapacity:1];
         NSMutableArray *lastNewList = [NSMutableArray arrayWithCapacity:1];
         
+        NSMutableDictionary *sectionToValues = [NSMutableDictionary dictionaryWithCapacity:1];
+        
         [news enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
             SSNVMSectionInfo *origin_section = [_sectionMap objectForKey:section.identify];
             if (origin_section && origin_section != section) {
-                [origin_section.objects setArray:section.objects];
+                
+                [sectionToValues setObject:section.objects forKey:section.identify];
+                
                 [nsectionMap setObject:origin_section forKey:section.identify];
                 [lastNewList addObject:origin_section];
             }
@@ -669,11 +674,11 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
         }];
         [_sectionMap setDictionary:nsectionMap];
         
-        [self processReset:lastNewList obeyChanges:sectionChanges];
+        [self processReset:lastNewList sectionToValues:sectionToValues obeyChanges:sectionChanges];
     }
 }
 
-- (void)processReset:(NSArray *)sections obeyChanges:(NSArray *)changes {
+- (void)processReset:(NSArray *)sections sectionToValues:(NSDictionary *)sectionToValues obeyChanges:(NSArray *)changes {
     dispatch_block_t block = ^{
         
         [_delegate ssnlist_controllerWillChange:self];
@@ -725,6 +730,14 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
                     break;
             }
         }];
+        
+        [sections enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+            NSArray *toValues = [sectionToValues objectForKey:section.identify];
+            if (toValues) {
+                [section.objects setArray:toValues];
+            }
+        }];
+
         
         [_list setArray:sections];
         
