@@ -212,9 +212,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         [self openRelativePath:@"../layout" query:nil];
     }
     else {
-        //tableView.editing = YES;
-//        NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
-//        [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
+//        tableView.editing = YES;
+        NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
+        [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
     }
 }
 

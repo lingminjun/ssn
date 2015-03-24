@@ -524,7 +524,11 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     id ret_val  = nil;
     NSUInteger ret_size = [methodSignature methodReturnLength];
     if(ret_size > 0) {
-        [rep_invocation getReturnValue:&ret_val];
+        
+        void *returnValue = NULL;
+        [rep_invocation getReturnValue:&returnValue];
+        
+        ret_val = (__bridge id)(returnValue);
         [paramlog appendFormat:@"result=%@&",ret_val];
     }
     

@@ -58,6 +58,8 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 
 @property (nonatomic) BOOL dataSourceRespondSectionDidLoad;
 
+@property (nonatomic) BOOL synchronFlag;//用于回调同步
+
 @end
 
 @implementation SSNListFetchController
@@ -80,7 +82,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 
 - (void)setDataSource:(id<SSNListFetchControllerDataSource>)dataSource {
     _dataSource = dataSource;
-    
+
     //效率考虑，只判断一次
     _dataSourceRespondSectionDidLoad = [dataSource respondsToSelector:@selector(ssnlist_controller:sectionDidLoad:sectionIdntify:)];
 }
@@ -571,10 +573,13 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
 - (void)resetResults:(NSArray *)datas isMerge:(BOOL)isMerge {
     @autoreleasepool {
         
+        _synchronFlag++;
+        
         //数据转换
         NSArray *models = [self convertModelsFromDatas:datas];
         
         NSArray *news = nil;
+
         NSArray *olds = [NSArray arrayWithArray:_list];
         NSIndexSet *changeSet = nil;
         NSDictionary *modelChange = nil;
@@ -680,6 +685,14 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
 
 - (void)processReset:(NSArray *)sections sectionToValues:(NSDictionary *)sectionToValues obeyChanges:(NSArray *)changes {
     dispatch_block_t block = ^{
+        _synchronFlag--;
+        
+        /** 说明结果集被反复修改，此时仅仅更新最后一次，
+            遗留问题：前几次的update数据可能被遗漏更新
+         */
+        if (_synchronFlag > 0) {
+            return ;
+        }
         
         [_delegate ssnlist_controllerWillChange:self];
         
