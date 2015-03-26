@@ -36,6 +36,8 @@
 
 #import "SSNCrashReport.h"
 
+#import "SSNRouter+Nice.h"
+
 @interface AppDelegate ()<SSNRouterDelegate>
 @end
 
@@ -76,12 +78,14 @@
     BOOL isSingin = NO;
     if (isSingin)
     {
-        [self.ssn_router openURL:[NSURL URLWithString:@"app://default"]]; //转到重定向中加载ui
+        [self.ssn_router open:@"app://default"]; //转到重定向中加载ui
     }
     else
     {
-        [self.ssn_router openURL:[NSURL URLWithString:@"app://login"]]; //转到重定向中加载ui
+        [self.ssn_router open:@"app://login"]; //转到重定向中加载ui
     }
+    
+//    [self.ssn_router open:@"path?animated=yes"];
     
 
     [self.window makeKeyAndVisible];

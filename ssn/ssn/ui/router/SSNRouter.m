@@ -95,16 +95,7 @@
         return NO;
     }
     
-    BOOL animated = YES;
-    
-    //对参数简单支持
-    NSDictionary *query = [url ssn_queryInfo];
-    NSString *an = [query objectForKey:@"animated"];
-    if ([an isEqualToString:@"NO"] || [an isEqualToString:@"false"]) {
-        animated = [an boolValue];
-    }
-    
-    return [self openURL:url query:query animated:animated];
+    return [self openURL:url query:nil];
 }
 
 - (BOOL)openURL:(NSURL *)url query:(NSDictionary *)query {
@@ -114,13 +105,14 @@
     
     BOOL animated = YES;
     
-    //对参数简单支持
     NSString *an = [query objectForKey:@"animated"];
     if (!an) {
         NSDictionary *url_query = [url ssn_queryInfo];
         an = [url_query objectForKey:@"animated"];
     }
-    if ([an isEqualToString:@"NO"] || [an isEqualToString:@"false"]) {
+    
+    if ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
+        || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
         animated = [an boolValue];
     }
     
@@ -526,9 +518,17 @@
 - (BOOL)openRelativePath:(NSString *)path query:(NSDictionary *)query {
     BOOL animated = YES;
     
-    //对参数简单支持
     NSString *an = [query objectForKey:@"animated"];
-    if ([an isEqualToString:@"NO"] || [an isEqualToString:@"false"]) {
+    if (!an) {
+        NSURL *u = [NSURL URLWithString:path];
+        if (u) {
+            NSDictionary *url_query = [u ssn_queryInfo];
+            an = [url_query objectForKey:@"animated"];
+        }
+    }
+    
+    if ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
+        || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
         animated = [an boolValue];
     }
     

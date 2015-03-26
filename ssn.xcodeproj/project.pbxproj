@@ -80,6 +80,7 @@
 		538E384A19986A560061692E /* DMSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384919986A560061692E /* DMSessionViewController.m */; };
 		538E384D19986A700061692E /* DMSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384C19986A700061692E /* DMSettingViewController.m */; };
 		5397B5D41A6FA10700CD6AFC /* SSNCrashReport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5397B5D31A6FA10700CD6AFC /* SSNCrashReport.m */; };
+		539B4FD41AC41ED20042F6C4 /* SSNRouter+Nice.m in Sources */ = {isa = PBXBuildFile; fileRef = 539B4FD31AC41ED20042F6C4 /* SSNRouter+Nice.m */; };
 		53A1BA161A52A14C00C76844 /* SSNPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA151A52A14C00C76844 /* SSNPanel.m */; };
 		53A1BA171A52A14C00C76844 /* SSNPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA151A52A14C00C76844 /* SSNPanel.m */; };
 		53A1BA1A1A52A1D000C76844 /* SSNUILayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA191A52A1D000C76844 /* SSNUILayout.m */; };
@@ -359,6 +360,8 @@
 		538E384C19986A700061692E /* DMSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DMSettingViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5397B5D21A6FA10700CD6AFC /* SSNCrashReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNCrashReport.h; sourceTree = "<group>"; };
 		5397B5D31A6FA10700CD6AFC /* SSNCrashReport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNCrashReport.m; sourceTree = "<group>"; };
+		539B4FD21AC41ED20042F6C4 /* SSNRouter+Nice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNRouter+Nice.h"; sourceTree = "<group>"; };
+		539B4FD31AC41ED20042F6C4 /* SSNRouter+Nice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SSNRouter+Nice.m"; sourceTree = "<group>"; };
 		53A1BA141A52A14C00C76844 /* SSNPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNPanel.h; sourceTree = "<group>"; };
 		53A1BA151A52A14C00C76844 /* SSNPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNPanel.m; sourceTree = "<group>"; };
 		53A1BA181A52A1D000C76844 /* SSNUILayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUILayout.h; sourceTree = "<group>"; };
@@ -1017,6 +1020,8 @@
 				53BC52ED1A485E6E0044C238 /* SSNRouter.m */,
 				53BC52EE1A485E6E0044C238 /* SSNVC+Router.h */,
 				53BC52EF1A485E6E0044C238 /* SSNVC+Router.m */,
+				539B4FD21AC41ED20042F6C4 /* SSNRouter+Nice.h */,
+				539B4FD31AC41ED20042F6C4 /* SSNRouter+Nice.m */,
 			);
 			path = router;
 			sourceTree = "<group>";
@@ -1348,6 +1353,7 @@
 				53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */,
 				53BC53081A485E6E0044C238 /* NSString+SSN.m in Sources */,
 				53D82B8E1A6550AE005C2958 /* NSObject+SSNBlock.m in Sources */,
+				539B4FD41AC41ED20042F6C4 /* SSNRouter+Nice.m in Sources */,
 				53BC53001A485E6E0044C238 /* ssnlog.c in Sources */,
 				533BE3A41A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
 				538E3844199869F90061692E /* DMSignViewController.m in Sources */,
