@@ -281,7 +281,7 @@ if (0 != pthread_rwlock_unlock(&_rwlock))\
         
         if (count % 2 != 0)//必须是两倍
         {
-            [NSException exceptionWithName:@"SSNSafeDictionary" reason:@"Enumerating error!" userInfo:nil];
+            [[NSException exceptionWithName:@"SSNSafeDictionary" reason:@"Enumerating error!" userInfo:nil] raise];
         }
         else
         {

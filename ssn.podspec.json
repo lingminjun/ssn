@@ -1,0 +1,144 @@
+{
+  "name": "ssn",
+  "version": "0.0.1",
+  "summary": "ssn.",
+  "description":"lingminjun.",
+  "homepage": "https://github.com/lingminjun/ssn",
+  "license": {
+    "type": "Copyright",
+    "text": "lingminjun copyright"
+  },
+  "authors": {
+    "lingminjun": "soulshan_work@126.com"
+  },
+  "source": {
+    "git": "git@github.com:lingminjun/ssn.git",
+    "branch": "master"
+  },
+  "subspecs": [
+    {
+      "name": "base",
+      "source_files": "ssn/ssn/base/*.{h,m}",
+      "requires_arc": true,
+      "subspecs": [
+        {
+          "name": "diff",
+          "source_files": "ssn/ssn/base/diff/*.*",
+          "requires_arc": true
+        },
+        {
+          "name": "log",
+          "source_files": "ssn/ssn/base/log/*.*",
+          "requires_arc": true
+        }
+      ]
+    }
+    ,
+    {
+      "name": "bound",
+      "source_files": "ssn/ssn/bound/*.*",
+      "requires_arc": true
+    }
+    ,
+    {
+      "name": "db",
+      // "source_files": "ssn/ssn/db/*.{h,m}",
+      // "requires_arc": true,
+      "subspecs": [
+        {
+          "name": "db",
+          "source_files": "ssn/ssn/db/db/*.*",
+          "requires_arc": true
+        },
+        {
+          "name": "bound",
+          "source_files": "ssn/ssn/db/bound/*.*",
+          "requires_arc": true
+        }
+      ]
+    }
+    ,
+    {
+      "name": "fetch",
+      "source_files": "ssn/ssn/fetch/*.{h,m}",
+      "requires_arc": true
+    }
+    ,
+    {
+      "name": "pinyin",
+      "source_files": "ssn/ssn/pinyin/*.{h,m}",
+      "resources": "ssn/ssn/pinyin/unicode_to_pinyin.txt",
+      "requires_arc": true
+    }
+    ,
+    {
+      "name": "quantum",
+      "source_files": "ssn/ssn/quantum/*.{h,m}",
+      "requires_arc": true
+    }
+    ,
+    {
+      "name": "rpc",
+      "source_files": "ssn/ssn/rpc/*.{h,m}",
+      "requires_arc": true
+    }
+    ,
+    {
+      "name": "ui",
+      "source_files": "ssn/ssn/ui/*.{h,m}",
+      "requires_arc": true,
+      "subspecs": [
+        {
+          "name": "category",
+          "source_files": "ssn/ssn/ui/category/*.*",
+          "requires_arc": true
+        }
+        ,
+        {
+          "name": "kit",
+          "source_files": "ssn/ssn/db/kit/*.{h,m}",
+          "requires_arc": true,
+          "subspecs": [
+            {
+              "name": "ele",
+              "source_files": "ssn/ssn/ui/kit/ele/*.*",
+              "requires_arc": true
+            }
+          ]
+        }
+        ,
+        {
+          "name": "router",
+          "source_files": "ssn/ssn/ui/router/*.*",
+          "requires_arc": true
+        }
+        ,
+        {
+          "name": "table",
+          "source_files": "ssn/ssn/ui/table/*.{h,m}",
+          "resources": "ssn/ssn/ui/table/resources/*.txt",
+          "requires_arc": true
+        }
+        ,
+        {
+          "name": "toast",
+          "source_files": "ssn/ssn/ui/toast/*.{h,m}",
+          "requires_arc": true
+        }
+      ]
+    }
+  ],
+  "platforms": {
+    "ios": "7.0"
+  },
+  "libraries": [
+    "z",
+    "sqlite3",
+    "stdc++"
+  ],
+  "frameworks": [
+    "UIKit",
+    "Foundation",
+    "CoreGraphics"
+  ]
+}

@@ -14,7 +14,9 @@
 #import "DMSettingCellItem.h"
 #import "DMSectionCellItem.h"
 
-@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate>
+@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate> {
+    NSInteger flag;
+}
 
 @end
 
@@ -43,6 +45,8 @@
 //    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = NO;
 //    self.ssn_tableViewConfigurator.listFetchController.isMandatorySorting = NO;
     
+    flag = 0;
+    
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];
 }
@@ -52,6 +56,15 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [[self ssn_router] openURL:[NSURL URLWithString:@"app://login"]];
     });
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    static int i = 0;
+    i++;
+    flag = i;
+    [self.ssn_tableViewConfigurator.listFetchController loadData];
 }
 
 - (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query
@@ -161,8 +174,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)ssn_configurator:(SSNTableViewConfigurator *)configurator controller:(SSNListFetchController *)controller loadDataWithOffset:(NSUInteger)offset limit:(NSUInteger)limit userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion {
     
     NSMutableArray *ary = [NSMutableArray array];
-    static int i = 0;
-    if (i%2 == 0) {
+    if (flag % 2 == 0) {
         
         [ary addObject:[DMSettingCellItem itemWithTitle:@"UIDic"]];
         [ary addObject:[DMSectionCellItem item]];
@@ -197,7 +209,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         [ary addObject:[DMSettingCellItem itemWithTitle:@"xxxxxxxx"]];
         [ary addObject:[DMSectionCellItem item]];
     }
-    i++;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         completion(ary,[ary count],nil,YES);

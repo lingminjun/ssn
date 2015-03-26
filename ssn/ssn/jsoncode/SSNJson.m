@@ -155,7 +155,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 - (NSMutableArray *)rootArray {
     if (_jsonObj) {
         if (!_isArray) {
-            [NSException exceptionWithName:@"SSNJson" reason:@"json coder 不支持 同时code两种容器" userInfo:nil];
+            @throw [NSException exceptionWithName:@"SSNJson" reason:@"json coder 不支持 同时code两种容器" userInfo:nil];
         }
         return (NSMutableArray *)_jsonObj;
     }
@@ -170,7 +170,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 - (NSMutableDictionary *)rootDictionary {
     if (_jsonObj) {
         if (_isArray) {
-            [NSException exceptionWithName:@"SSNJson" reason:@"json coder 不支持 同时code两种容器" userInfo:nil];
+            @throw [NSException exceptionWithName:@"SSNJson" reason:@"json coder 不支持 同时code两种容器" userInfo:nil];
         }
         return (NSMutableDictionary *)_jsonObj;
     }
