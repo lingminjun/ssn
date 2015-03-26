@@ -25,10 +25,17 @@
           "name": "diff",
           "source_files": "ssn/ssn/base/diff/*.*",
           "requires_arc": true
-        },
+        }
+        ,
         {
           "name": "log",
           "source_files": "ssn/ssn/base/log/*.*",
+          "requires_arc": true
+        }
+        ,
+        {
+          "name": "base64",
+          "source_files": "ssn/ssn/base/bbox/*.*",
           "requires_arc": true
         }
       ]
@@ -42,8 +49,6 @@
     ,
     {
       "name": "db",
-      // "source_files": "ssn/ssn/db/*.{h,m}",
-      // "requires_arc": true,
       "subspecs": [
         {
           "name": "db",
@@ -116,7 +121,7 @@
         {
           "name": "table",
           "source_files": "ssn/ssn/ui/table/*.{h,m}",
-          "resources": "ssn/ssn/ui/table/resources/*.txt",
+          "resources": "ssn/ssn/ui/table/resources/*.png",
           "requires_arc": true
         }
         ,
