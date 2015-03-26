@@ -36,8 +36,9 @@
         }
     }
     
-    if ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
-        || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+    if ([an length] > 0
+        && ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
+            || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
         animated = [an boolValue];
     }
     
@@ -46,7 +47,7 @@
 
 - (BOOL)open:(NSString *)url query:(NSDictionary *)query animated:(BOOL)animated {
     
-    if ([url hasPrefix:@"./"] || [url hasPrefix:@"../"]) {
+    if ([url hasPrefix:@"./"] || [url hasPrefix:@"../"] || [url hasPrefix:@"~/"] || [url hasPrefix:@"/"]) {
         return [self openRelativePath:url query:query animated:animated];
     }
     else{
@@ -54,5 +55,45 @@
     }
     
 }
+
+@end
+
+@implementation NSObject (SSNRouterNice)
+
+/**
+ * 支持相对路径打开
+ */
+- (BOOL)ssn_open:(NSString *)url {
+    return [self ssn_open:url query:nil];
+}
+- (BOOL)ssn_open:(NSString *)url query:(NSDictionary *)query {
+    BOOL animated = YES;
+    
+    NSString *an = [query objectForKey:@"animated"];
+    if (!an) {
+        NSURL *u = [NSURL URLWithString:url];
+        if (u) {
+            NSDictionary *url_query = [u ssn_queryInfo];
+            an = [url_query objectForKey:@"animated"];
+        }
+    }
+    
+    if ([an length] > 0
+        && ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
+            || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
+            animated = [an boolValue];
+    }
+    return [self ssn_open:url query:query animated:animated];
+}
+
+- (BOOL)ssn_open:(NSString *)url query:(NSDictionary *)query animated:(BOOL)animated {
+    if ([url hasPrefix:@"./"] || [url hasPrefix:@"../"] || [url hasPrefix:@"~/"] || [url hasPrefix:@"/"]) {
+        return [self openRelativePath:url query:query animated:animated];
+    }
+    else{
+        return [self openURL:[NSURL URLWithString:url] query:query animated:animated];
+    }
+}
+
 
 @end

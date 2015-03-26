@@ -11,10 +11,21 @@
 @interface SSNRouter (Nice)
 
 /**
- * 支持相对路径打开，但是必须以".",".."开头才能被识别成相对路径
+ * 仅仅支持完整路劲
  */
 - (BOOL)open:(NSString *)url; //如果url query中没有animated，默认有动画，
 - (BOOL)open:(NSString *)url query:(NSDictionary *)query;//如果url query中没有animated，默认有动画
 - (BOOL)open:(NSString *)url query:(NSDictionary *)query animated:(BOOL)animated;
+
+@end
+
+@interface NSObject (SSNRouterNice)
+
+/**
+ * 支持相对路径打开
+ */
+- (BOOL)ssn_open:(NSString *)url; //如果url query中没有animated，默认有动画，
+- (BOOL)ssn_open:(NSString *)url query:(NSDictionary *)query;//如果url query中没有animated，默认有动画
+- (BOOL)ssn_open:(NSString *)url query:(NSDictionary *)query animated:(BOOL)animated;
 
 @end

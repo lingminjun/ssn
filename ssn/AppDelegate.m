@@ -37,6 +37,7 @@
 #import "SSNCrashReport.h"
 
 #import "SSNRouter+Nice.h"
+#import "DMSignEngine.h"
 
 @interface AppDelegate ()<SSNRouterDelegate>
 @end
@@ -75,9 +76,10 @@
     [self ssn_router].delegate = self;
     [self ssn_router].window = self.window;
 
-    BOOL isSingin = NO;
+    BOOL isSingin = YES;
     if (isSingin)
     {
+        [DMSignEngine sharedInstance].loginId = @"18758014247";
         [self.ssn_router open:@"app://default"]; //转到重定向中加载ui
     }
     else

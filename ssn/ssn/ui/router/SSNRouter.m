@@ -111,8 +111,9 @@
         an = [url_query objectForKey:@"animated"];
     }
     
-    if ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
-        || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+    if ([an length] > 0
+        && ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
+            || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
         animated = [an boolValue];
     }
     
@@ -527,8 +528,9 @@
         }
     }
     
-    if ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
-        || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+    if ([an length] > 0
+        && ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
+            || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
         animated = [an boolValue];
     }
     
