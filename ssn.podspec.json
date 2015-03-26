@@ -101,7 +101,7 @@
         ,
         {
           "name": "kit",
-          "source_files": "ssn/ssn/db/kit/*.{h,m}",
+          "source_files": "ssn/ssn/ui/kit/*.{h,m}",
           "requires_arc": true,
           "subspecs": [
             {
