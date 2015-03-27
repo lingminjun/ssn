@@ -43,7 +43,7 @@ ssn_uikit_value_synthesize(float,ssn_edge_width,Ssn_edge_width)
     frame.size.width = aMax;
     frame.size.height = ssn_ceil( height < 0.0f ? 40.0f : height );
     
-    UIButton *button = [[[UIButton class] alloc] initWithFrame:frame];
+    UIButton *button = [[[self class] alloc] initWithFrame:frame];
     button.titleLabel.font = aFont;
     button.exclusiveTouch = YES;
     

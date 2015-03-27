@@ -43,7 +43,7 @@ ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
     frame.size.width = aMax;
     frame.size.height = ssn_ceil(aFont.lineHeight);
     
-    UILabel *label = [[[UILabel class] alloc] initWithFrame:frame];
+    UILabel *label = [[[self class] alloc] initWithFrame:frame];
     label.font = aFont;
     label.textColor = aColor;
     label.backgroundColor = aBackgroud;

@@ -33,7 +33,7 @@
     
     CGFloat aMinFont = (minFont < 0.0f ? 11.0f : minFont);
     
-    UITextField *input = [[[UITextField class] alloc] initWithFrame:frame];
+    UITextField *input = [[[self class] alloc] initWithFrame:frame];
     input.font = aFont;
     input.textColor = aColor;
     input.adjustsFontSizeToFitWidth = adjustFont;
