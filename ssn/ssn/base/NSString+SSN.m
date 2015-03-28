@@ -9,6 +9,27 @@
 #import "NSString+SSN.h"
 #import <CommonCrypto/CommonDigest.h>
 
+BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2) {
+    
+    if (str1 == str2) {
+        return YES;
+    }
+    
+    NSUInteger len1 = [str1 length];
+    NSUInteger len2 = [str2 length];
+    
+    if (len1 == 0 && len2 == 0)
+    {
+        return YES;
+    }
+
+    if (len1 != len2) {
+        return NO;
+    }
+    
+    return [str1 isEqualToString:str2];
+}
+
 @implementation NSString (SSN)
 
 + (NSString *)stringWithSuitableLength:(NSUInteger)length UTF8Format:(const char *)format, ...
@@ -159,7 +180,7 @@
 }
 
 
-- (NSString *)urlEncode
+- (NSString *)ssn_urlEncode
 {
     NSString *resultString = self;
     NSString *temString = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
@@ -172,7 +193,7 @@
     return temString;
 }
 
-- (NSString *)urlDecode
+- (NSString *)ssn_urlDecode
 {
     NSString *resultString = self;
     NSString *temString = CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(
@@ -186,7 +207,11 @@
     return temString;
 }
 
-- (NSRange)lastNestSubstringRange
+- (BOOL)ssn_non_empty {
+    return [self length] > 0;
+}
+
+- (NSRange)ssn_lastNestSubstring
 {
     NSInteger beginIndex = 0;
     NSInteger endIndex = 0;
@@ -235,7 +260,7 @@
     }
 }
 
-- (BOOL)isJustNumberString
+- (BOOL)ssn_isNumberString
 {
     NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
     NSString *resultString = [self stringByTrimmingCharactersInSet:set];
@@ -249,19 +274,283 @@
     }
 }
 
-+ (BOOL)isString:(NSString *)str1 equalToString:(NSString *)str2
-{
-    if ([str1 isEqualToString:str2])
-    {
-        return YES;
-    }
 
-    if ([str1 length] == 0 && [str2 length] == 0)
-    {
-        return YES;
-    }
 
-    return NO;
+/**
+ * 去掉字符串两端的空白字符
+ *
+ **/
+- (NSString *)ssn_trimWhitespace {
+    if(nil == self){
+        return nil;
+    }
+    NSMutableString *str = [NSMutableString stringWithString:self];
+    CFStringTrimWhitespace((CFMutableStringRef)str);
+    return str;
+}
+
+/**
+ * 去掉字符串所有的空白字符
+ *
+ **/
+- (NSString *)ssn_trimAllWhitespace {
+    if(nil == self){
+        return nil;
+    }
+    NSString *copy = [self copy];
+    
+    NSMutableString *str = [NSMutableString string];
+    for (NSUInteger index = 0; index < [copy length]; index++) {
+        unichar c = [copy characterAtIndex:index];
+        if (c != ' ' && c != '\t' && c != '\r' && c != '\n') {
+            [str appendFormat:@"%C",c];
+        }
+    }
+    return str;
+}
+
+/**
+ * 判断一个字符串是否全由字母组成
+ *
+ * @return NSString
+ **/
+- (BOOL)ssn_isLetters {
+    NSString *regPattern = @"[a-zA-Z]+";
+    NSPredicate *testResult = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regPattern];
+    return [testResult evaluateWithObject:self];
+}
+
+/**
+ * 忽略大小写比较两个字符串
+ *
+ * @return BOOL
+ **/
+- (BOOL)ssn_isEqualCaseInsensitive:(NSString *)str {
+    if (nil == str) {
+        return NO;
+    }
+    
+    return [self compare:str options:NSCaseInsensitiveSearch] == NSOrderedSame;
+}
+
+/* 是否包含特定字符串 */
+- (BOOL)ssn_containsString:(NSString *)str {
+    if (nil == str || [str length] == 0) {
+        return NO;
+    }
+    
+    return [self rangeOfString:str].length > 0;
+}
+
+
+//字符串是不是一个纯整数型
+- (BOOL)ssn_isPureInteger {
+    NSScanner* scan = [NSScanner scannerWithString:self];
+    NSInteger val;
+    return [scan scanInteger:&val] && [scan isAtEnd];
+}
+
+/* 获取 UTF8 编码的 NSData 值 */
+- (NSData *)ssn_toUTF8Data {
+    if ([self length] == 0) {
+        return [NSData data];
+    }
+    
+    return [self dataUsingEncoding:NSUTF8StringEncoding];
+}
+
+/**
+ *  是否为电话号码，忽略格式【344】【443】【335】
+ *
+ *  @return 是否为号码
+ */
+- (BOOL)ssn_isValidMobileNumber {
+    NSString *num = [self ssn_trimCountryCodePhoneNumber];
+    if ([num length] != 11) {//最短亲情号，三位
+        return NO;
+    }
+    
+    NSString *pattern = @"^1[0-9]{10}$";
+    NSPredicate *regextestmobile = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", pattern];
+    return [regextestmobile evaluateWithObject:num];
+}
+
+- (NSString *)ssn_trimPhoneNumber {
+    
+    NSMutableString *countryCode = [NSMutableString string];
+    NSMutableString *mobile = [NSMutableString string];
+    
+    NSInteger index = 0;
+    NSInteger length = [self length];
+    
+    BOOL mayBeCountryCode = NO;
+    if ([self hasPrefix:@"+"]) {
+        mayBeCountryCode = YES;
+        index = 1;
+    }
+    else if ([self hasPrefix:@"00"]) {
+        mayBeCountryCode = YES;
+        index = 2;
+    }
+    
+    if (mayBeCountryCode) {//考虑计算国家吗，最长国家码7位
+        
+        [countryCode appendString:@"+"];
+        
+        const NSInteger max_cc_length = 7;//国家码最长
+        
+        NSInteger max_cc_location = index + max_cc_length + 1;//检查到国家码最长后一位，如果仍然没有分割符，就不算国家码
+        
+        for (; index < max_cc_location && index < length; index++) {
+            
+            unichar c = [self characterAtIndex:index];
+            
+            if ((c >= '0' && c <= '9')//数字
+                || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')//字母也支持，
+                || (c == '#' || c == '*')//“#”号也支持
+                ) {
+                NSString *charString = [NSString stringWithFormat:@"%c",c];
+                [countryCode appendString:charString];
+                [mobile appendString:charString];
+            }
+            else {//遇到非法字符，可以终止
+                break ;
+            }
+        }
+        
+        if ([countryCode length] > 1 && [countryCode length] <= max_cc_length + 1) {//前面有个加号
+            [mobile setString:@"-"];//增加减号连接符
+        }
+        else {
+            //保留其加号
+            [countryCode setString:@"+"];
+        }
+    }
+    
+    for (; index < length; index++) {
+        
+        unichar c = [self characterAtIndex:index];
+        
+        //合法字符
+        if ((c >= '0' && c <= '9')//数字
+            || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')//字母也支持，
+            || (c == '#' || c == '*')//“#”号也支持
+            ) {
+            NSString *charString = [NSString stringWithFormat:@"%c",c];
+            [mobile appendString:charString];
+        }
+        else {//遇到非法字符，可以终止
+            continue ;
+        }
+    }
+    
+    if ([mobile isEqualToString:@"-"]) {//说明后面并没有找到多余号码
+        [mobile setString:@""];
+    }
+    
+    return [NSString stringWithFormat:@"%@%@",countryCode,mobile];
+}
+
+//去掉号码中包含的国家码，这里只对中国国家码做处理
+- (NSString *)ssn_trimCountryCodePhoneNumber {
+    NSString *num = [self ssn_trimPhoneNumber];
+    if ([num hasPrefix:@"+86-"]) {
+        return [num substringFromIndex:[@"+86-" length]];
+    }
+    else if ([num hasPrefix:@"+86"]) {
+        return [num substringFromIndex:[@"+86" length]];
+    }
+    else {
+        return num;
+    }
+}
+
+- (NSString *)ssn_mobile344Format {
+    return [self ssn_mobile344FormatSeparatedByCharacter:' '];
+}
+
+//344方式分割号码
+- (NSString *)ssn_mobile344FormatSeparatedByCharacter:(unichar)character {
+    unichar sep = character;
+    if (sep == 0) {
+        sep = ' ';
+    }
+    NSUInteger len = [self length];
+    
+    @autoreleasepool {
+        NSMutableString *format = [NSMutableString string];
+        NSUInteger mask = 0;
+        for (NSUInteger idx = 0; idx < len; idx++) {
+            unichar c = [self characterAtIndex:idx];
+            if (c < '0' || c > '9') {
+                continue ;
+            }
+            
+            mask++;
+            [format appendFormat:@"%C",c];
+            
+            if (mask % 4 == 3) {
+                [format appendFormat:@"%C",sep];
+            }
+        }
+        
+        return format;
+    }
+}
+
+//是否是合法邮箱
+- (BOOL)ssn_isValidEmail {
+    NSString *txt = [self ssn_trimWhitespace];
+    if ([txt length] < 5) {
+        return NO;
+    }
+    NSString *emailRegex = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+";
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+    return [emailTest evaluateWithObject:txt];
+}
+
+
+- (BOOL)ssn_isValidIDCardNumber {
+    NSString *txt = [self ssn_trimWhitespace];
+    if (txt.length != 18) {
+        return NO;
+    }
+    NSString *regex = @"^(\\d{17}x|\\d{18})$";
+    return [[self ssn_substringForRegex:regex] count] != 0;
+}
+
+// 根据正则表达式截取字符串
+- (NSArray *)ssn_substringForRegex:(NSString *)regex {
+    NSMutableArray * array = [NSMutableArray arrayWithCapacity:1];
+    
+    NSError * error;
+    NSRegularExpression * expression = [NSRegularExpression regularExpressionWithPattern:regex options:NSRegularExpressionCaseInsensitive error:&error];
+    NSArray * matches                = [expression matchesInString:self options:0 range:NSMakeRange(0, self.length)];
+    for (NSUInteger i = 0; i < matches.count; i++) {
+        NSTextCheckingResult * result = [matches objectAtIndex:i];
+        
+        for (NSUInteger j = 0; j < result.numberOfRanges; j++) {
+            NSRange range = [result rangeAtIndex:j];
+            if (range.location == NSNotFound) {
+                continue;
+            }
+            NSString * string = [self substringWithRange:range];
+            [array addObject:string];
+        }
+    }
+    
+    return array;
+}
+
+
+// 将字符串中与正则表达式匹配的字符串替换成指定的字符串
+- (NSString *)ssn_stringByReplaceRegex:(NSString *)regex withString:(NSString *)replace{
+    NSError * error;
+    NSRegularExpression * expression = [NSRegularExpression regularExpressionWithPattern:regex options:NSRegularExpressionCaseInsensitive error:&error];
+    
+    NSString * string                = [expression stringByReplacingMatchesInString:self options:0 range:NSMakeRange(0, self.length) withTemplate:replace];
+    
+    return  string;
 }
 
 #pragma mark predicate

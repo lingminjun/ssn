@@ -205,6 +205,8 @@
 		53C84C7D1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7B1A5BBED1008AB7C8 /* SSNUIFlowLayout.m */; };
 		53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */; };
 		53C84C811A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */; };
+		53CAACFC1AC6BBA50012742A /* UIViewController+SSNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAACFB1AC6BBA50012742A /* UIViewController+SSNToast.m */; };
+		53CAACFF1AC6F31B0012742A /* NSURL+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */; };
 		53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */; };
 		53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */; };
 		53CE03321A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */; };
@@ -468,6 +470,10 @@
 		53C84C7E1A5BBF7C008AB7C8 /* SSNUITableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUITableLayout.h; sourceTree = "<group>"; };
 		53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNUITableLayout.m; sourceTree = "<group>"; };
 		53C84C821A5BC03E008AB7C8 /* SSNUILayout+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNUILayout+Private.h"; sourceTree = "<group>"; };
+		53CAACFA1AC6BBA50012742A /* UIViewController+SSNToast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SSNToast.h"; sourceTree = "<group>"; };
+		53CAACFB1AC6BBA50012742A /* UIViewController+SSNToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SSNToast.m"; sourceTree = "<group>"; };
+		53CAACFD1AC6F31B0012742A /* NSURL+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+SSN.h"; sourceTree = "<group>"; };
+		53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+SSN.m"; sourceTree = "<group>"; };
 		53CB29F81A89ECA700509148 /* UIApplication+SSNCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+SSNCategory.h"; sourceTree = "<group>"; };
 		53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+SSNCategory.m"; sourceTree = "<group>"; };
 		53CE03211A9A11C800E30E0D /* SSNMessageInterceptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNMessageInterceptor.h; sourceTree = "<group>"; };
@@ -838,6 +844,8 @@
 				53620B311AB53C2200381C3C /* SSNSeqGen.m */,
 				53620B331AB5D1C300381C3C /* NSThread+SSN.h */,
 				53620B341AB5D1C300381C3C /* NSThread+SSN.m */,
+				53CAACFD1AC6F31B0012742A /* NSURL+SSN.h */,
+				53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -1040,6 +1048,8 @@
 			children = (
 				53CB29F81A89ECA700509148 /* UIApplication+SSNCategory.h */,
 				53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */,
+				53CAACFA1AC6BBA50012742A /* UIViewController+SSNToast.h */,
+				53CAACFB1AC6BBA50012742A /* UIViewController+SSNToast.m */,
 			);
 			path = category;
 			sourceTree = "<group>";
@@ -1314,6 +1324,7 @@
 				53D163F4191A629C00AD4C81 /* AppDelegate.m in Sources */,
 				5312CAC21A57E983009C32B1 /* DMLayoutViewController.m in Sources */,
 				53BC53221A485E6E0044C238 /* SSNDBColumn.m in Sources */,
+				53CAACFF1AC6F31B0012742A /* NSURL+SSN.m in Sources */,
 				53BC533C1A485E6E0044C238 /* lock.cpp in Sources */,
 				5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */,
 				5397B5D41A6FA10700CD6AFC /* SSNCrashReport.m in Sources */,
@@ -1371,6 +1382,7 @@
 				53D9ED871A8DE20900CAFADE /* UITableView+SSNPullRefresh.m in Sources */,
 				53BC53321A485E6E0044C238 /* SSNHostingTask.m in Sources */,
 				53BC534A1A485E6E0044C238 /* SSNVC+Router.m in Sources */,
+				53CAACFC1AC6BBA50012742A /* UIViewController+SSNToast.m in Sources */,
 				53C84C781A5BBE88008AB7C8 /* SSNUISiteLayout.m in Sources */,
 				53BC53511A486DA30044C238 /* ssnbase64.c in Sources */,
 				53BC53121A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
