@@ -149,6 +149,15 @@
     return [hash lowercaseString];
 }
 
+- (BOOL)ssn_containsChinese {
+    if ([self length] == 0) {
+        return NO;
+    }
+    NSString *match=@"(^[\u4e00-\u9fa5]+$)";
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF matches %@", match];
+    return [predicate evaluateWithObject:self];
+}
+
 
 - (NSString *)urlEncode
 {

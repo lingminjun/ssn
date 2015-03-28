@@ -26,6 +26,8 @@
 
 - (NSString *)ssn_md5;//小写
 
+- (BOOL)ssn_containsChinese;//是否包含中文
+
 // urlencode
 - (NSString *)urlEncode;
 
