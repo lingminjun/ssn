@@ -207,6 +207,7 @@
 		53C84C811A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C7F1A5BBF7C008AB7C8 /* SSNUITableLayout.m */; };
 		53CAACFC1AC6BBA50012742A /* UIViewController+SSNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAACFB1AC6BBA50012742A /* UIViewController+SSNToast.m */; };
 		53CAACFF1AC6F31B0012742A /* NSURL+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */; };
+		53CAAD021AC78C410012742A /* UIViewController+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAAD011AC78C410012742A /* UIViewController+SSNCategory.m */; };
 		53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */; };
 		53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */; };
 		53CE03321A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */; };
@@ -474,6 +475,8 @@
 		53CAACFB1AC6BBA50012742A /* UIViewController+SSNToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SSNToast.m"; sourceTree = "<group>"; };
 		53CAACFD1AC6F31B0012742A /* NSURL+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+SSN.h"; sourceTree = "<group>"; };
 		53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+SSN.m"; sourceTree = "<group>"; };
+		53CAAD001AC78C410012742A /* UIViewController+SSNCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SSNCategory.h"; sourceTree = "<group>"; };
+		53CAAD011AC78C410012742A /* UIViewController+SSNCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SSNCategory.m"; sourceTree = "<group>"; };
 		53CB29F81A89ECA700509148 /* UIApplication+SSNCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+SSNCategory.h"; sourceTree = "<group>"; };
 		53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+SSNCategory.m"; sourceTree = "<group>"; };
 		53CE03211A9A11C800E30E0D /* SSNMessageInterceptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNMessageInterceptor.h; sourceTree = "<group>"; };
@@ -1050,6 +1053,8 @@
 				53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */,
 				53CAACFA1AC6BBA50012742A /* UIViewController+SSNToast.h */,
 				53CAACFB1AC6BBA50012742A /* UIViewController+SSNToast.m */,
+				53CAAD001AC78C410012742A /* UIViewController+SSNCategory.h */,
+				53CAAD011AC78C410012742A /* UIViewController+SSNCategory.m */,
 			);
 			path = category;
 			sourceTree = "<group>";
@@ -1325,6 +1330,7 @@
 				5312CAC21A57E983009C32B1 /* DMLayoutViewController.m in Sources */,
 				53BC53221A485E6E0044C238 /* SSNDBColumn.m in Sources */,
 				53CAACFF1AC6F31B0012742A /* NSURL+SSN.m in Sources */,
+				53CAAD021AC78C410012742A /* UIViewController+SSNCategory.m in Sources */,
 				53BC533C1A485E6E0044C238 /* lock.cpp in Sources */,
 				5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */,
 				5397B5D41A6FA10700CD6AFC /* SSNCrashReport.m in Sources */,

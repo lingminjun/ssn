@@ -95,7 +95,8 @@
       "subspecs": [
         {
           "name": "category",
-          "source_files": "ssn/ssn/ui/category/*.*",
+          "source_files": "ssn/ssn/ui/category/*.{h,m}",
+          "resources": "ssn/ssn/ui/category/resources/*.png",
           "requires_arc": true
         }
         ,
