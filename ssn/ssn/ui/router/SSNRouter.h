@@ -19,7 +19,9 @@
 
 @property (nonatomic, strong) UIWindow *window; // window的rootViewController将作为第一个目录
 
-@property (nonatomic, strong) NSString *scheme; // app内部scheme
+@property (nonatomic, strong) NSString *scheme; // app内部scheme，可以不设置，则只要在plist中设置了schemes就可以
+
+@property (nonatomic, copy, readonly) NSSet *schemes;//应用plist中设置的schemes，加载应用时读取
 
 // open url接口，与app不符的scheme将提交给Application打开
 - (BOOL)openURL:(NSURL *)url; //如果url query中没有animated，默认有动画

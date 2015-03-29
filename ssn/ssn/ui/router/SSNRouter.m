@@ -22,6 +22,8 @@
 @property (nonatomic,strong) NSString *lastPath;
 @property (nonatomic,strong) id<SSNPage> targetPage;//不一定有值
 
+@property (nonatomic, copy) NSSet *schemes;
+
 @end
 
 
@@ -46,6 +48,18 @@
         share = [[self alloc] init];
     });
     return share;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        NSArray *aschemes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLSchemes"];
+        if (aschemes) {
+            _schemes = [NSSet setWithArray:aschemes];
+        }
+    }
+    return self;
 }
 
 #pragma - mark 属性相关
@@ -88,6 +102,21 @@
     return _scheme;
 }
 
+- (BOOL)isAppScheme:(NSString *)scheme {
+    if ([scheme length] == 0) {
+        return NO;
+    }
+    
+    if ([_schemes containsObject:scheme]) {
+        return YES;
+    }
+    
+    if ([scheme isEqualToString:self.scheme]) {
+        return YES;
+    }
+    
+    return NO;
+}
 
 #pragma - mark 基本API
 - (BOOL)openURL:(NSURL*)url {
@@ -151,12 +180,37 @@
     return url;
 }
 
+//合并query，始终以query中的数据为主
+- (NSDictionary *)mergeQueryWithURL:(NSURL *)url query:(NSDictionary *)query {
+    NSDictionary *url_query = [url ssn_queryInfo];
+    
+    NSMutableDictionary *q = [NSMutableDictionary dictionary];
+    if (url_query) {
+        [q setDictionary:url_query];
+    }
+    
+    //以query中为主
+    for (NSString *key in query) {
+        id value = [query objectForKey:key];
+        [q setObject:value forKey:key];
+    }
+    
+    if ([q count]) {
+        return q;
+    }
+    
+    return nil;
+}
+
 //更佳细致的接口
-- (BOOL)openURL:(NSURL*)aurl query:(NSDictionary *)query animated:(BOOL)animated {
+- (BOOL)openURL:(NSURL*)aurl query:(NSDictionary *)aquery animated:(BOOL)animated {
     
     if (nil == aurl) {
         return NO;
     }
+    
+    //合并query
+    NSDictionary *query = [self mergeQueryWithURL:aurl query:aquery];
     
     //让委托有控制权
     NSURL *url = [self delegateFilterURL:aurl query:query];
@@ -165,8 +219,12 @@
     }
     
     NSString *urlscheme = [url scheme];
-    if (![urlscheme isEqualToString:self.scheme]) {
+    if (![self isAppScheme:urlscheme]) {
         return [[UIApplication sharedApplication] openURL:url];
+    }
+    
+    if (url != aurl) {//query参数需要被重新带入
+        query = [self mergeQueryWithURL:url query:query];
     }
     
     //找到目标url
@@ -201,10 +259,13 @@
     return openSuccess;
 }
 
-- (BOOL)canOpenURL:(NSURL *)aurl query:(NSDictionary *)query {
+- (BOOL)canOpenURL:(NSURL *)aurl query:(NSDictionary *)aquery {
     if (nil == aurl) {
         return NO;
     }
+    
+    //合并query
+    NSDictionary *query = [self mergeQueryWithURL:aurl query:aquery];
     
     //让委托有控制权
     NSURL *url = [self delegateFilterURL:aurl query:query];
@@ -213,8 +274,12 @@
     }
     
     NSString *urlscheme = [url scheme];
-    if (![urlscheme isEqualToString:self.scheme]) {
+    if (![self isAppScheme:urlscheme]) {
         return [[UIApplication sharedApplication] canOpenURL:url];
+    }
+    
+    if (url != aurl) {//query参数需要被重新带入
+        query = [self mergeQueryWithURL:url query:query];
     }
     
     SSNSearchResult *result = [self searchPageWithURL:url query:query];
@@ -226,14 +291,27 @@
 }
 
 //与url对应的page发送消息
-- (BOOL)noticeURL:(NSURL *)url query:(NSDictionary *)query {
-    if (nil == url) {
+- (BOOL)noticeURL:(NSURL *)aurl query:(NSDictionary *)aquery {
+    if (nil == aurl) {
         return NO;
     }
     
-    NSString *urlscheme = [url scheme];
-    if (![urlscheme isEqualToString:self.scheme]) {
+    //合并query
+    NSDictionary *query = [self mergeQueryWithURL:aurl query:aquery];
+    
+    //让委托有控制权
+    NSURL *url = [self delegateFilterURL:aurl query:query];
+    if (nil == url) {
         return NO;
+    }
+
+    NSString *urlscheme = [url scheme];
+    if (![self isAppScheme:urlscheme]) {
+        return NO;
+    }
+    
+    if (url != aurl) {//query参数需要被重新带入
+        query = [self mergeQueryWithURL:url query:query];
     }
     
     //找到对应的对象
@@ -381,14 +459,28 @@
     return result;
 }
 
-- (id <SSNPage>)pageWithURL:(NSURL *)url query:(NSDictionary *)query {
+- (id <SSNPage>)pageWithURL:(NSURL *)aurl query:(NSDictionary *)aquery {
+    if (nil == aurl) {
+        return nil;
+    }
+    
+    //合并query
+    NSDictionary *query = [self mergeQueryWithURL:aurl query:aquery];
+    
+    //让委托有控制权
+    NSURL *url = [self delegateFilterURL:aurl query:query];
     if (nil == url) {
         return nil;
     }
     
     NSString *urlscheme = [url scheme];
-    if (![urlscheme isEqualToString:self.scheme]) {
+    if (![self isAppScheme:urlscheme]) {
         return nil;
+    }
+    
+    //再次合并query
+    if (url != aurl) {
+        query = [self mergeQueryWithURL:url query:query];
     }
     
     SSNSearchResult *result = [self loadPageWithURL:url query:query];
