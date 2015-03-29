@@ -208,6 +208,7 @@
 		53CAACFC1AC6BBA50012742A /* UIViewController+SSNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAACFB1AC6BBA50012742A /* UIViewController+SSNToast.m */; };
 		53CAACFF1AC6F31B0012742A /* NSURL+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */; };
 		53CAAD021AC78C410012742A /* UIViewController+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAAD011AC78C410012742A /* UIViewController+SSNCategory.m */; };
+		53CAB0061AC7A6120012742A /* UIAlertView+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAB0051AC7A6120012742A /* UIAlertView+SSNCategory.m */; };
 		53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */; };
 		53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */; };
 		53CE03321A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */; };
@@ -477,6 +478,8 @@
 		53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+SSN.m"; sourceTree = "<group>"; };
 		53CAAD001AC78C410012742A /* UIViewController+SSNCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SSNCategory.h"; sourceTree = "<group>"; };
 		53CAAD011AC78C410012742A /* UIViewController+SSNCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SSNCategory.m"; sourceTree = "<group>"; };
+		53CAB0041AC7A6120012742A /* UIAlertView+SSNCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+SSNCategory.h"; sourceTree = "<group>"; };
+		53CAB0051AC7A6120012742A /* UIAlertView+SSNCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+SSNCategory.m"; sourceTree = "<group>"; };
 		53CB29F81A89ECA700509148 /* UIApplication+SSNCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+SSNCategory.h"; sourceTree = "<group>"; };
 		53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+SSNCategory.m"; sourceTree = "<group>"; };
 		53CE03211A9A11C800E30E0D /* SSNMessageInterceptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNMessageInterceptor.h; sourceTree = "<group>"; };
@@ -1049,6 +1052,8 @@
 		53CB29F71A89EB8200509148 /* category */ = {
 			isa = PBXGroup;
 			children = (
+				53CAB0041AC7A6120012742A /* UIAlertView+SSNCategory.h */,
+				53CAB0051AC7A6120012742A /* UIAlertView+SSNCategory.m */,
 				53CB29F81A89ECA700509148 /* UIApplication+SSNCategory.h */,
 				53CB29F91A89ECA700509148 /* UIApplication+SSNCategory.m */,
 				53CAACFA1AC6BBA50012742A /* UIViewController+SSNToast.h */,
@@ -1424,6 +1429,7 @@
 				53A1BA2D1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */,
 				53BC53061A485E6E0044C238 /* NSFileManager+SSN.m in Sources */,
 				538E3835199869430061692E /* DMTabViewController.m in Sources */,
+				53CAB0061AC7A6120012742A /* UIAlertView+SSNCategory.m in Sources */,
 				53BC53481A485E6E0044C238 /* SSNRouter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
