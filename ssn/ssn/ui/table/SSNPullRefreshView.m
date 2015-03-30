@@ -369,7 +369,7 @@
         return ;
     }
     //第一次取_crollview时需要找到偏移值
-    if (_startOffset == 0) {
+    if (_startOffset == 0 && _state != SSNPullRefreshLoading) {
         if (_style == SSNPullRefreshHeaderRefresh) {
             _startOffset = scl.contentInset.top;
         }

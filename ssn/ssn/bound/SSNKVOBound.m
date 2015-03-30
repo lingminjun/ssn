@@ -108,7 +108,17 @@
         [_tobj setValue:value forKey:_tiekey];
     }
     else {
-        [_tobj setNilValueForKey:_tiekey];
+        @try {
+            [_tobj setNilValueForKey:_tiekey];
+        }
+        @catch (NSException *exception) {
+            if ([exception.name isEqualToString:NSInvalidArgumentException]) {
+                [_tobj setValue:value forKey:_tiekey];
+            }
+            else {
+                @throw exception;
+            }
+        }
     }
 }
 
