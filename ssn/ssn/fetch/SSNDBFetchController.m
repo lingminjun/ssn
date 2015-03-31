@@ -140,7 +140,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 int db_fetch_elem_equal(void *from, void *to, const size_t f_idx, const size_t t_idx, void *context) {
     id<SSNDBFetchObject> old_obj = [(__bridge NSArray *)from objectAtIndex:f_idx];
     id<SSNDBFetchObject> new_obj = [(__bridge NSArray *)to objectAtIndex:t_idx];
-    return [old_obj isEqual:new_obj];
+    return [old_obj ssn_dbfetch_rowid] == [new_obj ssn_dbfetch_rowid];
 }
 
 
@@ -502,7 +502,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
 - (id<SSNDBFetchObject>)objectForIdenticalTo:(id)anObject index:(NSUInteger *)pindex {
     __block id<SSNDBFetchObject> result = nil;
     [_metaResults enumerateObjectsUsingBlock:^(id<SSNDBFetchObject> obj, NSUInteger idx, BOOL *stop) {
-        if ([anObject isEqual:obj]) {
+        if ([anObject ssn_dbfetch_rowid] == [obj ssn_dbfetch_rowid]) {
             result = obj;
             if (pindex) {
                 *pindex = idx;
@@ -550,7 +550,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     }
     
     //step 4 用新数据来找原来的数据和位置（防止replace sql语句，replace语句使得rowid变更；或者一个sql事务中，删除所有行，重新插入新数据，rowid将从0开始）
-    if (nil == box.obj || NO == [box.obj isEqual:box.nObj]) {
+    if (nil == box.obj || [box.obj ssn_dbfetch_rowid] != [box.nObj ssn_dbfetch_rowid]) {
         box.obj = [self objectForIdenticalTo:box.nObj index:&index];
         box.index = index;
     }

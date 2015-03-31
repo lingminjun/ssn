@@ -10,6 +10,7 @@
 
 @interface UILabel (SSNUIKit)
 
+
 /**
  *  返回一个宽度为width的label，
  *
@@ -44,4 +45,13 @@
  *  重新改变尺寸
  */
 - (void)ssn_sizeToFit;
+
+/**
+ *  使用这些属性必须了解其实现
+ */
+@property (nonatomic) int ssn_width_scalable;
+@property (nonatomic) float ssn_min_width;
+@property (nonatomic) float ssn_max_width;
+@property (nonatomic) int ssn_multi_line;
+
 @end
