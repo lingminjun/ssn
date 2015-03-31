@@ -25,6 +25,7 @@
 		533164F91A8B41DF007223DC /* ssn_pull_refresh_white_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 533164EB1A8B41DF007223DC /* ssn_pull_refresh_white_arrow.png */; };
 		533164FA1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533164EC1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png */; };
 		533164FD1A8B4375007223DC /* SSNPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 533164FC1A8B4375007223DC /* SSNPullRefreshView.m */; };
+		5334C0E01ACA3DD900094768 /* NSNotificationCenter+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */; };
 		5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5335EBE41A83A77D007B9DC9 /* SSNToast.m */; };
 		5339FC3F1AA2B46C0000F6B9 /* ssn_pull_refresh_black_arrow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5339FC3B1AA2B46C0000F6B9 /* ssn_pull_refresh_black_arrow@3x.png */; };
 		5339FC401AA2B46C0000F6B9 /* ssn_pull_refresh_blue_arrow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5339FC3C1AA2B46C0000F6B9 /* ssn_pull_refresh_blue_arrow@3x.png */; };
@@ -288,6 +289,8 @@
 		533164EC1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ssn_pull_refresh_white_arrow@2x.png"; sourceTree = "<group>"; };
 		533164FB1A8B4375007223DC /* SSNPullRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNPullRefreshView.h; sourceTree = "<group>"; };
 		533164FC1A8B4375007223DC /* SSNPullRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNPullRefreshView.m; sourceTree = "<group>"; };
+		5334C0DE1ACA3DD900094768 /* NSNotificationCenter+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+SSN.h"; sourceTree = "<group>"; };
+		5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+SSN.m"; sourceTree = "<group>"; };
 		5335EBE31A83A77D007B9DC9 /* SSNToast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNToast.h; sourceTree = "<group>"; };
 		5335EBE41A83A77D007B9DC9 /* SSNToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNToast.m; sourceTree = "<group>"; };
 		5339FC3B1AA2B46C0000F6B9 /* ssn_pull_refresh_black_arrow@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ssn_pull_refresh_black_arrow@3x.png"; path = "ssn/ssn/ui/table/resources/ssn_pull_refresh_black_arrow@3x.png"; sourceTree = SOURCE_ROOT; };
@@ -854,6 +857,8 @@
 				53620B341AB5D1C300381C3C /* NSThread+SSN.m */,
 				53CAACFD1AC6F31B0012742A /* NSURL+SSN.h */,
 				53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */,
+				5334C0DE1ACA3DD900094768 /* NSNotificationCenter+SSN.h */,
+				5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -1367,6 +1372,7 @@
 				538E384D19986A700061692E /* DMSettingViewController.m in Sources */,
 				53BC53441A485E6E0044C238 /* NiceQueue.m in Sources */,
 				53BC53281A485E6E0044C238 /* SSNDBTable.m in Sources */,
+				5334C0E01ACA3DD900094768 /* NSNotificationCenter+SSN.m in Sources */,
 				53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */,
 				53BC53161A485E6E0044C238 /* SSNDataStore+Factory.m in Sources */,
 				53BC53041A485E6E0044C238 /* NSData+SSNBase64.m in Sources */,

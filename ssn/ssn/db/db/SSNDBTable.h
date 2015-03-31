@@ -103,7 +103,7 @@ typedef enum : NSUInteger
 - (void)inreplaceObjects:(NSArray *)objects; // insert or replace
 - (void)inreplaceObjects:(NSArray *)objects inTransaction:(BOOL)inTransaction;//是否在事务中，方便多个DDL方法组装
 
-- (NSArray *)objectsWithClass:(Class)clazz forPredicate:(NSPredicate *)predicate;//查询支持
+- (NSArray *)objectsWithClass:(Class)clazz forPredicate:(NSPredicate *)predicate;//查询支持 不建议使用，对于字符串查询容易出错
 - (NSArray *)objectsWithClass:(Class)clazz forConditions:(NSDictionary *)conditions;//查询支持
 
 - (void)truncate;//清空表，请务必调用此方法，否则hook失效，并非sql语句“truncate table xxx”，实际执行delete语句，所以可以与其他方法一起在事务中使用

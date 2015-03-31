@@ -105,21 +105,28 @@
 - (void)test_truncate {
     SSNDBPool *pool = [SSNDBPool shareInstance];
     SSNDB *db = [pool dbWithScope:@"test1"];
-    NSString *path = @"/Users/lingminjun/Workdesk/work/ssn/ssnTests/TestPerson.json";
+    NSString *path = @"/Users/lingminjun/work/source_code/ssn/ssn/ssnTests/TestPerson.json";
     SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
     [table update];
     
     
     TSPerson *user1 = [[TSPerson alloc] init];
-    user1.uid = @"14";
-    user1.name = @"name:杨世亮";
+    user1.uid = @"15";
+    user1.name = @"name: '杨' 世 \"亮\"";
     user1.age = 26;
     user1.sex = 0;
     
-    [db executeTransaction:^(SSNDB *database, BOOL *rollback) {
-        [table truncate];
-        [table upinsertObjects:@[user1] inTransaction:NO];
-    } sync:YES];
+    [table upinsertObjects:@[user1]];
+    
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"name = '%@'",user1.name];
+    NSLog(@"%@",pred);
+    NSArray *list = [table objectsWithClass:[TSPerson class] forPredicate:pred];
+    NSLog(@"%@",list);
+    
+//    [db executeTransaction:^(SSNDB *database, BOOL *rollback) {
+//        [table truncate];
+//        [table upinsertObjects:@[user1] inTransaction:NO];
+//    } sync:YES];
 }
 
 
