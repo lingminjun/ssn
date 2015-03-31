@@ -71,6 +71,46 @@
  */
 - (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller loadDataWithOffset:(NSUInteger)offset limit:(NSUInteger)limit userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion;
 
+
+@optional
+
+/**
+ *  局部插入数据，当调用SSNListFetchController的insertDatasAtIndexPaths:方法时触发
+ *  注意：在加载完数据后请务必调用completion通知controller来反馈结果集变化
+ *
+ *  @param configurator 配置器
+ *  @param controller 当前fetch controller
+ *  @param indexPaths 所传入的插入数据位置(位置仅仅提供参考，此位置是insertDatasAtIndexPaths:方法传入的)
+ *  @param sections   当前数据结果集 sections
+ *  @param userInfo   其他参数
+ *  @param completion 回调结果 changes中存放修改或者新增的原始数据，finished表示此次加载是否正常完结，若错误则需要设置为NO(忽略)
+ */
+- (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller insertDatasWithIndexPaths:(NSArray *)indexPaths sections:(NSArray *)sections userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *changes, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion;
+
+/**
+ *  局部更新数据，当调用SSNListFetchController的updateDatasAtIndexPaths:方法时触发
+ *  注意：在加载完数据后请务必调用completion通知controller来反馈结果集变化
+ *
+ *  @param configurator 配置器
+ *  @param controller 当前fetch controller
+ *  @param indexPaths 所传入的更新数据(位置仅仅提供参考，此位置是updateDatasAtIndexPaths:方法传入的)
+ *  @param sections    当前数据结果集 sections
+ *  @param userInfo   其他参数
+ *  @param completion 回调结果 changes中存放修改或者新增的原始数据，finished表示此次加载是否正常完结，若错误则需要设置为NO(忽略)
+ */
+- (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller updateDatasWithIndexPaths:(NSArray *)indexPaths sections:(NSArray *)sections userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *changes, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion;
+
+/**
+ *  局部更新和插入数据，当调用SSNListFetchController的insertDatasAtIndexPaths:和updateDatasAtIndexPaths:方法时触发
+ *  注意：在加载完数据后请务必调用completion通知controller来反馈结果集变化
+ *
+ *  @param configurator 配置器
+ *  @param controller 当前fetch controller
+ *  @param section    需要配置的分组，可以配置title、高度等等
+ *  @param identify   分组的id
+ */
+- (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify;
+
 @optional
 /**
  *  对原始数据加工，转换成view model，若不实现此方法，则直接采用原始数据

@@ -102,6 +102,20 @@
     [table truncate];
 }
 
+- (void)test_userdefault {
+    SSNDBPool *pool = [SSNDBPool shareInstance];
+    SSNDB *db = [pool dbWithScope:@"test1"];
+    NSString *path = @"/Users/lingminjun/work/source_code/ssn/ssn/ssnTests/userdefaults.json";
+    SSNDBTable *table = [SSNDBTable tableWithDB:db tableJSONDescriptionFilePath:path];
+    [table update];
+    
+    [table upinsertObject:@{@"key":@"dddd",@"value":@"1002"}];
+    
+    NSArray *ary = [table objectsWithClass:nil forConditions:@{@"key":@"dddd"}];
+    
+    NSLog(@"%@",ary);
+}
+
 - (void)test_truncate {
     SSNDBPool *pool = [SSNDBPool shareInstance];
     SSNDB *db = [pool dbWithScope:@"test1"];

@@ -120,3 +120,12 @@
 + (instancetype)sectionInfoWithIdentify:(NSString *)identify title:(NSString *)title;
 
 @end
+
+
+@interface NSArray (SSNVMSectionInfos)
+
+//越界返回nil
+- (id)objectAtIndexPath:(NSIndexPath *)indexPath;
+
+@end
+

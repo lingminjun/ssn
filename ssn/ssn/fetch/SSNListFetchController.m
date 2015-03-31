@@ -134,7 +134,10 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         self.hasMore = hasMore;
         self.userInfo = userInfo;
         
-        [self resetResults:results isMerge:(offset != 0)];
+        //数据转换
+        NSArray *models = [self convertModelsFromDatas:results];
+        
+        [self resetResults:models isMerge:(offset != 0)];
     };
     
     [self.dataSource ssnlist_controller:self loadDataWithOffset:offset limit:limit userInfo:_userInfo completion:block];
@@ -179,7 +182,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 - (NSArray *)objects {
     NSMutableArray *objects = [NSMutableArray arrayWithCapacity:1];
     [_list enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
-        [objects addObject:[section objects]];
+        [objects addObjectsFromArray:[section objects]];
     }];
     return objects;
 }
@@ -247,8 +250,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  @return 数据
  */
 - (id<SSNCellModel>)objectAtIndexPath:(NSIndexPath *)indexPath {
-    SSNVMSectionInfo *section = [_list objectAtIndex:indexPath.section];
-    return [section objectAtIndex:indexPath.row];
+    return [_list objectAtIndexPath:indexPath];
 }
 
 /**
@@ -280,10 +282,12 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  @param indexPaths  对应的位置新增，实际位置并不取决于它
  */
 - (void)insertDatasAtIndexPaths:(NSArray *)indexPaths {
-    if ([_dataSource respondsToSelector:@selector(ssnlist_controller:loadDataWithIndexPaths:userInfo:completion:)]) {
+    if ([_dataSource respondsToSelector:@selector(ssnlist_controller:insertDatasWithIndexPaths:result:userInfo:completion:)]) {
+        
+        NSArray *sections = [_list copy];
         
         __weak typeof(self) w_self = self;
-        void (^block)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
+        void (^block)(NSArray *changes, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *changes, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
             __strong typeof(w_self) self = w_self; if (!w_self) { return ; }
             
             if (!finished) {
@@ -292,11 +296,26 @@ const NSUInteger SSNListFetchedChangeNan = 0;
             
             self.userInfo = userInfo;
             
+            //数据转换
+            NSArray *new_models = [self convertModelsFromDatas:changes];
+            
+            NSMutableArray *models = [NSMutableArray array];
+            
+            [sections enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+                [models addObject:[section objects]];
+            }];
+            
+            [new_models enumerateObjectsUsingBlock:^(id<SSNCellModel> obj, NSUInteger idx, BOOL *stop) {
+                if (![models containsObject:obj]) {
+                    [models addObject:obj];
+                }
+            }];
+            
             //重置数据
-            [self resetResults:results isMerge:YES];
+            [self resetResults:models isMerge:YES];
         };
         
-        [self.dataSource ssnlist_controller:self loadDataWithIndexPaths:indexPaths userInfo:self.userInfo completion:block];
+        [self.dataSource ssnlist_controller:self insertDatasWithIndexPaths:indexPaths result:sections userInfo:_userInfo completion:block];
     }
 }
 
@@ -369,10 +388,12 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  @param indexPaths 位置
  */
 - (void)updateDatasAtIndexPaths:(NSArray *)indexPaths {
-    if ([_dataSource respondsToSelector:@selector(ssnlist_controller:loadDataWithIndexPaths:userInfo:completion:)]) {
+    if ([_dataSource respondsToSelector:@selector(ssnlist_controller:updateDatasWithIndexPaths:result:userInfo:completion:)]) {
+        
+        NSArray *sections = [_list copy];
         
         __weak typeof(self) w_self = self;
-        void (^block)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
+        void (^block)(NSArray *changes, BOOL hasMore, NSDictionary *userInfo, BOOL finished) = ^(NSArray *changes, BOOL hasMore, NSDictionary *userInfo, BOOL finished) {
             __strong typeof(w_self) self = w_self; if (!w_self) { return ; }
             
             if (!finished) {
@@ -381,11 +402,26 @@ const NSUInteger SSNListFetchedChangeNan = 0;
             
             self.userInfo = userInfo;
             
+            //数据转换
+            NSArray *new_models = [self convertModelsFromDatas:changes];
+            
+            NSMutableArray *models = [NSMutableArray array];
+            
+            [sections enumerateObjectsUsingBlock:^(SSNVMSectionInfo *section, NSUInteger idx, BOOL *stop) {
+                [models addObjectsFromArray:[section objects]];
+            }];
+            
+            [new_models enumerateObjectsUsingBlock:^(id<SSNCellModel> obj, NSUInteger idx, BOOL *stop) {
+                if (![models containsObject:obj]) {
+                    [models addObject:obj];
+                }
+            }];
+            
             //重置数据
-            [self resetResults:results isMerge:YES];
+            [self resetResults:models isMerge:YES];
         };
         
-        [self.dataSource ssnlist_controller:self loadDataWithIndexPaths:indexPaths userInfo:self.userInfo completion:block];
+        [self.dataSource ssnlist_controller:self updateDatasWithIndexPaths:indexPaths result:_list userInfo:_userInfo completion:block];
     }
 }
 
@@ -570,13 +606,10 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
     return section;
 }
 
-- (void)resetResults:(NSArray *)datas isMerge:(BOOL)isMerge {
+- (void)resetResults:(NSArray *)models isMerge:(BOOL)isMerge {
     @autoreleasepool {
         
         _synchronFlag++;
-        
-        //数据转换
-        NSArray *models = [self convertModelsFromDatas:datas];
         
         NSArray *news = nil;
 
@@ -607,8 +640,10 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
                     }
                     [uSectionsChanges setObject:[NSMutableIndexSet indexSet] forKey:sectionIdentify];
                     
-                    NSUInteger index = [_list indexOfObject:oSection];
-                    [changes addIndex:index];
+                    NSUInteger index = [olds indexOfObject:oSection];
+                    if (index != NSNotFound) {
+                        [changes addIndex:index];
+                    }
                 }
                 else {
                     nSection = [self loadSectionWithSectionIdentify:sectionIdentify];
@@ -625,7 +660,9 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
                 
                 //注意有变化的位置需要记下来(记老数据位置，主要是要将这部分数据update下，以防止修改不更新)
                 NSMutableIndexSet *set = [uSectionsChanges objectForKey:sectionIdentify];
-                [set addIndex:index];
+                if (index != NSNotFound) {
+                    [set addIndex:index];
+                }
             }
             else {
                 [nSection.objects addObject:obj];

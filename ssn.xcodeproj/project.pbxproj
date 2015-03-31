@@ -26,6 +26,7 @@
 		533164FA1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533164EC1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png */; };
 		533164FD1A8B4375007223DC /* SSNPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 533164FC1A8B4375007223DC /* SSNPullRefreshView.m */; };
 		5334C0E01ACA3DD900094768 /* NSNotificationCenter+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */; };
+		5334C0ED1ACA7F4400094768 /* userdefaults.json in Resources */ = {isa = PBXBuildFile; fileRef = 5334C0EC1ACA7F4400094768 /* userdefaults.json */; };
 		5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5335EBE41A83A77D007B9DC9 /* SSNToast.m */; };
 		5339FC3F1AA2B46C0000F6B9 /* ssn_pull_refresh_black_arrow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5339FC3B1AA2B46C0000F6B9 /* ssn_pull_refresh_black_arrow@3x.png */; };
 		5339FC401AA2B46C0000F6B9 /* ssn_pull_refresh_blue_arrow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5339FC3C1AA2B46C0000F6B9 /* ssn_pull_refresh_blue_arrow@3x.png */; };
@@ -291,6 +292,7 @@
 		533164FC1A8B4375007223DC /* SSNPullRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNPullRefreshView.m; sourceTree = "<group>"; };
 		5334C0DE1ACA3DD900094768 /* NSNotificationCenter+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+SSN.h"; sourceTree = "<group>"; };
 		5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+SSN.m"; sourceTree = "<group>"; };
+		5334C0EC1ACA7F4400094768 /* userdefaults.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = userdefaults.json; sourceTree = "<group>"; };
 		5335EBE31A83A77D007B9DC9 /* SSNToast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNToast.h; sourceTree = "<group>"; };
 		5335EBE41A83A77D007B9DC9 /* SSNToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNToast.m; sourceTree = "<group>"; };
 		5339FC3B1AA2B46C0000F6B9 /* ssn_pull_refresh_black_arrow@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ssn_pull_refresh_black_arrow@3x.png"; path = "ssn/ssn/ui/table/resources/ssn_pull_refresh_black_arrow@3x.png"; sourceTree = SOURCE_ROOT; };
@@ -1135,6 +1137,7 @@
 		53D1640B191A629C00AD4C81 /* ssnTests */ = {
 			isa = PBXGroup;
 			children = (
+				5334C0EC1ACA7F4400094768 /* userdefaults.json */,
 				533BE3951A2AC43800E07FF0 /* TestPerson.json */,
 				53D16411191A629C00AD4C81 /* ssnTests.mm */,
 				53D1640C191A629C00AD4C81 /* Supporting Files */,
@@ -1323,6 +1326,7 @@
 				533BE3B71A2B0C0D00E07FF0 /* Default@2x.png in Resources */,
 				53A1BA261A52F85100C76844 /* unicode_to_pinyin_tone.txt in Resources */,
 				533BE3B51A2B0C0D00E07FF0 /* Default.png in Resources */,
+				5334C0ED1ACA7F4400094768 /* userdefaults.json in Resources */,
 				533BE3BA1A2B0DC900E07FF0 /* DMPerson.json in Resources */,
 				533BE3961A2AC43800E07FF0 /* TestPerson.json in Resources */,
 				53D16410191A629C00AD4C81 /* InfoPlist.strings in Resources */,

@@ -1,0 +1,10 @@
+{
+    "tb":"userdefaults",
+    "its":[{
+           "vs":1,
+           "cl":[
+                 {"name":"key",  "type":3,   "level":2,  "fill":"",  "index":1,  "mapping":""},
+                 {"name":"value", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""}
+                 ]
+           }]
+}

@@ -140,3 +140,24 @@
     return copy;
 }
 @end
+
+
+@implementation NSArray (SSNVMSectionInfos)
+
+//越界返回nil
+- (id)objectAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath.section >= [self count]) {
+        return nil;
+    }
+    
+    SSNVMSectionInfo *section = [self objectAtIndex:indexPath.section];
+    if (![section isKindOfClass:[SSNVMSectionInfo class]]) {
+        return nil;
+    }
+    
+    return [section objectAtIndex:indexPath.row];
+}
+
+@end
+

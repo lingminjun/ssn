@@ -473,6 +473,37 @@
     return results;
 }
 
+- (void)ssnlist_controller:(SSNListFetchController *)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify {
+    if (controller != self.listFetchController) {
+        return ;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:sectionDidLoad:sectionIdntify:)]) {
+        [self.delegate ssn_configurator:self controller:controller sectionDidLoad:section sectionIdntify:identify];
+    }
+}
+
+
+- (void)ssnlist_controller:(SSNListFetchController *)controller insertDatasWithIndexPaths:(NSArray *)indexPaths result:(NSArray *)results userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion {
+    if (controller != self.listFetchController) {
+        return ;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:insertDatasWithIndexPaths:sections:userInfo:completion:)]) {
+        [self.delegate ssn_configurator:self controller:controller insertDatasWithIndexPaths:indexPaths sections:results userInfo:userInfo completion:completion];
+    }
+}
+
+- (void)ssnlist_controller:(SSNListFetchController *)controller updateDatasWithIndexPaths:(NSArray *)indexPaths result:(NSArray *)results userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion {
+    if (controller != self.listFetchController) {
+        return ;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:updateDatasWithIndexPaths:sections:userInfo:completion:)]) {
+        [self.delegate ssn_configurator:self controller:controller updateDatasWithIndexPaths:indexPaths sections:results userInfo:userInfo completion:completion];
+    }
+}
+
 @end
 
 

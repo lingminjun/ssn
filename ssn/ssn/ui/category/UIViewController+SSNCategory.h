@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "UIColor+SSNUIHex.h"
 
-#define SSN_NAV_BAR_BACK_BUTTON_IMAGE   [UIImage imageNamed:@"nav_back"]
+#define SSN_NAV_BAR_BACK_BUTTON_IMAGE   [UIImage imageNamed:@"com_nav_back"]
 #define SSN_NAV_BAR_BUTTON_FONT         [UIFont systemFontOfSize:15]
 
 #define SSN_NAV_BAR_BUTTON_TITLE_COLOR_NORMAL         [UIColor blackColor]
