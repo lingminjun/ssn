@@ -17,11 +17,16 @@
 
 #include <stdio.h>
 
+#ifndef ssn_log_level_defined
+#define ssn_log_level_defined
+
 typedef enum _ssn_log_level {
     ssn_disk_log    = 0,    //仅仅写入文件日志
     ssn_console_log = 1,    //仅仅写入控制台日志
     ssn_verbose_log = 2     //文件和控制台
 } ssn_log_level;
+
+#endif
 
 /**
  *  获取日志目录名

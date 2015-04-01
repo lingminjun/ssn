@@ -15,8 +15,6 @@
 #define SSN_BASE64_EXTERN extern
 #endif
 
-#define ssn_base64_encode_length(len) ((len) * 4 / 3 + 4)
-
 /**
  * base64_encode - Base64 encode
  * @buff: require variable length >= (len * 4 / 3 + 4)，you can see ssn_base64_encode_length

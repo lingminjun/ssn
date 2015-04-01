@@ -11,6 +11,8 @@
 #include <string.h>
 
 
+#define ssn_base64_encode_length(len) ((len) * 4 / 3 + 4)
+
 static const unsigned char ssn_base64_table[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 /**

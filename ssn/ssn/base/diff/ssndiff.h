@@ -17,6 +17,9 @@
 #define SSN_DIFF_EXTERN extern
 #endif
 
+#ifndef ssn_diff_change_type_defined
+#define ssn_diff_change_type_defined
+
 /**
  @brief diff比较时对别元素的变化
  */
@@ -28,6 +31,8 @@ typedef enum _ssn_diff_change_type {
 
 #define ssn_diff_equal   1  //<! 元素相等
 #define ssn_diff_unequal 0  //<! 元素不相等
+
+#endif
 
 /**
  @brief 元素是否相回调
