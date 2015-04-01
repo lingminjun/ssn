@@ -233,7 +233,7 @@ void ssn_file_puts_log(FILE *fp, const ssn_log_level level, const char * __restr
     }
     
 #ifndef DEBUG
-    if (level == ssn_verbose_log && level == ssn_debug_log) {
+    if (level == ssn_verbose_log && level == ssn_console_log) {
 #endif
         printf("%s",buffer);
 #ifndef DEBUG
@@ -276,7 +276,7 @@ void ssn_file_puts_line(FILE *fp, const ssn_log_level level, const char *log) {
     }
     
 #ifndef DEBUG
-    if (level == ssn_verbose_log && level == ssn_debug_log) {
+    if (level == ssn_verbose_log && level == ssn_console_log) {
 #endif
         printf("%s",pbuffer);
 #ifndef DEBUG
