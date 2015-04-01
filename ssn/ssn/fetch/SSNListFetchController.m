@@ -282,6 +282,17 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  @param indexPaths  对应的位置新增，实际位置并不取决于它
  */
 - (void)insertDatasAtIndexPaths:(NSArray *)indexPaths {
+    
+    if ([indexPaths count] == 0) {
+        return ;
+    }
+    
+    //FIX ME 压榨记录需要标记
+    if (_synchronFlag > 0) {
+        NSLog(@"忽略插入！说明此时数据源并没有稳定");
+        return ;
+    }
+    
     if ([_dataSource respondsToSelector:@selector(ssnlist_controller:insertDatasWithIndexPaths:result:userInfo:completion:)]) {
         
         NSArray *sections = [_list copy];
@@ -388,6 +399,16 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  @param indexPaths 位置
  */
 - (void)updateDatasAtIndexPaths:(NSArray *)indexPaths {
+    
+    if ([indexPaths count] == 0) {
+        return ;
+    }
+    
+    if (_synchronFlag > 0) {
+        NSLog(@"忽略更新！说明此时数据源并没有稳定");
+        return ;
+    }
+    
     if ([_dataSource respondsToSelector:@selector(ssnlist_controller:updateDatasWithIndexPaths:result:userInfo:completion:)]) {
         
         NSArray *sections = [_list copy];
@@ -728,6 +749,7 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
             遗留问题：前几次的update数据可能被遗漏更新
          */
         if (_synchronFlag > 0) {
+            NSLog(@"说明还有更新不断reload ");
             return ;
         }
         
@@ -790,6 +812,7 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
 
         
         [_list setArray:sections];
+        
         
         [_delegate ssnlist_controllerDidChange:self];
         
