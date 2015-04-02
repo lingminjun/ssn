@@ -111,17 +111,6 @@
  */
 - (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify;
 
-@optional
-/**
- *  对原始数据加工，转换成view model，若不实现此方法，则直接采用原始数据
- *
- *  @param configurator 配置器
- *  @param controller 当前fetch controller
- *  @param results    原始数据集
- *
- *  @return 返回加工后的数据集 @see SSNCellModel
- */
-- (NSArray *)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller constructObjectsFromResults:(NSArray *)results;
 
 @end
 

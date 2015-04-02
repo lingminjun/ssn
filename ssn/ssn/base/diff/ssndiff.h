@@ -66,6 +66,6 @@ typedef void (*ssn_diff_results_iterator)(void *from, void *to, const size_t f_i
  @param iterator 遍历结果回调
  @param context 上下文
  */
-void ssn_diff(void *from, void *to, const size_t f_size, const size_t t_size, ssn_diff_element_is_equal equal, ssn_diff_results_iterator iterator, void *context);
+SSN_DIFF_EXTERN void ssn_diff(void *from, void *to, const size_t f_size, const size_t t_size, ssn_diff_element_is_equal equal, ssn_diff_results_iterator iterator, void *context);
 
 #endif /* defined(__ssn__ssn_diff__) */

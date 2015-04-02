@@ -21,6 +21,10 @@
 #define ssn_log(s, ...) ((void)0)
 #endif
 
+
+FOUNDATION_EXTERN long long ssn_sec_timestamp();//当前时间戳（utc时间 秒）
+FOUNDATION_EXTERN long long ssn_usec_timestamp();//当前时间戳（utc时间 毫秒）
+
 #if DEBUG
 #define ssn_time_track_begin(t)                                                                                        \
     struct timeval t##_b_tv;                                                                                           \
@@ -75,6 +79,7 @@ FOUNDATION_EXTERN struct timespec ssn_orwl_gettime(void);
 #import "NSNotificationCenter+SSN.h"
 #import "NSObject+SSNBlock.h"
 #import "NSThread+SSN.h"
+#import "NSRunLoop+SSN.h"
 #import "NSURL+SSN.h"
 
 #import "SSNCuteSerialQueue.h"

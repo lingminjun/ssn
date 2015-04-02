@@ -326,16 +326,16 @@ typedef NS_ENUM(NSUInteger, SSNListFetchedChangeType){
 - (void)ssnlist_controller:(SSNListFetchController *)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify;
 
 /**
- *  选择位置插入数据回调，当调用insertDatasAtIndexPaths:方法时触发
- *  注意：在加载完数据后请务必调用completion通知controller来反馈结果集变化
+ *  选择位置插入数据回调，当调用insertDatasAtIndexPath:方法时触发
  *
  *  @param controller 当前fetch controller
- *  @param indexPaths 指定位置插入数据（注意，仅仅提供参考，实际位置可能会被框架重新排序）
+ *  @param indexPath 指定位置插入数据（注意，位置）
  *  @param results    原始数据集section lists
  *  @param userInfo   其他参数
  *  @param completion 回调结果 changes发生变化的原始数据集，finished表示此次加载是否正常完结，若错误则需要设置为NO
+ *  @return completion 回调结果 changes发生变化的原始数据集，finished表示此次加载是否正常完结，若错误则需要设置为NO
  */
-- (void)ssnlist_controller:(SSNListFetchController *)controller insertDatasWithIndexPaths:(NSArray *)indexPaths result:(NSArray *)results userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *changes, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion;
+- (NSArray *)ssnlist_controller:(SSNListFetchController *)controller insertDatasWithIndexPath:(NSIndexPath *)indexPath;
 
 /**
  *  局部数据更新回调，当调用updateDatasAtIndexPaths:方法时触发
@@ -349,14 +349,5 @@ typedef NS_ENUM(NSUInteger, SSNListFetchedChangeType){
  */
 - (void)ssnlist_controller:(SSNListFetchController *)controller updateDatasWithIndexPaths:(NSArray *)indexPaths result:(NSArray *)results userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *changes, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion;
 
-/**
- *  对原始数据加工，转换成view model，若不实现此方法，则直接采用原始数据
- *
- *  @param controller 当前fetch controller
- *  @param results    原始数据集
- *
- *  @return 返回加工后的数据集 @see SSNCellModel
- */
-- (NSArray *)ssnlist_controller:(SSNListFetchController *)controller constructObjectsFromResults:(NSArray *)results;
 
 @end

@@ -11,6 +11,7 @@
 #import "SSNVMCellItem.h"
 #import "ssndiff.h"
 #import "NSObject+SSNBlock.h"
+#import "NSRunLoop+SSN.h"
 
 #if DEBUG
 #define ssn_fetch_log(s, ...) printf(s, ##__VA_ARGS__)
@@ -58,6 +59,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 
 @property (nonatomic) BOOL dataSourceRespondSectionDidLoad;
 
+@property (nonatomic,strong) NSRunLoop *mainRunLoop;
 @property (nonatomic) BOOL synchronFlag;//用于回调同步
 
 @end
@@ -78,6 +80,16 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 - (instancetype)init
 {
     return [self initWithGrouping:NO];
+}
+
+- (NSRunLoop *)mainRunLoop {
+    if (_mainRunLoop) {
+        return _mainRunLoop;
+    }
+    
+    _mainRunLoop = [NSRunLoop mainRunLoop];
+    
+    return _mainRunLoop;
 }
 
 - (void)setDataSource:(id<SSNListFetchControllerDataSource>)dataSource {
@@ -134,10 +146,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         self.hasMore = hasMore;
         self.userInfo = userInfo;
         
-        //数据转换
-        NSArray *models = [self convertModelsFromDatas:results];
-        
-        [self resetResults:models isMerge:(offset != 0)];
+        [self resetResults:results isMerge:(offset != 0)];
     };
     
     [self.dataSource ssnlist_controller:self loadDataWithOffset:offset limit:limit userInfo:_userInfo completion:block];
@@ -287,13 +296,17 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         return ;
     }
     
-    //FIX ME 压榨记录需要标记
-    if (_synchronFlag > 0) {
-        NSLog(@"忽略插入！说明此时数据源并没有稳定");
+    NSRunLoop *runloop = self.mainRunLoop;
+    if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
+        NSLog(@"fetctController:%p 忽略插入！说明此时数据源并没有稳定",self);
         return ;
     }
     
+    /*
     if ([_dataSource respondsToSelector:@selector(ssnlist_controller:insertDatasWithIndexPaths:result:userInfo:completion:)]) {
+        
+        int64_t flag = [runloop ssn_push_flag_for_tag:(NSUInteger)self];
+        NSLog(@"在fetctController:%p 中插入数据 标记flag = %lld",self,flag);
         
         NSArray *sections = [_list copy];
         
@@ -305,10 +318,14 @@ const NSUInteger SSNListFetchedChangeNan = 0;
                 return ;
             }
             
-            self.userInfo = userInfo;
+            int64_t endFlag = [runloop ssn_top_flag_for_tag:(NSUInteger)self];
+            if (endFlag != flag) {
+                NSLog(@"在fetctController:%p 中插入数据 结果返回时已经被更新，认定为丢弃，因为其他reload操作会更新数据",self);
+                return ;
+            }
             
-            //数据转换
-            NSArray *new_models = [self convertModelsFromDatas:changes];
+            self.userInfo = userInfo;
+    
             
             NSMutableArray *models = [NSMutableArray array];
             
@@ -316,7 +333,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
                 [models addObject:[section objects]];
             }];
             
-            [new_models enumerateObjectsUsingBlock:^(id<SSNCellModel> obj, NSUInteger idx, BOOL *stop) {
+            [changes enumerateObjectsUsingBlock:^(id<SSNCellModel> obj, NSUInteger idx, BOOL *stop) {
                 if (![models containsObject:obj]) {
                     [models addObject:obj];
                 }
@@ -328,6 +345,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         
         [self.dataSource ssnlist_controller:self insertDatasWithIndexPaths:indexPaths result:sections userInfo:_userInfo completion:block];
     }
+     */
 }
 
 /**
@@ -336,6 +354,19 @@ const NSUInteger SSNListFetchedChangeNan = 0;
  *  @param indexPaths NSIndexPaths数据所在位置
  */
 - (void)deleteDatasAtIndexPaths:(NSArray *)indexPaths {
+    if ([indexPaths count] == 0) {
+        return ;
+    }
+    
+    NSRunLoop *runloop = self.mainRunLoop;
+    if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
+        NSLog(@"fetctController:%p 忽略删除！说明此时数据源并没有稳定",self);
+        return ;
+    }
+    
+    int64_t flag = [runloop ssn_push_flag_for_tag:(NSUInteger)self];
+    NSLog(@"在fetctController:%p 删除数据 标记flag = %lld",self,flag);
+    
     NSMutableIndexSet *changeSectionsSet = [NSMutableIndexSet indexSet];
     NSMutableDictionary *delIndexs = [NSMutableDictionary dictionaryWithCapacity:1];
     [indexPaths enumerateObjectsUsingBlock:^(NSIndexPath *path, NSUInteger idx, BOOL *stop) {
@@ -404,12 +435,16 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         return ;
     }
     
-    if (_synchronFlag > 0) {
-        NSLog(@"忽略更新！说明此时数据源并没有稳定");
+    NSRunLoop *runloop = self.mainRunLoop;
+    if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
+        NSLog(@"fetctController:%p 更新！说明此时数据源并没有稳定",self);
         return ;
     }
     
     if ([_dataSource respondsToSelector:@selector(ssnlist_controller:updateDatasWithIndexPaths:result:userInfo:completion:)]) {
+        
+        int64_t flag = [runloop ssn_push_flag_for_tag:(NSUInteger)self];
+        NSLog(@"在fetctController:%p 更新数据 标记flag = %lld",self,flag);
         
         NSArray *sections = [_list copy];
         
@@ -421,10 +456,13 @@ const NSUInteger SSNListFetchedChangeNan = 0;
                 return ;
             }
             
-            self.userInfo = userInfo;
+            int64_t endFlag = [runloop ssn_top_flag_for_tag:(NSUInteger)self];
+            if (endFlag != flag) {
+                NSLog(@"在fetctController:%p 更新数据 结果返回时已经被更新，认定为丢弃，因为其他reload操作会更新数据",self);
+                return ;
+            }
             
-            //数据转换
-            NSArray *new_models = [self convertModelsFromDatas:changes];
+            self.userInfo = userInfo;
             
             NSMutableArray *models = [NSMutableArray array];
             
@@ -432,7 +470,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
                 [models addObjectsFromArray:[section objects]];
             }];
             
-            [new_models enumerateObjectsUsingBlock:^(id<SSNCellModel> obj, NSUInteger idx, BOOL *stop) {
+            [changes enumerateObjectsUsingBlock:^(id<SSNCellModel> obj, NSUInteger idx, BOOL *stop) {
                 if (![models containsObject:obj]) {
                     [models addObject:obj];
                 }
@@ -583,28 +621,6 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
     }
 }
 
-- (NSArray *)convertModelsFromDatas:(NSArray *)datas {
-    NSMutableArray *array = [NSMutableArray array];
-    
-    @autoreleasepool {
-        
-        if ([datas count]) {
-            //数据是否需要转化
-            if ([self.dataSource respondsToSelector:@selector(ssnlist_controller:constructObjectsFromResults:)]) {
-                NSArray *list = [self.dataSource ssnlist_controller:self constructObjectsFromResults:datas];
-                if (list) {
-                    [array setArray:list];
-                }
-            }
-            else {
-                [array setArray:datas];
-            }
-        }
-        
-    }
-    
-    return array;
-}
 
 - (NSArray *)checkMandatorySortingModels:(NSArray *)models {
     if (_isMandatorySorting) {
@@ -629,8 +645,6 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
 
 - (void)resetResults:(NSArray *)models isMerge:(BOOL)isMerge {
     @autoreleasepool {
-        
-        _synchronFlag++;
         
         NSArray *news = nil;
 
@@ -743,13 +757,19 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
 
 - (void)processReset:(NSArray *)sections sectionToValues:(NSDictionary *)sectionToValues obeyChanges:(NSArray *)changes {
     dispatch_block_t block = ^{
-        _synchronFlag--;
+        
+        NSRunLoop *runloop = self.mainRunLoop;
+        
+        int64_t flag = [runloop ssn_top_flag_for_tag:(NSUInteger)self];
+        if (flag) {
+            NSLog(@"fetctController:%p 准备更新到界面",self);
+        }
         
         /** 说明结果集被反复修改，此时仅仅更新最后一次，
             遗留问题：前几次的update数据可能被遗漏更新
          */
-        if (_synchronFlag > 0) {
-            NSLog(@"说明还有更新不断reload ");
+        if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
+            NSLog(@"fetctController:%p 说明后面还有更新的数据",self);
             return ;
         }
         
@@ -812,7 +832,7 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
 
         
         [_list setArray:sections];
-        
+        NSLog(@"fetctController:%p 数据最后被更新",self);
         
         [_delegate ssnlist_controllerDidChange:self];
         

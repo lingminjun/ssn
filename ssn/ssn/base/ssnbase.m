@@ -32,3 +32,16 @@ struct timespec ssn_orwl_gettime(void)
     t.tv_nsec = diff - (t.tv_sec * ORWL_GIGA);
     return t;
 }
+
+
+long long ssn_sec_timestamp() {
+    struct timeval t;                                                                                           \
+    gettimeofday(&t, NULL);
+    return t.tv_sec;
+}
+
+long long ssn_usec_timestamp() {
+    struct timeval t;                                                                                           \
+    gettimeofday(&t, NULL);
+    return t.tv_sec * USEC_PER_SEC + t.tv_usec;
+}

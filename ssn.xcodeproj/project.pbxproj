@@ -25,6 +25,7 @@
 		533164F91A8B41DF007223DC /* ssn_pull_refresh_white_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 533164EB1A8B41DF007223DC /* ssn_pull_refresh_white_arrow.png */; };
 		533164FA1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533164EC1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png */; };
 		533164FD1A8B4375007223DC /* SSNPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 533164FC1A8B4375007223DC /* SSNPullRefreshView.m */; };
+		533365F21ACBBBC800DC4D0F /* NSRunLoop+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 533365F11ACBBBC800DC4D0F /* NSRunLoop+SSN.m */; };
 		5334C0E01ACA3DD900094768 /* NSNotificationCenter+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */; };
 		5334C0ED1ACA7F4400094768 /* userdefaults.json in Resources */ = {isa = PBXBuildFile; fileRef = 5334C0EC1ACA7F4400094768 /* userdefaults.json */; };
 		5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5335EBE41A83A77D007B9DC9 /* SSNToast.m */; };
@@ -290,6 +291,8 @@
 		533164EC1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ssn_pull_refresh_white_arrow@2x.png"; sourceTree = "<group>"; };
 		533164FB1A8B4375007223DC /* SSNPullRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNPullRefreshView.h; sourceTree = "<group>"; };
 		533164FC1A8B4375007223DC /* SSNPullRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNPullRefreshView.m; sourceTree = "<group>"; };
+		533365F01ACBBBC800DC4D0F /* NSRunLoop+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRunLoop+SSN.h"; sourceTree = "<group>"; };
+		533365F11ACBBBC800DC4D0F /* NSRunLoop+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRunLoop+SSN.m"; sourceTree = "<group>"; };
 		5334C0DE1ACA3DD900094768 /* NSNotificationCenter+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+SSN.h"; sourceTree = "<group>"; };
 		5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+SSN.m"; sourceTree = "<group>"; };
 		5334C0EC1ACA7F4400094768 /* userdefaults.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = userdefaults.json; sourceTree = "<group>"; };
@@ -861,6 +864,8 @@
 				53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */,
 				5334C0DE1ACA3DD900094768 /* NSNotificationCenter+SSN.h */,
 				5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */,
+				533365F01ACBBBC800DC4D0F /* NSRunLoop+SSN.h */,
+				533365F11ACBBBC800DC4D0F /* NSRunLoop+SSN.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -1225,6 +1230,7 @@
 				53D163DC191A629C00AD4C81 /* Sources */,
 				53D163DD191A629C00AD4C81 /* Frameworks */,
 				53D163DE191A629C00AD4C81 /* Resources */,
+				533365EE1ACBA74800DC4D0F /* Run Script Update Build Number */,
 			);
 			buildRules = (
 			);
@@ -1338,6 +1344,23 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		533365EE1ACBA74800DC4D0F /* Run Script Update Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script Update Build Number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# get build number from git\n#exit 0;\nGIT_COMMIT_COUNT=`git rev-list HEAD | wc -l | sed -e 's/ *//g' | xargs -n1 printf %d`\nINFOPLIST_TARGET=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion ${GIT_COMMIT_COUNT}\" \"${INFOPLIST_TARGET}\"\nplutil -convert binary1 \"${INFOPLIST_TARGET}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		53D163DC191A629C00AD4C81 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1348,6 +1371,7 @@
 				53BC53221A485E6E0044C238 /* SSNDBColumn.m in Sources */,
 				53CAACFF1AC6F31B0012742A /* NSURL+SSN.m in Sources */,
 				53CAAD021AC78C410012742A /* UIViewController+SSNCategory.m in Sources */,
+				533365F21ACBBBC800DC4D0F /* NSRunLoop+SSN.m in Sources */,
 				53BC533C1A485E6E0044C238 /* lock.cpp in Sources */,
 				5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */,
 				5397B5D41A6FA10700CD6AFC /* SSNCrashReport.m in Sources */,

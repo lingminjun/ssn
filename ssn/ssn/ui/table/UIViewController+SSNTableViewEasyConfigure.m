@@ -459,20 +459,6 @@
     }
 }
 
-
-- (NSArray *)ssnlist_controller:(SSNListFetchController *)controller constructObjectsFromResults:(NSArray *)results
-{
-    if (controller != self.listFetchController) {
-        return results;
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:constructObjectsFromResults:)]) {
-        return [self.delegate ssn_configurator:self controller:controller constructObjectsFromResults:results];
-    }
-    
-    return results;
-}
-
 - (void)ssnlist_controller:(SSNListFetchController *)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify {
     if (controller != self.listFetchController) {
         return ;
