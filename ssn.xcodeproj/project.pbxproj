@@ -71,6 +71,8 @@
 		53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B311AB53C2200381C3C /* SSNSeqGen.m */; };
 		53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B341AB5D1C300381C3C /* NSThread+SSN.m */; };
 		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
+		538706711ACD762A001F3880 /* SSNFileDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 538706701ACD762A001F3880 /* SSNFileDownloader.m */; };
+		538706741ACD7F8A001F3880 /* SSNFileDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 538706731ACD7F8A001F3880 /* SSNFileDownloadOperation.m */; };
 		5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C5961A0498290072C3F9 /* DMProfileViewController.m */; };
 		5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C59A1A0499B90072C3F9 /* DMChatViewController.m */; };
 		538E3835199869430061692E /* DMTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3834199869430061692E /* DMTabViewController.m */; };
@@ -350,6 +352,10 @@
 		53620B341AB5D1C300381C3C /* NSThread+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+SSN.m"; sourceTree = "<group>"; };
 		537064961A2A032700287199 /* TSUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUser.h; sourceTree = "<group>"; };
 		537064971A2A032700287199 /* TSUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUser.m; sourceTree = "<group>"; };
+		5387066F1ACD762A001F3880 /* SSNFileDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNFileDownloader.h; sourceTree = "<group>"; };
+		538706701ACD762A001F3880 /* SSNFileDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNFileDownloader.m; sourceTree = "<group>"; };
+		538706721ACD7F8A001F3880 /* SSNFileDownloadOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNFileDownloadOperation.h; sourceTree = "<group>"; };
+		538706731ACD7F8A001F3880 /* SSNFileDownloadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNFileDownloadOperation.m; sourceTree = "<group>"; };
 		5388C5951A0498290072C3F9 /* DMProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProfileViewController.h; sourceTree = "<group>"; };
 		5388C5961A0498290072C3F9 /* DMProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProfileViewController.m; sourceTree = "<group>"; };
 		5388C5991A0499B90072C3F9 /* DMChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMChatViewController.h; sourceTree = "<group>"; };
@@ -674,6 +680,17 @@
 				534CA1641A6CAC9500CB55B3 /* SSNJob.m */,
 			);
 			path = job;
+			sourceTree = "<group>";
+		};
+		5387066E1ACD7598001F3880 /* downloader */ = {
+			isa = PBXGroup;
+			children = (
+				5387066F1ACD762A001F3880 /* SSNFileDownloader.h */,
+				538706701ACD762A001F3880 /* SSNFileDownloader.m */,
+				538706721ACD7F8A001F3880 /* SSNFileDownloadOperation.h */,
+				538706731ACD7F8A001F3880 /* SSNFileDownloadOperation.m */,
+			);
+			path = downloader;
 			sourceTree = "<group>";
 		};
 		5388C5941A0497FF0072C3F9 /* profile */ = {
@@ -1180,6 +1197,7 @@
 		53D1641B191A66B500AD4C81 /* ssn */ = {
 			isa = PBXGroup;
 			children = (
+				5387066E1ACD7598001F3880 /* downloader */,
 				53A6E52A1AB2ED2C003BFBCF /* rpc */,
 				5339FC7F1AA551AA0000F6B9 /* fetch */,
 				5397B5D11A6FA0D300CD6AFC /* crash */,
@@ -1425,12 +1443,14 @@
 				53BC53021A485E6E0044C238 /* SSNLogger.m in Sources */,
 				53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */,
 				538E384A19986A560061692E /* DMSessionViewController.m in Sources */,
+				538706711ACD762A001F3880 /* SSNFileDownloader.m in Sources */,
 				53BC53381A485E6E0044C238 /* buffer.cpp in Sources */,
 				5339FC7D1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m in Sources */,
 				53D9ED871A8DE20900CAFADE /* UITableView+SSNPullRefresh.m in Sources */,
 				53BC53321A485E6E0044C238 /* SSNHostingTask.m in Sources */,
 				53BC534A1A485E6E0044C238 /* SSNVC+Router.m in Sources */,
 				53CAACFC1AC6BBA50012742A /* UIViewController+SSNToast.m in Sources */,
+				538706741ACD7F8A001F3880 /* SSNFileDownloadOperation.m in Sources */,
 				53C84C781A5BBE88008AB7C8 /* SSNUISiteLayout.m in Sources */,
 				53BC53511A486DA30044C238 /* ssnbase64.c in Sources */,
 				53BC53121A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
