@@ -38,6 +38,28 @@
 
 #import "SSNRouter+Nice.h"
 #import "DMSignEngine.h"
+#import "ssnbase.h"
+
+//@interface DDObj : NSObject<SSNDBFetchObject>
+//
+//@property (nonatomic,copy) NSString *name;
+//@property (nonatomic) int age;
+//
+//@end
+//
+//@implementation DDObj
+//
+//@end
+//
+//@interface DDDObj : DDObj
+//
+//@property (nonatomic,copy) NSString *yyy;
+//
+//@end
+//
+//@implementation DDDObj
+//
+//@end
 
 @interface AppDelegate ()<SSNRouterDelegate>
 @end
@@ -98,6 +120,18 @@
         [alert show];
     }
     
+//    DDDObj *obj = [[DDDObj alloc] init];
+//    obj.name = @"dddddd";
+//    obj.age = 11;
+//    obj.ssn_dbfetch_rowid = 10;
+//    obj.yyy = @"hhhh";
+//    
+//    DDDObj *cp = [obj ssn_copy];
+//    NSLog(@"%@",cp.name);
+//    NSLog(@"%i",cp.age);
+//    NSLog(@"%lld",cp.ssn_dbfetch_rowid);
+//    NSLog(@"%@",cp.yyy);
+//    
     return YES;
 }
 

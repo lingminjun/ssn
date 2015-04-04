@@ -70,13 +70,12 @@ FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
 - (instancetype)initWithGrouping:(BOOL)grouping;
 
 /**
- *  更新所有数据，默认offset被重置为0，正在加载时忽略调用
+ *  更新所有数据，默认offset被重置为0，正在加载时忽略调用，数据加载是一个异步过程
  */
 - (void)loadData;
 
 /**
- *  加载更多数据，hasMore为NO时忽略调用，正在加载时忽略调用
- *  等价与
+ *  加载更多数据，hasMore为NO时忽略调用，正在加载时忽略调用，数据加载是一个异步过程
  */
 - (void)loadMoreData;
 
@@ -168,23 +167,29 @@ FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
 /**
  *  新增数据
  *
- *  @param indexPaths  对应的位置新增，实际位置并不取决于它
+ *  @param indexPaths  对应的位置新增数据
+ *
+ *  @return 此次操作是否被执行，如果此时fetch正在处理reload结果时，将会返回NO，表示此次都做被忽略（明智做法是reload中返回新增数据）
  */
-- (void)insertDatasAtIndexPaths:(NSArray *)indexPaths;
+- (BOOL)insertDatasAtIndexPaths:(NSArray *)indexPaths;
 
 /**
  *  删除对应位置的数据
  *
  *  @param indexPaths NSIndexPaths数据所在位置
+ *
+ *  @return 此次操作是否被执行，如果此时fetch正在处理reload结果时，将会返回NO，表示此次都做被忽略（明智做法是reload中删除数据）
  */
-- (void)deleteDatasAtIndexPaths:(NSArray *)indexPaths;
+- (BOOL)deleteDatasAtIndexPaths:(NSArray *)indexPaths;
 
 /**
- *  更新位置的数据，如果对应位置数据没有确实有变化，可能重新排序
+ *  更新位置的数据
  *
  *  @param indexPaths 位置
+ *
+ *  @return 此次操作是否被执行，如果此时fetch正在处理reload结果时，将会返回NO，表示此次都做被忽略（明智做法是reload中更新数据）
  */
-- (void)updateDatasAtIndexPaths:(NSArray *)indexPaths;
+- (BOOL)updateDatasAtIndexPaths:(NSArray *)indexPaths;
 
 #pragma mark 工厂方法
 /**

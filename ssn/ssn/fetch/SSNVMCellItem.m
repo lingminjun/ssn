@@ -68,15 +68,6 @@
 
 @implementation SSNVMCellItem
 
-@synthesize identify = _identify;
-- (NSString *)identify {
-    if (_identify) {
-        return _identify;
-    }
-    
-    _identify = [[NSString alloc] initWithFormat:@"%p",self];
-    return _identify;
-}
 
 @synthesize userInfo = _userInfo;
 - (NSMutableDictionary *)userInfo {
@@ -103,37 +94,17 @@
     return self;
 }
 
-#pragma mark over write
-- (NSUInteger)hash {
-    return [self.identify hash];
-}
-
-- (BOOL)isEqual:(SSNVMCellItem *)object {
-    if (self == object) {
-        return YES;
-    }
-    
-    if (![object isKindOfClass:[SSNVMCellItem class]]) {
-        return NO;
-    }
-    
-    if (self.identify == object.identify) {//效率更高
-        return YES;
-    }
-    
-    return [self.identify isEqualToString:object.identify];
-}
-
 - (NSComparisonResult)ssn_compare:(SSNVMCellItem *)model {
-    if (self == model) {
-        return NSOrderedSame;
+    //默认地址比较
+    if (self > model) {
+        return NSOrderedDescending;
     }
-    
-    if (![model isKindOfClass:[SSNVMCellItem class]]) {
+    else if (self < model) {
         return NSOrderedAscending;
     }
-    
-    return [self.identify compare:model.identify];
+    else {
+        return NSOrderedSame;
+    }
 }
 
 @end

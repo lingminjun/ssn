@@ -46,7 +46,9 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
     @autoreleasepool {
         //递归寻找
         Class p_cls = clazz;
-        while (p_cls != nil && (p_cls != [NSObject class] && p_cls != [NSProxy class])) {
+        Class ns_object_calzz = [NSObject class];
+        Class ns_proxy_clazz = [NSProxy class];
+        while (p_cls != nil && (p_cls != ns_object_calzz && p_cls != ns_proxy_clazz)) {
             unsigned int outCount;
             objc_property_t *c_properties = class_copyPropertyList(p_cls, &outCount);
             
@@ -61,7 +63,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
                     }
                     
                     char *typeEncoding = property_copyAttributeValue(property, "T");
-                    if (strlen(typeEncoding) == 0) {
+                    if (typeEncoding == NULL || strlen(typeEncoding) == 0) {
                         if (typeEncoding) {
                             free(typeEncoding);
                         }

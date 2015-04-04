@@ -18,20 +18,6 @@
 @protocol SSNCellModel <NSObject>
 
 /**
- *  元素的hash值
- */
-@property (readonly) NSUInteger hash;
-
-/**
- *  数据
- *
- *  @param model 另一个数据
- *
- *  @return 返回是否相等
- */
-- (BOOL)isEqual:(id<SSNCellModel>)model;
-
-/**
  *  对应的cell 类型
  */
 @property (nonatomic,strong,readonly) Class<SSNVMCellProtocol> cellClass;
@@ -104,11 +90,6 @@
  *  table view cell view model
  */
 @interface SSNVMCellItem : NSObject<SSNCellModel>
-
-/**
- *  id，isEqaul将比较idendify
- */
-@property (nonatomic,copy) NSString *identify;
 
 /**
  *  业务对象，如果支持copy，请尽量采用copy方式

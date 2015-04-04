@@ -60,7 +60,12 @@ const NSUInteger SSNListFetchedChangeNan = 0;
 @property (nonatomic) BOOL dataSourceRespondSectionDidLoad;
 
 @property (nonatomic,strong) NSRunLoop *mainRunLoop;
-@property (nonatomic) BOOL synchronFlag;//用于回调同步
+
+//记录有更新的indexs （现阶段不需要，因为数据并没有update状态）
+@property (nonatomic,strong) NSMutableSet *changeIndexPaths;
+//@property (nonatomic,strong) NSMutableSet *sectionChangeIndexs;
+//@property (nonatomic,strong) NSMutableDictionary *objectChangeIndexs;
+
 
 @end
 
@@ -646,6 +651,10 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
 - (void)resetResults:(NSArray *)models isMerge:(BOOL)isMerge {
     @autoreleasepool {
         
+        NSRunLoop *runloop = self.mainRunLoop;
+        [runloop ssn_push_flag_for_tag:(NSUInteger)self];
+        NSLog(@"fetctController:%p reload！标记一下，此时结果集仍然是老结果集",self);
+        
         NSArray *news = nil;
 
         NSArray *olds = [NSArray arrayWithArray:_list];
@@ -760,7 +769,7 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
         
         NSRunLoop *runloop = self.mainRunLoop;
         
-        int64_t flag = [runloop ssn_top_flag_for_tag:(NSUInteger)self];
+        int64_t flag = [runloop ssn_pop_flag_for_tag:(NSUInteger)self];
         if (flag) {
             NSLog(@"fetctController:%p 准备更新到界面",self);
         }
