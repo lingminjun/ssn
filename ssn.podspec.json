@@ -83,6 +83,12 @@
     }
     ,
     {
+      "name": "downloader",
+      "source_files": "ssn/ssn/downloader/*.{h,m}",
+      "requires_arc": true
+    }
+    ,
+    {
       "name": "rpc",
       "source_files": "ssn/ssn/rpc/*.{h,m}",
       "requires_arc": true
