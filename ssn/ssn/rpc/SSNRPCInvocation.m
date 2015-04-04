@@ -109,8 +109,14 @@ NSString *SSNRPCErrorDomain = @"SSNRPC";
     
     NSUInteger seq = [SSNRPCManager.gen seq];
     
+    /**
+     *  finish变量暴露在多个线程中，但是此处不需要加锁
+     *  因为finish的值仅仅会被修改一次，而且会反复check其值，
+     *  即使某一次去掉脏数据，也无关紧要，下次就能正常work
+     */
     __block BOOL finish = NO;
     __block id result = nil;
+    __block NSError *inner_error = nil;//安全考虑，参数error不能带入block中
     
     CFRunLoopRef runloop = CFRunLoopGetCurrent();
     CFRetain(runloop);
@@ -123,28 +129,34 @@ NSString *SSNRPCErrorDomain = @"SSNRPC";
         //先处理结果
         result = ret;
         
-        if (error && err) {
-            *error = err;
+        if (err) {
+            inner_error = err;
         }
         
         //停止嵌套runloop
         finish = YES;
+        
         CFRunLoopStop(runloop);
+        CFRelease(runloop);
     };
-    
+
+    //此处注意，最终block必须调用，否则会造成runloop泄漏
     [target rpc_processInvocation:self seq:seq result:block];
     
     //等待block执行
     [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return finish; } atSpellTime:time];
     
-    if (!finish) {
-        if (error) {
+    //将error赋值
+    if (error) {
+        if (!finish) {
             *error = [[NSError alloc] initWithDomain:SSNRPCErrorDomain code:408 userInfo:@{NSLocalizedFailureReasonErrorKey:@"请求超时"}];
+        }
+        else {
+            *error = inner_error;
         }
     }
     
     finish = YES;
-    CFRelease(runloop);
     
     return result;
 }

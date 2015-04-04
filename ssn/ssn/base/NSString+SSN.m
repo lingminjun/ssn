@@ -653,4 +653,13 @@ BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2) {
     return string;
 }
 
+//对date格式支持
++ (NSString *)ssn_stringWithDate:(NSDate *)date formatter:(NSString *)dateFormat {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    if ([dateFormat length]) {
+        formatter.dateFormat = dateFormat;
+    }
+    return [formatter stringFromDate:date];
+}
+
 @end

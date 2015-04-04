@@ -8,6 +8,7 @@
 
 #import "SSNFileDownloader.h"
 #import "SSNFileDownloadOperation.h"
+#import "NSThread+SSN.h"
 
 NSString *const SSNStartDownloadNotification    = @"SSNStartDownloadNotification";//开始下载，主线程回调
 NSString *const SSNStopDownloadNotification     = @"SSNStopDownloadNotification";//下载结束，主线程回调
@@ -141,6 +142,42 @@ NSString *const kCompletedCallbackKey = @"completed";
     
     return operation;
 }
+
+/**
+ *  同步下载文件
+ *
+ *  @param url           文件资源url
+ *  @param progressBlock 进度回调
+ *
+ *  @return 返回下载的文件
+ */
+- (NSData *)downloadFileWithURL:(NSURL *)url progress:(SSNFileDownloaderProgressBlock)progressBlock {
+    
+    __block BOOL finish = NO;//不需要加锁，单次修改，反复check
+    __block NSData *result = nil;
+    
+    CFRunLoopRef runloop = CFRunLoopGetCurrent();
+    CFRetain(runloop);
+    
+    SSNFileDownloaderCompletedBlock completed = ^(NSData *data, NSError *error, BOOL finished) {
+        
+        if (finished && [data length]) {
+            result = data;
+        }
+        
+        finish = YES;
+        
+        CFRunLoopStop(runloop);
+        CFRelease(runloop);
+    };
+    
+    [self downloadFileWithURL:url progress:progressBlock completed:completed];//completed必须回调，否则runloop泄漏
+    
+    [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return finish; } atSpellTime:20];
+    
+    return result;
+}
+
 
 - (void)addProgressCallback:(SSNFileDownloaderProgressBlock)progressBlock andCompletedBlock:(SSNFileDownloaderCompletedBlock)completedBlock forURL:(NSURL *)url createCallback:(SSNFileDownloaderCancelBlock)createCallback {
     // The URL will be used as the key to the callbacks dictionary so it cannot be nil. If it is nil immediately call the completed block with no image or data.

@@ -97,7 +97,7 @@ typedef void(^SSNFileDownloaderCancelBlock)(void);
 /**
  *  下载文件
  *
- *  @param url            文件所在url
+ *  @param url            文件资源url
  *  @param progressBlock  进度回调
  *  @param completedBlock 完成回调
  *
@@ -105,5 +105,15 @@ typedef void(^SSNFileDownloaderCancelBlock)(void);
  */
 - (id<SSNFileDownloaderCancelable>)downloadFileWithURL:(NSURL *)url progress:(SSNFileDownloaderProgressBlock)progressBlock completed:(SSNFileDownloaderCompletedBlock)completedBlock;
 
+
+/**
+ *  同步下载文件
+ *
+ *  @param url           文件资源url
+ *  @param progressBlock 进度回调
+ *
+ *  @return 返回下载的文件
+ */
+- (NSData *)downloadFileWithURL:(NSURL *)url progress:(SSNFileDownloaderProgressBlock)progressBlock;
 
 @end
