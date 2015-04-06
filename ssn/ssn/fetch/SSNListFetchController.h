@@ -168,28 +168,25 @@ FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
  *  新增数据
  *
  *  @param indexPaths  对应的位置新增数据
- *
- *  @return 此次操作是否被执行，如果此时fetch正在处理reload结果时，将会返回NO，表示此次都做被忽略（明智做法是reload中返回新增数据）
+ *  @param context     此次操作的一些上下文
  */
-- (BOOL)insertDatasAtIndexPaths:(NSArray *)indexPaths;
+- (void)insertDatasAtIndexPaths:(NSArray *)indexPaths withContext:(void *)context;
 
 /**
  *  删除对应位置的数据
  *
  *  @param indexPaths NSIndexPaths数据所在位置
- *
- *  @return 此次操作是否被执行，如果此时fetch正在处理reload结果时，将会返回NO，表示此次都做被忽略（明智做法是reload中删除数据）
+ *  @param context     此次操作的一些上下文
  */
-- (BOOL)deleteDatasAtIndexPaths:(NSArray *)indexPaths;
+- (void)deleteDatasAtIndexPaths:(NSArray *)indexPaths withContext:(void *)context;
 
 /**
  *  更新位置的数据
  *
  *  @param indexPaths 位置
- *
- *  @return 此次操作是否被执行，如果此时fetch正在处理reload结果时，将会返回NO，表示此次都做被忽略（明智做法是reload中更新数据）
+ *  @param context     此次操作的一些上下文
  */
-- (BOOL)updateDatasAtIndexPaths:(NSArray *)indexPaths;
+- (void)updateDatasAtIndexPaths:(NSArray *)indexPaths withContext:(void *)context;
 
 #pragma mark 工厂方法
 /**
@@ -331,28 +328,26 @@ typedef NS_ENUM(NSUInteger, SSNListFetchedChangeType){
 - (void)ssnlist_controller:(SSNListFetchController *)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify;
 
 /**
- *  选择位置插入数据回调，当调用insertDatasAtIndexPath:方法时触发
+ *  选择位置插入数据回调，当调用insertDatasAtIndexPaths:withContext:方法时触发
  *
  *  @param controller 当前fetch controller
- *  @param indexPath 指定位置插入数据（注意，位置）
- *  @param results    原始数据集section lists
- *  @param userInfo   其他参数
- *  @param completion 回调结果 changes发生变化的原始数据集，finished表示此次加载是否正常完结，若错误则需要设置为NO
- *  @return completion 回调结果 changes发生变化的原始数据集，finished表示此次加载是否正常完结，若错误则需要设置为NO
+ *  @param indexPath  对应位置
+ *  @param context    执行时上下文
+ *
+ *  @return 返回此位置要插入的数据
  */
-- (NSArray *)ssnlist_controller:(SSNListFetchController *)controller insertDatasWithIndexPath:(NSIndexPath *)indexPath;
+- (id<SSNCellModel>)ssnlist_controller:(SSNListFetchController *)controller insertDataWithIndexPath:(NSIndexPath *)indexPath context:(void *)context;
 
 /**
- *  局部数据更新回调，当调用updateDatasAtIndexPaths:方法时触发
- *  注意：在加载完数据后请务必调用completion通知controller来反馈结果集变化
+ *  根据位置更新数据回调，当调用updateDatasAtIndexPaths:withContext:方法时触发
  *
  *  @param controller 当前fetch controller
- *  @param indexPaths 指定位置更新数据（注意，仅仅提供参考，实际位置可能会被框架重新排序）
- *  @param results    原始数据集 section lists
- *  @param userInfo   其他参数
- *  @param completion 回调结果 changes发生变化的原始数据集，finished表示此次加载是否正常完结，若错误则需要设置为NO
+ *  @param model      原来位置上的数据
+ *  @param indexPath  对应的位置
+ *  @param context    执行时上下文
+ *
+ *  @return 返回新的数据
  */
-- (void)ssnlist_controller:(SSNListFetchController *)controller updateDatasWithIndexPaths:(NSArray *)indexPaths result:(NSArray *)results userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *changes, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion;
-
+- (id<SSNCellModel>)ssnlist_controller:(SSNListFetchController *)controller updateDataWithOriginalData:(id<SSNCellModel>)model indexPath:(NSIndexPath *)indexPath context:(void *)context;
 
 @end

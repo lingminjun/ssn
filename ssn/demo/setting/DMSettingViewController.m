@@ -208,6 +208,12 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         
         [ary addObject:[DMSettingCellItem itemWithTitle:@"xxxxxxxx"]];
         [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"========="]];
+        [ary addObject:[DMSectionCellItem item]];
+        
+        [ary addObject:[DMSettingCellItem itemWithTitle:@"===ddd==="]];
+        [ary addObject:[DMSectionCellItem item]];
     }
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -222,17 +228,37 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     else if ([model.title isEqualToString:@"UILayout"]) {
         [self openRelativePath:@"../layout" query:nil];
     }
-    else {
-//        tableView.editing = YES;
-        NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
-        [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
+    else if ([model.title isEqualToString:@"xxxxxxxx"]) {
+        [self.ssn_tableViewConfigurator.listFetchController updateDatasAtIndexPaths:@[indexPath] withContext:nil];
     }
+    else if ([model.title isEqualToString:@"========="]) {
+        [self.ssn_tableViewConfigurator.listFetchController insertDatasAtIndexPaths:@[indexPath] withContext:nil];
+    }
+    else {
+        NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
+        [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath] withContext:nil];
+    }
+}
+
+- (id<SSNCellModel>)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller insertDataWithIndexPath:(NSIndexPath *)indexPath context:(void *)context {
+    return nil;
+}
+
+- (id<SSNCellModel>)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller updateDataWithOriginalData:(id<SSNCellModel>)model indexPath:(NSIndexPath *)indexPath context:(void *)context {
+    DMSettingCellItem *item = (DMSettingCellItem *)model;
+    if ([item.title isEqualToString:@"xxxxxxxx"]) {
+        item.title = @"xxx===xxxx";
+    }
+    else {
+        item.title = @"xxxxxxxx";
+    }
+    return item;
 }
 
 - (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
-    [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
+    [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath] withContext:nil];
     
 }
 @end

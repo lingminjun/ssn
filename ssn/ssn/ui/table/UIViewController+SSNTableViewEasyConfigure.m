@@ -469,25 +469,29 @@
     }
 }
 
-
-- (void)ssnlist_controller:(SSNListFetchController *)controller insertDatasWithIndexPaths:(NSArray *)indexPaths result:(NSArray *)results userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion {
+- (id<SSNCellModel>)ssnlist_controller:(SSNListFetchController *)controller insertDataWithIndexPath:(NSIndexPath *)indexPath context:(void *)context {
     if (controller != self.listFetchController) {
-        return ;
+        return nil;
     }
     
-    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:insertDatasWithIndexPaths:sections:userInfo:completion:)]) {
-        [self.delegate ssn_configurator:self controller:controller insertDatasWithIndexPaths:indexPaths sections:results userInfo:userInfo completion:completion];
+    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:insertDataWithIndexPath:context:)]) {
+        return [self.delegate ssn_configurator:self controller:controller insertDataWithIndexPath:indexPath context:context];
     }
+
+    return nil;
 }
 
-- (void)ssnlist_controller:(SSNListFetchController *)controller updateDatasWithIndexPaths:(NSArray *)indexPaths result:(NSArray *)results userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion {
+- (id<SSNCellModel>)ssnlist_controller:(SSNListFetchController *)controller updateDataWithOriginalData:(id<SSNCellModel>)model indexPath:(NSIndexPath *)indexPath context:(void *)context {
     if (controller != self.listFetchController) {
-        return ;
+        return model;
     }
     
-    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:updateDatasWithIndexPaths:sections:userInfo:completion:)]) {
-        [self.delegate ssn_configurator:self controller:controller updateDatasWithIndexPaths:indexPaths sections:results userInfo:userInfo completion:completion];
+    if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:updateDataWithOriginalData:indexPath:context:)]) {
+        return [self.delegate ssn_configurator:self controller:controller updateDataWithOriginalData:model indexPath:indexPath context:context];
     }
+    
+    return nil;
+
 }
 
 @end
