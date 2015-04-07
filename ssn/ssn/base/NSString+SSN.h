@@ -119,6 +119,8 @@ FOUNDATION_EXTERN BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2);
 //对Predicate支持,顺序按照keys的顺序，默认使用逗号分隔
 + (NSString *)predicateStringKeyAndValues:(NSDictionary *)keyAndValues componentsJoinedByString:(NSString *)separator;
 
+//比较应用程序版本大小如：1.0.0 和 1.2.0
+- (NSComparisonResult)ssn_compareAppVersion:(NSString *)version;
 
 //对date格式支持
 + (NSString *)ssn_stringWithDate:(NSDate *)date formatter:(NSString *)dateFormat;

@@ -653,6 +653,44 @@ BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2) {
     return string;
 }
 
+//比较应用程序版本大小如：1.0.0 和 1.2.0
+- (NSComparisonResult)ssn_compareAppVersion:(NSString *)version {
+    NSArray *selfComps = [self componentsSeparatedByString:@"."];
+    NSArray *targComps = [version componentsSeparatedByString:@"."];
+    
+    NSUInteger self_count = [selfComps count];
+    NSUInteger targ_count = [targComps count];
+    
+    if (self_count > 0 && targ_count > 0) {
+        __block NSComparisonResult rt = NSOrderedSame;
+        [selfComps enumerateObjectsUsingBlock:^(NSString *v, NSUInteger idx, BOOL *stop) {
+            if (idx >= targ_count) {
+                rt = NSOrderedDescending;
+                *stop = YES;
+                return ;
+            }
+            
+            NSString *tv = [targComps objectAtIndex:idx];
+            
+            rt = [v compare:tv];
+            if (rt != NSOrderedSame) {
+                *stop = YES;
+                return ;
+            }
+        }];
+        
+        return rt;
+    }
+    else if (self_count > 0) {
+        return NSOrderedDescending;
+    }
+    else if (targ_count > 0) {
+        return NSOrderedAscending;
+    }
+    
+    return NSOrderedSame;
+}
+
 //对date格式支持
 + (NSString *)ssn_stringWithDate:(NSDate *)date formatter:(NSString *)dateFormat {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
