@@ -21,4 +21,8 @@
 //将在tmp中创建对应的目录，多级目录创建，创建失败返回nil
 - (NSString *)pathTemporaryDirectoryWithPathComponents:(NSString *)pathComponents;
 
+//添加icloud skip back up
++ (BOOL)ssn_addSkipBackupAttributeWithPath:(NSString *)path;
++ (BOOL)ssn_addSkipBackupAttributeToItemAtURL:(NSURL *)URL;
+
 @end

@@ -68,6 +68,7 @@
 		534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 534CA1641A6CAC9500CB55B3 /* SSNJob.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
 		535C0E091AD0373D0033EB92 /* NSObject+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E081AD0373D0033EB92 /* NSObject+SSN.m */; };
+		535C0E0D1AD37A780033EB92 /* NSData+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E0C1AD37A780033EB92 /* NSData+SSN.m */; };
 		53620B2F1AB3217F00381C3C /* SSNRPCInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */; };
 		53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B311AB53C2200381C3C /* SSNSeqGen.m */; };
 		53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B341AB5D1C300381C3C /* NSThread+SSN.m */; };
@@ -347,6 +348,8 @@
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		535C0E071AD0373D0033EB92 /* NSObject+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SSN.h"; sourceTree = "<group>"; };
 		535C0E081AD0373D0033EB92 /* NSObject+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SSN.m"; sourceTree = "<group>"; };
+		535C0E0B1AD37A780033EB92 /* NSData+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SSN.h"; sourceTree = "<group>"; };
+		535C0E0C1AD37A780033EB92 /* NSData+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+SSN.m"; sourceTree = "<group>"; };
 		53620B2D1AB3217F00381C3C /* SSNRPCInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRPCInvocation.h; sourceTree = "<group>"; };
 		53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRPCInvocation.m; sourceTree = "<group>"; };
 		53620B301AB53C2200381C3C /* SSNSeqGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNSeqGen.h; sourceTree = "<group>"; };
@@ -888,6 +891,8 @@
 				533365F11ACBBBC800DC4D0F /* NSRunLoop+SSN.m */,
 				535C0E071AD0373D0033EB92 /* NSObject+SSN.h */,
 				535C0E081AD0373D0033EB92 /* NSObject+SSN.m */,
+				535C0E0B1AD37A780033EB92 /* NSData+SSN.h */,
+				535C0E0C1AD37A780033EB92 /* NSData+SSN.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -1424,6 +1429,7 @@
 				53BC53441A485E6E0044C238 /* NiceQueue.m in Sources */,
 				53BC53281A485E6E0044C238 /* SSNDBTable.m in Sources */,
 				5334C0E01ACA3DD900094768 /* NSNotificationCenter+SSN.m in Sources */,
+				535C0E0D1AD37A780033EB92 /* NSData+SSN.m in Sources */,
 				53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */,
 				53BC53161A485E6E0044C238 /* SSNDataStore+Factory.m in Sources */,
 				53BC53041A485E6E0044C238 /* NSData+SSNBase64.m in Sources */,

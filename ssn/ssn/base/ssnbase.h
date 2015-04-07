@@ -74,6 +74,7 @@ FOUNDATION_EXTERN struct timespec ssn_orwl_gettime(void);
 
 //文件引入
 #import "NSObject+SSN.h"
+#import "NSData+SSN.h"
 #import "NSString+SSN.h"
 #import "NSData+SSNBase64.h"
 #import "NSFileManager+SSN.h"
