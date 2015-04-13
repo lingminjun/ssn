@@ -77,6 +77,7 @@
 		538706741ACD7F8A001F3880 /* SSNFileDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 538706731ACD7F8A001F3880 /* SSNFileDownloadOperation.m */; };
 		5388C5971A0498290072C3F9 /* DMProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C5961A0498290072C3F9 /* DMProfileViewController.m */; };
 		5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388C59A1A0499B90072C3F9 /* DMChatViewController.m */; };
+		538DDE071AD971B00082B4FE /* objscope.mm in Sources */ = {isa = PBXBuildFile; fileRef = 538DDE051AD971B00082B4FE /* objscope.mm */; };
 		538E3835199869430061692E /* DMTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3834199869430061692E /* DMTabViewController.m */; };
 		538E3838199869880061692E /* DMContactNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E3837199869880061692E /* DMContactNavController.m */; };
 		538E383B199869A20061692E /* DMSessionNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E383A199869A20061692E /* DMSessionNavController.m */; };
@@ -366,6 +367,8 @@
 		5388C5961A0498290072C3F9 /* DMProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProfileViewController.m; sourceTree = "<group>"; };
 		5388C5991A0499B90072C3F9 /* DMChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMChatViewController.h; sourceTree = "<group>"; };
 		5388C59A1A0499B90072C3F9 /* DMChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMChatViewController.m; sourceTree = "<group>"; };
+		538DDE051AD971B00082B4FE /* objscope.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = objscope.mm; sourceTree = "<group>"; };
+		538DDE061AD971B00082B4FE /* objscope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objscope.h; sourceTree = "<group>"; };
 		538E3833199869430061692E /* DMTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMTabViewController.h; sourceTree = "<group>"; };
 		538E3834199869430061692E /* DMTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMTabViewController.m; sourceTree = "<group>"; };
 		538E3836199869880061692E /* DMContactNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMContactNavController.h; sourceTree = "<group>"; };
@@ -717,6 +720,15 @@
 			path = chat;
 			sourceTree = "<group>";
 		};
+		538DDE041AD9715D0082B4FE /* scope */ = {
+			isa = PBXGroup;
+			children = (
+				538DDE051AD971B00082B4FE /* objscope.mm */,
+				538DDE061AD971B00082B4FE /* objscope.h */,
+			);
+			path = scope;
+			sourceTree = "<group>";
+		};
 		538E382D199868710061692E /* demo */ = {
 			isa = PBXGroup;
 			children = (
@@ -851,6 +863,7 @@
 		53BC527C1A485E6E0044C238 /* base */ = {
 			isa = PBXGroup;
 			children = (
+				538DDE041AD9715D0082B4FE /* scope */,
 				53CE03211A9A11C800E30E0D /* SSNMessageInterceptor.h */,
 				53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */,
 				534CA1621A6CAC7A00CB55B3 /* job */,
@@ -1442,6 +1455,7 @@
 				53BC53081A485E6E0044C238 /* NSString+SSN.m in Sources */,
 				53D82B8E1A6550AE005C2958 /* NSObject+SSNBlock.m in Sources */,
 				539B4FD41AC41ED20042F6C4 /* SSNRouter+Nice.m in Sources */,
+				538DDE071AD971B00082B4FE /* objscope.mm in Sources */,
 				53BC53001A485E6E0044C238 /* ssnlog.c in Sources */,
 				533BE3A41A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
 				538E3844199869F90061692E /* DMSignViewController.m in Sources */,
