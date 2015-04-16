@@ -54,6 +54,74 @@
 /**
  *  扩大按钮的点击范围（outsets表示自己frame向外延生部分，superview要足够大）
  */
-@property(nonatomic) UIEdgeInsets hitEdgeOutsets;
+@property(nonatomic) UIEdgeInsets ssn_hitEdgeOutsets;
+
+/**
+ *  设置normal下的title
+ */
+@property(nonatomic,copy) NSString *ssn_normalTitle;
+
+/**
+ *  设置normal下的titleColor
+ */
+@property(nonatomic,strong) UIColor *ssn_normalTitleColor;
+
+/**
+ *  设置normal下的image
+ */
+@property(nonatomic,strong) UIImage *ssn_normalImage;
+
+/**
+ *  设置normal下的backgroud image
+ */
+@property(nonatomic,strong) UIImage *ssn_normalBackgroundImage;
+
+/**
+ *  设置highlighted/selected下的title
+ */
+@property(nonatomic,copy) NSString *ssn_selectedTitle;
+
+/**
+ *  设置highlighted/selected下的titleColor
+ */
+@property(nonatomic,strong) UIColor *ssn_selectedTitleColor;
+
+/**
+ *  设置highlighted/selected下的image
+ */
+@property(nonatomic,strong) UIImage *ssn_selectedImage;
+
+/**
+ *  设置normal下的backgroud image
+ */
+@property(nonatomic,strong) UIImage *ssn_selectedBackgroundImage;
+
+/**
+ *  设置disabled下的title
+ */
+@property(nonatomic,copy) NSString *ssn_disabledTitle;
+
+/**
+ *  设置disabled下的titleColor
+ */
+@property(nonatomic,strong) UIColor *ssn_disabledTitleColor;
+
+/**
+ *  设置disabled下的image
+ */
+@property(nonatomic,strong) UIImage *ssn_disabledImage;
+
+/**
+ *  设置normal下的backgroud image
+ */
+@property(nonatomic,strong) UIImage *ssn_disabledBackgroundImage;
+
+/**
+ *  添加点击事件
+ *
+ *  @param target   事件执行者
+ *  @param selector 事件方法
+ */
+- (void)ssn_addTarget:(id)target touchAction:(SEL)selector;
 
 @end

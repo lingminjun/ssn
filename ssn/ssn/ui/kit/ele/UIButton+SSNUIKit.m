@@ -166,14 +166,14 @@ ssn_uikit_value_synthesize(float,ssn_edge_width,Ssn_edge_width)
 }
 
 static char * ssn_hit_edge_outsets_key = NULL;
-@dynamic hitEdgeOutsets;
-- (void)setHitEdgeOutsets:(UIEdgeInsets)hitEdgeOutsets
+@dynamic ssn_hitEdgeOutsets;
+- (void)setSsn_hitEdgeOutsets:(UIEdgeInsets)hitEdgeOutsets
 {
     NSValue *value = [NSValue valueWithUIEdgeInsets:hitEdgeOutsets];
     objc_setAssociatedObject(self, &ssn_hit_edge_outsets_key, value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (UIEdgeInsets)hitEdgeOutsets
+- (UIEdgeInsets)ssn_hitEdgeOutsets
 {
     NSValue * value = objc_getAssociatedObject(self, &ssn_hit_edge_outsets_key);
     if(value) {
@@ -184,16 +184,112 @@ static char * ssn_hit_edge_outsets_key = NULL;
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
-    if (UIEdgeInsetsEqualToEdgeInsets(self.hitEdgeOutsets, UIEdgeInsetsZero) || !self.enabled || self.hidden) {
+    if (UIEdgeInsetsEqualToEdgeInsets(self.ssn_hitEdgeOutsets, UIEdgeInsetsZero) || !self.enabled || self.hidden) {
         return [super pointInside:point withEvent:event];
     }
-    UIEdgeInsets edge = self.hitEdgeOutsets;
+    UIEdgeInsets edge = self.ssn_hitEdgeOutsets;
     edge.top = -edge.top;
     edge.bottom = -edge.bottom;
     edge.left = -edge.left;
     edge.right = -edge.right;
     CGRect hitFrame = UIEdgeInsetsInsetRect(self.bounds, edge);
     return CGRectContainsPoint(hitFrame, point);
+}
+
+- (NSString *)ssn_normalTitle {
+    return [self titleForState:UIControlStateNormal];
+}
+- (void)setSsn_normalTitle:(NSString *)title {
+    [self setTitle:title forState:UIControlStateNormal];
+}
+
+- (UIColor *)ssn_normalTitleColor {
+    return [self titleColorForState:UIControlStateNormal];
+}
+- (void)setSsn_normalTitleColor:(UIColor *)color {
+    [self setTitleColor:color forState:UIControlStateNormal];
+}
+
+- (UIImage *)ssn_normalImage {
+    return [self imageForState:UIControlStateNormal];
+}
+- (void)setSsn_normalImage:(UIImage *)image {
+    [self setImage:image forState:UIControlStateNormal];
+}
+
+- (UIImage *)ssn_normalBackgroundImage {
+    return [self backgroundImageForState:UIControlStateNormal];
+}
+- (void)setSsn_normalBackgroundImage:(UIImage *)image {
+    [self setBackgroundImage:image forState:UIControlStateNormal];
+}
+
+- (NSString *)ssn_selectedTitle {
+    return [self titleForState:UIControlStateHighlighted];
+}
+- (void)setSsn_selectedTitle:(NSString *)title {
+    [self setTitle:title forState:UIControlStateHighlighted];
+    [self setTitle:title forState:UIControlStateSelected];
+    [self setTitle:title forState:UIControlStateHighlighted|UIControlStateSelected];
+}
+
+- (UIColor *)ssn_selectedTitleColor {
+    return [self titleColorForState:UIControlStateHighlighted];
+}
+- (void)setSsn_selectedTitleColor:(UIColor *)color {
+    [self setTitleColor:color forState:UIControlStateHighlighted];
+    [self setTitleColor:color forState:UIControlStateSelected];
+    [self setTitleColor:color forState:UIControlStateHighlighted|UIControlStateSelected];
+}
+
+- (UIImage *)ssn_selectedImage {
+    return [self imageForState:UIControlStateHighlighted];
+}
+- (void)setSsn_selectedImage:(UIImage *)image {
+    [self setImage:image forState:UIControlStateHighlighted];
+     [self setImage:image forState:UIControlStateSelected];
+     [self setImage:image forState:UIControlStateHighlighted|UIControlStateSelected];
+}
+
+- (UIImage *)ssn_selectedBackgroundImage {
+    return [self backgroundImageForState:UIControlStateHighlighted];
+}
+- (void)setSsn_selectedBackgroundImage:(UIImage *)image {
+    [self setBackgroundImage:image forState:UIControlStateHighlighted];
+    [self setBackgroundImage:image forState:UIControlStateSelected];
+    [self setBackgroundImage:image forState:UIControlStateHighlighted|UIControlStateSelected];
+}
+
+- (NSString *)ssn_disabledTitle {
+    return [self titleForState:UIControlStateDisabled];
+}
+- (void)setSsn_disabledTitle:(NSString *)title {
+    [self setTitle:title forState:UIControlStateDisabled];
+}
+
+- (UIColor *)ssn_disabledTitleColor {
+    return [self titleColorForState:UIControlStateDisabled];
+}
+- (void)setSsn_disabledTitleColor:(UIColor *)color {
+    [self setTitleColor:color forState:UIControlStateDisabled];
+}
+
+- (UIImage *)ssn_disabledImage {
+    return [self imageForState:UIControlStateDisabled];
+}
+- (void)setSsn_disabledImage:(UIImage *)image {
+    [self setImage:image forState:UIControlStateDisabled];
+}
+
+- (UIImage *)ssn_disabledBackgroundImage {
+    return [self backgroundImageForState:UIControlStateDisabled];
+}
+- (void)setSsn_disabledBackgroundImage:(UIImage *)image {
+    [self setBackgroundImage:image forState:UIControlStateDisabled];
+}
+
+- (void)ssn_addTarget:(id)target touchAction:(SEL)selector {
+    [self addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 }
 
 @end
