@@ -816,12 +816,13 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
 - (void)processResetObjects:(NSArray *)objs obeyChanges:(NSArray *)changes {
     
     if ([changes count] == 0) {
-        NSLog(@"并没有数据变化，不需要通知到界面");
+        NSLog(@"%@ 并没有数据变化，不需要通知到界面",self);
         return ;
     }
     
     dispatch_block_t block = ^{
         
+        NSLog(@"%@ reload开始",self);
         [_delegate ssndb_controllerWillChange:self];
         
         //删除老数据
@@ -849,7 +850,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         [_results setArray:objs];
         
         [_delegate ssndb_controllerDidChange:self];
-        
+        NSLog(@"%@ reload结束",self);
     };
     dispatch_async(self.delegateQueue, block);
 }

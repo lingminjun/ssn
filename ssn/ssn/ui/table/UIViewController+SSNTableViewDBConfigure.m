@@ -40,16 +40,16 @@
         changed = YES;
     }
     
-    if (changed) {
-        [tableView reloadData];//此时是必要的一次reload，因为tableView显示的cell是上一个委托的值
-    }
-    
     tableView.ssn_headerPullRefreshView.delegate = self;
     tableView.ssn_footerLoadMoreView.delegate = self;
     
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     _tableView = tableView;
+    
+    if (changed) {
+        [tableView reloadData];//此时是必要的一次reload，因为tableView显示的cell是上一个委托的值
+    }
 }
 
 
@@ -59,7 +59,6 @@
     if (tableView != self.tableView) {
         return 0;
     }
-    
     return 1;
 }
 
