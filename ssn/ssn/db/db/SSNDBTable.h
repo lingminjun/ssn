@@ -12,7 +12,10 @@ FOUNDATION_EXTERN NSString *const SSNDBTableWillMigrateNotification; //数据准
 FOUNDATION_EXTERN NSString *const SSNDBTableDidMigrateNotification;  //数据迁移结束 mainThread
 FOUNDATION_EXTERN NSString *const SSNDBTableDidDropNotification;     //数据表删除 mainThread
 FOUNDATION_EXTERN NSString *const SSNDBTableUpdatedNotification;     //数据表更新 mainThread
+
 FOUNDATION_EXTERN NSString *const SSNDBTableNameUserInfoKey;         //数据迁移表格
+FOUNDATION_EXTERN NSString *const SSNDBOperationUserInfoKey;  //notification userinfo key : operation(NSNumber<int>) eg. SQLITE_INSERT
+FOUNDATION_EXTERN NSString *const SSNDBRowIdUserInfoKey;      //notification userinfo key : row_id(NSNumber<int64>)
 
 #ifndef _SSNDBTable_
 #define _SSNDBTable_
@@ -107,5 +110,7 @@ typedef enum : NSUInteger
 - (NSArray *)objectsWithClass:(Class)clazz forConditions:(NSDictionary *)conditions;//查询支持
 
 - (void)truncate;//清空表，请务必调用此方法，否则hook失效，并非sql语句“truncate table xxx”，实际执行delete语句，所以可以与其他方法一起在事务中使用
+
+- (NSUInteger)objectsCount;//数据总数
 
 @end

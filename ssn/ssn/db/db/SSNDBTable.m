@@ -153,7 +153,12 @@ NSString *const SSNDBTableUpdatedNotification = @"SSNDBTableUpdatedNotification"
 // table的状体
 - (void)update
 {
-    NSAssert(_db, @"模板表不能执行update方法");
+    if (!_db) {
+        NSLog(@"模板表不能执行update方法");
+        return ;
+    }
+    
+//    NSAssert(_db, @"模板表不能执行update方法");
 
     if (_status == SSNDBTableOK)
     {
@@ -800,6 +805,12 @@ NSString *const SSNDBTableUpdatedNotification = @"SSNDBTableUpdatedNotification"
 - (void)truncate {
     NSString *sql = [NSString stringWithUTF8Format:"DELETE FROM %s WHERE rowid > 0",[_name UTF8String]];
     [_db prepareSql:sql arguments:nil];
+}
+
+- (NSUInteger)objectsCount {
+    NSString *sql = [NSString stringWithUTF8Format:"SELECT count(*) AS count FROM %@",_name];
+    NSArray *objs = [_db objects:nil sql:sql arguments:nil];
+    return [[[objs firstObject] objectForKey:@"count"] integerValue];
 }
 
 

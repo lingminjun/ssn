@@ -27,7 +27,7 @@ NSString *const SSNAvoidEmptyLoopSourceFlag = @"SSNAvoidEmptyLoopSourceFlag";
 }
 
 /**
- *  采用runloop阻塞当前线程，指导某个条件出现
+ *  采用runloop阻塞当前线程，直到某个条件出现
  *
  *  @param condition 条件，返回yes表示跳出block
  *  @param time      超时时间

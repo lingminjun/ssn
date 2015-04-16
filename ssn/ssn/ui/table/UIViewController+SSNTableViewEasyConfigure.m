@@ -33,12 +33,19 @@
 
 - (void)setTableView:(UITableView *)tableView {
     
+    BOOL changed = NO;
     if (tableView.delegate != self) {//不相等时再赋值，setDelegate会触发内部检查一些委托方法是否实现问题
         tableView.delegate = self;
+        changed = YES;
     }
     
     if (tableView.dataSource != self) {//不相等时再赋值，setDataSource会触发内部检查一些委托方法是否实现问题
         tableView.dataSource = self;
+        changed = YES;
+    }
+    
+    if (changed) {
+        [tableView reloadData];//此时是必要的一次reload，因为tableView显示的cell是上一个委托的值
     }
     
     tableView.ssn_headerPullRefreshView.delegate = self;

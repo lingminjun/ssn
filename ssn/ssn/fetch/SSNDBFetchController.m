@@ -62,7 +62,7 @@ const NSUInteger SSNDBFetchedChangeNan = 0;
 
 - (void)dbupdatedNotification:(NSNotification *)notice;
 
-- (void)processAddAllObjects:(NSArray *)objs;
+//- (void)processAddAllObjects:(NSArray *)objs;
 - (void)processRemoveAllObjects;
 
 @end
@@ -814,6 +814,12 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
 }
 
 - (void)processResetObjects:(NSArray *)objs obeyChanges:(NSArray *)changes {
+    
+    if ([changes count] == 0) {
+        NSLog(@"并没有数据变化，不需要通知到界面");
+        return ;
+    }
+    
     dispatch_block_t block = ^{
         
         [_delegate ssndb_controllerWillChange:self];
@@ -848,32 +854,36 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     dispatch_async(self.delegateQueue, block);
 }
 
-- (void)processAddAllObjects:(NSArray *)objs {
-    dispatch_block_t block = ^{
-        
-        [_delegate ssndb_controllerWillChange:self];
-        
-        //删除老数据
-        [_results enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            [_delegate ssndb_controller:self didChangeObject:obj atIndex:idx forChangeType:SSNDBFetchedChangeDelete newIndex:0];
-        }];
-        
-        //设置新的值
-        [_results setArray:objs];
-        
-        //插入新数据
-        [_results enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            [_delegate ssndb_controller:self didChangeObject:obj atIndex:idx forChangeType:SSNDBFetchedChangeInsert newIndex:idx];
-        }];
-        
-        [_delegate ssndb_controllerDidChange:self];
-        
-    };
-    dispatch_async(self.delegateQueue, block);
-}
+//- (void)processAddAllObjects:(NSArray *)objs {
+//    dispatch_block_t block = ^{
+//        
+//        [_delegate ssndb_controllerWillChange:self];
+//        
+//        //删除老数据
+//        [_results enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//            [_delegate ssndb_controller:self didChangeObject:obj atIndex:idx forChangeType:SSNDBFetchedChangeDelete newIndex:0];
+//        }];
+//        
+//        //设置新的值
+//        [_results setArray:objs];
+//        
+//        //插入新数据
+//        [_results enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//            [_delegate ssndb_controller:self didChangeObject:obj atIndex:idx forChangeType:SSNDBFetchedChangeInsert newIndex:idx];
+//        }];
+//        
+//        [_delegate ssndb_controllerDidChange:self];
+//        
+//    };
+//    dispatch_async(self.delegateQueue, block);
+//}
 
 - (void)processRemoveAllObjects {
     dispatch_block_t block = ^{
+        if ([_results count] == 0) {
+            NSLog(@"processRemoveAllObjects 时发现不需要更新到界面");
+            return ;
+        }
         
         [_delegate ssndb_controllerWillChange:self];
         

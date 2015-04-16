@@ -35,17 +35,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
+    
+    flag = 0;
 
     self.title = @"Setting";
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"退出" style:UIBarButtonItemStyleDone target:self action:@selector(logout)];
 
-    self.tableView.ssn_pullRefreshEnabled = YES;
-    self.ssn_tableViewConfigurator.tableView = self.tableView;
-//    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = NO;
-//    self.ssn_tableViewConfigurator.listFetchController.isMandatorySorting = NO;
+//    self.tableView.ssn_pullRefreshEnabled = YES;//下拉刷新
+    self.tableView.ssn_loadMoreEnabled = YES;//上提更多
     
-    flag = 0;
+    self.ssn_tableViewConfigurator.tableView = self.tableView;
+    
+    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;//自动控制是否还有更多
     
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];
@@ -61,10 +65,10 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    static int i = 0;
-    i++;
-    flag = i;
-    [self.ssn_tableViewConfigurator.listFetchController loadData];
+//    static int i = 0;
+//    i++;
+//    flag = i;
+//    [self.ssn_tableViewConfigurator.listFetchController loadData];
 }
 
 - (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query
@@ -174,8 +178,8 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)ssn_configurator:(SSNTableViewConfigurator *)configurator controller:(SSNListFetchController *)controller loadDataWithOffset:(NSUInteger)offset limit:(NSUInteger)limit userInfo:(NSDictionary *)userInfo completion:(void (^)(NSArray *results, BOOL hasMore, NSDictionary *userInfo, BOOL finished))completion {
     
     NSMutableArray *ary = [NSMutableArray array];
-    if (flag % 2 == 0) {
-        
+//    if (flag % 2 == 0) {
+    
         [ary addObject:[DMSettingCellItem itemWithTitle:@"UIDic"]];
         [ary addObject:[DMSectionCellItem item]];
         
@@ -214,10 +218,12 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         
         [ary addObject:[DMSettingCellItem itemWithTitle:@"===ddd==="]];
         [ary addObject:[DMSectionCellItem item]];
-    }
+//    }
+    
+    flag++;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        completion(ary,[ary count],nil,YES);
+        completion(ary,flag != 3,nil,YES);
     });
 }
 

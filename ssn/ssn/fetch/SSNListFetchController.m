@@ -827,6 +827,12 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
         //可以清楚积累的需要更新数据了
         [_changeIndexPaths removeAllObjects];
         
+        //并没有任何修改
+        if ([changes count] == 0) {
+             NSLog(@"fetctController:%p 数据最后发现不需要通知界面",self);
+            return;
+        }
+        
         [_delegate ssnlist_controllerWillChange:self];
         
         //删除老数据
