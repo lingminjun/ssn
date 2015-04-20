@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		530187981A3FFF0700E2CB5D /* ssn_lcs_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */; };
+		530BE9E01AE13D57007F0025 /* SSNHosting.m in Sources */ = {isa = PBXBuildFile; fileRef = 530BE9DF1AE13D57007F0025 /* SSNHosting.m */; };
 		5312CAC21A57E983009C32B1 /* DMLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */; };
 		531324811A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
 		531324821A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
@@ -270,6 +271,8 @@
 
 /* Begin PBXFileReference section */
 		530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_lcs_test.m; sourceTree = "<group>"; };
+		530BE9DE1AE13D57007F0025 /* SSNHosting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNHosting.h; sourceTree = "<group>"; };
+		530BE9DF1AE13D57007F0025 /* SSNHosting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNHosting.m; sourceTree = "<group>"; };
 		5312CAC01A57E983009C32B1 /* DMLayoutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLayoutViewController.h; sourceTree = "<group>"; };
 		5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLayoutViewController.m; sourceTree = "<group>"; };
 		5313247F1A5CFEAA0038256F /* UIImageView+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+SSNUIKit.h"; sourceTree = "<group>"; };
@@ -992,6 +995,8 @@
 		53BC52CC1A485E6E0044C238 /* hosting */ = {
 			isa = PBXGroup;
 			children = (
+				530BE9DE1AE13D57007F0025 /* SSNHosting.h */,
+				530BE9DF1AE13D57007F0025 /* SSNHosting.m */,
 				5381F7EB1ADE4B24006BB93A /* ssn_hosting_task.json */,
 			);
 			path = hosting;
@@ -1463,6 +1468,7 @@
 				53BC53511A486DA30044C238 /* ssnbase64.c in Sources */,
 				53BC53121A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
 				5339FC8E1AA551AA0000F6B9 /* SSNVMCellItem.m in Sources */,
+				530BE9E01AE13D57007F0025 /* SSNHosting.m in Sources */,
 				53BC53401A485E6E0044C238 /* SSNQuantum.m in Sources */,
 				53F5F1531A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */,
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,

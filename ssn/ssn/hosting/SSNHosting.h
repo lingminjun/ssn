@@ -12,7 +12,7 @@
 #import "SSNDBPool.h"
 #import "SSNDBTable+Factory.h"
 
-@class SSNHosting,SSNHostingTask;
+@class SSNHosting;
 
 /**
  *  托管任务状态
@@ -39,31 +39,6 @@ typedef NS_ENUM(NSUInteger, SSNHostingTaskStatus){
 
 @optional
 /**
- *  某个任务将要被处理
- *
- *  @param hosting 当前的服务
- *  @param task    将要处理的任务
- */
-- (void)ssn_hosting:(SSNHosting *)hosting willProcessTask:(SSNHostingTask *)task;
-
-/**
- *  某个任务被处理完了（失败和成功）
- *
- *  @param hosting 当前的服务
- *  @param task    当前处理的任务
- *  @param status  任务被转到什么状态，失败后，并不会立即重试，而是先转入到waiting状态
- */
-- (void)ssn_hosting:(SSNHosting *)hosting didProcessTask:(SSNHostingTask *)task turnStatus:(SSNHostingTaskStatus)status;
-
-/**
- *  某个任务被移除了
- *
- *  @param hosting 当前服务
- *  @param task    被移除的任务
- */
-- (void)ssn_hosting:(SSNHosting *)hosting cancelProcessTask:(SSNHostingTask *)task;
-
-/**
  *  从数据库队列中加载任务时类名找不到时调用
  *
  *  @param hosting       当前的服务
@@ -71,16 +46,30 @@ typedef NS_ENUM(NSUInteger, SSNHostingTaskStatus){
  *
  *  @return 返回新的类名，若返回nil，将丢弃此任务
  */
-- (NSString *)ssn_hosting:(SSNHosting *)hosting loadTaskWithTaskClassName:(NSString *)taskClassName;
+- (NSString *)ssn_hosting:(SSNHosting *)hosting loadTaskClassName:(NSString *)taskClassName;
+
+/**
+ *  从数据库队列中加载任务时方法找不到时调用
+ *
+ *  @param hosting       当前的服务
+ *  @param taskClassName 数据库中的类名
+ *  @param selectorName  数据库中的方法名
+ *
+ *  @return 返回新的方法，若返回nil，将丢弃此任务
+ */
+- (NSString *)ssn_hosting:(SSNHosting *)hosting taskClassName:(NSString *)taskClassName loadTaskSelectorName:(NSString *)selectorName;
 
 @end
 
-//@protocol SSNHostingTaskSelector <NSObject>
-//
-//@required
-//+ ()
-//
-//@end
+/**
+ *  满足json code协议的序列化
+ */
+@protocol SSNHostingTaskDataCoding <NSObject>
+
+- (NSData *)ssn_hostingTaskDataEncode;//自定义序列换（建议json序列）
+- (instancetype)initWithHostingTaskData:(NSData *)data;//(反序列)
+
+@end
 
 /**
  *  是否异步
@@ -132,32 +121,25 @@ typedef BOOL SSNProcessAsync;
 - (BOOL)stop;
 
 /**
- *  托管一个任务，任务已经存在将被替换，时序不被改变
- *
- *  @param task 被托管的任务
- */
-//- (void)hostingTask:(SSNHostingTask *)task;
-
-/**
- *  托管某个类的静态方法
- *
- *  @param className 需要托管的类
- *  @param selector 托管的方法
- *                  注意，托管的方法必须一下格式
- *                  +(SSNProcessAsync)isAsyncTaskProcess:(NSString *)data;
- *                  或者+(SSNProcessAsync)isAsyncTaskProcess:(NSString *)data taskID:(NSString *)taskID;
- *  @param data     数据（业务去保证去重逻辑）
- *
- *  @return 返回为本次托管任务分配的taskID
- */
-- (NSString *)hostingClassName:(NSString *)className classSelector:(SEL)selector data:(NSString *)data;
-
-/**
- *  移除某个任务，任务此时处在process过程中，则会调用cancel process方法
+ *  取消任务
  *
  *  @param taskID 任务id
  */
-- (void)removeTaskWithTaskID:(NSString *)taskID;
+- (void)cancelTaskWithTaskID:(NSString *)taskID;
+
+/**
+ *  完成任务
+ *
+ *  @param taskID 任务id
+ */
+- (void)finishTaskWithTaskID:(NSString *)taskID;
+
+/**
+ *  失败任务，任务就继续重试
+ *
+ *  @param taskID 任务id
+ */
+- (void)failedTaskWithTaskID:(NSString *)taskID;
 
 /**
  *  当前的任务个数（包含正在处理的）
@@ -167,79 +149,59 @@ typedef BOOL SSNProcessAsync;
 - (NSUInteger)taskCount;
 
 /**
- *  <#Description#>
- *
- *  @param taskID <#taskID description#>
- *
- *  @return <#return value description#>
- */
-- (NSUInteger)activateTimesWithTaskID:(NSString *)taskID;
-
-/**
- *  获取队列中的任务
+ *  返回此任务被激活次数
  *
  *  @param taskID 任务id
  *
- *  @return 返回id对应的任务
+ *  @return 返回此任务激活次数
  */
-//- (SSNHostingTask *)taskWithTaskID:(NSString *)taskID;
+- (NSUInteger)activateTimesWithTaskID:(NSString *)taskID;
+
+#pragma mark 托管任务方法，请根据参数是否需要序列化，选取合适的托管
+
+/**
+ *  托管某个类的静态方法
+ *
+ *  @param className 需要托管的类
+ *  @param selector 托管的方法
+ *                  注意，托管的方法必须一下格式
+ *                  +(SSNProcessAsync)isAsyncTaskProcess:(NSData *)data;
+ *                  或者+(SSNProcessAsync)isAsyncTaskProcess:(NSData *)data taskID:(NSString *)taskID;
+ *  @param data     数据（业务去保证去重逻辑）
+ *
+ *  @return 返回为本次托管任务分配的taskID
+ */
+- (NSString *)hostingClassName:(NSString *)className classSelector:(SEL)selector data:(NSData *)data;
+
+/**
+ *  托管某个类的静态方法(可序NSCoding列化的方法)
+ *
+ *  @param className 需要托管的类
+ *  @param selector 托管的方法
+ *                  注意，托管的方法必须一下格式
+ *                  +(SSNProcessAsync)isAsyncTaskProcess:(id<NSCoding>)data;
+ *                  或者+(SSNProcessAsync)isAsyncTaskProcess:(id<NSCoding>)data taskID:(NSString *)taskID;
+ *  @param obj      数据（业务去保证去重逻辑）
+ *
+ *  @return 返回为本次托管任务分配的taskID
+ */
+- (NSString *)hostingClassName:(NSString *)className classSelector:(SEL)selector ocCodingObject:(id<NSCoding>)obj;
+
+/**
+ *  托管某个类的静态方法(可序自定义列化的方法)
+ *
+ *  @param className 需要托管的类
+ *  @param selector 托管的方法
+ *                  注意，托管的方法必须一下格式
+ *                  +(SSNProcessAsync)isAsyncTaskProcess:(id<SSNHostingTaskDataCoding>)data;
+ *                  或者+(SSNProcessAsync)isAsyncTaskProcess:(id<SSNHostingTaskDataCoding>)data taskID:(NSString *)taskID;
+ *  @param obj      数据（业务去保证去重逻辑）
+ *
+ *  @return 返回为本次托管任务分配的taskID
+ */
+- (NSString *)hostingClassName:(NSString *)className classSelector:(SEL)selector customCodingObject:(id<SSNHostingTaskDataCoding>)obj;
 
 @end
-
-///**
-// *  托管任务，要加入到托管服务的操作，必须继承task
-// */
-//@interface SSNHostingTask : NSObject
-//
-///**
-// *  任务id
-// */
-//@property (nonatomic,copy,readonly) NSString *taskID;//任务id
-//
-///**
-// *  任务状态
-// */
-//@property (nonatomic,readonly) SSNHostingTaskStatus status;
-//
-///**
-// *  任务被激活的次数，使用者可以根据此值做删除操作
-// */
-//@property (nonatomic,readonly) NSUInteger activateTimes;
-//
-///**
-// *  任务所携带的数据，更改他的值是，hosting会讲数据记录下来
-// */
-//@property (nonatomic,copy) NSString *data;//
-//
-///**
-// *  通知任务已经完成，状态将转向SSNHostingTaskClosed，不要重载
-// */
-//- (void)finish;
-//
-///**
-// *  通知任务失败，状态将转向SSNHostingTaskWaiting，不要重载
-// */
-//- (void)failure;
-//
-///**
-// *  通知任务取消，状态将转向SSNHostingTaskClosed，不要重载
-// */
-//- (void)cancel;
-//
-//#pragma mark - override selector 供重载的方法
-///**
-// *  正在执行
-// *
-// *  @return 返回是否异步执行，若返回异步执行，需要调用finish方法结束
-// */
-//- (SSNProcessAsync)onProcess;
-//
-///**
-// *  取消
-// */
-//- (void)onCancel;
-//
-//@end
 
 
 

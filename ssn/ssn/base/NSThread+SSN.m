@@ -33,9 +33,6 @@ NSString *const SSNAvoidEmptyLoopSourceFlag = @"SSNAvoidEmptyLoopSourceFlag";
  *  @param time      超时时间
  */
 + (void)ssn_runloopBlockUntilCondition:(SSNBreak (^)(void))condition atSpellTime:(NSTimeInterval)time {
-    if (!condition) {
-        return ;
-    }
     
     //先确保runloop非空
     [[NSThread currentThread] ssn_avoidEmptyLoopSource];
@@ -55,9 +52,11 @@ NSString *const SSNAvoidEmptyLoopSourceFlag = @"SSNAvoidEmptyLoopSourceFlag";
     // Add your sources or timers to the run loop and do any other setup.
     do
     {
-        isBreak = condition();
-        if (isBreak) {
-            break ;
+        if (condition) {
+            isBreak = condition();
+            if (isBreak) {
+                break ;
+            }
         }
         
         CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();

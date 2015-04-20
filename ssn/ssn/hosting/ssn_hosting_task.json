@@ -5,9 +5,11 @@
            "cl":[
                  {"name":"tid",  "type":3,   "level":2,  "fill":"",  "index":1,  "mapping":""},
                  {"name":"at", "type":1,   "level":0,  "fill":"",  "index":1,  "mapping":""},
-                 {"name":"clazz", "type":3,   "level":0,  "fill":"SSNHostingTask",  "index":0,  "mapping":""},
+                 {"name":"clazz", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
+                 {"name":"selector", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
                  {"name":"times", "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""},
-                 {"name":"data", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""}
+                 {"name":"coder", "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""},
+                 {"name":"data", "type":4,   "level":0,  "fill":"",  "index":0,  "mapping":""}
                  ]
            }]
 }

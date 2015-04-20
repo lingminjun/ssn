@@ -8,17 +8,26 @@
 
 #import "SSNHosting.h"
 #import "ssnbase.h"
+#import <sqlite3.h>
 #import <pthread.h>
 
 NSString *const SSNHostingTaskTable = @"ssn_hosting_task";
 
 #pragma mark - 私有方法
+typedef NS_ENUM(NSUInteger, SSNHostingTaskDataCodingType) {
+    SSNHostingTaskDataCodingNan,//不编码
+    SSNHostingTaskDataCodingObjC,//oc编码
+    SSNHostingTaskDataCodingCustom,//自定义编码
+};
+
 @interface SSNHostingDBTask : NSObject
 @property (nonatomic,copy) NSString *tid;
 @property (nonatomic) NSUInteger at;
 @property (nonatomic,copy) NSString *clazz;
+@property (nonatomic,copy) NSString *selector;
 @property (nonatomic) NSUInteger times;
-@property (nonatomic,copy) NSString *data;
+@property (nonatomic) SSNHostingTaskDataCodingType coder;
+@property (nonatomic,copy) NSData *data;
 @end
 
 @interface SSNHosting () {
@@ -44,24 +53,23 @@ NSString *const SSNHostingTaskTable = @"ssn_hosting_task";
 @end
 
 
-@interface SSNHostingTask ()
-
-@property (nonatomic,copy) NSString *taskID;//任务id
-@property (nonatomic) SSNHostingTaskStatus status;
-//@property (nonatomic) NSUInteger activateTimes;
-//@property (nonatomic) NSUInteger timestamp;//加入到队列的时间
-@property (nonatomic,weak) SSNHosting *hosting;
-@property (nonatomic,strong) SSNHostingDBTask *core;
-
-@end
-
 @implementation SSNHostingDBTask
 
-+ (instancetype)dbtaskWithTask:(SSNHostingTask *)task {
++ (instancetype)dbtaskWithTargetClassName:(NSString *)clazzName selector:(SEL)selector coder:(SSNHostingTaskDataCodingType)type data:(NSData *)data {
     SSNHostingDBTask *dbtask = [[SSNHostingDBTask alloc] init];
-    dbtask.tid = task.taskID;
-    dbtask.clazz = NSStringFromClass([task class]);
-    dbtask.at = ssn_sec_timestamp();
+    
+    int64_t now = ssn_usec_timestamp();
+    NSString *selecorString = NSStringFromSelector(selector);
+    dbtask.tid = [NSString stringWithFormat:@"%@.%@.%@",@(now),clazzName,selecorString];
+    
+    dbtask.clazz = clazzName;
+    dbtask.selector = selecorString;
+    
+    dbtask.at = now;
+    
+    dbtask.coder = type;
+    dbtask.data = data;
+    
     return dbtask;
 }
 
@@ -96,7 +104,7 @@ NSString *const SSNHostingTaskTable = @"ssn_hosting_task";
         
         //执行队列
         _queue = dispatch_queue_create([_identify UTF8String], DISPATCH_QUEUE_SERIAL);
-        dispatch_suspend(_queue);//先暂停队列
+//        dispatch_suspend(_queue);//先暂停队列
         
         [NSNotificationCenter ssn_defaultCenterAddObserver:self selector:@selector(tableUpdatedNotify:) name:SSNDBTableUpdatedNotification object:_table];
     }
@@ -111,7 +119,10 @@ NSString *const SSNHostingTaskTable = @"ssn_hosting_task";
     BOOL result = NO;
     pthread_mutex_lock(&_mutex);
     if (!_isRuning) {
-        //
+        _isRuning = YES;
+        result =  YES;
+        
+        [self coreLoop];
     }
     pthread_mutex_unlock(&_mutex);
     return result;
@@ -121,29 +132,24 @@ NSString *const SSNHostingTaskTable = @"ssn_hosting_task";
     BOOL result = NO;
     pthread_mutex_lock(&_mutex);
     if (_isRuning) {
-        //
+        _isRuning = YES;
+        result =  YES;
     }
     pthread_mutex_unlock(&_mutex);
     return result;
 }
 
 - (void)tableUpdatedNotify:(NSNotification *)notify {
-    NSLog(@"数据表中数据发生改变");
-}
-
-/**
- *  托管一个任务，任务已经存在将被替换，时序不被改变
- *
- *  @param task 被托管的任务
- */
-- (void)hostingTask:(SSNHostingTask *)task {
     
-    if ([task.taskID length] == 0) {
-        return;
+    NSDictionary *info = notify.userInfo;
+    
+    NSInteger operation = [[info objectForKey:SSNDBOperationUserInfoKey] integerValue];
+    
+    if (SQLITE_INSERT == operation) {
+        [self coreLoop];
     }
     
-    SSNHostingDBTask *dbtask = [SSNHostingDBTask dbtaskWithTask:task];
-    [_table upinsertObject:dbtask];//在db回调中触发
+    NSLog(@"数据表中数据发生改变");
 }
 
 /**
@@ -151,25 +157,79 @@ NSString *const SSNHostingTaskTable = @"ssn_hosting_task";
  *
  *  @param taskID 任务id
  */
-- (void)removeTaskWithTaskID:(NSString *)taskID {
+- (void)cancelTaskWithTaskID:(NSString *)taskID {
     if ([taskID length] == 0) {
-        return;
-    }
-    
-    SSNHostingDBTask *dbtask = [SSNHostingDBTask dbtaskWithTaskID:taskID];
-    [_table deleteObject:dbtask];
-    
-    //比较当前任务
-    if (![_currentTaskID isEqualToString:taskID]) {
         return ;
     }
     
-    //取消等待任务
-    if (_runloop) {
-        CFRunLoopStop(_runloop);
-        _runloop = NULL;
+    pthread_mutex_lock(&_mutex);
+    //比较当前任务
+    if ([_currentTaskID isEqualToString:taskID]) {
+        //取消等待任务
+        if (_runloop) {
+            CFRunLoopStop(_runloop);
+            _runloop = NULL;
+        }
     }
+    pthread_mutex_unlock(&_mutex);
+    
+    SSNHostingDBTask *dbtask = [SSNHostingDBTask dbtaskWithTaskID:taskID];
+    [_table deleteObject:dbtask];
 }
+
+/**
+ *  完成任务
+ *
+ *  @param taskID 任务id
+ */
+- (void)finishTaskWithTaskID:(NSString *)taskID {
+    if ([taskID length] == 0) {
+        return ;
+    }
+    
+    BOOL deleted = NO;
+    pthread_mutex_lock(&_mutex);
+    //比较当前任务
+    if ([_currentTaskID isEqualToString:taskID]) {
+        //取消等待任务
+        if (_runloop) {
+            CFRunLoopStop(_runloop);
+            _runloop = NULL;
+        }
+        
+        deleted = YES;
+    }
+    pthread_mutex_unlock(&_mutex);
+    
+    if (deleted) {
+        SSNHostingDBTask *dbtask = [SSNHostingDBTask dbtaskWithTaskID:taskID];
+        [_table deleteObject:dbtask];
+    }
+    
+}
+
+/**
+ *  失败任务
+ *
+ *  @param taskID 任务id
+ */
+- (void)failedTaskWithTaskID:(NSString *)taskID {
+    if ([taskID length] == 0) {
+        return ;
+    }
+    
+    pthread_mutex_lock(&_mutex);
+    //比较当前任务
+    if ([_currentTaskID isEqualToString:taskID]) {
+        //取消等待任务
+        if (_runloop) {
+            CFRunLoopStop(_runloop);
+            _runloop = NULL;
+        }
+    }
+    pthread_mutex_unlock(&_mutex);
+}
+
 
 /**
  *  当前的任务个数（包含正在处理的）
@@ -181,27 +241,270 @@ NSString *const SSNHostingTaskTable = @"ssn_hosting_task";
 }
 
 /**
- *  获取队列中的任务
+ *  返回此任务被激活次数
  *
  *  @param taskID 任务id
  *
- *  @return 返回id对应的任务
+ *  @return 返回此任务激活次数
  */
-- (SSNHostingTask *)taskWithTaskID:(NSString *)taskID {
+- (NSUInteger)activateTimesWithTaskID:(NSString *)taskID {
     if ([taskID length] == 0) {
+        return 0;
+    }
+    
+    NSArray *result = [_table objectsWithClass:[SSNHostingDBTask class] forConditions:@{@"tid":taskID}];
+    SSNHostingDBTask *task = [result lastObject];
+    return task.times;
+}
+#pragma mark - 托管方法
+
+- (NSString *)hostingClassName:(NSString *)className classSelector:(SEL)selector data:(NSData *)data coder:(SSNHostingTaskDataCodingType)coder {
+    
+    //参数验证
+    Class clazz = NSClassFromString(className);
+    if (!clazz) {
         return nil;
     }
-    NSArray *objs = [_table objectsWithClass:[SSNHostingDBTask class] forConditions:@{@"tid":taskID}];
-    return [objs firstObject];
+    
+    if (![(NSObject *)clazz respondsToSelector:selector]) {
+        return nil;
+    }
+    
+    SSNHostingDBTask *task = [SSNHostingDBTask dbtaskWithTargetClassName:className selector:selector coder:coder data:data];
+    
+    [_table upinsertObject:task];//db hook 回调
+    
+    return task.tid;
 }
 
+/**
+ *  托管某个类的静态方法
+ *
+ *  @param className 需要托管的类
+ *  @param selector 托管的方法
+ *                  注意，托管的方法必须一下格式
+ *                  +(SSNProcessAsync)isAsyncTaskProcess:(NSString *)data;
+ *                  或者+(SSNProcessAsync)isAsyncTaskProcess:(NSString *)data taskID:(NSString *)taskID;
+ *  @param data     数据（业务去保证去重逻辑）
+ *
+ *  @return 返回为本次托管任务分配的taskID
+ */
+- (NSString *)hostingClassName:(NSString *)className classSelector:(SEL)selector data:(NSData *)data {
+    return [self hostingClassName:className classSelector:selector data:data coder:SSNHostingTaskDataCodingNan];
+}
+
+/**
+ *  托管某个类的静态方法(可序NSCoding列化的方法)
+ *
+ *  @param className 需要托管的类
+ *  @param selector 托管的方法
+ *                  注意，托管的方法必须一下格式
+ *                  +(SSNProcessAsync)isAsyncTaskProcess:(id<NSCoding>)data;
+ *                  或者+(SSNProcessAsync)isAsyncTaskProcess:(id<NSCoding>)data taskID:(NSString *)taskID;
+ *  @param data     数据（业务去保证去重逻辑）
+ *
+ *  @return 返回为本次托管任务分配的taskID
+ */
+- (NSString *)hostingClassName:(NSString *)className classSelector:(SEL)selector ocCodingObject:(id<NSCoding>)obj {
+    if (!obj) {
+        return nil;
+    }
+    NSData *data = nil;
+    @try {
+        data = [NSKeyedArchiver archivedDataWithRootObject:obj];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"%@",exception);
+        return nil;
+    }
+    
+    if (data == nil) {
+        return nil;
+    }
+    
+    return [self hostingClassName:className classSelector:selector data:data coder:SSNHostingTaskDataCodingObjC];
+}
+
+/**
+ *  托管某个类的静态方法(可序自定义列化的方法)
+ *
+ *  @param className 需要托管的类
+ *  @param selector 托管的方法
+ *                  注意，托管的方法必须一下格式
+ *                  +(SSNProcessAsync)isAsyncTaskProcess:(id<SSNHostingTaskDataCoding>)data;
+ *                  或者+(SSNProcessAsync)isAsyncTaskProcess:(id<SSNHostingTaskDataCoding>)data taskID:(NSString *)taskID;
+ *  @param obj      数据（业务去保证去重逻辑）
+ *
+ *  @return 返回为本次托管任务分配的taskID
+ */
+- (NSString *)hostingClassName:(NSString *)className classSelector:(SEL)selector customCodingObject:(id<SSNHostingTaskDataCoding>)obj {
+    if (!obj) {
+        return nil;
+    }
+    NSData *data = [self encodeDataFromObject:obj];
+    if (data == nil) {
+        return nil;
+    }
+    return [self hostingClassName:className classSelector:selector data:data coder:SSNHostingTaskDataCodingCustom];
+}
+
+
+
 #pragma mark - loop
-//- ()
+- (void)coreLoop {
+    
+    dispatch_block_t block = ^{
+        
+        do {
+            BOOL isRunloop = NO;
+            pthread_mutex_lock(&_mutex);
+            isRunloop = _isRuning;
+            _runloop = CFRunLoopGetCurrent();
+            pthread_mutex_unlock(&_mutex);
 
-@end
+            if (!isRunloop) {
+                return ;
+            }
+            
+            NSString *sql = [NSString stringWithFormat:@"SELECT * FROM %@ ORDER BY at AES LIMI 1",SSNHostingTaskTable];
+            NSArray *result = [_db objects:[SSNHostingDBTask class] sql:sql arguments:nil];
+            SSNHostingDBTask *task = [result lastObject];
+            
+            if (!task) {//说明没有任务了
+                break ;
+            }
+            
+            Class clazz = NSClassFromString(task.clazz);
+            if (!clazz && [_delegate respondsToSelector:@selector(ssn_hosting:loadTaskClassName:)]) {
+                NSString *clazz_str = [_delegate ssn_hosting:self loadTaskClassName:task.clazz];
+                if ([clazz_str length]) {
+                    clazz = NSClassFromString(clazz_str);
+                }
+            }
+            
+            //删除此任务
+            if (!clazz) {
+                [_table deleteObject:task];
+                continue ;
+            }
+            
+            SEL selector = NSSelectorFromString(task.selector);
+            if (![(NSObject *)clazz respondsToSelector:selector] && [_delegate respondsToSelector:@selector(ssn_hosting:taskClassName:loadTaskSelectorName:)]) {
+                NSString *selector_str = [_delegate ssn_hosting:self taskClassName:task.clazz loadTaskSelectorName:task.selector];
+                if ([selector_str length]) {
+                    selector = NSSelectorFromString(selector_str);
+                }
+            }
+            
+            //删除此任务
+            if (![(NSObject *)clazz respondsToSelector:selector]) {
+                [_table deleteObject:task];
+                continue ;
+            }
+            
+            id obj = [self objectFromEncodeData:task.data encoderType:task.coder];
+            
+            if (!obj) {
+                [_table deleteObject:task];//删除此任务
+                continue;
+            }
+            
+            pthread_mutex_lock(&_mutex);
+            _currentTaskID = task.tid;//疑问，若cancel调用在runloop run之前会发生什么事
+            pthread_mutex_unlock(&_mutex);
+            
+            SSNProcessAsync ret = NO;
+            @try {
+                //开始处理任务
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+                ret = [(NSObject *)clazz performSelector:selector withObject:obj withObject:task.tid];
+#pragma clang diagnostic pop
+            }
+            @catch (NSException *exception) {
+                NSLog(@"%@",exception);
+                [_table deleteObject:task];//删除此任务
+                ret = NO;
+            }
 
-@implementation SSNHostingTask
+            
+            if (ret) {
+                NSLog(@"开启runloop开始等待");
+                [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return NO; } atSpellTime:0];
+            }
+            
+            pthread_mutex_lock(&_mutex);
+            _currentTaskID = nil;
+            _runloop = NULL;
+            pthread_mutex_unlock(&_mutex);
+            
+        } while (YES);
+        
+    };
+    
+    dispatch_async(_queue, block);
+}
 
-//
+#pragma mark - other
+- (id)objectFromEncodeData:(NSData *)data encoderType:(SSNHostingTaskDataCodingType)type {
+    @try {
+        switch (type) {
+            case SSNHostingTaskDataCodingNan:
+                return data;
+                break;
+            case SSNHostingTaskDataCodingObjC:
+                return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+                break;
+            case SSNHostingTaskDataCodingCustom:
+                return [self decodeObjectFromData:data];
+                break;
+            default:
+                break;
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"%@",exception);
+        return nil;
+    }
+}
+
+- (NSData *)encodeDataFromObject:(id<SSNHostingTaskDataCoding>)obj {
+    @try {
+        NSMutableData *data = [NSMutableData data];
+        NSData *clazzName = [NSStringFromClass([obj class]) dataUsingEncoding:NSUTF8StringEncoding];
+        char c = [clazzName length];//256 个字符，足够了
+        [data appendBytes:&c length:1];
+        [data appendData:clazzName];
+        NSData *objData = [obj ssn_hostingTaskDataEncode];
+        if (objData) {
+            [data appendData:objData];
+        }
+        return data;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"encodeData %@",exception);
+        return nil;
+    }
+}
+
+- (id<SSNHostingTaskDataCoding>)decodeObjectFromData:(NSData *)data {
+    @try {
+        char c = 0;
+        [data getBytes:&c length:1];
+        char *c_str = (char *)malloc(sizeof(char));
+        [data getBytes:c_str range:NSMakeRange(1, c)];
+        NSString *clazz_str = [[NSString alloc] initWithBytesNoCopy:c_str length:c encoding:NSUTF8StringEncoding freeWhenDone:YES];
+        Class clazz = NSClassFromString(clazz_str);
+        if (!clazz) {
+            return nil;
+        }
+        NSData *subData = [data subdataWithRange:NSMakeRange(c+1, [data length] - (c+1))];
+        return [[clazz alloc] initWithHostingTaskData:subData];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"decodeData %@",exception);
+        return nil;
+    }
+}
 
 @end
