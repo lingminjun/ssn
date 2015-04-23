@@ -387,6 +387,34 @@
     return image;
 }
 
+/**
+ *  绘制一个圆
+ *
+ *  @param diameter 直径
+ *  @param color    颜色
+ *
+ *  @return 绘制一个圆
+ */
++ (UIImage *)ssn_circleWithDiameter:(CGFloat)diameter color:(UIColor *)color {
+    
+    CGSize size = CGSizeMake(diameter, diameter);
+    CGFloat radius = ssn_floor(diameter/2.0f);
+    
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    UIBezierPath* borderPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(radius, radius)
+                                                              radius:radius
+                                                          startAngle:0
+                                                            endAngle:ssn_degrees_to_radians(360)
+                                                           clockwise:YES];
+    
+    [color setFill]; //设置颜色
+    [borderPath fill];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
 - (UIImage *)ssn_centerStretchImage {
     CGSize size = self.size;
     CGFloat half_width = ssn_floor(size.width/2);

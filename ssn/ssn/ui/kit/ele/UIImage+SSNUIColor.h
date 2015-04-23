@@ -123,6 +123,16 @@
  */
 + (UIImage *)ssn_circleLineWithDiameter:(CGFloat)diameter border:(CGFloat)width color:(UIColor *)borderColor;
 
+/**
+ *  绘制一个圆
+ *
+ *  @param diameter 直径
+ *  @param color    颜色
+ *
+ *  @return 绘制一个圆
+ */
++ (UIImage *)ssn_circleWithDiameter:(CGFloat)diameter color:(UIColor *)color;
+
 #pragma mark other
 /**
  *  中间拉伸图
