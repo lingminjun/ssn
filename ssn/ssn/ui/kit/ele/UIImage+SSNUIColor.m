@@ -388,6 +388,50 @@
 }
 
 /**
+ *  绘制一个圆形线圈
+ *
+ *  @param diameter    直径
+ *  @param width       线宽
+ *  @param borderColor 线颜色
+ *  @param backgroudColor 背景色
+ *
+ *  @return 绘制一个圆形线圈
+ */
++ (UIImage *)ssn_circleLineWithDiameter:(CGFloat)diameter border:(CGFloat)width color:(UIColor *)borderColor backgroudColor:(UIColor *)backgroudColor {
+    CGSize size = CGSizeMake(diameter, diameter);
+    CGFloat radius = ssn_floor(diameter/2.0f);
+    
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    UIBezierPath* borderPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(radius, radius)
+                                                              radius:radius
+                                                          startAngle:0
+                                                            endAngle:ssn_degrees_to_radians(360)
+                                                           clockwise:YES];
+    
+    borderPath.lineWidth = width;
+    borderPath.lineCapStyle = kCGLineCapRound; //线条拐角
+    borderPath.lineJoinStyle = kCGLineCapRound; //终点处理
+    
+    [borderColor setFill];
+    [borderPath fill];
+    
+    CGSize fillsize = CGSizeMake(diameter - 2*width, diameter - 2*width);
+    CGFloat fillradius = ssn_floor(fillsize.width/2.0f);
+    
+    UIBezierPath *fillPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(radius, radius)
+                                                            radius:fillradius
+                                                        startAngle:0
+                                                          endAngle:ssn_degrees_to_radians(360)
+                                                         clockwise:YES];
+    [backgroudColor setFill];
+    [fillPath fill];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+/**
  *  绘制一个圆
  *
  *  @param diameter 直径

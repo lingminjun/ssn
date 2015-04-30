@@ -113,7 +113,7 @@
 
 
 /**
- *  绘制一个圆形线圈
+ *  绘制一个圆形线圈,线圈转角不是很好看
  *
  *  @param diameter    直径
  *  @param width       线宽
@@ -122,6 +122,18 @@
  *  @return 绘制一个圆形线圈
  */
 + (UIImage *)ssn_circleLineWithDiameter:(CGFloat)diameter border:(CGFloat)width color:(UIColor *)borderColor;
+
+/**
+ *  绘制一个圆形线圈
+ *
+ *  @param diameter    直径
+ *  @param width       线宽
+ *  @param borderColor 线颜色
+ *  @param backgroudColor 背景色
+ *
+ *  @return 绘制一个圆形线圈
+ */
++ (UIImage *)ssn_circleLineWithDiameter:(CGFloat)diameter border:(CGFloat)width color:(UIColor *)borderColor backgroudColor:(UIColor *)backgroudColor;
 
 /**
  *  绘制一个圆
