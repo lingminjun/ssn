@@ -68,11 +68,14 @@
 		534B4AA919C04E4B00698137 /* KKObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B4AA819C04E4B00698137 /* KKObj.m */; };
 		534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 534CA1641A6CAC9500CB55B3 /* SSNJob.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
+		53527A7A1AFB68940059B95B /* test_backgroud_img@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 53527A791AFB68940059B95B /* test_backgroud_img@2x.png */; };
+		53527A7D1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53527A7C1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m */; };
 		535C0E091AD0373D0033EB92 /* NSObject+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E081AD0373D0033EB92 /* NSObject+SSN.m */; };
 		535C0E0D1AD37A780033EB92 /* NSData+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E0C1AD37A780033EB92 /* NSData+SSN.m */; };
 		53620B2F1AB3217F00381C3C /* SSNRPCInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */; };
 		53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B311AB53C2200381C3C /* SSNSeqGen.m */; };
 		53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B341AB5D1C300381C3C /* NSThread+SSN.m */; };
+		5362BB4C1AFAFE4A00D93060 /* SSNScrollHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5362BB4B1AFAFE4A00D93060 /* SSNScrollHeader.m */; };
 		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
 		5381F7EC1ADE4B24006BB93A /* ssn_hosting_task.json in Resources */ = {isa = PBXBuildFile; fileRef = 5381F7EB1ADE4B24006BB93A /* ssn_hosting_task.json */; };
 		538706711ACD762A001F3880 /* SSNFileDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 538706701ACD762A001F3880 /* SSNFileDownloader.m */; };
@@ -345,6 +348,9 @@
 		534CA1631A6CAC9500CB55B3 /* SSNJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNJob.h; sourceTree = "<group>"; };
 		534CA1641A6CAC9500CB55B3 /* SSNJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNJob.m; sourceTree = "<group>"; };
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		53527A791AFB68940059B95B /* test_backgroud_img@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_backgroud_img@2x.png"; sourceTree = SOURCE_ROOT; };
+		53527A7B1AFBB85D0059B95B /* SSNDefaultPullRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDefaultPullRefreshView.h; sourceTree = "<group>"; };
+		53527A7C1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDefaultPullRefreshView.m; sourceTree = "<group>"; };
 		535C0E071AD0373D0033EB92 /* NSObject+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SSN.h"; sourceTree = "<group>"; };
 		535C0E081AD0373D0033EB92 /* NSObject+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SSN.m"; sourceTree = "<group>"; };
 		535C0E0B1AD37A780033EB92 /* NSData+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SSN.h"; sourceTree = "<group>"; };
@@ -355,6 +361,8 @@
 		53620B311AB53C2200381C3C /* SSNSeqGen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNSeqGen.m; sourceTree = "<group>"; };
 		53620B331AB5D1C300381C3C /* NSThread+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+SSN.h"; sourceTree = "<group>"; };
 		53620B341AB5D1C300381C3C /* NSThread+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+SSN.m"; sourceTree = "<group>"; };
+		5362BB4A1AFAFE4A00D93060 /* SSNScrollHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNScrollHeader.h; sourceTree = "<group>"; };
+		5362BB4B1AFAFE4A00D93060 /* SSNScrollHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNScrollHeader.m; sourceTree = "<group>"; };
 		537064961A2A032700287199 /* TSUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUser.h; sourceTree = "<group>"; };
 		537064971A2A032700287199 /* TSUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUser.m; sourceTree = "<group>"; };
 		5381F7EB1ADE4B24006BB93A /* ssn_hosting_task.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ssn_hosting_task.json; sourceTree = "<group>"; };
@@ -682,6 +690,17 @@
 				534CA1641A6CAC9500CB55B3 /* SSNJob.m */,
 			);
 			path = job;
+			sourceTree = "<group>";
+		};
+		5362BB491AFAFE2400D93060 /* scroll_header */ = {
+			isa = PBXGroup;
+			children = (
+				5362BB4A1AFAFE4A00D93060 /* SSNScrollHeader.h */,
+				5362BB4B1AFAFE4A00D93060 /* SSNScrollHeader.m */,
+				53527A7B1AFBB85D0059B95B /* SSNDefaultPullRefreshView.h */,
+				53527A7C1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m */,
+			);
+			path = scroll_header;
 			sourceTree = "<group>";
 		};
 		5387066E1ACD7598001F3880 /* downloader */ = {
@@ -1054,6 +1073,7 @@
 		53BC52E41A485E6E0044C238 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				5362BB491AFAFE2400D93060 /* scroll_header */,
 				533164D61A8B41B4007223DC /* table */,
 				53CB29F71A89EB8200509148 /* category */,
 				5335EBE21A83A609007B9DC9 /* toast */,
@@ -1158,6 +1178,7 @@
 		53D163EA191A629C00AD4C81 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				53527A791AFB68940059B95B /* test_backgroud_img@2x.png */,
 				533BE3AF1A2B0C0D00E07FF0 /* Default-568h@2x.png */,
 				533BE3B01A2B0C0D00E07FF0 /* Default.png */,
 				533BE3B11A2B0C0D00E07FF0 /* Default@2x.png */,
@@ -1333,6 +1354,7 @@
 				53BC53421A485E6E0044C238 /* Navigator介绍.txt in Resources */,
 				533BE3A81A2B070800E07FF0 /* dm_default_avatar@2x.png in Resources */,
 				533BE3B41A2B0C0D00E07FF0 /* Default.png in Resources */,
+				53527A7A1AFB68940059B95B /* test_backgroud_img@2x.png in Resources */,
 				5381F7EC1ADE4B24006BB93A /* ssn_hosting_task.json in Resources */,
 				533BE3A01A2B010800E07FF0 /* DMSession.json in Resources */,
 				5339FC411AA2B46C0000F6B9 /* ssn_pull_refresh_gray_arrow@3x.png in Resources */,
@@ -1440,6 +1462,7 @@
 				53BC53181A485E6E0044C238 /* SSNDataStore.m in Sources */,
 				53BC532A1A485E6E0044C238 /* db.md in Sources */,
 				53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */,
+				5362BB4C1AFAFE4A00D93060 /* SSNScrollHeader.m in Sources */,
 				53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */,
 				53BC53081A485E6E0044C238 /* NSString+SSN.m in Sources */,
 				53D82B8E1A6550AE005C2958 /* NSObject+SSNBlock.m in Sources */,
@@ -1491,6 +1514,7 @@
 				53C84C721A5B9586008AB7C8 /* NSString+SSNUIKit.m in Sources */,
 				5339FC931AA55BE60000F6B9 /* DMPersonCell.m in Sources */,
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
+				53527A7D1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m in Sources */,
 				53BC53101A485E6E0044C238 /* SSNSafeArray.m in Sources */,
 				5339FC8C1AA551AA0000F6B9 /* SSNDBFetchController.m in Sources */,
 				53BC53461A485E6E0044C238 /* NSURL+Router.m in Sources */,

@@ -13,8 +13,10 @@
 #import "UIViewController+SSNTableViewEasyConfigure.h"
 #import "DMSettingCellItem.h"
 #import "DMSectionCellItem.h"
+#import "SSNScrollHeader.h"
+#import "SSNDefaultPullRefreshView.h"
 
-@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate> {
+@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate,SSNScrollHeaderDelegate> {
     NSInteger flag;
 }
 
@@ -45,14 +47,29 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"退出" style:UIBarButtonItemStyleDone target:self action:@selector(logout)];
 
 //    self.tableView.ssn_pullRefreshEnabled = YES;//下拉刷新
-    self.tableView.ssn_loadMoreEnabled = YES;//上提更多
+//    self.tableView.ssn_loadMoreEnabled = YES;//上提更多
     
     self.ssn_tableViewConfigurator.tableView = self.tableView;
     
-    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;//自动控制是否还有更多
+//    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;//自动控制是否还有更多
     
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];
+    
+    SSNScrollHeader *header = [[SSNScrollHeader alloc] init];
+//    header.triggerHeight = 100;
+    header.backgroudImageView.image = [UIImage imageNamed:@"test_backgroud_img"];
+    [header installToScrollView:self.tableView];
+    header.delegate = self;
+    
+    SSNDefaultPullRefreshView *refreshView = [[SSNDefaultPullRefreshView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 60)];
+    [header setContentViewClass:refreshView];
+}
+
+- (void)ssn_scrollHeaderDidTrigger:(SSNScrollHeader *)scrollHeader {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [scrollHeader finishedLoading];
+    });
 }
 
 - (void)logout {

@@ -197,8 +197,6 @@
     else {
         if (_lastUpdatedTimestamp) {
             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//            [formatter setAMSymbol:@"AM"];
-//            [formatter setPMSymbol:@"PM"];
             [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
             string = [NSString stringWithFormat:@"最后更新: %@", [formatter stringFromDate:_lastUpdatedTimestamp]];
         }
