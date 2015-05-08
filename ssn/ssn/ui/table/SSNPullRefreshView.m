@@ -313,9 +313,7 @@
     CGFloat scrolledDistance = scrollView.contentOffset.y + visibleTableHeight; // If scrolled all the way down this should add upp to the content heigh.
     
     CGFloat normalizedOffset = scrollAreaContenHeight -scrolledDistance;
-    
     return normalizedOffset;
-    
 }
 
 - (CGFloat)visibleTableHeightDiffWithBoundsHeight:(UIScrollView *) scrollView

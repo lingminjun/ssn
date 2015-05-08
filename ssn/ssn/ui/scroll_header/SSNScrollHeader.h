@@ -76,6 +76,11 @@ typedef NS_ENUM(NSUInteger, SSNScrollHeaderState){
 @property (nonatomic,strong,readonly) UIImageView *backgroudImageView;
 
 /**
+ *  是否停用
+ */
+@property (nonatomic) BOOL disabled;
+
+/**
  *  依赖的scrollview
  *
  *  @return 返回正在作用的scrollView

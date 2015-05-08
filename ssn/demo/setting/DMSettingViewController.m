@@ -15,8 +15,9 @@
 #import "DMSectionCellItem.h"
 #import "SSNScrollHeader.h"
 #import "SSNDefaultPullRefreshView.h"
+#import "SSNLoadMoreView.h"
 
-@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate,SSNScrollHeaderDelegate> {
+@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate,SSNScrollHeaderDelegate,SSNLoadMoreViewDelegate> {
     NSInteger flag;
 }
 
@@ -64,11 +65,22 @@
     
     SSNDefaultPullRefreshView *refreshView = [[SSNDefaultPullRefreshView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 60)];
     [header setContentViewClass:refreshView];
+    
+    SSNLoadMoreView *loadMore = [[SSNLoadMoreView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 40)];
+    [loadMore installToTableView:self.tableView];
+    loadMore.delegate = self;
+    loadMore.hasMore = YES;
 }
 
 - (void)ssn_scrollHeaderDidTrigger:(SSNScrollHeader *)scrollHeader {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [scrollHeader finishedLoading];
+    });
+}
+
+- (void)ssn_loadMoreViewDidTrigger:(SSNLoadMoreView *)loadMoreView {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [loadMoreView finishedLoading];
     });
 }
 

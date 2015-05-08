@@ -200,6 +200,10 @@
         return ;
     }
     
+    if (_disabled) {
+        return ;
+    }
+    
     NSValue *chaned_new_value = [change objectForKey:NSKeyValueChangeNewKey];
     CGPoint contentOffset = [chaned_new_value CGPointValue];
     
