@@ -17,7 +17,7 @@
 /**
  *  将table configurator单独定义下，表明必要接口
  */
-@protocol SSNTableViewConfigurator <NSObject,UITableViewDelegate,UITableViewDataSource,SSNPullRefreshDelegate>
+@protocol SSNTableViewConfigurator <NSObject,UITableViewDelegate,UITableViewDataSource,SSNScrollEdgeViewDelegate>
 /**
  *  委托
  */

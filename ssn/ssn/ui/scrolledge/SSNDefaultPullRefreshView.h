@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SSNScrollHeader.h"
+#import "SSNScrollEdgeView.h"
 
-@interface SSNDefaultPullRefreshView : UIView<SSNScrollHeaderContentView> {
+/**
+ *  实现一个默认的refresh view
+ */
+@interface SSNDefaultPullRefreshView : UIView<SSNScrollEdgeContentView> {
     UIImage *_arrowImage;
     
     UILabel *_lastUpdatedLabel;
@@ -19,5 +22,12 @@
     
     NSDate *_lastUpdatedTimestamp;
 }
+
+/**
+ *  获得一个默认风格的refresh view
+ *
+ *  @return edgeView
+ */
++ (SSNScrollEdgeView *)pullRefreshView;
 
 @end

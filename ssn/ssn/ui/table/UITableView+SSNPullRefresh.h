@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SSNPullRefreshView.h"
+#import "SSNScrollEdgeView.h"
 
 /**
  *  扩充tableview具备下拉刷新和加载更多功能
@@ -27,12 +27,12 @@
 /**
  *  下拉刷新view，你可以修改其显示内容
  */
-@property (nonatomic,strong,readonly) SSNPullRefreshView *ssn_headerPullRefreshView;
+@property (nonatomic,strong,readonly) SSNScrollEdgeView *ssn_headerPullRefreshView;
 
 /**
  *  上提加载更多view，你可以修改其显示内容
  */
-@property (nonatomic,strong,readonly) SSNPullRefreshView *ssn_footerLoadMoreView;
+@property (nonatomic,strong,readonly) SSNScrollEdgeView *ssn_footerLoadMoreView;
 
 @end
 

@@ -15,7 +15,7 @@
 /**
  *  给出一种默认的实现，让控制器变得更佳简介易用
  */
-@interface SSNTableViewConfigurator : NSObject<SSNTableViewConfigurator,UITableViewDelegate,UITableViewDataSource,SSNPullRefreshDelegate,SSNListFetchControllerDelegate,SSNListFetchControllerDataSource>
+@interface SSNTableViewConfigurator : NSObject<SSNTableViewConfigurator,UITableViewDelegate,UITableViewDataSource,SSNScrollEdgeViewDelegate,SSNListFetchControllerDelegate,SSNListFetchControllerDataSource>
 
 /**
  *  委托

@@ -70,25 +70,18 @@
         view.frame = CGRectMake(25.0f,(content_frame.size.height - activity_size.height)/2, activity_size.width, activity_size.height);
         [self addSubview:view];
         _activityView = view;
+        
+        [self refreshLastUpdatedDate];
     }
     return self;
 }
 
 /**
- *  当headerView被拉伸时回调，此回调在整个拉伸过程中都会回调
+ *  当scrollEdgeView将要触发阀值时回调，此时可以开始加载动画
  *
- *  @param scrollHeader 当前的scrollHeader
- *  @param stretchForce 拉伸力度，[0~1](零到一)
+ *  @param scrollEdgeView 当前的scrollEdgeView
  */
-- (void)scrollHeader:(SSNScrollHeader *)scrollHeader didPullingWithStretchForce:(CGFloat)stretchForce {
-}
-
-/**
- *  当headerView将要触发阀值前回调，此时可以开始加载动画
- *
- *  @param scrollHeader 当前的scrollHeader
- */
-- (void)scrollHeaderWillTrigger:(SSNScrollHeader *)scrollHeader {
+- (void)scrollEdgeViewWillTrigger:(SSNScrollEdgeView *)scrollEdgeView {
     _lastUpdatedTimestamp = [NSDate date];
     
     _statusLabel.text = @"加载中...";
@@ -101,11 +94,11 @@
 }
 
 /**
- *  当headerView将被拖拽时回调，
+ *  当scrollEdgeView将被拖拽时回调，此时可以改变提示语句
  *
- *  @param scrollHeader 当前的scrollHeader
+ *  @param scrollEdgeView 当前的scrollEdgeView
  */
-- (void)scrollHeaderWillDragging:(SSNScrollHeader *)scrollHeader {
+- (void)scrollEdgeViewWillDragging:(SSNScrollEdgeView *)scrollEdgeView {
     _statusLabel.text = @"松开即可刷新...";
     [CATransaction begin];
     [CATransaction setAnimationDuration:0.18f];
@@ -118,7 +111,12 @@
  *
  *  @param scrollHeader 当前的scrollHeader
  */
-- (void)scrollHeaderDidFinish:(SSNScrollHeader *)scrollHeader {    
+/**
+ *  当scrollEdgeView结束加载过程后回调，此时可以停止加载动画
+ *
+ *  @param scrollEdgeView 当前的scrollEdgeView
+ */
+- (void)scrollEdgeViewDidFinish:(SSNScrollEdgeView *)scrollEdgeView {
     _statusLabel.text = @"下拉可以刷新...";
     
     [_activityView stopAnimating];
@@ -155,6 +153,21 @@
         status_label_y = (content_frame.size.height-status_label_height)/2;
     }
     _statusLabel.frame = CGRectMake(0.0f, status_label_y, _statusLabel.frame.size.width, status_label_height);
+}
+
+/**
+ *  获得一个默认风格的refresh view
+ *
+ *  @return edgeView
+ */
++ (SSNScrollEdgeView *)pullRefreshView {
+    SSNScrollEdgeView *header = [[SSNScrollEdgeView alloc] init];
+    header.backgroundColor = [UIColor colorWithRed:226.0/255.0 green:231.0/255.0 blue:237.0/255.0 alpha:1.0];
+    
+    SSNDefaultPullRefreshView *refreshView = [[SSNDefaultPullRefreshView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 60)];
+    [header setContentView:refreshView];
+    
+    return header;
 }
 
 @end

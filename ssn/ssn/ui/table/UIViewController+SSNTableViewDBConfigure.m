@@ -203,78 +203,20 @@
     }
 }
 
-#pragma mark - uiscroll view delegate
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (scrollView != self.tableView) {
-        return ;
-    }
-    
-    UITableView *tableView = self.tableView;
-    
-    [tableView.ssn_headerPullRefreshView scrollViewDidScroll:scrollView];
-    [tableView.ssn_footerLoadMoreView scrollViewDidScroll:scrollView];
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (scrollView != self.tableView) {
-        return ;
-    }
-    
-    UITableView *tableView = self.tableView;
-    
-    [tableView.ssn_headerPullRefreshView scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
-    [tableView.ssn_footerLoadMoreView scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    if (scrollView != self.tableView) {
-        return ;
-    }
-    
-    UITableView *tableView = self.tableView;
-    [tableView.ssn_footerLoadMoreView scrollViewDidEndDecelerating:scrollView];
-}
-
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    if (scrollView != self.tableView) {
-        return ;
-    }
-    
-    UITableView *tableView = self.tableView;
-    
-    [tableView.ssn_headerPullRefreshView scrollViewWillBeginDragging:scrollView];
-    [tableView.ssn_footerLoadMoreView scrollViewWillBeginDragging:scrollView];
-}
-
 #pragma mark - pull refresh delegate
 /**
  *  将要触发动作
  *
  *  @param view
  */
-- (void)ssn_pullRefreshViewDidTriggerRefresh:(SSNPullRefreshView *)view {
-    if (view == self.tableView.ssn_headerPullRefreshView) {
+- (void)ssn_scrollEdgeViewDidTrigger:(SSNScrollEdgeView *)scrollEdgeView {
+    if (scrollEdgeView == self.tableView.ssn_headerPullRefreshView) {
         [self.dbFetchController performFetch];
     }
-    else if (view == self.tableView.ssn_footerLoadMoreView) {
+    else if (scrollEdgeView == self.tableView.ssn_footerLoadMoreView) {
         [self.dbFetchController performNextFetchCount:SSNDBFetchPageSize];
     }
 }
-
-- (NSString *)ssn_pullRefreshView:(SSNPullRefreshView *)view copywritingAtLatestUpdatedTime:(NSDate *)time {
-    if (view == self.tableView.ssn_headerPullRefreshView) {
-        if (time) {
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-            return [NSString stringWithFormat:@"最后更新: %@", [formatter stringFromDate:time]];
-        }
-    }
-    else if (view == self.tableView.ssn_footerLoadMoreView) {
-        //
-    }
-    return nil;
-}
-
 
 #pragma mark - db fetch controller delegate
 - (void)ssndb_controller:(SSNDBFetchController *)controller didChangeObject:(id)object atIndex:(NSUInteger)index forChangeType:(SSNDBFetchedChangeType)type newIndex:(NSUInteger)newIndex {

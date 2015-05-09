@@ -25,7 +25,6 @@
 		533164F81A8B41DF007223DC /* ssn_pull_refresh_gray_arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533164EA1A8B41DF007223DC /* ssn_pull_refresh_gray_arrow@2x.png */; };
 		533164F91A8B41DF007223DC /* ssn_pull_refresh_white_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 533164EB1A8B41DF007223DC /* ssn_pull_refresh_white_arrow.png */; };
 		533164FA1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 533164EC1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png */; };
-		533164FD1A8B4375007223DC /* SSNPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 533164FC1A8B4375007223DC /* SSNPullRefreshView.m */; };
 		533365F21ACBBBC800DC4D0F /* NSRunLoop+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 533365F11ACBBBC800DC4D0F /* NSRunLoop+SSN.m */; };
 		5334C0E01ACA3DD900094768 /* NSNotificationCenter+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */; };
 		5334C0ED1ACA7F4400094768 /* userdefaults.json in Resources */ = {isa = PBXBuildFile; fileRef = 5334C0EC1ACA7F4400094768 /* userdefaults.json */; };
@@ -65,18 +64,18 @@
 		533BE3C01A2B150500E07FF0 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 533BE3BF1A2B150500E07FF0 /* AddressBook.framework */; };
 		533BE3C21A2B150B00E07FF0 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */; };
 		533F4FD51A35997F009D29C6 /* ssn_datastore_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 533F4FD41A35997F009D29C6 /* ssn_datastore_test.m */; };
+		534173231AFE690E00A17C5A /* SSNDefaultLoadMoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5341731E1AFE690E00A17C5A /* SSNDefaultLoadMoreView.m */; };
+		534173241AFE690E00A17C5A /* SSNDefaultPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 534173201AFE690E00A17C5A /* SSNDefaultPullRefreshView.m */; };
+		534173251AFE690E00A17C5A /* SSNScrollEdgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 534173221AFE690E00A17C5A /* SSNScrollEdgeView.m */; };
 		534B4AA919C04E4B00698137 /* KKObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B4AA819C04E4B00698137 /* KKObj.m */; };
 		534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 534CA1641A6CAC9500CB55B3 /* SSNJob.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
 		53527A7A1AFB68940059B95B /* test_backgroud_img@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 53527A791AFB68940059B95B /* test_backgroud_img@2x.png */; };
-		53527A7D1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53527A7C1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m */; };
-		5356B1511AFC517E007EAF0C /* SSNLoadMoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5356B1501AFC517E007EAF0C /* SSNLoadMoreView.m */; };
 		535C0E091AD0373D0033EB92 /* NSObject+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E081AD0373D0033EB92 /* NSObject+SSN.m */; };
 		535C0E0D1AD37A780033EB92 /* NSData+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E0C1AD37A780033EB92 /* NSData+SSN.m */; };
 		53620B2F1AB3217F00381C3C /* SSNRPCInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */; };
 		53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B311AB53C2200381C3C /* SSNSeqGen.m */; };
 		53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B341AB5D1C300381C3C /* NSThread+SSN.m */; };
-		5362BB4C1AFAFE4A00D93060 /* SSNScrollHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5362BB4B1AFAFE4A00D93060 /* SSNScrollHeader.m */; };
 		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
 		5381F7EC1ADE4B24006BB93A /* ssn_hosting_task.json in Resources */ = {isa = PBXBuildFile; fileRef = 5381F7EB1ADE4B24006BB93A /* ssn_hosting_task.json */; };
 		538706711ACD762A001F3880 /* SSNFileDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 538706701ACD762A001F3880 /* SSNFileDownloader.m */; };
@@ -116,7 +115,6 @@
 		53A6E51D1AB28DC7003BFBCF /* SSNMessageInterceptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */; };
 		53A6E51E1AB28DC7003BFBCF /* SSNJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 534CA1641A6CAC9500CB55B3 /* SSNJob.m */; };
 		53A6E51F1AB28DC7003BFBCF /* NSObject+SSNBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D82B8D1A6550AE005C2958 /* NSObject+SSNBlock.m */; };
-		53A6E5201AB28DC7003BFBCF /* SSNPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 533164FC1A8B4375007223DC /* SSNPullRefreshView.m */; };
 		53A6E5211AB28DC7003BFBCF /* UITableView+SSNPullRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9ED861A8DE20900CAFADE /* UITableView+SSNPullRefresh.m */; };
 		53A6E5221AB28DC7003BFBCF /* UIViewController+SSNTableViewEasyConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03311A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m */; };
 		53A6E5231AB28DC7003BFBCF /* UIViewController+SSNTableViewDBConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC7C1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m */; };
@@ -296,8 +294,6 @@
 		533164EA1A8B41DF007223DC /* ssn_pull_refresh_gray_arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ssn_pull_refresh_gray_arrow@2x.png"; sourceTree = "<group>"; };
 		533164EB1A8B41DF007223DC /* ssn_pull_refresh_white_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ssn_pull_refresh_white_arrow.png; sourceTree = "<group>"; };
 		533164EC1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ssn_pull_refresh_white_arrow@2x.png"; sourceTree = "<group>"; };
-		533164FB1A8B4375007223DC /* SSNPullRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNPullRefreshView.h; sourceTree = "<group>"; };
-		533164FC1A8B4375007223DC /* SSNPullRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNPullRefreshView.m; sourceTree = "<group>"; };
 		533365F01ACBBBC800DC4D0F /* NSRunLoop+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRunLoop+SSN.h"; sourceTree = "<group>"; };
 		533365F11ACBBBC800DC4D0F /* NSRunLoop+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRunLoop+SSN.m"; sourceTree = "<group>"; };
 		5334C0DE1ACA3DD900094768 /* NSNotificationCenter+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+SSN.h"; sourceTree = "<group>"; };
@@ -344,16 +340,18 @@
 		533BE3BF1A2B150500E07FF0 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		533BE3C11A2B150B00E07FF0 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		533F4FD41A35997F009D29C6 /* ssn_datastore_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_datastore_test.m; sourceTree = "<group>"; };
+		5341731D1AFE690E00A17C5A /* SSNDefaultLoadMoreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDefaultLoadMoreView.h; sourceTree = "<group>"; };
+		5341731E1AFE690E00A17C5A /* SSNDefaultLoadMoreView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDefaultLoadMoreView.m; sourceTree = "<group>"; };
+		5341731F1AFE690E00A17C5A /* SSNDefaultPullRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDefaultPullRefreshView.h; sourceTree = "<group>"; };
+		534173201AFE690E00A17C5A /* SSNDefaultPullRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDefaultPullRefreshView.m; sourceTree = "<group>"; };
+		534173211AFE690E00A17C5A /* SSNScrollEdgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNScrollEdgeView.h; sourceTree = "<group>"; };
+		534173221AFE690E00A17C5A /* SSNScrollEdgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNScrollEdgeView.m; sourceTree = "<group>"; };
 		534B4AA719C04E4B00698137 /* KKObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKObj.h; sourceTree = "<group>"; };
 		534B4AA819C04E4B00698137 /* KKObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKObj.m; sourceTree = "<group>"; };
 		534CA1631A6CAC9500CB55B3 /* SSNJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNJob.h; sourceTree = "<group>"; };
 		534CA1641A6CAC9500CB55B3 /* SSNJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNJob.m; sourceTree = "<group>"; };
 		53512E2119A371AC00DACC42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		53527A791AFB68940059B95B /* test_backgroud_img@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_backgroud_img@2x.png"; sourceTree = SOURCE_ROOT; };
-		53527A7B1AFBB85D0059B95B /* SSNDefaultPullRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNDefaultPullRefreshView.h; sourceTree = "<group>"; };
-		53527A7C1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNDefaultPullRefreshView.m; sourceTree = "<group>"; };
-		5356B14F1AFC517E007EAF0C /* SSNLoadMoreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNLoadMoreView.h; sourceTree = "<group>"; };
-		5356B1501AFC517E007EAF0C /* SSNLoadMoreView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNLoadMoreView.m; sourceTree = "<group>"; };
 		535C0E071AD0373D0033EB92 /* NSObject+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SSN.h"; sourceTree = "<group>"; };
 		535C0E081AD0373D0033EB92 /* NSObject+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SSN.m"; sourceTree = "<group>"; };
 		535C0E0B1AD37A780033EB92 /* NSData+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SSN.h"; sourceTree = "<group>"; };
@@ -364,8 +362,6 @@
 		53620B311AB53C2200381C3C /* SSNSeqGen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNSeqGen.m; sourceTree = "<group>"; };
 		53620B331AB5D1C300381C3C /* NSThread+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+SSN.h"; sourceTree = "<group>"; };
 		53620B341AB5D1C300381C3C /* NSThread+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+SSN.m"; sourceTree = "<group>"; };
-		5362BB4A1AFAFE4A00D93060 /* SSNScrollHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNScrollHeader.h; sourceTree = "<group>"; };
-		5362BB4B1AFAFE4A00D93060 /* SSNScrollHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNScrollHeader.m; sourceTree = "<group>"; };
 		537064961A2A032700287199 /* TSUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUser.h; sourceTree = "<group>"; };
 		537064971A2A032700287199 /* TSUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUser.m; sourceTree = "<group>"; };
 		5381F7EB1ADE4B24006BB93A /* ssn_hosting_task.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ssn_hosting_task.json; sourceTree = "<group>"; };
@@ -602,8 +598,6 @@
 			isa = PBXGroup;
 			children = (
 				533164E41A8B41DF007223DC /* resources */,
-				533164FB1A8B4375007223DC /* SSNPullRefreshView.h */,
-				533164FC1A8B4375007223DC /* SSNPullRefreshView.m */,
 				53D9ED851A8DE20900CAFADE /* UITableView+SSNPullRefresh.h */,
 				53D9ED861A8DE20900CAFADE /* UITableView+SSNPullRefresh.m */,
 				53CE03301A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.h */,
@@ -686,6 +680,19 @@
 			path = images;
 			sourceTree = "<group>";
 		};
+		5341731C1AFE68B600A17C5A /* scrolledge */ = {
+			isa = PBXGroup;
+			children = (
+				5341731D1AFE690E00A17C5A /* SSNDefaultLoadMoreView.h */,
+				5341731E1AFE690E00A17C5A /* SSNDefaultLoadMoreView.m */,
+				5341731F1AFE690E00A17C5A /* SSNDefaultPullRefreshView.h */,
+				534173201AFE690E00A17C5A /* SSNDefaultPullRefreshView.m */,
+				534173211AFE690E00A17C5A /* SSNScrollEdgeView.h */,
+				534173221AFE690E00A17C5A /* SSNScrollEdgeView.m */,
+			);
+			path = scrolledge;
+			sourceTree = "<group>";
+		};
 		534CA1621A6CAC7A00CB55B3 /* job */ = {
 			isa = PBXGroup;
 			children = (
@@ -693,26 +700,6 @@
 				534CA1641A6CAC9500CB55B3 /* SSNJob.m */,
 			);
 			path = job;
-			sourceTree = "<group>";
-		};
-		5356B14E1AFC5151007EAF0C /* load_more */ = {
-			isa = PBXGroup;
-			children = (
-				5356B14F1AFC517E007EAF0C /* SSNLoadMoreView.h */,
-				5356B1501AFC517E007EAF0C /* SSNLoadMoreView.m */,
-			);
-			path = load_more;
-			sourceTree = "<group>";
-		};
-		5362BB491AFAFE2400D93060 /* scroll_header */ = {
-			isa = PBXGroup;
-			children = (
-				5362BB4A1AFAFE4A00D93060 /* SSNScrollHeader.h */,
-				5362BB4B1AFAFE4A00D93060 /* SSNScrollHeader.m */,
-				53527A7B1AFBB85D0059B95B /* SSNDefaultPullRefreshView.h */,
-				53527A7C1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m */,
-			);
-			path = scroll_header;
 			sourceTree = "<group>";
 		};
 		5387066E1ACD7598001F3880 /* downloader */ = {
@@ -1085,8 +1072,7 @@
 		53BC52E41A485E6E0044C238 /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				5356B14E1AFC5151007EAF0C /* load_more */,
-				5362BB491AFAFE2400D93060 /* scroll_header */,
+				5341731C1AFE68B600A17C5A /* scrolledge */,
 				533164D61A8B41B4007223DC /* table */,
 				53CB29F71A89EB8200509148 /* category */,
 				5335EBE21A83A609007B9DC9 /* toast */,
@@ -1446,12 +1432,10 @@
 				53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */,
 				533BE3BD1A2B0DDA00E07FF0 /* DMPerson.m in Sources */,
 				53BC531A1A485E6E0044C238 /* SSNBound.m in Sources */,
-				533164FD1A8B4375007223DC /* SSNPullRefreshView.m in Sources */,
 				53F5F1571A5ACECD009EE27A /* UIImage+SSNUIColor.m in Sources */,
 				53BC52FC1A485E6E0044C238 /* NSObject+SSNTracking.m in Sources */,
 				534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */,
 				53BC53261A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
-				5356B1511AFC517E007EAF0C /* SSNLoadMoreView.m in Sources */,
 				5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */,
 				53CE03381A9F6C4600E30E0D /* DMSectionCellItem.m in Sources */,
 				53C84C7C1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */,
@@ -1471,12 +1455,12 @@
 				53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */,
 				53BC53161A485E6E0044C238 /* SSNDataStore+Factory.m in Sources */,
 				53BC53041A485E6E0044C238 /* NSData+SSNBase64.m in Sources */,
+				534173251AFE690E00A17C5A /* SSNScrollEdgeView.m in Sources */,
 				53CE03321A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m in Sources */,
 				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,
 				53BC53181A485E6E0044C238 /* SSNDataStore.m in Sources */,
 				53BC532A1A485E6E0044C238 /* db.md in Sources */,
 				53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */,
-				5362BB4C1AFAFE4A00D93060 /* SSNScrollHeader.m in Sources */,
 				53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */,
 				53BC53081A485E6E0044C238 /* NSString+SSN.m in Sources */,
 				53D82B8E1A6550AE005C2958 /* NSObject+SSNBlock.m in Sources */,
@@ -1503,6 +1487,7 @@
 				538706741ACD7F8A001F3880 /* SSNFileDownloadOperation.m in Sources */,
 				53C84C781A5BBE88008AB7C8 /* SSNUISiteLayout.m in Sources */,
 				53BC53511A486DA30044C238 /* ssnbase64.c in Sources */,
+				534173231AFE690E00A17C5A /* SSNDefaultLoadMoreView.m in Sources */,
 				53BC53121A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
 				5339FC8E1AA551AA0000F6B9 /* SSNVMCellItem.m in Sources */,
 				530BE9E01AE13D57007F0025 /* SSNHosting.m in Sources */,
@@ -1528,7 +1513,7 @@
 				53C84C721A5B9586008AB7C8 /* NSString+SSNUIKit.m in Sources */,
 				5339FC931AA55BE60000F6B9 /* DMPersonCell.m in Sources */,
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,
-				53527A7D1AFBB85D0059B95B /* SSNDefaultPullRefreshView.m in Sources */,
+				534173241AFE690E00A17C5A /* SSNDefaultPullRefreshView.m in Sources */,
 				53BC53101A485E6E0044C238 /* SSNSafeArray.m in Sources */,
 				5339FC8C1AA551AA0000F6B9 /* SSNDBFetchController.m in Sources */,
 				53BC53461A485E6E0044C238 /* NSURL+Router.m in Sources */,
@@ -1551,7 +1536,6 @@
 				53A6E51D1AB28DC7003BFBCF /* SSNMessageInterceptor.m in Sources */,
 				53A6E51E1AB28DC7003BFBCF /* SSNJob.m in Sources */,
 				53A6E51F1AB28DC7003BFBCF /* NSObject+SSNBlock.m in Sources */,
-				53A6E5201AB28DC7003BFBCF /* SSNPullRefreshView.m in Sources */,
 				53A6E5211AB28DC7003BFBCF /* UITableView+SSNPullRefresh.m in Sources */,
 				53A6E5221AB28DC7003BFBCF /* UIViewController+SSNTableViewEasyConfigure.m in Sources */,
 				53A6E5231AB28DC7003BFBCF /* UIViewController+SSNTableViewDBConfigure.m in Sources */,
