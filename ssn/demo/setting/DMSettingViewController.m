@@ -17,7 +17,7 @@
 #import "SSNDefaultPullRefreshView.h"
 #import "SSNDefaultLoadMoreView.h"
 
-@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate,SSNScrollEdgeViewDelegate> {
+@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate> {
     NSInteger flag;
 }
 

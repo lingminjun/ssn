@@ -11,6 +11,14 @@
 @implementation DMPersonVM
 @synthesize ssn_dbfetch_rowid = _ssn_dbfetch_rowid;
 
+@synthesize cellClass = _cellClass;
+@synthesize cellNibName = _cellNibName;
+@synthesize cellIdentify = _cellIdentify;
+@synthesize cellHeight = _cellHeight;
+@synthesize isDisabledSelect = _isDisabledSelect;
+@synthesize cellDeleteConfirmationButtonTitle = _cellDeleteConfirmationButtonTitle;
+@synthesize cellSectionIdentify = _cellSectionIdentify;
+
 - (NSUInteger)hash {
     return [self.uid hash];
 }

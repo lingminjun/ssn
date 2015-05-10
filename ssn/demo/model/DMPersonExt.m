@@ -10,6 +10,8 @@
 
 @implementation DMPersonExt
 
+@synthesize ssn_dbfetch_rowid = _ssn_dbfetch_rowid;
+
 - (NSUInteger)hash {
     return [self.uid hash];
 }
