@@ -41,7 +41,7 @@ void ssn_log_get_local_clear_time(char* buffer)
 }
 
 /*
- 获得当前时间字符串，utc-1900时间，并且采用十六进制显示
+ 获得当前时间字符串，utc时间，自1970.1.1到现在的秒数，并且采用十六进制显示
  @param buffer [out]: 时间字符串
  @return 空
  */

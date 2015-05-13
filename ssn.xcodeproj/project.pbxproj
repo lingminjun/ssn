@@ -67,6 +67,25 @@
 		534173231AFE690E00A17C5A /* SSNDefaultLoadMoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5341731E1AFE690E00A17C5A /* SSNDefaultLoadMoreView.m */; };
 		534173241AFE690E00A17C5A /* SSNDefaultPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 534173201AFE690E00A17C5A /* SSNDefaultPullRefreshView.m */; };
 		534173251AFE690E00A17C5A /* SSNScrollEdgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 534173221AFE690E00A17C5A /* SSNScrollEdgeView.m */; };
+		5346DFD31B03241E000C7752 /* SSNFileDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 538706701ACD762A001F3880 /* SSNFileDownloader.m */; };
+		5346DFD41B03241E000C7752 /* SSNFileDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 538706731ACD7F8A001F3880 /* SSNFileDownloadOperation.m */; };
+		5346DFD51B03241E000C7752 /* SSNRPCInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */; };
+		5346DFD61B03241E000C7752 /* objscope.mm in Sources */ = {isa = PBXBuildFile; fileRef = 538DDE051AD971B00082B4FE /* objscope.mm */; };
+		5346DFD71B03241E000C7752 /* SSNSeqGen.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B311AB53C2200381C3C /* SSNSeqGen.m */; };
+		5346DFD81B03241E000C7752 /* NSThread+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B341AB5D1C300381C3C /* NSThread+SSN.m */; };
+		5346DFD91B03241E000C7752 /* NSURL+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAACFE1AC6F31B0012742A /* NSURL+SSN.m */; };
+		5346DFDA1B03241E000C7752 /* NSNotificationCenter+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 5334C0DF1ACA3DD900094768 /* NSNotificationCenter+SSN.m */; };
+		5346DFDB1B03241E000C7752 /* NSRunLoop+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 533365F11ACBBBC800DC4D0F /* NSRunLoop+SSN.m */; };
+		5346DFDC1B03241E000C7752 /* NSObject+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E081AD0373D0033EB92 /* NSObject+SSN.m */; };
+		5346DFDD1B03241E000C7752 /* NSData+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E0C1AD37A780033EB92 /* NSData+SSN.m */; };
+		5346DFDE1B03241E000C7752 /* SSNHosting.m in Sources */ = {isa = PBXBuildFile; fileRef = 530BE9DF1AE13D57007F0025 /* SSNHosting.m */; };
+		5346DFDF1B03241E000C7752 /* SSNDefaultLoadMoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5341731E1AFE690E00A17C5A /* SSNDefaultLoadMoreView.m */; };
+		5346DFE01B03241E000C7752 /* SSNDefaultPullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 534173201AFE690E00A17C5A /* SSNDefaultPullRefreshView.m */; };
+		5346DFE11B03241E000C7752 /* SSNScrollEdgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 534173221AFE690E00A17C5A /* SSNScrollEdgeView.m */; };
+		5346DFE21B03241E000C7752 /* UIAlertView+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAB0051AC7A6120012742A /* UIAlertView+SSNCategory.m */; };
+		5346DFE31B03241E000C7752 /* UIViewController+SSNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAACFB1AC6BBA50012742A /* UIViewController+SSNToast.m */; };
+		5346DFE41B03241E000C7752 /* UIViewController+SSNCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CAAD011AC78C410012742A /* UIViewController+SSNCategory.m */; };
+		5346DFE51B03241E000C7752 /* SSNRouter+Nice.m in Sources */ = {isa = PBXBuildFile; fileRef = 539B4FD31AC41ED20042F6C4 /* SSNRouter+Nice.m */; };
 		534B4AA919C04E4B00698137 /* KKObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B4AA819C04E4B00698137 /* KKObj.m */; };
 		534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 534CA1641A6CAC9500CB55B3 /* SSNJob.m */; };
 		53512E2219A371AC00DACC42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53512E2119A371AC00DACC42 /* libz.dylib */; };
@@ -1533,6 +1552,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5346DFD31B03241E000C7752 /* SSNFileDownloader.m in Sources */,
+				5346DFD41B03241E000C7752 /* SSNFileDownloadOperation.m in Sources */,
+				5346DFD51B03241E000C7752 /* SSNRPCInvocation.m in Sources */,
+				5346DFD61B03241E000C7752 /* objscope.mm in Sources */,
+				5346DFD71B03241E000C7752 /* SSNSeqGen.m in Sources */,
+				5346DFD81B03241E000C7752 /* NSThread+SSN.m in Sources */,
+				5346DFD91B03241E000C7752 /* NSURL+SSN.m in Sources */,
+				5346DFDA1B03241E000C7752 /* NSNotificationCenter+SSN.m in Sources */,
+				5346DFDB1B03241E000C7752 /* NSRunLoop+SSN.m in Sources */,
+				5346DFDC1B03241E000C7752 /* NSObject+SSN.m in Sources */,
+				5346DFDD1B03241E000C7752 /* NSData+SSN.m in Sources */,
+				5346DFDE1B03241E000C7752 /* SSNHosting.m in Sources */,
+				5346DFDF1B03241E000C7752 /* SSNDefaultLoadMoreView.m in Sources */,
+				5346DFE01B03241E000C7752 /* SSNDefaultPullRefreshView.m in Sources */,
+				5346DFE11B03241E000C7752 /* SSNScrollEdgeView.m in Sources */,
+				5346DFE21B03241E000C7752 /* UIAlertView+SSNCategory.m in Sources */,
+				5346DFE31B03241E000C7752 /* UIViewController+SSNToast.m in Sources */,
+				5346DFE41B03241E000C7752 /* UIViewController+SSNCategory.m in Sources */,
+				5346DFE51B03241E000C7752 /* SSNRouter+Nice.m in Sources */,
 				53A6E51D1AB28DC7003BFBCF /* SSNMessageInterceptor.m in Sources */,
 				53A6E51E1AB28DC7003BFBCF /* SSNJob.m in Sources */,
 				53A6E51F1AB28DC7003BFBCF /* NSObject+SSNBlock.m in Sources */,
