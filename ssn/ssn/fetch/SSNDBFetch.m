@@ -335,7 +335,7 @@ static char *ssn_dbfetch_rowid_key = NULL;
 }
 
 - (NSString *)fetchForCascadedTableChangedSql:(NSString *)table {
-    return [NSString stringWithFormat:@"SELECT %@.rowid AS ssn_dbfetch_rowid FROM %@ %@ AND %@.rowid = ? LIMIT 0,1", self.dbTable, [self sqlFromTablesStatement], [self sqlWhereStatement],table];
+    return [NSString stringWithFormat:@"SELECT DISTINCT %@.rowid AS ssn_dbfetch_rowid FROM %@ %@ AND %@.rowid = ?", self.dbTable, [self sqlFromTablesStatement], [self sqlWhereStatement],table];
 }
 
 

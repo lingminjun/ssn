@@ -672,8 +672,9 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
     //得到被影响的rowids，这些数据需要更新
     rowids = [rowids valueForKey:@"ssn_dbfetch_rowid"];
     
-    ssn_fetch_log("\n 级联表%s发生更改，造成结果集%s数据发生变化，影响数据rowid in%s，重新fetch！！！\n", [changeTable UTF8String],[[_fetch dbTable] UTF8String],[[[rowids description] stringByReplacingOccurrencesOfString:@"\n" withString:@""] UTF8String]);
+    ssn_fetch_log("\n fetch for cascaded sql = %s\n 级联表%s发生更改，造成结果集%s数据发生变化，影响数据rowid in%s，重新fetch！！！\n",[change_sql UTF8String], [changeTable UTF8String],[[_fetch dbTable] UTF8String],[[[rowids description] stringByReplacingOccurrencesOfString:@"\n" withString:@""] UTF8String]);
     
+    //重新发起查询主要是级联表字段可能造成排序变化，而不仅仅是值更新
     [self reperformFetchWithChangedRowids:rowids];
 }
 
