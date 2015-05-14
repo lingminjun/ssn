@@ -89,7 +89,7 @@ NSString *const kCompletedCallbackKey = @"completed";
     dispatch_block_t block = ^{
         NSTimeInterval timeoutInterval = wself.timeout;
         if (timeoutInterval == 0.0) {
-            timeoutInterval = 15.0;
+            timeoutInterval = 120.0;
         }
         
         //请求request构建
@@ -173,7 +173,7 @@ NSString *const kCompletedCallbackKey = @"completed";
     
     [self downloadFileWithURL:url progress:progressBlock completed:completed];//completed必须回调，否则runloop泄漏
     
-    [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return finish; } atSpellTime:20];
+    [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return finish; } atSpellTime:120];
     
     return result;
 }
