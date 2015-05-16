@@ -440,12 +440,16 @@ static char * ssn_scroll_edge_view_key = NULL;
         return ;
     }
     
+    //将_startOffset清零，因为不能确定每次动画_startOffset都是一样的
+    const CGFloat startOffset = _startOffset;
+    _startOffset = 0;
+    
     if (!_isBottomEdge) {
         //修改offset
         [UIView beginAnimations:@"changed_inset" context:NULL];
         [UIView setAnimationDuration:0.3f];
         UIEdgeInsets currentInsets = scl.contentInset;
-        currentInsets.top = _startOffset;
+        currentInsets.top = startOffset;
         scl.contentInset = currentInsets;
         [UIView commitAnimations];
     }
@@ -456,8 +460,8 @@ static char * ssn_scroll_edge_view_key = NULL;
     [_contentSubview scrollEdgeViewDidFinish:self];
     
     //内容平滑滚动
-    if(!_isBottomEdge && scl.contentOffset.y != -_startOffset){
-        [scl setContentOffset:CGPointMake(scl.contentOffset.x, -_startOffset) animated:YES];
+    if(!_isBottomEdge && scl.contentOffset.y != -startOffset){
+        [scl setContentOffset:CGPointMake(scl.contentOffset.x, -startOffset) animated:YES];
     }
 }
 

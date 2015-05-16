@@ -125,6 +125,7 @@
 		53A1BA261A52F85100C76844 /* unicode_to_pinyin_tone.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */; };
 		53A1BA2D1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */; };
 		53A1BA2E1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */; };
+		53A674931B07A7A2000EE1B9 /* SSNNavigationBarAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A674921B07A7A2000EE1B9 /* SSNNavigationBarAnimator.m */; };
 		53A6E5171AB28D99003BFBCF /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC811AA551AA0000F6B9 /* SSNDBFetch.m */; };
 		53A6E5181AB28D99003BFBCF /* SSNDBFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC831AA551AA0000F6B9 /* SSNDBFetchController.m */; };
 		53A6E5191AB28D99003BFBCF /* SSNListFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC861AA551AA0000F6B9 /* SSNListFetchController.m */; };
@@ -426,6 +427,8 @@
 		53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unicode_to_pinyin_tone.txt; sourceTree = "<group>"; };
 		53A1BA2B1A52F8B100C76844 /* NSString+SSNPinyin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSNPinyin.h"; sourceTree = "<group>"; };
 		53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSNPinyin.m"; sourceTree = "<group>"; };
+		53A674911B07A7A2000EE1B9 /* SSNNavigationBarAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNNavigationBarAnimator.h; sourceTree = "<group>"; };
+		53A674921B07A7A2000EE1B9 /* SSNNavigationBarAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNNavigationBarAnimator.m; sourceTree = "<group>"; };
 		53B5F5021AB7FCAF00149F3A /* DMNibCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DMNibCell.xib; sourceTree = "<group>"; };
 		53BB50BF1A1441F50070B67D /* ssn_json_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_json_test.m; sourceTree = "<group>"; };
 		53BC52871A485E6E0044C238 /* ssndiff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssndiff.c; sourceTree = "<group>"; };
@@ -881,6 +884,15 @@
 			path = pinyin;
 			sourceTree = "<group>";
 		};
+		53A674901B07A789000EE1B9 /* navigationbaranimator */ = {
+			isa = PBXGroup;
+			children = (
+				53A674911B07A7A2000EE1B9 /* SSNNavigationBarAnimator.h */,
+				53A674921B07A7A2000EE1B9 /* SSNNavigationBarAnimator.m */,
+			);
+			path = navigationbaranimator;
+			sourceTree = "<group>";
+		};
 		53A6E52A1AB2ED2C003BFBCF /* rpc */ = {
 			isa = PBXGroup;
 			children = (
@@ -1091,6 +1103,7 @@
 		53BC52E41A485E6E0044C238 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				53A674901B07A789000EE1B9 /* navigationbaranimator */,
 				5341731C1AFE68B600A17C5A /* scrolledge */,
 				533164D61A8B41B4007223DC /* table */,
 				53CB29F71A89EB8200509148 /* category */,
@@ -1474,6 +1487,7 @@
 				53CE03231A9A11C800E30E0D /* SSNMessageInterceptor.m in Sources */,
 				53BC53161A485E6E0044C238 /* SSNDataStore+Factory.m in Sources */,
 				53BC53041A485E6E0044C238 /* NSData+SSNBase64.m in Sources */,
+				53A674931B07A7A2000EE1B9 /* SSNNavigationBarAnimator.m in Sources */,
 				534173251AFE690E00A17C5A /* SSNScrollEdgeView.m in Sources */,
 				53CE03321A9F605800E30E0D /* UIViewController+SSNTableViewEasyConfigure.m in Sources */,
 				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,

@@ -16,9 +16,11 @@
 #import "SSNScrollEdgeView.h"
 #import "SSNDefaultPullRefreshView.h"
 #import "SSNDefaultLoadMoreView.h"
+#import "SSNNavigationBarAnimator.h"
 
 @interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate> {
     NSInteger flag;
+    SSNNavigationBarAnimator *animator;
 }
 
 @end
@@ -47,12 +49,15 @@
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"退出" style:UIBarButtonItemStyleDone target:self action:@selector(logout)];
 
-//    self.tableView.ssn_pullRefreshEnabled = YES;//下拉刷新
+    self.tableView.ssn_pullRefreshEnabled = YES;//下拉刷新
     self.tableView.ssn_loadMoreEnabled = YES;//上提更多
     
     self.ssn_tableViewConfigurator.tableView = self.tableView;
     
     self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;//自动控制是否还有更多
+    
+    animator = [[SSNNavigationBarAnimator alloc] init];
+    [animator setTargetView:self.tableView];
     
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];
@@ -68,10 +73,17 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    animator.enabled = YES;
+    
 //    static int i = 0;
 //    i++;
 //    flag = i;
 //    [self.ssn_tableViewConfigurator.listFetchController loadData];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    animator.enabled = NO;
 }
 
 - (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query
