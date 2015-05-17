@@ -70,6 +70,11 @@ typedef NS_ENUM(NSUInteger, SSNScrollEdgeState){
 @property (nonatomic) BOOL isBottomEdge;
 
 /**
+ *  scrollView 开始位置
+ */
+@property (nonatomic) CGFloat startOffset;
+
+/**
  *  依赖的scrollview
  *
  *  @return 返回正在作用的scrollView

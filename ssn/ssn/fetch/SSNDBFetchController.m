@@ -14,11 +14,17 @@
 #import <sqlite3.h>
 #import "ssndiff.h"
 
-#if DEBUG
-#define ssn_fetch_log(s, ...) printf(s, ##__VA_ARGS__)
-#else
+//#if DEBUG
+//#define ssn_fetch_log(s, ...) printf(s, ##__VA_ARGS__)
+//#else
 #define ssn_fetch_log(s, ...) ((void)0)
-#endif
+//#endif
+
+//#if DEBUG
+//#define ssn_t_log(s, ...) NSLog(s, ##__VA_ARGS__)
+//#else
+#define ssn_t_log(s, ...) ((void)0)
+//#endif
 
 const NSUInteger SSNDBFetchedChangeNan = 0;
 
@@ -817,13 +823,13 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
 - (void)processResetObjects:(NSArray *)objs obeyChanges:(NSArray *)changes {
     
     if ([changes count] == 0) {
-        NSLog(@"%@ 并没有数据变化，不需要通知到界面",self);
+        ssn_t_log(@"%@ 并没有数据变化，不需要通知到界面",self);
         return ;
     }
     
     dispatch_block_t block = ^{
         
-        NSLog(@"%@ reload开始",self);
+        ssn_t_log(@"%@ reload开始",self);
         [_delegate ssndb_controllerWillChange:self];
         
         //删除老数据
@@ -851,7 +857,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
         [_results setArray:objs];
         
         [_delegate ssndb_controllerDidChange:self];
-        NSLog(@"%@ reload结束",self);
+        ssn_t_log(@"%@ reload结束",self);
     };
     dispatch_async(self.delegateQueue, block);
 }
@@ -883,7 +889,7 @@ void db_fetch_chgs_iter(void *from, void *to, const size_t f_idx, const size_t t
 - (void)processRemoveAllObjects {
     dispatch_block_t block = ^{
         if ([_results count] == 0) {
-            NSLog(@"processRemoveAllObjects 时发现不需要更新到界面");
+            ssn_t_log(@"processRemoveAllObjects 时发现不需要更新到界面");
             return ;
         }
         

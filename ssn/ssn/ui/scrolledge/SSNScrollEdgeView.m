@@ -424,6 +424,11 @@ static char * ssn_scroll_edge_view_key = NULL;
         }
         [_contentSubview scrollEdgeView:self didPullingWithStretchForce:force];
     }
+    
+    //不在loading过程，不需要记录start,因为不能确定每次拉取动画_startOffset都是一样的
+    if (_state == SSNScrollEdgeStill) {
+        _startOffset = 0;
+    }
 }
 
 
@@ -443,6 +448,7 @@ static char * ssn_scroll_edge_view_key = NULL;
     //将_startOffset清零，因为不能确定每次动画_startOffset都是一样的
     const CGFloat startOffset = _startOffset;
     _startOffset = 0;
+    _state = SSNScrollEdgeStill;
     
     if (!_isBottomEdge) {
         //修改offset
@@ -454,7 +460,7 @@ static char * ssn_scroll_edge_view_key = NULL;
         [UIView commitAnimations];
     }
     
-    _state = SSNScrollEdgeStill;
+    
     
     //显示内容回调
     [_contentSubview scrollEdgeViewDidFinish:self];

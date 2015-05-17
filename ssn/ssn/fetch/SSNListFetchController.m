@@ -13,11 +13,17 @@
 #import "NSObject+SSNBlock.h"
 #import "NSRunLoop+SSN.h"
 
-#if DEBUG
-#define ssn_fetch_log(s, ...) printf(s, ##__VA_ARGS__)
-#else
+//#if DEBUG
+//#define ssn_fetch_log(s, ...) printf(s, ##__VA_ARGS__)
+//#else
 #define ssn_fetch_log(s, ...) ((void)0)
-#endif
+//#endif
+
+//#if DEBUG
+//#define ssn_t_log(s, ...) NSLog(s, ##__VA_ARGS__)
+//#else
+#define ssn_t_log(s, ...) ((void)0)
+//#endif
 
 NSString *const SSNFetchDefaultSectionIdentify = @"_$_#_";
 
@@ -304,17 +310,17 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     
     NSRunLoop *runloop = self.mainRunLoop;
     if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
-        NSLog(@"fetctController:%p 忽略插入！说明此时数据源并没有稳定",self);
+        ssn_t_log(@"fetctController:%p 忽略插入！说明此时数据源并没有稳定",self);
         return ;
     }
     
     if (![_dataSource respondsToSelector:@selector(ssnlist_controller:insertDataWithIndexPath:context:)]) {
-        NSLog(@"fetctController:%p 忽略插入！委托没人实现",self);
+        ssn_t_log(@"fetctController:%p 忽略插入！委托没人实现",self);
         return ;
     }
     
     int64_t flag = [runloop ssn_push_flag_for_tag:(NSUInteger)self];
-    NSLog(@"在fetctController:%p 插入数据 标记flag = %lld",self,flag);
+    ssn_t_log(@"在fetctController:%p 插入数据 标记flag = %lld",self,flag);
     
     [_delegate ssnlist_controllerWillChange:self];
     
@@ -362,7 +368,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     [_delegate ssnlist_controllerDidChange:self];
     
     [runloop ssn_pop_flag_for_tag:(NSUInteger)self];
-    NSLog(@"在fetctController:%p 插入数据 取消标记flag = %lld",self,flag);
+    ssn_t_log(@"在fetctController:%p 插入数据 取消标记flag = %lld",self,flag);
 }
 
 /**
@@ -377,12 +383,12 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     
     NSRunLoop *runloop = self.mainRunLoop;
     if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
-        NSLog(@"fetctController:%p 忽略删除！说明此时数据源并没有稳定",self);
+        ssn_t_log(@"fetctController:%p 忽略删除！说明此时数据源并没有稳定",self);
         return ;
     }
     
     int64_t flag = [runloop ssn_push_flag_for_tag:(NSUInteger)self];
-    NSLog(@"在fetctController:%p 删除数据 标记flag = %lld",self,flag);
+    ssn_t_log(@"在fetctController:%p 删除数据 标记flag = %lld",self,flag);
     
     [_delegate ssnlist_controllerWillChange:self];
     
@@ -427,7 +433,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
         
         //表示直接可以删除
         if ([obj.objects count] == 0) {
-            NSLog(@"delete section at index %lu",section);
+            ssn_t_log(@"delete section at index %lu",section);
             [_sectionMap removeObjectForKey:obj.identify];
             [_list removeObject:obj];//删除section
             
@@ -439,7 +445,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
             NSArray *delPaths = [delPathsMap objectForKey:key];
             [delPaths enumerateObjectsUsingBlock:^(NSIndexPath *indexPath, NSUInteger idx, BOOL *stop) {
                 id<SSNCellModel> obj = [oldObjs objectAtIndex:indexPath.row];
-                 NSLog(@"delete object at index %lu in section %lu",indexPath.row,section);
+                 ssn_t_log(@"delete object at index %lu in section %lu",indexPath.row,section);
                 [_delegate ssnlist_controller:self didChangeObject:obj atIndexPath:indexPath forChangeType:SSNListFetchedChangeDelete newIndexPath:nil];
             }];
         }
@@ -448,7 +454,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     [_delegate ssnlist_controllerDidChange:self];
     
     [runloop ssn_pop_flag_for_tag:(NSUInteger)self];
-    NSLog(@"在fetctController:%p 删除数据 取消标记flag = %lld",self,flag);
+    ssn_t_log(@"在fetctController:%p 删除数据 取消标记flag = %lld",self,flag);
 }
 
 /**
@@ -464,18 +470,18 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     
     NSRunLoop *runloop = self.mainRunLoop;
     if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
-        NSLog(@"fetctController:%p 更新！说明此时数据源并没有稳定",self);
+        ssn_t_log(@"fetctController:%p 更新！说明此时数据源并没有稳定",self);
         [self.changeIndexPaths addObjectsFromArray:indexPaths];
         return ;
     }
     
     if (![_dataSource respondsToSelector:@selector(ssnlist_controller:updateDataWithOriginalData:indexPath:context:)]) {
-        NSLog(@"fetctController:%p 忽略更新！委托没人实现",self);
+        ssn_t_log(@"fetctController:%p 忽略更新！委托没人实现",self);
         return ;
     }
     
     int64_t flag = [runloop ssn_push_flag_for_tag:(NSUInteger)self];
-    NSLog(@"在fetctController:%p 更新数据 标记flag = %lld",self,flag);
+    ssn_t_log(@"在fetctController:%p 更新数据 标记flag = %lld",self,flag);
     
     [_delegate ssnlist_controllerWillChange:self];
     
@@ -511,7 +517,7 @@ const NSUInteger SSNListFetchedChangeNan = 0;
     [_delegate ssnlist_controllerDidChange:self];
     
     [runloop ssn_pop_flag_for_tag:(NSUInteger)self];
-    NSLog(@"在fetctController:%p 更新数据 取消标记flag = %lld",self,flag);
+    ssn_t_log(@"在fetctController:%p 更新数据 取消标记flag = %lld",self,flag);
 }
 
 #pragma mark 工厂方法
@@ -678,7 +684,7 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
         
         NSRunLoop *runloop = self.mainRunLoop;
         [runloop ssn_push_flag_for_tag:(NSUInteger)self];
-        NSLog(@"fetctController:%p reload！标记一下，此时结果集仍然是老结果集",self);
+        ssn_t_log(@"fetctController:%p reload！标记一下，此时结果集仍然是老结果集",self);
         
         NSArray *news = nil;
 
@@ -813,14 +819,14 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
         
         int64_t flag = [runloop ssn_pop_flag_for_tag:(NSUInteger)self];
         if (flag) {
-            NSLog(@"fetctController:%p 准备更新到界面",self);
+            ssn_t_log(@"fetctController:%p 准备更新到界面",self);
         }
         
         /** 说明结果集被反复修改，此时仅仅更新最后一次，
             遗留问题：前几次的update数据可能被遗漏更新
          */
         if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
-            NSLog(@"fetctController:%p 说明后面还有更新的数据",self);
+            ssn_t_log(@"fetctController:%p 说明后面还有更新的数据",self);
             return ;
         }
         
@@ -829,7 +835,7 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
         
         //并没有任何修改
         if ([changes count] == 0) {
-             NSLog(@"fetctController:%p 数据最后发现不需要通知界面",self);
+             ssn_t_log(@"fetctController:%p 数据最后发现不需要通知界面",self);
             return;
         }
         
@@ -892,7 +898,7 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
 
         
         [_list setArray:sections];
-        NSLog(@"fetctController:%p 数据最后被更新",self);
+        ssn_t_log(@"fetctController:%p 数据最后被更新",self);
         
         [_delegate ssnlist_controllerDidChange:self];
         

@@ -18,7 +18,7 @@
 #import "SSNDefaultLoadMoreView.h"
 #import "SSNNavigationBarAnimator.h"
 
-@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate> {
+@interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate,SSNNavigationBarAnimatorDelegate> {
     NSInteger flag;
     SSNNavigationBarAnimator *animator;
 }
@@ -50,17 +50,27 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"退出" style:UIBarButtonItemStyleDone target:self action:@selector(logout)];
 
     self.tableView.ssn_pullRefreshEnabled = YES;//下拉刷新
-    self.tableView.ssn_loadMoreEnabled = YES;//上提更多
+//    self.tableView.ssn_loadMoreEnabled = YES;//上提更多
     
     self.ssn_tableViewConfigurator.tableView = self.tableView;
     
-    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;//自动控制是否还有更多
+//    self.ssn_tableViewConfigurator.isAutoEnabledLoadMore = YES;//自动控制是否还有更多
     
     animator = [[SSNNavigationBarAnimator alloc] init];
     [animator setTargetView:self.tableView];
+    animator.delegate = self;
     
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];
+}
+
+- (void)animator:(SSNNavigationBarAnimator *)animator didSetNavigationBarHidden:(BOOL)hidden animated:(BOOL)animated {
+    if (hidden) {
+        self.tableView.ssn_headerPullRefreshView.startOffset = 20;
+    }
+    else {
+        self.tableView.ssn_headerPullRefreshView.startOffset = 64;
+    }
 }
 
 - (void)logout {
