@@ -14,6 +14,8 @@
 #import <objc/message.h>
 #endif
 
+NSString *const ssn_copy_push_flag = @"ssn_flag";
+
 @implementation NSObject (SSN)
 
 /**
@@ -23,10 +25,19 @@
  */
 - (instancetype)ssn_copy {
     Class clazz = [self class];
-    if ([clazz ssn_instancesOverrideSelector:@selector(copyWithZone:)]) {
-        return [self copy];
+    
+    id cp = nil;
+    NSString *flag = objc_getAssociatedObject(self, &ssn_copy_push_flag);
+    if (!flag) {
+        objc_setAssociatedObject(self, &ssn_copy_push_flag, ssn_copy_push_flag, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        if ([clazz ssn_instancesOverrideSelector:@selector(copyWithZone:)]) {
+            cp = [self copy];
+        }
+        objc_setAssociatedObject(self, &ssn_copy_push_flag, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        return cp;
     }
-    id cp = [[clazz alloc] init];
+    
+    cp = [[clazz alloc] init];
     [cp ssn_setObject:self];
     return cp;
 }
