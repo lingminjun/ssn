@@ -140,7 +140,37 @@ ssn_uikit_value_synthesize(int,ssn_multi_line,Ssn_multi_line)
     
     //多行处理
     if (multiLine) {
-        frame.size.height = size.height;
+        
+        CGFloat line_height = ssn_ceil(self.font.lineHeight);
+        
+        //兼容行间距问题
+        if (size.height > line_height && 2*line_height > size.height) {
+            frame.size.height = line_height;
+            
+            @autoreleasepool {
+                NSAttributedString *attrtext = self.attributedText;
+                NSMutableAttributedString *attr = [attrtext mutableCopy];
+                NSRange range = NSMakeRange(0, [attr length]);
+                
+                //去掉段落行距
+                [attrtext enumerateAttribute:NSParagraphStyleAttributeName inRange:range options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+                    
+                    if ([value isKindOfClass:[NSParagraphStyle class]]) {
+                        NSMutableParagraphStyle *style = [value mutableCopy];
+                        style.lineSpacing = 0.0f;
+                        [attr addAttribute:NSParagraphStyleAttributeName value:style range:range];
+                    }
+                    
+                }];
+                
+                self.attributedText = attr;
+            }
+            
+        }
+        else {
+            frame.size.height = size.height;
+        }
+        
         self.numberOfLines = 0;
     }
     

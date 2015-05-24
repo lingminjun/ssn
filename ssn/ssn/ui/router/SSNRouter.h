@@ -52,6 +52,7 @@
 
 @interface NSObject (SSNRouter) //弱协议实现
 
++ (SSNRouter *)ssn_router;
 - (SSNRouter *)ssn_router;
 
 - (id<SSNParentPage>)ssn_parentPage;

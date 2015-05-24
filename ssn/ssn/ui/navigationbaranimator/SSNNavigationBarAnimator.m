@@ -46,6 +46,11 @@
                                                  selector:@selector(applicationDidBecomeActive:)
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(applicationDidEnterBackgroundNotification:)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
     }
     return self;
 }
@@ -212,6 +217,43 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     [self setNavigationBarHidden:NO animated:YES];
 }
 
+- (void)applicationDidEnterBackgroundNotification:(NSNotification *)notify {
+    //回复window检查
+    [self resumeChangeViewFrame];
+}
+
+- (void)resumeChangeViewFrame {
+    //恢复window检查
+    UINavigationController *navigationController = self.navigationController;
+    UINavigationBar *bar = navigationController.navigationBar;
+    
+    //修改导航contentView
+    UIView *barSuperView = self.navigationBarSuperView;
+    for (UIView *subview in barSuperView.subviews) {
+        if (subview == bar) {
+            continue ;
+        }
+        
+        if (subview == [[self class] topStateView]) {
+            continue ;
+        }
+        
+        if (!CGRectEqualToRect(subview.frame, barSuperView.bounds)) {
+            subview.frame = barSuperView.bounds;
+        }
+    }
+    
+    //transform恢复
+//    for (UIView* view in bar.subviews) {
+//        bool isBackgroundView = view == [bar.subviews objectAtIndex:0];
+//        if (!isBackgroundView) {
+//            view.transform = CGAffineTransformIdentity;
+//        }
+//    }
+}
+
+
+
 #pragma mark - panGesture handler
 - (void)setFrame:(CGRect)frame alpha:(CGFloat)alpha animated:(BOOL)animated completion:(void (^)(BOOL finish))completion {
     
@@ -236,6 +278,10 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
         UIView *barSuperView = self.navigationBarSuperView;
         for (UIView *subview in barSuperView.subviews) {
             if (subview == bar) {
+                continue ;
+            }
+            
+            if (subview == [[self class] topStateView]) {
                 continue ;
             }
             
@@ -341,6 +387,8 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
         if ([self.navigationController isNavigationBarHidden]) {
             T_LOG(@"因为导航隐藏无法展示展示动画");
             [self setNavigationBarHidden:NO animated:NO];
+            [self resumeChangeViewFrame];
+            
             CGRect aframe = frame;
             aframe.origin.y = minY;
             [self setFrame:aframe alpha:alpha animated:NO completion:nil];
@@ -384,6 +432,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
         
         if (shouldShow && barFrame.origin.y == maxY) {//已经是最下面了
             [self setNavigationBarHidden:!shouldShow animated:NO];
+            [self resumeChangeViewFrame];
             T_LOG(@"导航栏本来就显示着，故不需要动画了");
             return ;
         }
@@ -395,7 +444,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
         
         T_LOG(@"2change bar frame(%f,%f %f,%f)",frame.origin.x,frame.origin.y,frame.size.width,frame.size.height);
         
-        gesture.enabled = NO;
+        window.userInteractionEnabled = NO;
         __weak typeof(self) w_self = self;
         [self setFrame:frame alpha:alpha animated:YES completion:^(BOOL finish) {
             __strong typeof(w_self) self = w_self;
@@ -406,8 +455,9 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
             
             [self setFrame:aframe alpha:alpha animated:NO completion:nil];
             [self setNavigationBarHidden:!shouldShow animated:NO];
+            [self resumeChangeViewFrame];
             
-            gesture.enabled = YES;
+            window.userInteractionEnabled = YES;
         }];
     }
     

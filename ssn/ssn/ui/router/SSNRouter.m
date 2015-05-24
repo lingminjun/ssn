@@ -565,6 +565,9 @@
 
 @implementation NSObject (SSNRouter)
 
++ (SSNRouter *)ssn_router {
+    return [SSNRouter shareInstance];
+}
 - (SSNRouter *)ssn_router {
     return [SSNRouter shareInstance];
 }

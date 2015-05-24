@@ -27,9 +27,27 @@
     [super tearDown];
 }
 
+//合法的密码字符
+- (BOOL)isValidPasswdCharacter:(NSString *)string {
+    if (string.length == 0) {
+        return NO;
+    }
+    NSString *pattern = @"^[0-9a-zA-Z~!@#\\$%\\^&\\*\\(\\)_\\+=-\\|~`,\\.\\/<>\\[\\]\\{\\}]+$";
+    NSPredicate *regextestmobile = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", pattern];
+    return [regextestmobile evaluateWithObject:string];
+}
+
 - (void)testExample {
     // This is an example of a functional test case.
-    XCTAssert(YES, @"Pass");
+//    XCTAssert(YES, @"Pass");
+    
+    if ([self isValidPasswdCharacter:@"[]{}"]) {
+        NSLog(@"yes");
+    }
+    else {
+        XCTFail(@"NO");
+    }
+    
 }
 
 - (void)quantum:(SSNQuantum *)quantum objects:(NSArray *)objects {

@@ -49,9 +49,9 @@
 /**
  *  使用这些属性必须了解其实现
  */
-@property (nonatomic) int ssn_width_scalable;
-@property (nonatomic) float ssn_min_width;
-@property (nonatomic) float ssn_max_width;
-@property (nonatomic) int ssn_multi_line;
+@property (nonatomic) int ssn_width_scalable;//宽度是否可变，在ssn_min_width~ssn_max_width之间变化
+@property (nonatomic) float ssn_min_width;//最小宽度
+@property (nonatomic) float ssn_max_width;//最大宽度
+@property (nonatomic) int ssn_multi_line;//是否要显示多行
 
 @end

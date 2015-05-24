@@ -289,6 +289,9 @@ static char * ssn_hit_edge_outsets_key = NULL;
 }
 
 - (void)ssn_addTarget:(id)target touchAction:(SEL)selector {
+    if (target) {
+        [self removeTarget:target action:NULL forControlEvents:UIControlEventTouchUpInside];
+    }
     [self addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 }
 
