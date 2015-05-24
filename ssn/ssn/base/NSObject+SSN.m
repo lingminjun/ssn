@@ -29,12 +29,13 @@ NSString *const ssn_copy_push_flag = @"ssn_flag";
     id cp = nil;
     NSString *flag = objc_getAssociatedObject(self, &ssn_copy_push_flag);
     if (!flag) {
-        objc_setAssociatedObject(self, &ssn_copy_push_flag, ssn_copy_push_flag, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        if ([clazz ssn_instancesOverrideSelector:@selector(copyWithZone:)]) {
+        BOOL override = [clazz ssn_instancesOverrideSelector:@selector(copyWithZone:)];
+        if (override) {
+            objc_setAssociatedObject(self, &ssn_copy_push_flag, ssn_copy_push_flag, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             cp = [self copy];
+            objc_setAssociatedObject(self, &ssn_copy_push_flag, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            return cp;
         }
-        objc_setAssociatedObject(self, &ssn_copy_push_flag, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        return cp;
     }
     
     cp = [[clazz alloc] init];
