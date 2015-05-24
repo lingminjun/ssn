@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#define SSNSeqGenDefaultCycleSize   (999999)//默认训话尺
+#define SSNSeqGenDefaultCycleSize   (999999)//默认循环尺
 
 /**
  *  序列号生成器

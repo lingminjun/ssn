@@ -41,22 +41,29 @@ typedef enum : NSUInteger
 /*
  JSON方式 实现table 版本管理
  json文件定义:与数据SSNDBColumn对应
+ 下面定义仅供参考，数据结构并非合理，主要注意type、level和index的值设置
  {
  "tb":"Person",
  "its":[{
             "vs":1,
-            "cl":[  {"name":"uid",  "type":1,   "level":2,  "fill":"",  "index":1,  "mapping":""},
-                    {"name":"name", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
-                    {"name":"age",  "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""}
+            "cl":[  {"name":"uid",    "type":"Int",   "level":"Primary",  "fill":"",  "index":"Index",   "mapping":""},
+                    {"name":"name",   "type":"Text",  "level":"NotNull",  "fill":"",  "index":"Unique",  "mapping":""},
+                    {"name":"sex",    "type":"Bool",  "level":"",         "fill":"",  "index":"",        "mapping":""},
+                    {"name":"height", "type":"Float", "level":"",         "fill":"",  "index":"",        "mapping":""},
+                    {"name":"avatar", "type":"Blob",  "level":"",         "fill":"",  "index":"",        "mapping":""},
+                    {"name":"other",  "type":"Null",  "level":"",         "fill":"",  "index":"",        "mapping":""}
                 ]
         },
         {
             "vs":2,
-            "cl":[  {"name":"uid",  "type":1,   "level":2,  "fill":"",  "index":1,  "mapping":""},
-                    {"name":"name", "type":3,   "level":0,  "fill":"",  "index":0,  "mapping":""},
-                    {"name":"age",  "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""},
-                    {"name":"sex",  "type":1,   "level":0,  "fill":"",  "index":0,  "mapping":""}
-                ]
+            "cl":[  {"name":"uid",    "type":"Int",   "level":"Primary",  "fill":"",  "index":"Index",   "mapping":""},
+                    {"name":"name",   "type":"Text",  "level":"NotNull",  "fill":"",  "index":"Unique",  "mapping":""},
+                    {"name":"sex",    "type":"Bool",  "level":"",         "fill":"",  "index":"",        "mapping":""},
+                    {"name":"height", "type":"Float", "level":"",         "fill":"",  "index":"",        "mapping":""},
+                    {"name":"avatar", "type":"Blob",  "level":"",         "fill":"",  "index":"",        "mapping":""},
+                    {"name":"mobile", "type":"Text",  "level":"",         "fill":"",  "index":"Index",   "mapping":""},
+                    {"name":"other",  "type":"Null",  "level":"",         "fill":"",  "index":"",        "mapping":""}
+                  ]
         }]
  }
  */

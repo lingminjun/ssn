@@ -312,6 +312,69 @@ NSString *const SSNDBTableUpdatedNotification = @"SSNDBTableUpdatedNotification"
 }
 
 #pragma mark 表描述文件解析
+- (SSNDBColumnType)columnTypeWithColumnInfo:(NSDictionary *)cl {
+    id obj = [cl objectForKey:@"type"];
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        return [(NSNumber *)obj integerValue];
+    }
+    
+    NSString *type = (NSString *)obj;
+    if ([type ssn_isEqualCaseInsensitive:@"Int"]) {
+        return SSNDBColumnInt;
+    }
+    else if ([type ssn_isEqualCaseInsensitive:@"Float"]) {
+        return SSNDBColumnFloat;
+    }
+    else if ([type ssn_isEqualCaseInsensitive:@"Bool"]) {
+        return SSNDBColumnBool;
+    }
+    else if ([type ssn_isEqualCaseInsensitive:@"Blob"]) {
+        return SSNDBColumnBlob;
+    }
+    else if ([type ssn_isEqualCaseInsensitive:@"Text"]) {
+        return SSNDBColumnText;
+    }
+    else {
+        return SSNDBColumnNull;
+    }
+}
+
+- (SSNDBColumnLevel)columnLevelWithColumnInfo:(NSDictionary *)cl {
+    id obj = [cl objectForKey:@"level"];
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        return [(NSNumber *)obj integerValue];
+    }
+    
+    NSString *level = (NSString *)obj;
+    if ([level ssn_isEqualCaseInsensitive:@"Primary"]) {
+        return SSNDBColumnPrimary;
+    }
+    else if ([level ssn_isEqualCaseInsensitive:@"NotNull"]) {
+        return SSNDBColumnNotNull;
+    }
+    else {
+        return SSNDBColumnNormal;
+    }
+}
+
+- (SSNDBColumnIndex)columnIndexWithColumnInfo:(NSDictionary *)cl {
+    id obj = [cl objectForKey:@"index"];
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        return [(NSNumber *)obj integerValue];
+    }
+    
+    NSString *index = (NSString *)obj;
+    if ([index ssn_isEqualCaseInsensitive:@"Index"]) {
+        return SSNDBColumnNormalIndex;
+    }
+    else if ([index ssn_isEqualCaseInsensitive:@"Unique"]) {
+        return SSNDBColumnUniqueIndex;
+    }
+    else {
+        return SSNDBColumnNotIndex;
+    }
+}
+
 - (NSDictionary *)parseJSONForFilePath:(NSString *)path
 {
     NSMutableDictionary *rslt = [NSMutableDictionary dictionaryWithCapacity:1];
@@ -349,9 +412,9 @@ NSString *const SSNDBTableUpdatedNotification = @"SSNDBTableUpdatedNotification"
             for (NSDictionary *cl in cls)
             {
                 SSNDBColumn *clmn = [SSNDBColumn columnWithName:[cl objectForKey:@"name"]
-                                                           type:[[cl objectForKey:@"type"] integerValue]
-                                                          level:[[cl objectForKey:@"level"] integerValue]
-                                                          index:[[cl objectForKey:@"index"] integerValue]
+                                                           type:[self columnTypeWithColumnInfo:cl]
+                                                          level:[self columnLevelWithColumnInfo:cl]
+                                                          index:[self columnIndexWithColumnInfo:cl]
                                                            fill:[cl objectForKey:@"fill"]
                                                         mapping:[cl objectForKey:@"mapping"]];
 
