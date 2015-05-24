@@ -347,6 +347,28 @@
     return [self ssn_resetURLForPath:pathString appendQuery:nil];
 }
 
+//合并query，始终以query中的数据为主
++ (NSDictionary *)ssn_mergeQueryWithURL:(NSURL *)url query:(NSDictionary *)query {
+    NSDictionary *url_query = [url ssn_queryInfo];
+    
+    NSMutableDictionary *q = [NSMutableDictionary dictionary];
+    if (url_query) {
+        [q setDictionary:url_query];
+    }
+    
+    //以query中为主
+    for (NSString *key in query) {
+        id value = [query objectForKey:key];
+        [q setObject:value forKey:key];
+    }
+    
+    if ([q count]) {
+        return q;
+    }
+    
+    return nil;
+}
+
 
 
 @end

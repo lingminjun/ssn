@@ -96,6 +96,7 @@
 		53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B311AB53C2200381C3C /* SSNSeqGen.m */; };
 		53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B341AB5D1C300381C3C /* NSThread+SSN.m */; };
 		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
+		537F39AA1B12209600EE8230 /* SSNAppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F39A91B12209600EE8230 /* SSNAppInfo.m */; };
 		5381F7EC1ADE4B24006BB93A /* ssn_hosting_task.json in Resources */ = {isa = PBXBuildFile; fileRef = 5381F7EB1ADE4B24006BB93A /* ssn_hosting_task.json */; };
 		538706711ACD762A001F3880 /* SSNFileDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 538706701ACD762A001F3880 /* SSNFileDownloader.m */; };
 		538706741ACD7F8A001F3880 /* SSNFileDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 538706731ACD7F8A001F3880 /* SSNFileDownloadOperation.m */; };
@@ -384,6 +385,8 @@
 		53620B341AB5D1C300381C3C /* NSThread+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+SSN.m"; sourceTree = "<group>"; };
 		537064961A2A032700287199 /* TSUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUser.h; sourceTree = "<group>"; };
 		537064971A2A032700287199 /* TSUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUser.m; sourceTree = "<group>"; };
+		537F39A81B12209600EE8230 /* SSNAppInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNAppInfo.h; sourceTree = "<group>"; };
+		537F39A91B12209600EE8230 /* SSNAppInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNAppInfo.m; sourceTree = "<group>"; };
 		5381F7EB1ADE4B24006BB93A /* ssn_hosting_task.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ssn_hosting_task.json; sourceTree = "<group>"; };
 		5387066F1ACD762A001F3880 /* SSNFileDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNFileDownloader.h; sourceTree = "<group>"; };
 		538706701ACD762A001F3880 /* SSNFileDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNFileDownloader.m; sourceTree = "<group>"; };
@@ -948,6 +951,8 @@
 				535C0E081AD0373D0033EB92 /* NSObject+SSN.m */,
 				535C0E0B1AD37A780033EB92 /* NSData+SSN.h */,
 				535C0E0C1AD37A780033EB92 /* NSData+SSN.m */,
+				537F39A81B12209600EE8230 /* SSNAppInfo.h */,
+				537F39A91B12209600EE8230 /* SSNAppInfo.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -1543,6 +1548,7 @@
 				53BC52FA1A485E6E0044C238 /* ssndiff.c in Sources */,
 				53BC533A1A485E6E0044C238 /* inet.cpp in Sources */,
 				53C84C6F1A5B887C008AB7C8 /* UILabel+SSNUIKit.m in Sources */,
+				537F39AA1B12209600EE8230 /* SSNAppInfo.m in Sources */,
 				53C84C721A5B9586008AB7C8 /* NSString+SSNUIKit.m in Sources */,
 				5339FC931AA55BE60000F6B9 /* DMPersonCell.m in Sources */,
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,

@@ -14,7 +14,7 @@
 - (BOOL)open:(NSString *)url {
     return [self open:url query:nil];
 }
-- (BOOL)open:(NSString *)url query:(NSDictionary *)query {
+- (BOOL)open:(NSString *)url query:(NSDictionary *)aquery {
     
     if ([url length] == 0) {
         return NO;
@@ -27,15 +27,10 @@
     
     BOOL animated = YES;
     
-    NSString *an = [query objectForKey:@"animated"];
-    if (!an) {
-        NSURL *u = [NSURL URLWithString:url];
-        if (u) {
-            NSDictionary *url_query = [u ssn_queryInfo];
-            an = [url_query objectForKey:@"animated"];
-        }
-    }
+    //合并query
+    NSDictionary *query = [NSURL ssn_mergeQueryWithURL:u query:aquery];
     
+    NSString *an = [query objectForKey:@"animated"];
     if ([an length] > 0
         && ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
             || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame)) {

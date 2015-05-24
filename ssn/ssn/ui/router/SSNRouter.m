@@ -180,28 +180,6 @@
     return url;
 }
 
-//合并query，始终以query中的数据为主
-- (NSDictionary *)mergeQueryWithURL:(NSURL *)url query:(NSDictionary *)query {
-    NSDictionary *url_query = [url ssn_queryInfo];
-    
-    NSMutableDictionary *q = [NSMutableDictionary dictionary];
-    if (url_query) {
-        [q setDictionary:url_query];
-    }
-    
-    //以query中为主
-    for (NSString *key in query) {
-        id value = [query objectForKey:key];
-        [q setObject:value forKey:key];
-    }
-    
-    if ([q count]) {
-        return q;
-    }
-    
-    return nil;
-}
-
 //更佳细致的接口
 - (BOOL)openURL:(NSURL*)aurl query:(NSDictionary *)aquery animated:(BOOL)animated {
     
@@ -210,7 +188,7 @@
     }
     
     //合并query
-    NSDictionary *query = [self mergeQueryWithURL:aurl query:aquery];
+    NSDictionary *query = [NSURL ssn_mergeQueryWithURL:aurl query:aquery];
     
     //让委托有控制权
     NSURL *url = [self delegateFilterURL:aurl query:query];
@@ -224,7 +202,16 @@
     }
     
     if (url != aurl) {//query参数需要被重新带入
-        query = [self mergeQueryWithURL:url query:query];
+        query = [NSURL ssn_mergeQueryWithURL:url query:query];
+        
+        //此时动画参数要重新读取
+        NSString *an = [query objectForKey:@"animated"];
+        if ([an length] > 0
+            && ([an compare:@"no" options:NSCaseInsensitiveSearch] == NSOrderedSame
+                || [an compare:@"false" options:NSCaseInsensitiveSearch] == NSOrderedSame))
+        {
+            animated = [an boolValue];
+        }
     }
     
     //找到目标url
@@ -265,7 +252,7 @@
     }
     
     //合并query
-    NSDictionary *query = [self mergeQueryWithURL:aurl query:aquery];
+    NSDictionary *query = [NSURL ssn_mergeQueryWithURL:aurl query:aquery];
     
     //让委托有控制权
     NSURL *url = [self delegateFilterURL:aurl query:query];
@@ -279,7 +266,7 @@
     }
     
     if (url != aurl) {//query参数需要被重新带入
-        query = [self mergeQueryWithURL:url query:query];
+        query = [NSURL ssn_mergeQueryWithURL:url query:query];
     }
     
     SSNSearchResult *result = [self searchPageWithURL:url query:query];
@@ -297,7 +284,7 @@
     }
     
     //合并query
-    NSDictionary *query = [self mergeQueryWithURL:aurl query:aquery];
+    NSDictionary *query = [NSURL ssn_mergeQueryWithURL:aurl query:aquery];
     
     //让委托有控制权
     NSURL *url = [self delegateFilterURL:aurl query:query];
@@ -311,7 +298,7 @@
     }
     
     if (url != aurl) {//query参数需要被重新带入
-        query = [self mergeQueryWithURL:url query:query];
+        query = [NSURL ssn_mergeQueryWithURL:url query:query];
     }
     
     //找到对应的对象
@@ -465,7 +452,7 @@
     }
     
     //合并query
-    NSDictionary *query = [self mergeQueryWithURL:aurl query:aquery];
+    NSDictionary *query = [NSURL ssn_mergeQueryWithURL:aurl query:aquery];
     
     //让委托有控制权
     NSURL *url = [self delegateFilterURL:aurl query:query];
@@ -480,7 +467,7 @@
     
     //再次合并query
     if (url != aurl) {
-        query = [self mergeQueryWithURL:url query:query];
+        query = [NSURL ssn_mergeQueryWithURL:url query:query];
     }
     
     SSNSearchResult *result = [self loadPageWithURL:url query:query];
