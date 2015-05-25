@@ -13,6 +13,7 @@ NSString *const kAppBuildVersion = @"CFBundleShortVersionString";
 NSString *const kAppBuildNumber = @"CFBundleVersion";
 NSString *const kAppBuildName = @"CFBundleDisplayName";
 
+NSString *const kAppLaunchVersion = @"AppLaunchVersion";
 
 @implementation SSNAppInfo
 
@@ -44,14 +45,25 @@ NSString *const kAppBuildName = @"CFBundleDisplayName";
     return buildNumber;
 }
 
-+ (NSString *)appFullVersion
++ (NSString *)appWholeVersion
 {
     NSString *appVersion = [self appVersion];
     NSString *buildNumber = [self appBuildNumber];
-    NSString *fullVersion = [NSString stringWithFormat:@"%@ (%@)", appVersion, buildNumber];
+    NSString *fullVersion = [NSString stringWithFormat:@"%@.%@", appVersion, buildNumber];
     return fullVersion;
 }
 
++ (NSString *)latestLaunchAppVersion {
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    return [defs stringForKey:kAppLaunchVersion];
+}
+
++ (void)updateLaunchAppVersion {
+    NSString *wholeVersion = [self appWholeVersion];
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    [defs setObject:wholeVersion forKey:kAppLaunchVersion];
+    [defs synchronize];
+}
 
 + (NSString *)appBundleId
 {

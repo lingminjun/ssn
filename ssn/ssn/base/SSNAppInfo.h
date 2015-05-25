@@ -38,13 +38,25 @@
  */
 + (NSString *)appBuildNumber;
 
+
 /**
- *  完整版本号 appVersion (appBuildNumber)
+ *  完整版本号 appVersion.appBuildNumber
  *
  *  @return 完整版本号
  */
-+ (NSString *)appFullVersion;
++ (NSString *)appWholeVersion;
 
+/**
+ *  最后一次启动的版本号，返回的是whole version
+ *
+ *  @return 范湖最后一次启动版本号
+ */
++ (NSString *)latestLaunchAppVersion;
+
+/**
+ *  更新下启动版本，既将最新的WholeVersion更新到永久化中
+ */
++ (void)updateLaunchAppVersion;
 
 /**
  *  app的BundleId
@@ -66,6 +78,5 @@
  *  @return 设备版本号
  */
 + (NSString *)device;
-
 
 @end
