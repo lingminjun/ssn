@@ -91,6 +91,8 @@ FOUNDATION_EXTERN struct timespec ssn_orwl_gettime(void);
 #import "SSNSafeArray.h"
 #import "SSNSafeDictionary.h"
 
+#import "SSNAppInfo.h"
+
 #import "SSNSeqGen.h"
 #import "SSNMessageInterceptor.h"
 
