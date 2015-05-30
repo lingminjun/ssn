@@ -1,0 +1,17 @@
+{
+    "tb":"SSNABPerson",
+    "its":[{
+           "vs":1,
+           "cl":[
+                 {"name":"key",    "type":"Text", "level":"Primary", "fill":"",    "index":"Index",  "mapping":""},
+                 {"name":"mobile", "type":"Text", "level":"",        "fill":"",    "index":"Index",  "mapping":""},
+                 {"name":"name",   "type":"Text", "level":"",        "fill":"",    "index":"",       "mapping":""},
+                 {"name":"pinyin", "type":"Text", "level":"",        "fill":"",    "index":"",       "mapping":""},
+                 {"name":"firstSpell", "type":"Int", "level":"",     "fill":"'#'", "index":"Index",  "mapping":""},
+                 {"name":"recordID", "type":"Int", "level":"",       "fill":"",    "index":"Index",  "mapping":""},
+                 {"name":"modifyAt", "type":"Int", "level":"",       "fill":"",    "index":"",       "mapping":""},
+                 {"name":"option",   "type":"Int", "level":"",       "fill":"",    "index":"",       "mapping":""},
+                 {"name":"ext",    "type":"Text", "level":"",        "fill":"",    "index":"Index",  "mapping":""}
+                 ]
+           }]
+}

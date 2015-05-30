@@ -8,6 +8,29 @@
 
 #import "NSString+SSN.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "ssncrc64.h"
+
+//暂时支持国家码识别
+NSString *const SSNCNCountryCode = @"86";
+NSString *const SSNHKCountryCode = @"852";  //香港
+NSString *const SSNTWCountryCode = @"886";  //台湾
+NSString *const SSNUSCountryCode = @"1";    //美国
+NSString *const SSNGBCountryCode = @"44";   //英国
+NSString *const SSNJPCountryCode = @"81";   //日本
+NSString *const SSNRUCountryCode = @"7";    //俄罗斯
+NSString *const SSNFRCountryCode = @"33";   //法国
+
+#define SSNCountryCodes  \
+@[\
+SSNCNCountryCode,\
+SSNHKCountryCode,\
+SSNTWCountryCode,\
+SSNUSCountryCode,\
+SSNGBCountryCode,\
+SSNJPCountryCode,\
+SSNRUCountryCode,\
+SSNFRCountryCode\
+]
 
 BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2) {
     
@@ -168,6 +191,12 @@ BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2) {
         [hash appendFormat:@"%02X", result[i]];
     }
     return [hash lowercaseString];
+}
+
+- (NSString *)ssn_crc64 {
+    const char * s = [self UTF8String];
+    uint64_t crc = ssn_crc64(0,(const unsigned char *)s,strlen(s));
+    return [NSString stringWithUTF8Format:"%qx",crc];
 }
 
 //全部符合集合的子字符串，若传入nil返回当前string copy

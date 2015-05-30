@@ -127,6 +127,11 @@
 		53A1BA261A52F85100C76844 /* unicode_to_pinyin_tone.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */; };
 		53A1BA2D1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */; };
 		53A1BA2E1A52F8B100C76844 /* NSString+SSNPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */; };
+		53A48D161B19808200AC46D3 /* SSNABContactsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D151B19808200AC46D3 /* SSNABContactsManager.m */; };
+		53A48D1A1B1983AC00AC46D3 /* SSNABPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D191B1983AC00AC46D3 /* SSNABPerson.m */; };
+		53A48D1C1B19B12000AC46D3 /* SSNABPerson.json in Resources */ = {isa = PBXBuildFile; fileRef = 53A48D1B1B19B12000AC46D3 /* SSNABPerson.json */; };
+		53A48D211B19CA7300AC46D3 /* ssncrc64.c in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D1F1B19CA7300AC46D3 /* ssncrc64.c */; };
+		53A48D271B19E41D00AC46D3 /* SSNABRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D261B19E41D00AC46D3 /* SSNABRecord.m */; };
 		53A674931B07A7A2000EE1B9 /* SSNNavigationBarAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A674921B07A7A2000EE1B9 /* SSNNavigationBarAnimator.m */; };
 		53A6E5171AB28D99003BFBCF /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC811AA551AA0000F6B9 /* SSNDBFetch.m */; };
 		53A6E5181AB28D99003BFBCF /* SSNDBFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC831AA551AA0000F6B9 /* SSNDBFetchController.m */; };
@@ -433,6 +438,15 @@
 		53A1BA221A52F85100C76844 /* unicode_to_pinyin_tone.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unicode_to_pinyin_tone.txt; sourceTree = "<group>"; };
 		53A1BA2B1A52F8B100C76844 /* NSString+SSNPinyin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSNPinyin.h"; sourceTree = "<group>"; };
 		53A1BA2C1A52F8B100C76844 /* NSString+SSNPinyin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSNPinyin.m"; sourceTree = "<group>"; };
+		53A48D141B19808200AC46D3 /* SSNABContactsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNABContactsManager.h; sourceTree = "<group>"; };
+		53A48D151B19808200AC46D3 /* SSNABContactsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNABContactsManager.m; sourceTree = "<group>"; };
+		53A48D181B1983AC00AC46D3 /* SSNABPerson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNABPerson.h; sourceTree = "<group>"; };
+		53A48D191B1983AC00AC46D3 /* SSNABPerson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNABPerson.m; sourceTree = "<group>"; };
+		53A48D1B1B19B12000AC46D3 /* SSNABPerson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = SSNABPerson.json; sourceTree = "<group>"; };
+		53A48D1F1B19CA7300AC46D3 /* ssncrc64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssncrc64.c; sourceTree = "<group>"; };
+		53A48D201B19CA7300AC46D3 /* ssncrc64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssncrc64.h; sourceTree = "<group>"; };
+		53A48D251B19E41D00AC46D3 /* SSNABRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNABRecord.h; sourceTree = "<group>"; };
+		53A48D261B19E41D00AC46D3 /* SSNABRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNABRecord.m; sourceTree = "<group>"; };
 		53A674911B07A7A2000EE1B9 /* SSNNavigationBarAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNNavigationBarAnimator.h; sourceTree = "<group>"; };
 		53A674921B07A7A2000EE1B9 /* SSNNavigationBarAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNNavigationBarAnimator.m; sourceTree = "<group>"; };
 		53B5F5021AB7FCAF00149F3A /* DMNibCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DMNibCell.xib; sourceTree = "<group>"; };
@@ -899,6 +913,29 @@
 			path = pinyin;
 			sourceTree = "<group>";
 		};
+		53A48D131B19801900AC46D3 /* contacts */ = {
+			isa = PBXGroup;
+			children = (
+				53A48D251B19E41D00AC46D3 /* SSNABRecord.h */,
+				53A48D261B19E41D00AC46D3 /* SSNABRecord.m */,
+				53A48D1B1B19B12000AC46D3 /* SSNABPerson.json */,
+				53A48D141B19808200AC46D3 /* SSNABContactsManager.h */,
+				53A48D151B19808200AC46D3 /* SSNABContactsManager.m */,
+				53A48D181B1983AC00AC46D3 /* SSNABPerson.h */,
+				53A48D191B1983AC00AC46D3 /* SSNABPerson.m */,
+			);
+			path = contacts;
+			sourceTree = "<group>";
+		};
+		53A48D1E1B19CA7200AC46D3 /* crc */ = {
+			isa = PBXGroup;
+			children = (
+				53A48D1F1B19CA7300AC46D3 /* ssncrc64.c */,
+				53A48D201B19CA7300AC46D3 /* ssncrc64.h */,
+			);
+			path = crc;
+			sourceTree = "<group>";
+		};
 		53A674901B07A789000EE1B9 /* navigationbaranimator */ = {
 			isa = PBXGroup;
 			children = (
@@ -920,6 +957,7 @@
 		53BC527C1A485E6E0044C238 /* base */ = {
 			isa = PBXGroup;
 			children = (
+				53A48D1E1B19CA7200AC46D3 /* crc */,
 				538DDE041AD9715D0082B4FE /* scope */,
 				53CE03211A9A11C800E30E0D /* SSNMessageInterceptor.h */,
 				53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */,
@@ -1280,6 +1318,7 @@
 		53D1641B191A66B500AD4C81 /* ssn */ = {
 			isa = PBXGroup;
 			children = (
+				53A48D131B19801900AC46D3 /* contacts */,
 				5387066E1ACD7598001F3880 /* downloader */,
 				53A6E52A1AB2ED2C003BFBCF /* rpc */,
 				5339FC7F1AA551AA0000F6B9 /* fetch */,
@@ -1407,6 +1446,7 @@
 				5381F7EC1ADE4B24006BB93A /* ssn_hosting_task.json in Resources */,
 				533BE3A01A2B010800E07FF0 /* DMSession.json in Resources */,
 				5339FC411AA2B46C0000F6B9 /* ssn_pull_refresh_gray_arrow@3x.png in Resources */,
+				53A48D1C1B19B12000AC46D3 /* SSNABPerson.json in Resources */,
 				533164F91A8B41DF007223DC /* ssn_pull_refresh_white_arrow.png in Resources */,
 				533BE3B21A2B0C0D00E07FF0 /* Default-568h@2x.png in Resources */,
 				533164FA1A8B41DF007223DC /* ssn_pull_refresh_white_arrow@2x.png in Resources */,
@@ -1475,6 +1515,7 @@
 				53CAACFF1AC6F31B0012742A /* NSURL+SSN.m in Sources */,
 				53CAAD021AC78C410012742A /* UIViewController+SSNCategory.m in Sources */,
 				533365F21ACBBBC800DC4D0F /* NSRunLoop+SSN.m in Sources */,
+				53A48D1A1B1983AC00AC46D3 /* SSNABPerson.m in Sources */,
 				53BC533C1A485E6E0044C238 /* lock.cpp in Sources */,
 				5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */,
 				5397B5D41A6FA10700CD6AFC /* SSNCrashReport.m in Sources */,
@@ -1490,6 +1531,7 @@
 				53CE03381A9F6C4600E30E0D /* DMSectionCellItem.m in Sources */,
 				53C84C7C1A5BBED1008AB7C8 /* SSNUIFlowLayout.m in Sources */,
 				531324811A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */,
+				53A48D271B19E41D00AC46D3 /* SSNABRecord.m in Sources */,
 				53BC530E1A485E6E0044C238 /* SSNRigidCache.m in Sources */,
 				53A1BA1E1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */,
 				53BC53141A485E6E0044C238 /* SSNSafeSet.m in Sources */,
@@ -1543,6 +1585,7 @@
 				53BC53121A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
 				5339FC8E1AA551AA0000F6B9 /* SSNVMCellItem.m in Sources */,
 				530BE9E01AE13D57007F0025 /* SSNHosting.m in Sources */,
+				53A48D211B19CA7300AC46D3 /* ssncrc64.c in Sources */,
 				53BC53401A485E6E0044C238 /* SSNQuantum.m in Sources */,
 				53F5F1531A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */,
 				538E383B199869A20061692E /* DMSessionNavController.m in Sources */,
@@ -1563,6 +1606,7 @@
 				53BC533A1A485E6E0044C238 /* inet.cpp in Sources */,
 				53C84C6F1A5B887C008AB7C8 /* UILabel+SSNUIKit.m in Sources */,
 				537F39AA1B12209600EE8230 /* SSNAppInfo.m in Sources */,
+				53A48D161B19808200AC46D3 /* SSNABContactsManager.m in Sources */,
 				53C84C721A5B9586008AB7C8 /* NSString+SSNUIKit.m in Sources */,
 				5339FC931AA55BE60000F6B9 /* DMPersonCell.m in Sources */,
 				538E383E199869BF0061692E /* DMSettingNavController.m in Sources */,

@@ -30,6 +30,9 @@ FOUNDATION_EXTERN BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2);
 //小写
 - (NSString *)ssn_md5;
 
+//crc64
+- (NSString *)ssn_crc64;
+
 //全部符合集合的子字符串，若传入nil返回当前string copy
 - (NSString *)ssn_substringMeetCharacterSet:(NSCharacterSet *)set;
 
@@ -75,7 +78,7 @@ FOUNDATION_EXTERN BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2);
 //是合法的手机号码（中国手机号，忽略格式【344】【443】【335】且各种分割符，以及+86 0086国家码前缀）
 - (BOOL)ssn_isValidMobileNumber;
 
-//返回+86-15888888888,+8615888888888或者15888888888，只是对号码做简单整理，过来所有非法字符
+//返回+86-15888888888,+8615888888888或者15888888888，只是对号码做简单整理，过滤所有非法字符
 - (NSString *)ssn_trimPhoneNumber;
 
 //去掉号码中包含的国家码，这里只对中国国家码做处理

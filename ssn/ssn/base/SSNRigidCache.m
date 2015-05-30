@@ -135,6 +135,10 @@
     return obj;
 }
 
+- (oneway void)removeAllObjects {
+    dispatch_async(_queue, ^{ [_cache removeAllObjects]; });
+}
+
 - (oneway void)removeObjectForKey:(id<NSCopying>)key
 {
     dispatch_async(_queue, ^{ [_cache removeObjectForKey:key]; });
