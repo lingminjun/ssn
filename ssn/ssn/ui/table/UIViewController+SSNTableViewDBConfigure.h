@@ -34,10 +34,19 @@
 @property (nonatomic,weak) UITableView *tableView;
 
 /**
+ *  cell更新动画
+ */
+@property (nonatomic) UITableViewRowAnimation rowAnimation;
+
+/**
+ *  table更新无动画
+ */
+@property (nonatomic) BOOL isWithoutAnimation;
+
+/**
  *  自动检查loadMore功能，不需要你处理tableView.ssn_loadMoreEnabled属性，自动检查是否有更多
  */
 @property (nonatomic) BOOL isAutoEnabledLoadMore;
-
 
 @end
 

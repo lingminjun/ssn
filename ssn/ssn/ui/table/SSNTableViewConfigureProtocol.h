@@ -28,6 +28,16 @@
  */
 @property (nonatomic,weak) UITableView *tableView;
 
+/**
+ *  cell更新动画
+ */
+@property (nonatomic) UITableViewRowAnimation rowAnimation;
+
+/**
+ *  table更新无动画
+ */
+@property (nonatomic) BOOL isWithoutAnimation;
+
 @end
 
 /**

@@ -313,13 +313,17 @@
         return ;
     }
 
+    if (_isWithoutAnimation) {
+        return ;
+    }
+    
     switch(type) {
         case SSNListFetchedChangeInsert:
-            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:_rowAnimation];
             break;
             
         case SSNListFetchedChangeDelete:
-            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:_rowAnimation];
             break;
         default:break;
     }
@@ -330,21 +334,25 @@
         return ;
     }
     
+    if (_isWithoutAnimation) {
+        return ;
+    }
+    
     switch (type) {
         case SSNListFetchedChangeInsert:
         {
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:_rowAnimation];
         }
             break;
         case SSNListFetchedChangeDelete:
         {
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:_rowAnimation];
         }
             break;
         case SSNListFetchedChangeMove:
         {
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:_rowAnimation];
+            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:_rowAnimation];
         }
             break;
         case SSNListFetchedChangeUpdate:
@@ -364,6 +372,10 @@
         return ;
     }
     
+    if (_isWithoutAnimation) {
+        return ;
+    }
+    
     [self.tableView beginUpdates];
 }
 
@@ -372,7 +384,12 @@
         return ;
     }
     
-    [self.tableView endUpdates];
+    if (_isWithoutAnimation) {
+        [self.tableView reloadData];
+    }
+    else {
+        [self.tableView endUpdates];
+    }
 }
 
 #pragma mark - list fetch controller datasource

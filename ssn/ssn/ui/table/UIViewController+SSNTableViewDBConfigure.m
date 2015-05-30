@@ -224,25 +224,29 @@
         return ;
     }
     
+    if (_isWithoutAnimation) {
+        return ;
+    }
+    
     switch (type) {
         case SSNDBFetchedChangeInsert:
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:_rowAnimation];
         }
             break;
         case SSNDBFetchedChangeDelete:
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:_rowAnimation];
         }
             break;
         case SSNDBFetchedChangeMove:
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:_rowAnimation];
             indexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:_rowAnimation];
         }
             break;
         case SSNDBFetchedChangeUpdate:
@@ -262,6 +266,11 @@
     if (controller != self.dbFetchController) {
         return ;
     }
+    
+    if (_isWithoutAnimation) {
+        return ;
+    }
+    
     [self.tableView beginUpdates];
 }
 
@@ -269,7 +278,13 @@
     if (controller != self.dbFetchController) {
         return ;
     }
-    [self.tableView endUpdates];
+    
+    if (_isWithoutAnimation) {
+        [self.tableView reloadData];
+    }
+    else {
+        [self.tableView endUpdates];
+    }
 }
 
 @end
