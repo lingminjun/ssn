@@ -544,21 +544,20 @@ static void addressBookExternalChangeCallback (ABAddressBookRef addressBook, CFD
 
 - (void)openService {
     
-    if (_isOpenService) {//没有加载过
+    if (_isOpenService && self.addressBook) {//没有加载过
         return ;
     }
     
     _isOpenService = YES;
-    
-    BOOL granted = [self synAuthoriseAccessABAddressBook];
-    if (!granted) {
-        return ;
-    }
-    
     //第一授权成功,需要加载数据,最好在异步线程中
     __weak typeof(self) w_self = self;
-    dispatch_async(_gcdQueue, ^{
-        __strong typeof(w_self) self = w_self;
+    dispatch_async(_gcdQueue, ^{ __strong typeof(w_self) self = w_self;
+        
+        BOOL granted = [self synAuthoriseAccessABAddressBook];
+        if (!granted) {
+            return ;
+        }
+        
         //本地通讯录数据加载
         [self updateDatasFromABAddressBook];
     });

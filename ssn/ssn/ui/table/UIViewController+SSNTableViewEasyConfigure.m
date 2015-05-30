@@ -438,9 +438,9 @@
     if ([self.delegate respondsToSelector:@selector(ssn_configurator:controller:updateDataWithOriginalData:indexPath:context:)]) {
         return [self.delegate ssn_configurator:self controller:controller updateDataWithOriginalData:model indexPath:indexPath context:context];
     }
-    
-    return nil;
-
+    else {
+        return model;
+    }
 }
 
 @end
