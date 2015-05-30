@@ -14,6 +14,12 @@
 #import <objc/message.h>
 #endif
 
+const char * SSN_IGNORE_description_KEY      = "description";
+const char * SSN_IGNORE_debugDescription_KEY = "debugDescription";
+const char * SSN_IGNORE_hash_KEY             = "hash";
+const char * SSN_IGNORE_superclass_KEY       = "superclass";
+
+
 NSString *const ssn_copy_push_flag = @"ssn_flag";
 
 @implementation NSObject (SSN)
@@ -118,6 +124,23 @@ NSString *const ssn_copy_push_flag = @"ssn_flag";
                     if (c_property_name && strlen(c_property_name) == 0) {
                         continue ;
                     }
+                    
+                    if (strcmp(SSN_IGNORE_description_KEY, c_property_name) == 0) {
+                        continue ;
+                    }
+                    
+                    if (strcmp(SSN_IGNORE_debugDescription_KEY, c_property_name) == 0) {
+                        continue ;
+                    }
+                    
+                    if (strcmp(SSN_IGNORE_hash_KEY, c_property_name) == 0) {
+                        continue ;
+                    }
+                    
+                    if (strcmp(SSN_IGNORE_superclass_KEY, c_property_name) == 0) {
+                        continue ;
+                    }
+                    
                     
                     char *typeEncoding = property_copyAttributeValue(property, "T");
                     if (typeEncoding && strlen(typeEncoding) > 0) {
