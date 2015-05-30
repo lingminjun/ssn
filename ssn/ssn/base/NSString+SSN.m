@@ -170,6 +170,24 @@ BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2) {
     return [hash lowercaseString];
 }
 
+//全部符合集合的子字符串，若传入nil返回当前string copy
+- (NSString *)ssn_substringMeetCharacterSet:(NSCharacterSet *)set {
+    if (!set) {
+        return [self copy];
+    }
+    @autoreleasepool {
+        NSMutableString *sub = [NSMutableString string];
+        NSString *text = [self copy];
+        for (NSUInteger index = 0; index < [text length];index++) {
+            unichar c = [text characterAtIndex:index];
+            if ([set characterIsMember:c]) {
+                [sub appendFormat:@"%C",c];
+            }
+        }
+        return [sub copy];
+    }
+}
+
 - (BOOL)ssn_containsChinese {
     if ([self length] == 0) {
         return NO;
@@ -489,7 +507,7 @@ BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2) {
             mask++;
             [format appendFormat:@"%C",c];
             
-            if (mask % 4 == 3) {
+            if (mask % 4 == 3 && idx + 1 < len) {//非最后一个时
                 [format appendFormat:@"%C",sep];
             }
         }

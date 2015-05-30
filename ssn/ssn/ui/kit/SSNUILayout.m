@@ -82,7 +82,7 @@ static char *ssn_dependent_layout_key = NULL;
 }
 
 - (void)removeSubview:(UIView *)subview {
-    NSLog(@"layout remove subview %@",subview);
+//    NSLog(@"layout remove subview %@",subview);
     
     [subview setSsn_dependent_layout:nil];//移除弱引用
     

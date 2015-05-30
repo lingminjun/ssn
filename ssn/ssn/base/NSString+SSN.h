@@ -30,6 +30,9 @@ FOUNDATION_EXTERN BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2);
 //小写
 - (NSString *)ssn_md5;
 
+//全部符合集合的子字符串，若传入nil返回当前string copy
+- (NSString *)ssn_substringMeetCharacterSet:(NSCharacterSet *)set;
+
 //是否包含中文
 - (BOOL)ssn_containsChinese;
 

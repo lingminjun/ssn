@@ -254,6 +254,10 @@
 //    
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+}
+
 - (void)ssn_layoutDidLoad {
     SSNUITableLayout *layout = [self.view ssn_tableLayout];
     layout.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
