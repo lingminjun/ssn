@@ -33,6 +33,13 @@
 - (BOOL)isGrantedAccessABAddressBook;
 
 /**
+ *  是否开启服务
+ *
+ *  @return 开启服务
+ */
+- (BOOL)isOpenService;
+
+/**
  *  开启服务
  *
  *  @return 同步开启，等的用户决定
