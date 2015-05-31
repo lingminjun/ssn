@@ -14,11 +14,11 @@
 #import <sqlite3.h>
 #import "ssndiff.h"
 
-//#if DEBUG
-//#define ssn_fetch_log(s, ...) printf(s, ##__VA_ARGS__)
-//#else
+#if DEBUG
+#define ssn_fetch_log(s, ...) printf(s, ##__VA_ARGS__)
+#else
 #define ssn_fetch_log(s, ...) ((void)0)
-//#endif
+#endif
 
 //#if DEBUG
 //#define ssn_t_log(s, ...) NSLog(s, ##__VA_ARGS__)

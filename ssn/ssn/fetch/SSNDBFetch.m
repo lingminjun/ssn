@@ -153,6 +153,133 @@ static char *ssn_dbfetch_rowid_key = NULL;
 @end
 
 
+#pragma mark - 模糊搜索
+@interface SSNDBLikeFetch ()
+
+@property (nonatomic, copy, readonly) NSString *dbTable;//数据来源的表，必填字段
+
+@end
+
+@implementation SSNDBLikeFetch
+
+- (instancetype)initWithEntity:(Class<SSNDBFetchObject>)clazz fromTable:(NSString *)dbTable {
+    return [self initWithEntity:clazz sortDescriptors:nil searchText:nil fields:nil offset:0 limit:0 fromTable:dbTable];
+}
+
+- (instancetype)initWithEntity:(Class<SSNDBFetchObject>)clazz sortDescriptors:(NSArray *)sortDescriptors searchText:(NSString *)searchText fields:(NSArray *)fields offset:(NSUInteger)offset limit:(NSUInteger)limit fromTable:(NSString *)dbTable {
+    NSAssert([dbTable length], @"必须输入数据来源主表名");
+    self = [super init];
+    if (self) {
+        _entity = clazz;
+        _sortDescriptors = [sortDescriptors copy];
+        _searchText = [searchText copy];
+        _fields = [fields copy];
+        _offset = offset;
+        _limit = limit;
+        _dbTable = dbTable;
+    }
+    return self;
+}
+
++ (instancetype)fetchWithEntity:(Class<SSNDBFetchObject>)clazz fromTable:(NSString *)dbTable {
+    return [[[self class] alloc] initWithEntity:clazz fromTable:dbTable];
+}
+
++ (instancetype)fetchWithEntity:(Class<SSNDBFetchObject>)clazz sortDescriptors:(NSArray *)sortDescriptors searchText:(NSString *)searchText fields:(NSArray *)fields offset:(NSUInteger)offset limit:(NSUInteger)limit fromTable:(NSString *)dbTable {
+    return [[[self class] alloc] initWithEntity:clazz sortDescriptors:sortDescriptors searchText:searchText fields:fields offset:offset limit:limit fromTable:dbTable];
+}
+
+#pragma mark copying
+- (instancetype)copyWithZone:(NSZone *)zone {
+    SSNDBLikeFetch *copy = [[[self class] alloc] initWithEntity:self.entity fromTable:self.dbTable];
+    copy.sortDescriptors = self.sortDescriptors;
+    copy.searchText = self.searchText;
+    copy.fields = self.fields;
+    copy.offset = self.offset;
+    copy.limit = self.limit;
+    return copy;
+}
+
+#pragma mark sql statement
+- (NSString *)sqlWhereStatement {
+    //添加where子句
+    if ([_searchText length] && [_fields count]) {
+        NSString *appendStr = [NSString stringWithFormat:@" like '%%%@%%'",_searchText];
+        NSString *sql = [NSString componentsStringWithArray:_fields appendingString:appendStr joinedString:@" OR "];
+        return [NSString stringWithFormat:@" WHERE (%@)",sql];
+    }
+    return nil;
+}
+
+- (NSString *)sqlOrderByStatement {
+    if ([_sortDescriptors count]) {
+        NSMutableString *sqlstatement = [NSMutableString string];
+        
+        [sqlstatement appendString:@" ORDER BY "];
+        
+        BOOL isFirst = YES;
+        for (NSSortDescriptor *sort in _sortDescriptors) {
+            if (!isFirst) {
+                [sqlstatement appendString:@", "];
+            }
+            isFirst = NO;
+            
+            [sqlstatement appendFormat:@"%@ %@", sort.key, sort.ascending? @"ASC": @"DESC"];
+        }
+        
+        return sqlstatement;
+    }
+    return nil;
+}
+
+- (NSString *)sqlLimitStatement {
+    if (_limit > 0) {
+        return [NSString stringWithFormat:@" LIMIT %@, %@", @(_offset), @(_limit)];
+    }
+    return nil;
+}
+
+- (NSString *)sqlStatement {//where子句和order by子句以及limit子句
+    
+    @autoreleasepool {
+        
+        NSMutableString *sqlstatement = [NSMutableString string];
+        
+        //添加where子句
+        NSString *where = [self sqlWhereStatement];
+        if ([where length]) {
+            [sqlstatement appendString:where];
+        }
+        
+        //添加order by子句
+        NSString *order = [self sqlOrderByStatement];
+        if ([order length]) {
+            [sqlstatement appendString:order];
+        }
+        
+        //添加limit子句
+        NSString *limit = [self sqlLimitStatement];
+        if ([limit length]) {
+            [sqlstatement appendString:limit];
+        }
+        
+        return [sqlstatement copy];
+    }
+}
+
+- (NSString *)fetchSql {
+    return [NSString stringWithFormat:@"SELECT rowid AS ssn_dbfetch_rowid,* FROM %@ %@", _dbTable, [self sqlStatement]];
+}
+
+- (NSString *)fetchForRowidSql {
+    return [NSString stringWithFormat:@"SELECT rowid AS ssn_dbfetch_rowid,* FROM %@ WHERE rowid = ? LIMIT 0,1", _dbTable];
+}
+
+
+@end
+
+
+
 #pragma mark -级联表查询实现
 @interface SSNDBCascadedItem : NSObject<SSNDBCascadedInfo>
 @property (nonatomic,copy) NSString *cascadedTable;//被关联的表

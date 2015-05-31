@@ -70,9 +70,33 @@
 
 @end
 
+/**
+ *  模糊查询数据集描述
+ */
+@interface SSNDBLikeFetch : NSObject<SSNDBFetchRequest>
+
+@property (nonatomic, strong) Class<SSNDBFetchObject> entity; //数据返回实例，如果你不传入对象，则返回数据项放入字典中
+
+@property (nonatomic, copy) NSArray *sortDescriptors; //<NSSortDescriptor *>
+
+@property (nonatomic) NSUInteger offset;//起始点，按照sortDescriptors排序的起始值
+
+@property (nonatomic) NSUInteger limit;//限制大小，传入0表示无限制
+
+@property (nonatomic,copy) NSString *searchText;//查询字符串
+
+@property (nonatomic,copy) NSArray *fields;//查询字符串影响的行
+
+- (instancetype)initWithEntity:(Class<SSNDBFetchObject>)clazz fromTable:(NSString *)dbTable;
+- (instancetype)initWithEntity:(Class<SSNDBFetchObject>)clazz sortDescriptors:(NSArray *)sortDescriptors searchText:(NSString *)searchText fields:(NSArray *)fields offset:(NSUInteger)offset limit:(NSUInteger)limit fromTable:(NSString *)dbTable;
+
++ (instancetype)fetchWithEntity:(Class<SSNDBFetchObject>)clazz fromTable:(NSString *)dbTable;
++ (instancetype)fetchWithEntity:(Class<SSNDBFetchObject>)clazz sortDescriptors:(NSArray *)sortDescriptors searchText:(NSString *)searchText fields:(NSArray *)fields offset:(NSUInteger)offset limit:(NSUInteger)limit fromTable:(NSString *)dbTable;
+
+@end
 
 /**
- *  查询数据集描述
+ *  级联查询数据集描述
  */
 @interface SSNDBCascadeFetch : SSNDBFetch
 

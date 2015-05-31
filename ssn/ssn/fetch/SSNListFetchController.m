@@ -839,6 +839,10 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
             return;
         }
         
+//        if (<#condition#>) {
+//            <#statements#>
+//        }
+        
         [_delegate ssnlist_controllerWillChange:self];
         
         //删除老数据
