@@ -44,21 +44,20 @@
     return CGSizeMake(ssn_ceil(rect.size.width), ssn_ceil(rect.size.height));
 }
 
-/**
- *  返回一个NSAttributedString
- *
- *  @param string      字符内容
- *  @param font        字体
- *  @param color       颜色
- *  @param lineSpacing 行距，输入0时忽略
- *
- *  @return NSAttributedString
- */
-+ (instancetype)ssn_attributedStringWithString:(NSString *)string font:(UIFont *)font color:(UIColor *)color lineSpacing:(CGFloat)lineSpacing {
+
++ (instancetype)ssn_attributedStringWithString:(NSString *)string font:(UIFont *)font color:(UIColor *)color underline:(BOOL)underline strikethrough:(BOOL)strikethrough lineSpacing:(CGFloat)lineSpacing {
     
     NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithCapacity:3];
     [attributes setValue:font forKey:NSFontAttributeName];
     [attributes setValue:color forKey:NSForegroundColorAttributeName];
+    
+    if (underline) {
+        [attributes setValue:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
+    }
+    
+    if (strikethrough) {//默认就给细线，如果需要可以修改成NSUnderlineStyleThick
+        [attributes setValue:@(NSUnderlineStyleSingle) forKey:NSStrikethroughStyleAttributeName];
+    }
     
     if (lineSpacing > 0.0f) {
         //调整行间距
@@ -71,6 +70,50 @@
     }
     
     return [[[self class] alloc] initWithString:string attributes:attributes];
+}
+
+/**
+ *  返回一个NSAttributedString
+ *
+ *  @param string      字符内容
+ *  @param font        字体
+ *  @param color       颜色
+ *  @param lineSpacing 行距，输入0时忽略
+ *
+ *  @return NSAttributedString
+ */
++ (instancetype)ssn_attributedStringWithString:(NSString *)string font:(UIFont *)font color:(UIColor *)color lineSpacing:(CGFloat)lineSpacing {
+    return [self ssn_attributedStringWithString:string font:font color:color underline:NO strikethrough:NO lineSpacing:lineSpacing];
+}
+
+/**
+ *  返回一个NSAttributedString
+ *
+ *  @param string      字符内容
+ *  @param font        字体
+ *  @param color       颜色
+ *  @param underline   是否有下划线
+ *  @param lineSpacing 行距，输入0时忽略
+ *
+ *  @return NSAttributedString
+ */
++ (instancetype)ssn_attributedStringWithString:(NSString *)string font:(UIFont *)font color:(UIColor *)color underline:(BOOL)underline lineSpacing:(CGFloat)lineSpacing {
+    return [self ssn_attributedStringWithString:string font:font color:color underline:underline strikethrough:NO lineSpacing:lineSpacing];
+}
+
+/**
+ *  返回一个NSAttributedString
+ *
+ *  @param string      字符内容
+ *  @param font        字体
+ *  @param color       颜色
+ *  @param strikethrough 是否有删除线
+ *  @param lineSpacing 行距，输入0时忽略
+ *
+ *  @return NSAttributedString
+ */
++ (instancetype)ssn_attributedStringWithString:(NSString *)string font:(UIFont *)font color:(UIColor *)color strikethrough:(BOOL)strikethrough lineSpacing:(CGFloat)lineSpacing {
+    return [self ssn_attributedStringWithString:string font:font color:color underline:NO strikethrough:strikethrough lineSpacing:lineSpacing];
 }
 
 /**
@@ -102,7 +145,7 @@
     NSMutableAttributedString *attributeString = [[NSMutableAttributedString alloc] init];
     
     for (id <SSNAttributedStringSection>section in sections) {
-        [attributeString appendAttributedString:[self ssn_attributedStringWithString:section.string font:section.font color:section.color lineSpacing:0.0f]];
+        [attributeString appendAttributedString:[self ssn_attributedStringWithString:section.string font:section.font color:section.color underline:section.underline strikethrough:section.strikethrough lineSpacing:0.0f]];
     }
     
     if (lineSpacing > 0.0f) {
@@ -131,22 +174,28 @@
 @synthesize string;//内容
 @synthesize font;//字体
 @synthesize color;//颜色
+@synthesize underline;           //下划线
+@synthesize strikethrough;       //删除线
 
 - (instancetype)copyWithZone:(NSZone *)zone {
     SSNAttributedStringSection *section = [[[self class] alloc] init];
     section.string = self.string;
     section.font = self.font;
     section.color = self.color;
+    section.underline = self.underline;
+    section.strikethrough = self.strikethrough;
     return section;
 }
 
 @end
 
-id<SSNAttributedStringSection> ssn_attributedStringSection(NSString *string, UIFont *font, UIColor *color) {
+id<SSNAttributedStringSection> ssn_attributedStringSection(NSString *string, UIFont *font, UIColor *color, BOOL underline, BOOL strikethrough) {
     SSNAttributedStringSection *section = [[SSNAttributedStringSection alloc] init];
     section.string = string;
     section.font = font;
     section.color = color;
+    section.underline = underline;
+    section.strikethrough = strikethrough;
     return section;
 }
 
