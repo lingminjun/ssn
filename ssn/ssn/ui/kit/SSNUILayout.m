@@ -7,7 +7,6 @@
 //
 
 #import "SSNUILayout.h"
-#import "UIView+SSNUIFrame.h"
 #import "SSNPanel.h"
 
 #if TARGET_IPHONE_SIMULATOR

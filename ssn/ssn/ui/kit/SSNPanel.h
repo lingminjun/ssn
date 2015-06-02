@@ -11,6 +11,7 @@
 #import "SSNUISiteLayout.h"
 #import "SSNUIFlowLayout.h"
 #import "SSNUITableLayout.h"
+#import "UIView+SSNUIFrame.h"
 
 #ifndef _ssn_panel_snippet_
 #define _ssn_panel_snippet_

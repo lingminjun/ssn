@@ -7,7 +7,7 @@
 //
 
 #import "SSNDBFetch.h"
-
+#import "NSString+SSN.h"
 #if TARGET_IPHONE_SIMULATOR
 #import <objc/objc-runtime.h>
 #else
