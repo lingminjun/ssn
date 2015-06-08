@@ -9,7 +9,7 @@
 #import "SSNWDT.h"
 #import "NSString+SSN.h"
 #import "NSObject+SSNBlock.h"
-#import "SSNSafeDictionary.h"
+#import "SSNSafeSet.h"
 
 NSString *const SSNWDT_DAILY_FORMAT = @"yyyy-MM-dd";
 NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
@@ -148,11 +148,11 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
     }
 }
 
-+ (SSNSafeDictionary *)isLaunchs {
-    static SSNSafeDictionary *launchs = nil;
++ (SSNSafeSet *)launchs {
+    static SSNSafeSet *launchs = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        launchs = [[SSNSafeDictionary alloc] initWithCapacity:1];
+        launchs = [[SSNSafeSet alloc] initWithCapacity:1];
     });
     return launchs;
 }
@@ -165,11 +165,11 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
 - (BOOL)launch {
     
     //说明已经启动过
-    SSNSafeDictionary *dic = [[self class] isLaunchs];
-    if ([dic objectForKey:_identify]) {
+    SSNSafeSet *set = [[self class] launchs];
+    if ([set containsObject:_identify]) {
         return NO;
     }
-    [dic setObject:_identify forKey:_identify];//标记已经启动
+    [set addObject:_identify];//标记已经启动
     
     //只在主线程中执行，因为timer需要在主线程中holder
     [self ssn_mainThreadAsyncBlock:^{
