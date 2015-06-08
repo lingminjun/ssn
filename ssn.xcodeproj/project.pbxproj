@@ -93,9 +93,11 @@
 		535ADAF21B14B6DD00265080 /* SSNPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 535ADAF11B14B6DD00265080 /* SSNPageControl.m */; };
 		535C0E091AD0373D0033EB92 /* NSObject+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E081AD0373D0033EB92 /* NSObject+SSN.m */; };
 		535C0E0D1AD37A780033EB92 /* NSData+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 535C0E0C1AD37A780033EB92 /* NSData+SSN.m */; };
+		535EDC2F1B253D0300E2C0D6 /* SSNWDT.m in Sources */ = {isa = PBXBuildFile; fileRef = 535EDC2E1B253D0300E2C0D6 /* SSNWDT.m */; };
 		53620B2F1AB3217F00381C3C /* SSNRPCInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */; };
 		53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B311AB53C2200381C3C /* SSNSeqGen.m */; };
 		53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B341AB5D1C300381C3C /* NSThread+SSN.m */; };
+		536CC4C81B202A3600959606 /* regions.json in Resources */ = {isa = PBXBuildFile; fileRef = 536CC4C71B202A3600959606 /* regions.json */; };
 		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
 		537F39AA1B12209600EE8230 /* SSNAppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F39A91B12209600EE8230 /* SSNAppInfo.m */; };
 		5381F7EC1ADE4B24006BB93A /* ssn_hosting_task.json in Resources */ = {isa = PBXBuildFile; fileRef = 5381F7EB1ADE4B24006BB93A /* ssn_hosting_task.json */; };
@@ -385,12 +387,15 @@
 		535C0E081AD0373D0033EB92 /* NSObject+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SSN.m"; sourceTree = "<group>"; };
 		535C0E0B1AD37A780033EB92 /* NSData+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SSN.h"; sourceTree = "<group>"; };
 		535C0E0C1AD37A780033EB92 /* NSData+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+SSN.m"; sourceTree = "<group>"; };
+		535EDC2D1B253D0300E2C0D6 /* SSNWDT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNWDT.h; sourceTree = "<group>"; };
+		535EDC2E1B253D0300E2C0D6 /* SSNWDT.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNWDT.m; sourceTree = "<group>"; };
 		53620B2D1AB3217F00381C3C /* SSNRPCInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNRPCInvocation.h; sourceTree = "<group>"; };
 		53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNRPCInvocation.m; sourceTree = "<group>"; };
 		53620B301AB53C2200381C3C /* SSNSeqGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNSeqGen.h; sourceTree = "<group>"; };
 		53620B311AB53C2200381C3C /* SSNSeqGen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNSeqGen.m; sourceTree = "<group>"; };
 		53620B331AB5D1C300381C3C /* NSThread+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+SSN.h"; sourceTree = "<group>"; };
 		53620B341AB5D1C300381C3C /* NSThread+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+SSN.m"; sourceTree = "<group>"; };
+		536CC4C71B202A3600959606 /* regions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = regions.json; sourceTree = "<group>"; };
 		537064961A2A032700287199 /* TSUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUser.h; sourceTree = "<group>"; };
 		537064971A2A032700287199 /* TSUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUser.m; sourceTree = "<group>"; };
 		537F39A81B12209600EE8230 /* SSNAppInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNAppInfo.h; sourceTree = "<group>"; };
@@ -1003,6 +1008,8 @@
 				535C0E0C1AD37A780033EB92 /* NSData+SSN.m */,
 				537F39A81B12209600EE8230 /* SSNAppInfo.h */,
 				537F39A91B12209600EE8230 /* SSNAppInfo.m */,
+				535EDC2D1B253D0300E2C0D6 /* SSNWDT.h */,
+				535EDC2E1B253D0300E2C0D6 /* SSNWDT.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -1280,6 +1287,7 @@
 		53D1640B191A629C00AD4C81 /* ssnTests */ = {
 			isa = PBXGroup;
 			children = (
+				536CC4C71B202A3600959606 /* regions.json */,
 				5334C0EC1ACA7F4400094768 /* userdefaults.json */,
 				533BE3951A2AC43800E07FF0 /* TestPerson.json */,
 				53D16411191A629C00AD4C81 /* ssnTests.mm */,
@@ -1478,6 +1486,7 @@
 				5334C0ED1ACA7F4400094768 /* userdefaults.json in Resources */,
 				533BE3BA1A2B0DC900E07FF0 /* DMPerson.json in Resources */,
 				533BE3961A2AC43800E07FF0 /* TestPerson.json in Resources */,
+				536CC4C81B202A3600959606 /* regions.json in Resources */,
 				53D16410191A629C00AD4C81 /* InfoPlist.strings in Resources */,
 				533121861A4BE87D000F456E /* DMPersonExt.json in Resources */,
 				533BE3B31A2B0C0D00E07FF0 /* Default-568h@2x.png in Resources */,
@@ -1565,6 +1574,7 @@
 				538E3844199869F90061692E /* DMSignViewController.m in Sources */,
 				53A1BA161A52A14C00C76844 /* SSNPanel.m in Sources */,
 				53BC534C1A485E6E0044C238 /* SSNNavigationController.m in Sources */,
+				535EDC2F1B253D0300E2C0D6 /* SSNWDT.m in Sources */,
 				53BC530C1A485E6E0044C238 /* SSNCuteSerialQueue.m in Sources */,
 				53D163F0191A629C00AD4C81 /* main.m in Sources */,
 				53BC53201A485E6E0044C238 /* SSNDB.m in Sources */,
