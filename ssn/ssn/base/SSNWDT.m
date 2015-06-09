@@ -171,8 +171,7 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
     }
     [set addObject:_identify];//标记已经启动
     
-    //只在主线程中执行，因为timer需要在主线程中holder
-    [self ssn_mainThreadAsyncBlock:^{
+    dispatch_block_t block = ^{
         
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         NSString *seed = [userDefaults objectForKey:[self userDefaultKey]];
@@ -188,7 +187,15 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
                                        userInfo:nil
                                         repeats:YES];
         
-    }];
+    };
+    
+    //只在主线程中执行，因为timer需要在主线程中holder
+    if ([NSThread isMainThread]) {
+        block();
+    }
+    else {
+        [self ssn_mainThreadAsyncBlock:block];
+    }
     
     return YES;
 }
