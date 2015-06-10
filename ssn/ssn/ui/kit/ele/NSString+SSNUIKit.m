@@ -36,11 +36,56 @@
 
 @implementation NSAttributedString (SSNUIKit)
 
+/**
+ *  返回字体所占用得尺寸
+ *
+ *  @param maxWidth 最大宽度
+ *
+ *  @return 返回合适的尺寸
+ */
 - (CGSize)ssn_sizeWithMaxWidth:(CGFloat)maxWidth {
+    return [self ssn_sizeWithMaxWidth:maxWidth singleLineIgnoreSpacing:NO];
+}
+
+/**
+ *  返回字体所占用得尺寸
+ *
+ *  @param maxWidth 最大宽度
+ *  @param ignore   若单行忽略其行间距
+ *
+ *  @return 返回合适的尺寸
+ */
+- (CGSize)ssn_sizeWithMaxWidth:(CGFloat)maxWidth singleLineIgnoreSpacing:(BOOL)ignore {
+    
     CGSize goal_size = CGSizeMake(maxWidth, 3000);
     CGRect rect = [self boundingRectWithSize:goal_size
                                      options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
                                      context:nil];
+    if (!ignore) {
+        return CGSizeMake(ssn_ceil(rect.size.width), ssn_ceil(rect.size.height));
+    }
+    
+    //若忽略，则需要取最大字体行高计算
+    __block UIFont *font = nil;
+    //去掉段落行距
+    NSRange range = NSMakeRange(0, [self length]);
+    [self enumerateAttribute:NSFontAttributeName inRange:range options:0 usingBlock:^(UIFont *f, NSRange range, BOOL *stop) {
+        if (font && f) {
+            if (font.pointSize < f.pointSize) {
+                font = f;
+            }
+        }
+        
+        if (!font && f){
+            font = f;
+        }
+    }];
+    
+    //简单判断单行，若行间距本身大于字高，此处有bug，暂时忽略这种情况（不符合美观设计）
+    if (rect.size.height > font.lineHeight && rect.size.height < 2*font.lineHeight) {
+        rect.size.height = font.lineHeight;
+    }
+    
     return CGSizeMake(ssn_ceil(rect.size.width), ssn_ceil(rect.size.height));
 }
 

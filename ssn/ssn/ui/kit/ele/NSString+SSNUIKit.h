@@ -37,6 +37,16 @@
 - (CGSize)ssn_sizeWithMaxWidth:(CGFloat)maxWidth;
 
 /**
+ *  返回字体所占用得尺寸
+ *
+ *  @param maxWidth 最大宽度
+ *  @param ignore   若单行忽略其行间距
+ *
+ *  @return 返回合适的尺寸
+ */
+- (CGSize)ssn_sizeWithMaxWidth:(CGFloat)maxWidth singleLineIgnoreSpacing:(BOOL)ignore;
+
+/**
  *  返回一个NSAttributedString
  *
  *  @param string      字符内容
