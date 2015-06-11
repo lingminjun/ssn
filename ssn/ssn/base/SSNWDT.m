@@ -99,27 +99,6 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
     return [NSString ssn_stringWithDate:date formatter:format];
 }
 
-- (NSString *)nextSeed {
-    NSDate *date = nil;
-    NSString *format = nil;
-    switch (_unit) {
-        case SSNWDTDailyUnit:
-            format = SSNWDT_DAILY_FORMAT;
-            date = [NSDate dateWithTimeIntervalSinceNow:[self timeInterval]];
-            break;
-        case SSNWDTHourUnit:
-            format = SSNWDT_HOUR_FORMAT;
-            date = [NSDate dateWithTimeIntervalSinceNow:[self timeInterval]];
-            break;
-            //        case SSNWDTWeekUnit:
-            //            format = SSNWDT_HOUR_FORMAT;
-            //            break;
-        default:
-            break;
-    }
-    return [NSString ssn_stringWithDate:date formatter:format];
-}
-
 - (NSString *)userDefaultKey {
     if (_key) {
         return _key;
@@ -130,13 +109,13 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
 
 - (void)callback {
     //将时间点更新
-    NSString *nextSeed = [self nextSeed];
+    NSString *currentSeed = [self currentSeed];
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *akey = [self userDefaultKey];
-    [userDefaults setObject:nextSeed forKey:akey];
+    [userDefaults setObject:currentSeed forKey:akey];
     [userDefaults synchronize];
 
-    NSLog(@"%@更新至%@",akey,nextSeed);
+    NSLog(@"%@更新至%@",akey,currentSeed);
     
     if (_scheduledTask) {
         _scheduledTask(self);
