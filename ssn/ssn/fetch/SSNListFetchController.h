@@ -102,6 +102,13 @@ FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
 - (NSArray *)sections;
 
 /**
+ *  所有sections的 identify
+ *
+ *  @return 返回所有identfiers
+ */
+- (NSArray *)sectionIdentifiers;
+
+/**
  *  返回所有当前数据 返回 SSNCellModel @see SSNCellModel
  *
  *  @return 返回所有当前数据

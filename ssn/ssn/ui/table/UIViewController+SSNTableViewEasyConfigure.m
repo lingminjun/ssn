@@ -292,6 +292,26 @@
     return sec.customFooterView;
 }
 
+// return list of section titles to display in section index view (e.g. "ABCD...Z#")
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
+    if (tableView != self.tableView) {
+        return nil;
+    }
+    
+    if (_showGroupIndexs) {
+        return [self.listFetchController sectionIdentifiers];
+    }
+    
+    return nil;
+}
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
+    if (tableView != self.tableView) {
+        return 0;
+    }
+    
+    return index;
+}
+
 #pragma mark - pull refresh delegate
 /**
  *  将要触发动作

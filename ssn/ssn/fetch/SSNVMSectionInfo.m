@@ -134,7 +134,11 @@
     copy.footerHeight = self.footerHeight;
     copy.hiddenFooter = self.hiddenFooter;
     copy.customFooterView = self.customFooterView;
+    
     copy.identify = self.identify;
+    copy.sortIndex = self.sortIndex;
+    
+    [copy.userInfo setDictionary:self.userInfo];
     
     [copy.objects setArray:self.objects];
     return copy;

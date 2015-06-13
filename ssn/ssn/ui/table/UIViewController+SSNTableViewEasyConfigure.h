@@ -50,6 +50,11 @@
 @property (nonatomic) BOOL isAutoEnabledLoadMore;
 
 /**
+ *  显示分组索引
+ */
+@property (nonatomic) BOOL showGroupIndexs;
+
+/**
  *  请务必调用此方法配置你的Configurator
  *
  *  @param tableView 需要设置的table
