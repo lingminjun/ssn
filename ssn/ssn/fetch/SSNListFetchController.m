@@ -678,6 +678,17 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
     return models;
 }
 
+- (NSString *)sectionIdentifyWithModel:(id<SSNCellModel>)model {
+    NSString *sectionIdentify = SSNFetchDefaultSectionIdentify;
+    if (_isGrouping) {
+        NSString *identify = [model cellSectionIdentify];
+        if ([identify length]) {
+            sectionIdentify = identify;
+        }
+    }
+    return sectionIdentify;
+}
+
 - (SSNVMSectionInfo *)loadSectionWithSectionIdentify:(NSString *)identify {
     SSNVMSectionInfo *section = [SSNVMSectionInfo sectionInfoWithIdentify:identify title:identify];
     if (_isGrouping && _dataSourceRespondSectionDidLoad) {
@@ -711,10 +722,7 @@ void list_fetch_sctn_chgs_iter(void *from, void *to, const size_t f_idx, const s
         NSMutableDictionary *uSectionsChanges = [NSMutableDictionary dictionaryWithCapacity:1];
         
         [models enumerateObjectsUsingBlock:^(id<SSNCellModel> obj, NSUInteger idx, BOOL *stop) {
-            NSString *sectionIdentify = [obj cellSectionIdentify];
-            if ([sectionIdentify length] == 0) {
-                sectionIdentify = SSNFetchDefaultSectionIdentify;
-            }
+            NSString *sectionIdentify = [self sectionIdentifyWithModel:obj];
             
             //生产新的section副本来存放新数据
             SSNVMSectionInfo *nSection = [nSections objectForKey:sectionIdentify];
