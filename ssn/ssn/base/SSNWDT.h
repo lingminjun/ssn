@@ -12,8 +12,10 @@
 typedef NS_ENUM(NSUInteger, SSNWDTIntervalUnit) {
     SSNWDTDailyUnit,//按天计算
     SSNWDTHourUnit, //按小时计算
-//    SSNWDTWeekUnit, //按周计算 
+    SSNWDTWeekUnit, //按周计算 
 };
+
+typedef BOOL SSNWDTTaskSuccess;//重试任务成功
 
 @class SSNWDT;
 
@@ -21,8 +23,14 @@ typedef NS_ENUM(NSUInteger, SSNWDTIntervalUnit) {
  *  任务触发
  */
 @protocol SSNWDTTaskDelegate <NSObject>
-@required
-- (void)scheduledTaskTriggerWDT:(SSNWDT *)WDT;
+@optional
+/**
+ *  任务触发回调
+ *
+ *  @param WDT    触发器
+ *  @param result 通知触发器结果，务必回调，否则，重试失效
+ */
+- (void)scheduledTaskTriggerWDT:(SSNWDT *)WDT result:(void(^)(SSNWDTTaskSuccess success))result;
 @end
 
 /**
@@ -36,8 +44,10 @@ typedef NS_ENUM(NSUInteger, SSNWDTIntervalUnit) {
 
 @property (nonatomic,readonly) NSUInteger interval;//触发间隔时间
 
-@property (nonatomic,copy) void (^scheduledTask)(SSNWDT *WDT);//预设的任务
+@property (nonatomic) NSUInteger retry;//重试间隔时间，若任务没有成功，则会在retry秒后重试，[0,1800]，传入0时表示不重试
 
+//block和委托，可同时使用，但是只要有一个成功，将不会重试
+@property (nonatomic,copy) void (^scheduledTask)(SSNWDT *WDT,void(^result)(SSNWDTTaskSuccess success));//预设的任务，
 @property (nonatomic,weak) id<SSNWDTTaskDelegate> delegate;//委托
 
 /**

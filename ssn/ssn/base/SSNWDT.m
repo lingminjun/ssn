@@ -13,6 +13,9 @@
 
 NSString *const SSNWDT_DAILY_FORMAT = @"yyyy-MM-dd";
 NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
+NSString *const SSNWDT_WEEK_FORMAT = @"yyyy-MM-EEE";
+
+#define SSNWDT_MAX_RETRY (1800)
 
 @interface SSNWDT ()
 
@@ -27,6 +30,13 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
 @end
 
 @implementation SSNWDT
+
+- (void)setRetry:(NSUInteger)retry {
+    if (retry > SSNWDT_MAX_RETRY) {
+        retry = SSNWDT_MAX_RETRY;
+    }
+    _retry = retry;
+}
 
 /**
  *  唯一初始化
@@ -74,9 +84,13 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
         case SSNWDTHourUnit:
             return _interval*3600;
             break;
+        case SSNWDTWeekUnit:
+            return _interval*24*3600*7;
+            break;
         default:
             break;
     }
+    return 0;
 }
 
 - (NSString *)currentSeed {
@@ -89,14 +103,21 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
         case SSNWDTHourUnit:
             format = SSNWDT_HOUR_FORMAT;
             break;
-//        case SSNWDTWeekUnit:
-//            format = SSNWDT_HOUR_FORMAT;
-//            break;
+        case SSNWDTWeekUnit:
+            format = SSNWDT_WEEK_FORMAT;
+            break;
         default:
             break;
     }
     
-    return [NSString ssn_stringWithDate:date formatter:format];
+    if (_unit == SSNWDTWeekUnit) {
+        int day = [[NSString ssn_stringWithDate:date formatter:@"dd"] intValue];
+        int weakNum = (day + 6)/7;
+        return [NSString stringWithFormat:@"%@-%d",[NSString ssn_stringWithDate:date formatter:format],weakNum];
+    }
+    else {
+        return [NSString ssn_stringWithDate:date formatter:format];
+    }
 }
 
 - (NSString *)userDefaultKey {
@@ -107,23 +128,65 @@ NSString *const SSNWDT_HOUR_FORMAT = @"yyyy-MM-dd HH";
     return _key;
 }
 
-- (void)callback {
-    //将时间点更新
-    NSString *currentSeed = [self currentSeed];
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *akey = [self userDefaultKey];
-    [userDefaults setObject:currentSeed forKey:akey];
-    [userDefaults synchronize];
+- (void)callback {/*此函数保证在主线程中执行*/
+    //将前面的重试cancel掉
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(callback) object:nil];
 
-    NSLog(@"%@更新至%@",akey,currentSeed);
+    //记过通知
+    __block NSInteger flag1 = 0;//0没处理，1成功，2失败
+    __block NSInteger flag2 = 0;//0没处理，1成功，2失败
+    NSInteger retry = _retry;
+    __weak typeof(self) w_self = self;
+    void(^result)(SSNWDTTaskSuccess success) = ^(SSNWDTTaskSuccess success){
+        __weak typeof(w_self) self = w_self; if (!self) { return ; }
+        [self ssn_mainThreadAsyncBlock:^{
+            //将时间点更新
+            NSString *currentSeed = [self currentSeed];
+            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+            NSString *akey = [self userDefaultKey];
+            
+            if (flag1 == 0) {
+                flag1 = success?1:2;
+            }
+            else {
+                if (flag2 != 1 && success) {//若使用者第二次调用或者多次调用，只check成功
+                    flag2 = 1;
+                }
+            }
+            
+            if (flag1 == 1 || flag2 == 1) {
+                NSLog(@"%@更新至%@",akey,currentSeed);
+                [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(callback) object:nil];
+                [userDefaults setObject:currentSeed forKey:akey];
+                [userDefaults synchronize];
+            }
+            else {
+                if (retry > 0) {
+                    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(callback) object:nil];
+                    [self performSelector:@selector(callback) withObject:nil afterDelay:retry];
+                    NSLog(@"%@在%@点开始重试",akey,currentSeed);
+                }
+            }
+        }];
+    };
     
-    if (_scheduledTask) {
-        _scheduledTask(self);
-        //是否继续holder
+    BOOL respondSelector = [_delegate respondsToSelector:@selector(scheduledTaskTriggerWDT:result:)];
+    
+    //需要校验是否重试
+    
+    if (_scheduledTask || respondSelector) {
+        
+        //先检查block
+        if (_scheduledTask) {
+            _scheduledTask(self,result);
+        }
+        
+        if (respondSelector) {
+            [_delegate scheduledTaskTriggerWDT:self result:result];
+        }
     }
-    
-    if ([_delegate respondsToSelector:@selector(scheduledTaskTriggerWDT:)]) {
-        [_delegate scheduledTaskTriggerWDT:self];
+    else {//没有回调，直接更新
+        result(YES);
     }
 }
 
