@@ -194,6 +194,10 @@
     return YES;
 }
 
+- (BOOL)isAsynchronous {
+    return YES;
+}
+
 #pragma mark NSURLConnection (delegate)
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {

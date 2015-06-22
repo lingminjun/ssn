@@ -14,14 +14,38 @@
 #import <objc/message.h>
 #endif
 #import "NSData+SSNBase64.h"
+#import "SSNSafeDictionary.h"
 
-NSString *const SSN_JSON_CODER_CLASS_TYPE_KEY   = @":class@";//避免与常见属性重复，冒号不可能作为语言标示符，故以冒号开头
+const char * SSN_JSON_IGNORE_description_KEY      = "description";
+const char * SSN_JSON_IGNORE_debugDescription_KEY = "debugDescription";
+const char * SSN_JSON_IGNORE_hash_KEY             = "hash";
+const char * SSN_JSON_IGNORE_superclass_KEY       = "superclass";
 
+NSString *const SSN_JSON_CODER_IGNORE_PROTOCOL  = @"__ssn_json_coder_ignore";
+NSString *const SSN_JSON_CODER_CORVERT_PROTOCOL  = @"__ssn_json_coder_corvert_to_";
+
+BOOL ssn_is_kind_of(Class acls, Class other)
+{
+    Class cls = acls;
+    while (cls != Nil)
+    {
+        if (cls == other)
+        {
+            return YES;
+        }
+        cls = class_getSuperclass(cls);
+    }
+    return NO;
+}
 
 @interface SSNClassProperty : NSObject
-@property (nonatomic,copy) NSString *name;
-@property (nonatomic) char typePrefix;
-@property (nonatomic) BOOL readonly;
+@property (nonatomic,copy) NSString *name;  //类型名字
+@property (nonatomic) char typePrefix;      //类型编码
+@property (nonatomic) BOOL readonly;        //只读（解析时并不忽略，只是标记，只读类型先处理）
+@property (nonatomic) BOOL ignore;          //忽略
+@property (nonatomic) BOOL isContainer;     //是容器
+@property (nonatomic,strong) Class clazz;   //属性类型（若值类型）
+@property (nonatomic,strong) Class subclazz;//容器类型中的元素类型
 @end
 
 @implementation SSNClassProperty
@@ -48,6 +72,11 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
         Class p_cls = clazz;
         Class ns_object_calzz = [NSObject class];
         Class ns_proxy_clazz = [NSProxy class];
+        Class ns_array_clazz = [NSArray class];
+        Class ns_dictionary_clazz = [NSDictionary class];
+        Class ns_set_clazz = [NSSet class];
+        Class ns_index_set_clazz = [NSIndexSet class];
+        
         while (p_cls != nil && (p_cls != ns_object_calzz && p_cls != ns_proxy_clazz)) {
             unsigned int outCount;
             objc_property_t *c_properties = class_copyPropertyList(p_cls, &outCount);
@@ -62,29 +91,108 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
                         continue ;
                     }
                     
-                    char *typeEncoding = property_copyAttributeValue(property, "T");
-                    if (typeEncoding == NULL || strlen(typeEncoding) == 0) {
-                        if (typeEncoding) {
-                            free(typeEncoding);
-                        }
+                    if (strcmp(SSN_JSON_IGNORE_description_KEY, c_property_name) == 0) {
                         continue ;
                     }
                     
-                    SSNClassProperty *classProperty = [[SSNClassProperty alloc] init];
-                    classProperty.name = [NSString stringWithFormat:@"%s",c_property_name];
-                    classProperty.typePrefix = typeEncoding[0];
-                    
-                    const char *propAttr = property_getAttributes(property);
-                    NSString *propString = [NSString stringWithUTF8String:propAttr];
-                    NSArray *attrArray = [propString componentsSeparatedByString:@","];
-                    classProperty.readonly = [attrArray containsObject:@"R"];
-                    
-                    if (![properties objectForKey:classProperty.name]) {
-                        [properties setObject:classProperty forKey:classProperty.name];
+                    if (strcmp(SSN_JSON_IGNORE_debugDescription_KEY, c_property_name) == 0) {
+                        continue ;
                     }
                     
-                    if (typeEncoding) {
-                        free(typeEncoding);
+                    if (strcmp(SSN_JSON_IGNORE_hash_KEY, c_property_name) == 0) {
+                        continue ;
+                    }
+                    
+                    if (strcmp(SSN_JSON_IGNORE_superclass_KEY, c_property_name) == 0) {
+                        continue ;
+                    }
+                    
+                    //get property attributes
+                    /* 请参考官网地址
+                     https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html#//apple_ref/doc/uid/TP40008048-CH101-SW5
+                     */
+                    const char *attrs = property_getAttributes(property);
+                    printf("\nobj_Attributes:%s",attrs);
+                    const long length = strlen(attrs);
+                    if (length <= 1) {
+                        continue ;
+                    }
+                    
+                    switch (attrs[1]) {
+                        case '^'://对象或者函数指针暂时不做支持
+                            continue ;
+                            break;
+                        case '{'://struct 暂时不做支持
+                            continue ;
+                            break;
+                        case '('://Union 暂时不做支持
+                            continue ;
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    SSNClassProperty *classProperty = [[SSNClassProperty alloc] init];
+                    
+                    classProperty.name = [NSString stringWithUTF8String:c_property_name];
+                    NSString* propertyAttributes =  [NSString stringWithUTF8String:attrs];
+                    
+                    //是否忽略字段
+                    if ([propertyAttributes rangeOfString:SSN_JSON_CODER_IGNORE_PROTOCOL].length > 0) {
+                        continue ;
+                    }
+                    
+                    NSArray* attributeItems = [propertyAttributes componentsSeparatedByString:@","];
+                    if ([attributeItems containsObject:@"R"]) {//read-only properties
+//                        continue; //to next property
+                        classProperty.readonly = YES;
+                    }
+                    
+                    classProperty.typePrefix = attrs[1];
+                    
+                    if (attrs[1] == '@') {//若是对象类型，需要获取类型
+                        //T@,&,VidRetain
+                        //T@"NSObject",R,&,N,Vobj01
+                        //T@"NSString<SDXIgnore>",&,N,V_name
+                        //T@"NSMutableArray<SDXConvert>",C,N,V_list
+                        //T@"SDObject<SDXIgnore>",&,N,V_obj
+                        //T@"SDObject<SDXIgnore><SDXConvert>",&,N,V_obj
+                        NSString *typeAttribute = attributeItems[0];
+                        NSUInteger typeLength = [typeAttribute length];
+                        
+                        if (typeLength > 4) {//说明有类型
+                            
+                            typeAttribute = [typeAttribute substringWithRange:NSMakeRange(3, typeLength - 4)];
+                            NSArray *comps = [typeAttribute componentsSeparatedByString:@"<"];
+                            classProperty.clazz = NSClassFromString(comps[0]);
+                            if (ssn_is_kind_of(classProperty.clazz, ns_array_clazz)
+                                || ssn_is_kind_of(classProperty.clazz, ns_dictionary_clazz)
+                                || ssn_is_kind_of(classProperty.clazz, ns_set_clazz)) {
+                                classProperty.isContainer = YES;
+                                
+                                //取容器属性
+                                NSInteger count = [comps count];
+                                for (NSInteger idx = 1; idx < count; idx++) {
+                                    NSString *protocol = comps[idx];
+                                    if ([protocol hasPrefix:SSN_JSON_CODER_CORVERT_PROTOCOL]) {
+                                        
+                                        NSString *subclass = [protocol substringFromIndex:[SSN_JSON_CODER_CORVERT_PROTOCOL length]];
+                                        subclass = [subclass substringToIndex:[subclass length] - 1];
+                                        classProperty.subclazz = NSClassFromString(subclass);
+                                        
+                                        break ;
+                                    }
+                                }
+                            }
+                            else if (ssn_is_kind_of(classProperty.clazz, ns_index_set_clazz)) {
+                                classProperty.isContainer = YES;
+                            }
+                        }
+                    }
+                    
+                    //记录下来
+                    if (classProperty.name) {
+                        [properties setObject:classProperty forKey:classProperty.name];
                     }
                 }
             }
@@ -133,8 +241,6 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 
 
 @implementation SSNJsonCoder
-
-//@synthesize beginEncoding = _beginEncoding;
 
 - (instancetype)init
 {
@@ -231,15 +337,26 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
         return _targetClass;
     }
     
-    NSDictionary *dic = [self rootDictionary];
-    NSString *class = [dic objectForKey:SSN_JSON_CODER_CLASS_TYPE_KEY];
-    if (class) {
-        _targetClass = NSClassFromString(class);
-        return _targetClass;
-    }
-    
     _targetClass = [NSMutableDictionary class];
     return _targetClass;
+}
+
++ (NSDictionary *)sharedPPTsWithClass:(Class)clazz {
+    static SSNSafeDictionary *shared = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        shared = [[SSNSafeDictionary alloc] initWithCapacity:1];
+    });
+    NSNumber *key = @((long)(clazz));
+    NSDictionary *ppts = [shared objectForKey:key];
+    if (ppts) {
+        return ppts;
+    }
+    ppts = ssn_get_class_property_name(clazz);
+    if (ppts) {
+        [shared setObject:ppts forKey:key];
+    }
+    return ppts;
 }
 
 - (NSDictionary *)ppts
@@ -253,7 +370,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
         return nil;
     }
     
-    _ppts = ssn_get_class_property_name(clazz);
+    _ppts = [SSNJsonCoder sharedPPTsWithClass:clazz];
     return _ppts;
 }
 
@@ -295,36 +412,30 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 @implementation NSObject (SSNJson)
 
 #pragma mark SSNJsonCoding
-#define ssn_not_support_code_class(clazz) if ([self isKindOfClass:[clazz class]]) {return ;}
+#define ssn_not_support_encode_class(clazz) if ([self isKindOfClass:[clazz class]]) {return ;}
+#define ssn_not_support_decode_class(clazz) if ([self isKindOfClass:[clazz class]]) {return self;}
 - (void)encodeWithJsonCoder:(SSNJsonCoder *)aCoder {
     if ([self class] == [NSObject class]) {
         return ;
     }
-    ssn_not_support_code_class(SSNJsonCoder)
-    ssn_not_support_code_class(NSString)
-    ssn_not_support_code_class(NSData)
-    ssn_not_support_code_class(NSValue)
-    ssn_not_support_code_class(NSDate)//时间支持也没有意义
+    ssn_not_support_encode_class(SSNJsonCoder)
+    ssn_not_support_encode_class(NSString)
+    ssn_not_support_encode_class(NSData)
+    ssn_not_support_encode_class(NSValue)
+    ssn_not_support_encode_class(NSCharacterSet)
+    ssn_not_support_encode_class(NSDate)//时间支持也没有意义
     
     if ([self isKindOfClass:[NSArray class]]) {
         [aCoder encodeArray:(NSArray *)self];
     }
     else if ([self isKindOfClass:[NSDictionary class]]) {
-        for (id key in [(NSDictionary *)self allKeys]) {
-            NSString *keyStr = nil;
-            if ([key isKindOfClass:[NSString class]]) {
-                keyStr = key;
-            }
-            else
-            {
-                keyStr = [NSString stringWithFormat:@"%@",key];
-            }
-            
-            id value = [(NSDictionary *)self objectForKey:key];
-            if (value) {
-                [aCoder encodeObject:value forKey:keyStr];
-            }
-        }
+        [aCoder encodeDictionary:(NSDictionary *)self];
+    }
+    else if ([self isKindOfClass:[NSSet class]]) {
+        [aCoder encodeSet:(NSSet *)self];
+    }
+    else if ([self isKindOfClass:[NSIndexSet class]]) {
+        [aCoder encodeIndexSet:(NSIndexSet *)self];
     }
     else //对于其他对象，我们只code其属性
     {
@@ -335,102 +446,156 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
                 [aCoder encodeObject:value forKey:key];
             }
         }
-        
-        //将类名code到json串中
-        [aCoder encodeString:NSStringFromClass([self class]) forKey:SSN_JSON_CODER_CLASS_TYPE_KEY];
     }
 }
 
-- (void)decodeWithJsonCoder:(SSNJsonCoder *)aDecoder {
-    if ([self class] == [NSObject class]) {
-        return ;
-    }
-    ssn_not_support_code_class(SSNJsonCoder)
-    ssn_not_support_code_class(NSString)
-    ssn_not_support_code_class(NSData)
-    ssn_not_support_code_class(NSValue)
-    ssn_not_support_code_class(NSDate)//时间支持也没有意义
-    
-    if ([self isKindOfClass:[NSArray class]]) {
-        if ([self isKindOfClass:[NSMutableArray class]]) {
-            [(NSMutableArray *)self setArray:[aDecoder decodeArray]];
+- (id)initWithJsonCoder:(SSNJsonCoder *)aDecoder {
+    return [self initWithJsonCoder:aDecoder element:nil];
+}
+
+- (id)initWithJsonCoder:(SSNJsonCoder *)aDecoder element:(Class)element {
+    self = [self init];
+    if (self) {
+        if ([self class] == [NSObject class]) {
+            return self;
         }
-    }
-    else if ([self isKindOfClass:[NSDictionary class]]) {
-        if ([self isKindOfClass:[NSMutableDictionary class]]) {
-            //此处用到code内部方法
-            NSDictionary *codeDic = [aDecoder rootDictionary];
-            for (NSString *key in [codeDic allKeys]) {
-                id obj = [aDecoder decodeObjectForKey:key];
-                if (obj) {
-                    [(NSMutableDictionary *)self setValue:obj forKey:key];
+        ssn_not_support_decode_class(SSNJsonCoder)
+        ssn_not_support_decode_class(NSString)
+        ssn_not_support_decode_class(NSData)
+        ssn_not_support_decode_class(NSValue)
+        ssn_not_support_decode_class(NSCharacterSet)
+        ssn_not_support_decode_class(NSDate)//时间支持也没有意义
+        
+        if ([self isKindOfClass:[NSArray class]]) {//不可变没有意义
+            NSArray *ary = [aDecoder decodeArrayObjectClass:element];
+            if ([self isKindOfClass:[NSMutableArray class]]) {
+                if (ary) {
+                    [(NSMutableArray *)self setArray:ary];
+                }
+            }
+            else {
+                return ary;
+            }
+        }
+        else if ([self isKindOfClass:[NSDictionary class]]) {//不可变没有意义
+            NSDictionary *dic = [aDecoder decodeDictionaryValueClass:element];
+            if ([self isKindOfClass:[NSMutableDictionary class]]) {
+                //此处用到code内部方法
+                
+                if (dic) {
+                    [(NSMutableDictionary *)self setDictionary:dic];
+                }
+            }
+            else {
+                return dic;
+            }
+        }
+        else if ([self isKindOfClass:[NSSet class]]) {
+            NSSet *set = [aDecoder decodeSetObjectClass:element];
+            if ([self isKindOfClass:[NSMutableSet class]]) {
+                if (set) {
+                    [(NSMutableSet *)self setSet:set];
+                }
+            }
+            else {
+                return set;
+            }
+        }
+        else if ([self isKindOfClass:[NSIndexSet class]]) {
+            NSIndexSet *set = [aDecoder decodeIndexSet];
+            if ([self isKindOfClass:[NSMutableIndexSet class]]) {
+                if (set) {
+                    [(NSMutableIndexSet *)self addIndexes:set];
+                }
+            }
+            else {
+                return set;
+            }
+        }
+        else //对于其他对象，我们只code其属性
+        {
+            NSArray *allKeys = [aDecoder.ppts allKeys];
+            for (NSString *key in allKeys) {
+                //熟悉取出来
+                SSNClassProperty *classProperty = [aDecoder.ppts objectForKey:key];
+                
+                switch (classProperty.typePrefix)
+                {
+                    case 'c'://	A char
+                    case 'i'://	An int
+                    case 's'://	A short
+                    case 'l'://	A longl is treated as a 32-bit quantity on 64-bit programs.
+                    case 'q'://	A long long
+                    case 'C'://	An unsigned char
+                    case 'I'://	An unsigned int
+                    case 'S'://	An unsigned short
+                    case 'L'://	An unsigned long
+                    case 'Q'://	An unsigned long long
+                    case 'f'://	A float
+                    case 'd'://	A double
+                    case 'B'://	A C++ bool or a C99 _Bool
+                    {// 以上数据类型直接将值encode
+                        id value = [aDecoder decodeValueForKey:key];
+                        if (value) {
+                            [self setValue:value forKey:key];
+                        }
+                    } break;
+                    case 'v'://	A void
+                    {// void丢弃
+                    } break;
+                    case '*'://	A character string (char *)
+                    {// 转换成NSString encode
+                        id value = [aDecoder decodeValueForKey:key];
+                        if (value) {
+                            [self setValue:value forKey:key];
+                        }
+                    } break;
+                    case '@'://	An object (whether statically typed or typed id)
+                    {// 将对象还原出来 再 encode
+                        
+                        if (ssn_is_kind_of(classProperty.clazz, [NSArray class])
+                            || ssn_is_kind_of(classProperty.clazz, [NSDictionary class])
+                            || ssn_is_kind_of(classProperty.clazz, [NSSet class]))
+                        {//1、对象容器支持
+                            id value = [aDecoder decodeObjectClass:classProperty.clazz element:classProperty.subclazz forKey:key];
+                            if (value) {
+                                [self setValue:value forKey:key];
+                            }
+                        }
+                        else if (ssn_is_kind_of(classProperty.clazz, [NSIndexSet class])){//2、值容器支持
+                            id value = [aDecoder decodeObjectClass:classProperty.clazz forKey:key];
+                            if (value) {
+                                [self setValue:value forKey:key];
+                            }
+                        }
+                        else {
+                            id value = [aDecoder decodeObjectClass:classProperty.clazz forKey:key];
+                            if (value) {
+                                [self setValue:value forKey:key];
+                            }
+                        }
+                    } break;
+                    case '#'://	A class object (Class)
+                    case ':'://	A method selector (SEL) ,@encode(SEL) ':v@:@'
+                    case '[': //[array type]	An array
+                    case '{': //{name=type...}	A structure
+                    case '(': //(name=type...)	A union
+                    case 'b': //'bnum'	A bit field of num bits
+                    case '^': //^type	A pointer to type
+                    case '?': //	An unknown type (among other things, this code is used for function pointers)
+                    default:
+                    {// 以上数据取出
+                        id value = [aDecoder decodeValueForKey:key];
+                        if (value) {
+                            [self setValue:value forKey:key];
+                        }
+                    } break;
                 }
             }
         }
     }
-    else //对于其他对象，我们只code其属性
-    {
-        NSArray *allKeys = [aDecoder.ppts allKeys];
-        for (NSString *key in allKeys) {
-            //熟悉取出来
-            SSNClassProperty *classProperty = [aDecoder.ppts objectForKey:key];
-            
-            switch (classProperty.typePrefix)
-            {
-                case 'c'://	A char
-                case 'i'://	An int
-                case 's'://	A short
-                case 'l'://	A longl is treated as a 32-bit quantity on 64-bit programs.
-                case 'q'://	A long long
-                case 'C'://	An unsigned char
-                case 'I'://	An unsigned int
-                case 'S'://	An unsigned short
-                case 'L'://	An unsigned long
-                case 'Q'://	An unsigned long long
-                case 'f'://	A float
-                case 'd'://	A double
-                case 'B'://	A C++ bool or a C99 _Bool
-                {// 以上数据类型直接将值encode
-                    id value = [aDecoder decodeValueForKey:key];
-                    if (value) {
-                        [self setValue:value forKey:key];
-                    }
-                } break;
-                case 'v'://	A void
-                {// void丢弃
-                } break;
-                case '*'://	A character string (char *)
-                {// 转换成NSString encode
-                    id value = [aDecoder decodeValueForKey:key];
-                    if (value) {
-                        [self setValue:value forKey:key];
-                    }
-                } break;
-                case '@'://	An object (whether statically typed or typed id)
-                {// 将对象还原出来 再 encode
-                    id value = [aDecoder decodeObjectForKey:key];
-                    if (value) {
-                        [self setValue:value forKey:key];
-                    }
-                } break;
-                case '#'://	A class object (Class)
-                case ':'://	A method selector (SEL) ,@encode(SEL) ':v@:@'
-                case '[': //[array type]	An array
-                case '{': //{name=type...}	A structure
-                case '(': //(name=type...)	A union
-                case 'b': //'bnum'	A bit field of num bits
-                case '^': //^type	A pointer to type
-                case '?': //	An unknown type (among other things, this code is used for function pointers)
-                default:
-                {// 以上数据取出
-                    id value = [aDecoder decodeValueForKey:key];
-                    if (value) {
-                        [self setValue:value forKey:key];
-                    }
-                } break;
-            }
-        }
-    }
+    
+    return self;
 }
 
 - (SSNJsonCoder *)ssn_toJsonCoder {
@@ -450,12 +615,12 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 
 
 + (instancetype)ssn_objectFromJsonData:(NSData *)jsonData {
-    return [self ssn_objectFromJsonData:jsonData targetClass:nil];
+    return [self ssn_objectFromJsonData:jsonData targetClass:[self class]];
 }
 
 
 + (instancetype)ssn_objectFromJsonString:(NSString *)jsonString {
-    return [self ssn_objectFromJsonString:jsonString targetClass:nil];
+    return [self ssn_objectFromJsonString:jsonString targetClass:[self class]];
 }
 
 + (instancetype)ssn_objectFromJsonData:(NSData *)jsonData targetClass:(Class)targetClass {
@@ -473,8 +638,20 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
     if (clazz == nil) {
         return nil;
     }
-    id obj = [[clazz alloc] init];//生产实例
-    [obj decodeWithJsonCoder:coder];
+    id obj = [[clazz alloc] initWithJsonCoder:coder];//生产实例
+    return obj;
+}
+
++ (instancetype)ssn_objectFromJsonCoder:(SSNJsonCoder *)coder element:(Class)element {
+    if (!coder) {
+        return nil;
+    }
+    
+    Class clazz = [coder targetClass];
+    if (clazz == nil) {
+        return nil;
+    }
+    id obj = [[clazz alloc] initWithJsonCoder:coder element:element];//生产实例
     return obj;
 }
 
@@ -510,6 +687,21 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
     {
         [self encodeValue:(NSValue *)objv forKey:key];
     }
+//    else if ([objv isKindOfClass:[NSArray class]]) {
+//        [self encodeArray:(NSArray *)objv];
+//    }
+//    else if ([objv isKindOfClass:[NSDictionary class]]) {
+//        [self encodeDictionary:(NSDictionary *)objv];
+//    }
+//    else if ([objv isKindOfClass:[NSSet class]]) {
+//        [self encodeSet:(NSSet *)objv];
+//    }
+//    else if ([objv isKindOfClass:[NSCharacterSet class]]) {
+//        [self encodeCharacterSet:(NSCharacterSet *)objv];
+//    }
+//    else if ([objv isKindOfClass:[NSIndexSet class]]) {
+//        [self encodeIndexSet:(NSIndexSet *)objv];
+//    }
     else //是普通对象则需要将对象递归encode
     {
         SSNJsonCoder *coder = [objv ssn_toJsonCoder];
@@ -640,15 +832,23 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 - (id)decodeObjectClass:(Class)clazz forKey:(NSString *)key {
     NSAssert([key length] > 0, @"SSNJsonCoder：传入正确参数");
     
+    return [self decodeObjectClass:clazz element:nil forKey:key];
+}
+
+//转么解析容器元素
+- (id)decodeObjectClass:(Class)clazz element:(Class)element forKey:(NSString *)key {
+    NSAssert([key length] > 0, @"SSNJsonCoder：传入正确参数");
+    
     //step 1 从code中取出数据，检查是否为容器类型（字典或者数组，需要进一步处理）
     id objv = [[self rootDictionary] valueForKey:key];
     
     //是字典类型 或者 数组类型，需要对值对象化
-    if ([objv isKindOfClass:[NSDictionary class]] || [objv isKindOfClass:[NSArray class]])//是对象
+    if ([objv isKindOfClass:[NSDictionary class]]
+        || [objv isKindOfClass:[NSArray class]])//是对象
     {
         SSNJsonCoder *coder = [SSNJsonCoder coderWithRootObject:objv];
         coder.targetClass = clazz;
-        id obj = [NSObject ssn_objectFromJsonCoder:coder];
+        id obj = [NSObject ssn_objectFromJsonCoder:coder element:element];
         if (obj) {
             return obj;
         }
@@ -799,25 +999,28 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
     if (coder.rootJsonObj) {
         [[self rootArray] addObject:coder.rootJsonObj];
     }
+    else {
+        [[self rootArray] addObject:objv];
+    }
 }
 
 - (NSArray *)decodeArrayObjectClass:(Class)clazz {
     NSMutableArray *array = [NSMutableArray array];
-    for (id obj in [self rootArray]) {
+    for (id aobj in [self rootArray]) {
 
         id target_obj = nil;
-        SSNJsonCoder *coder = [SSNJsonCoder coderWithRootObject:obj];
+        SSNJsonCoder *coder = [SSNJsonCoder coderWithRootObject:aobj];
         coder.targetClass = clazz;
         id obj = [NSObject ssn_objectFromJsonCoder:coder];
         if (obj) {
             target_obj = obj;
         }
         else {
-            if ([obj respondsToSelector:@selector(mutableCopy)]) {
-                target_obj = [obj mutableCopy];
+            if ([aobj respondsToSelector:@selector(mutableCopy)]) {
+                target_obj = [aobj mutableCopy];
             }
             else {
-                target_obj = obj;
+                target_obj = aobj;
             }
         }
         
@@ -830,6 +1033,91 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 
 - (NSArray *)decodeArray {
     return [self decodeArrayObjectClass:nil];
+}
+
+- (void)encodeSet:(NSSet *)set {
+    NSAssert(set, @"SSNJsonCoder：传入正确参数");
+    [self encodeArray:[set allObjects]];
+}
+- (NSSet *)decodeSetObjectClass:(Class)clazz {
+    NSArray *ary = [self decodeArrayObjectClass:clazz];
+    return [NSSet setWithArray:ary];
+}
+
+- (void)encodeDictionary:(NSDictionary *)dic {
+    NSAssert(dic, @"SSNJsonCoder：传入正确参数");
+    
+    for (id key in [dic allKeys]) {
+        NSString *keyStr = nil;
+        if ([key isKindOfClass:[NSString class]]) {
+            keyStr = key;
+        }
+        else
+        {
+            keyStr = [NSString stringWithFormat:@"%@",key];
+        }
+        id obj = [dic objectForKey:key];
+        [self addEncodeValueInDictionary:obj forKey:keyStr];
+    }
+}
+
+- (void)addEncodeValueInDictionary:(id)objv forKey:(NSString *)key {
+    NSAssert(objv && key, @"SSNJsonCoder：传入正确参数");
+    SSNJsonCoder *coder = [SSNJsonCoder coderWithTargetClass:[objv class]];
+    [objv encodeWithJsonCoder:coder];
+    if (coder.rootJsonObj) {
+        [[self rootDictionary] setObject:coder.rootJsonObj forKey:key];
+    }
+}
+- (NSDictionary *)decodeDictionaryValueClass:(Class)clazz {
+    
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    NSDictionary *root = [self rootDictionary];
+    for (NSString *key in [root allKeys]) {
+        id aobj = [root objectForKey:key];
+        
+        id target_obj = nil;
+        SSNJsonCoder *coder = [SSNJsonCoder coderWithRootObject:aobj];
+        coder.targetClass = clazz;
+        id obj = [NSObject ssn_objectFromJsonCoder:coder];
+        if (obj) {
+            target_obj = obj;
+        }
+        else {
+            if ([aobj respondsToSelector:@selector(mutableCopy)]) {
+                target_obj = [aobj mutableCopy];
+            }
+            else {
+                target_obj = aobj;
+            }
+        }
+        
+        if (target_obj) {
+            [dic setObject:target_obj forKey:key];
+        }
+    }
+    return dic;
+}
+
+- (void)encodeIndexSet:(NSIndexSet *)set {
+    NSAssert(set, @"SSNJsonCoder：传入正确参数");
+    NSMutableArray *ary = [NSMutableArray array];
+    [set enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [ary addObject:@(idx)];
+    }];
+    [self encodeArray:ary];
+}
+
+- (NSIndexSet *)decodeIndexSet {
+    NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
+    for (id aobj in [self rootArray]) {
+        if (![aobj isKindOfClass:[NSNumber class]]) {
+            continue ;
+        }
+        int64_t i = [(NSNumber *)aobj longLongValue];
+        [set addIndex:i];
+    }
+    return set;
 }
 
 @end

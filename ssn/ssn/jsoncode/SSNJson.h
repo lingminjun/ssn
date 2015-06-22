@@ -22,7 +22,7 @@
 
 @required
 - (void)encodeWithJsonCoder:(SSNJsonCoder *)aCoder;//写入
-- (void)decodeWithJsonCoder:(SSNJsonCoder *)aDecoder;//写出
+- (id)initWithJsonCoder:(SSNJsonCoder *)aDecoder;//解析
 
 @end
 
@@ -41,13 +41,46 @@
 //- (NSData *)ssn_toCleanJson;//转换成json序列，不会将类名code到json
 //- (NSString *)ssn_toCleanJsonString;//UTF8code，不会将类名code到json
 
-+ (instancetype)ssn_objectFromJsonData:(NSData *)jsonData;//从json序列取出json描述的类实例
-+ (instancetype)ssn_objectFromJsonString:(NSString *)jsonString;//从json序列取出json描述的类实例
++ (instancetype)ssn_objectFromJsonData:(NSData *)jsonData;//从json序列取出当前类实例
++ (instancetype)ssn_objectFromJsonString:(NSString *)jsonString;//从json序列取出当前类实例
 
 + (instancetype)ssn_objectFromJsonData:(NSData *)jsonData targetClass:(Class)targetClass;//从json序列取出targetClass类实例
 + (instancetype)ssn_objectFromJsonString:(NSString *)jsonString targetClass:(Class)targetClass;//从json序列取出targetClass类实例
 
 @end
+
+
+#pragma mark 属性修饰符
+/**
+ * 用于忽略属性定义，若某对象不想被json序列，可以适用此修饰符修饰属性
+ *
+ *  例如：
+ *  @property (strong, nonatomic) NSString <ssnjson_ignore> *propertyName;
+ */
+#define ssnjson_ignore __ssn_json_coder_ignore
+
+/**
+ *  jsonModel定义，若采用此宏定义后，此对象即可嵌套或者放入容器中（NSArray或者NSDictionary）
+ *
+ *  @ssnjson_interface(JsonModel) {
+ *      NSString *_name;
+ *  }
+ *  @end
+ */
+#define ssnjson_interface(model) _ssnjson_interface_(model)
+    #define _ssnjson_interface_(m) protocol __ssn_json_coder_corvert_to_##m <NSObject> \
+            @end \
+            @interface NSObject( _ssn_json_coder_compatibility_##m )< __ssn_json_coder_corvert_to_##m > \
+            @end\
+            @interface m
+
+/**
+ *  配合ssnjson_interface使用，model必须已经使用ssnjson_interface定义，则可嵌入使用
+ *
+ *  例如：
+ *  @property (copy, nonatomic) NSArray <ssnjson_convert(JsonModel)> *propertyName;
+ */
+#define ssnjson_convert(model)  __ssn_json_coder_corvert_to_##model
 
 /**
  *  coder支持的类型
@@ -121,6 +154,24 @@
 - (void)encodeArray:(NSArray *)array;
 - (void)addEncodeObjectInArray:(id)objv;
 - (NSArray *)decodeArrayObjectClass:(Class)clazz;
-- (NSArray *)decodeArray;
 
+- (void)encodeSet:(NSSet *)set;
+- (NSSet *)decodeSetObjectClass:(Class)clazz;
+
+- (void)encodeDictionary:(NSDictionary *)dic;
+- (void)addEncodeValueInDictionary:(id)objv forKey:(NSString *)key;
+- (NSDictionary *)decodeDictionaryValueClass:(Class)clazz;
+
+- (void)encodeIndexSet:(NSIndexSet *)set;
+- (NSIndexSet *)decodeIndexSet;
+
+//转么解析容器元素
+- (id)decodeObjectClass:(Class)clazz element:(Class)element forKey:(NSString *)key;
+
+@end
+
+//属性忽略coding
+@protocol __ssn_json_coder_ignore<NSObject>
+@end
+@interface NSObject (_ssn_json_coder_compatibility_ignore)
 @end

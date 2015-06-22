@@ -97,6 +97,11 @@
 		53620B2F1AB3217F00381C3C /* SSNRPCInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B2E1AB3217F00381C3C /* SSNRPCInvocation.m */; };
 		53620B321AB53C2200381C3C /* SSNSeqGen.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B311AB53C2200381C3C /* SSNSeqGen.m */; };
 		53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */ = {isa = PBXBuildFile; fileRef = 53620B341AB5D1C300381C3C /* NSThread+SSN.m */; };
+		536448301B2D6D52001F7CF2 /* SSNABRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D261B19E41D00AC46D3 /* SSNABRecord.m */; };
+		536448311B2D6D52001F7CF2 /* SSNABContactsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D151B19808200AC46D3 /* SSNABContactsManager.m */; };
+		536448321B2D6D52001F7CF2 /* SSNABPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D191B1983AC00AC46D3 /* SSNABPerson.m */; };
+		536448331B2D6D52001F7CF2 /* ssncrc64.c in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D1F1B19CA7300AC46D3 /* ssncrc64.c */; };
+		536448341B2D6D52001F7CF2 /* SSNWDT.m in Sources */ = {isa = PBXBuildFile; fileRef = 535EDC2E1B253D0300E2C0D6 /* SSNWDT.m */; };
 		536CC4C81B202A3600959606 /* regions.json in Resources */ = {isa = PBXBuildFile; fileRef = 536CC4C71B202A3600959606 /* regions.json */; };
 		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
 		537F39AA1B12209600EE8230 /* SSNAppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F39A91B12209600EE8230 /* SSNAppInfo.m */; };
@@ -1640,6 +1645,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				536448301B2D6D52001F7CF2 /* SSNABRecord.m in Sources */,
+				536448311B2D6D52001F7CF2 /* SSNABContactsManager.m in Sources */,
+				536448321B2D6D52001F7CF2 /* SSNABPerson.m in Sources */,
+				536448331B2D6D52001F7CF2 /* ssncrc64.c in Sources */,
+				536448341B2D6D52001F7CF2 /* SSNWDT.m in Sources */,
 				5346DFD31B03241E000C7752 /* SSNFileDownloader.m in Sources */,
 				5346DFD41B03241E000C7752 /* SSNFileDownloadOperation.m in Sources */,
 				5346DFD51B03241E000C7752 /* SSNRPCInvocation.m in Sources */,
