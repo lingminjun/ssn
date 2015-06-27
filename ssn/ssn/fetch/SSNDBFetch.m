@@ -197,6 +197,7 @@ static char *ssn_dbfetch_rowid_key = NULL;
     copy.fields = self.fields;
     copy.offset = self.offset;
     copy.limit = self.limit;
+    copy.predicate = self.predicate;
     return copy;
 }
 
@@ -206,7 +207,20 @@ static char *ssn_dbfetch_rowid_key = NULL;
     if ([_searchText length] && [_fields count]) {
         NSString *appendStr = [NSString stringWithFormat:@" like '%%%@%%'",_searchText];
         NSString *sql = [NSString componentsStringWithArray:_fields appendingString:appendStr joinedString:@" OR "];
-        return [NSString stringWithFormat:@" WHERE (%@)",sql];
+        
+        //添加where子句
+        if (_predicate) {
+            return [NSString stringWithFormat:@" WHERE (%@) AND (%@)",[_predicate predicateFormat],sql];
+        }
+        else {
+            return [NSString stringWithFormat:@" WHERE (%@)",sql];
+        }
+    }
+    else {
+        //添加where子句
+        if (_predicate) {
+            return [NSString stringWithFormat:@" WHERE (%@)",[_predicate predicateFormat]];
+        }
     }
     return nil;
 }

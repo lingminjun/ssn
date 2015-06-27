@@ -102,6 +102,8 @@
 		536448321B2D6D52001F7CF2 /* SSNABPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D191B1983AC00AC46D3 /* SSNABPerson.m */; };
 		536448331B2D6D52001F7CF2 /* ssncrc64.c in Sources */ = {isa = PBXBuildFile; fileRef = 53A48D1F1B19CA7300AC46D3 /* ssncrc64.c */; };
 		536448341B2D6D52001F7CF2 /* SSNWDT.m in Sources */ = {isa = PBXBuildFile; fileRef = 535EDC2E1B253D0300E2C0D6 /* SSNWDT.m */; };
+		536448781B385C8F001F7CF2 /* SSNHorizontalTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 536448771B385C8F001F7CF2 /* SSNHorizontalTable.m */; };
+		5364487B1B385CC8001F7CF2 /* SSNHorizontalTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364487A1B385CC8001F7CF2 /* SSNHorizontalTableCell.m */; };
 		536CC4C81B202A3600959606 /* regions.json in Resources */ = {isa = PBXBuildFile; fileRef = 536CC4C71B202A3600959606 /* regions.json */; };
 		537064981A2A032700287199 /* TSUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 537064971A2A032700287199 /* TSUser.m */; };
 		537F39AA1B12209600EE8230 /* SSNAppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F39A91B12209600EE8230 /* SSNAppInfo.m */; };
@@ -400,6 +402,10 @@
 		53620B311AB53C2200381C3C /* SSNSeqGen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNSeqGen.m; sourceTree = "<group>"; };
 		53620B331AB5D1C300381C3C /* NSThread+SSN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+SSN.h"; sourceTree = "<group>"; };
 		53620B341AB5D1C300381C3C /* NSThread+SSN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+SSN.m"; sourceTree = "<group>"; };
+		536448761B385C8F001F7CF2 /* SSNHorizontalTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNHorizontalTable.h; sourceTree = "<group>"; };
+		536448771B385C8F001F7CF2 /* SSNHorizontalTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNHorizontalTable.m; sourceTree = "<group>"; };
+		536448791B385CC8001F7CF2 /* SSNHorizontalTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNHorizontalTableCell.h; sourceTree = "<group>"; };
+		5364487A1B385CC8001F7CF2 /* SSNHorizontalTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNHorizontalTableCell.m; sourceTree = "<group>"; };
 		536CC4C71B202A3600959606 /* regions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = regions.json; sourceTree = "<group>"; };
 		537064961A2A032700287199 /* TSUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUser.h; sourceTree = "<group>"; };
 		537064971A2A032700287199 /* TSUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUser.m; sourceTree = "<group>"; };
@@ -649,6 +655,7 @@
 		533164D61A8B41B4007223DC /* table */ = {
 			isa = PBXGroup;
 			children = (
+				536448751B385C37001F7CF2 /* horizontaltable */,
 				533164E41A8B41DF007223DC /* resources */,
 				53D9ED851A8DE20900CAFADE /* UITableView+SSNPullRefresh.h */,
 				53D9ED861A8DE20900CAFADE /* UITableView+SSNPullRefresh.m */,
@@ -761,6 +768,17 @@
 				535ADAF11B14B6DD00265080 /* SSNPageControl.m */,
 			);
 			path = pagecontrol;
+			sourceTree = "<group>";
+		};
+		536448751B385C37001F7CF2 /* horizontaltable */ = {
+			isa = PBXGroup;
+			children = (
+				536448761B385C8F001F7CF2 /* SSNHorizontalTable.h */,
+				536448771B385C8F001F7CF2 /* SSNHorizontalTable.m */,
+				536448791B385CC8001F7CF2 /* SSNHorizontalTableCell.h */,
+				5364487A1B385CC8001F7CF2 /* SSNHorizontalTableCell.m */,
+			);
+			path = horizontaltable;
 			sourceTree = "<group>";
 		};
 		5387066E1ACD7598001F3880 /* downloader */ = {
@@ -1568,6 +1586,7 @@
 				533BE39D1A2AFF7800E07FF0 /* DMSession.m in Sources */,
 				53BC53181A485E6E0044C238 /* SSNDataStore.m in Sources */,
 				53BC532A1A485E6E0044C238 /* db.md in Sources */,
+				536448781B385C8F001F7CF2 /* SSNHorizontalTable.m in Sources */,
 				53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */,
 				53C84C801A5BBF7C008AB7C8 /* SSNUITableLayout.m in Sources */,
 				53BC53081A485E6E0044C238 /* NSString+SSN.m in Sources */,
@@ -1609,6 +1628,7 @@
 				53BC531C1A485E6E0044C238 /* SSNKVOBound.m in Sources */,
 				53CB29FA1A89ECA700509148 /* UIApplication+SSNCategory.m in Sources */,
 				53C84C751A5BB355008AB7C8 /* UIView+SSNUIKit.m in Sources */,
+				5364487B1B385CC8001F7CF2 /* SSNHorizontalTableCell.m in Sources */,
 				53DB120C1A5CE6E200B119BA /* UITextField+SSNUIKit.m in Sources */,
 				533121821A4BE85E000F456E /* DMPersonExt.m in Sources */,
 				538E384719986A3B0061692E /* DMContactViewController.m in Sources */,

@@ -87,6 +87,8 @@
 
 @property (nonatomic,copy) NSArray *fields;//查询字符串影响的行
 
+@property (nonatomic, copy) NSPredicate *predicate; //eg. "userId = 8888"
+
 - (instancetype)initWithEntity:(Class<SSNDBFetchObject>)clazz fromTable:(NSString *)dbTable;
 - (instancetype)initWithEntity:(Class<SSNDBFetchObject>)clazz sortDescriptors:(NSArray *)sortDescriptors searchText:(NSString *)searchText fields:(NSArray *)fields offset:(NSUInteger)offset limit:(NSUInteger)limit fromTable:(NSString *)dbTable;
 
