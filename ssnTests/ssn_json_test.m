@@ -24,6 +24,7 @@
 @property (nonatomic,strong) NSString <ssnjson_ignore>*alias;
 @property (nonatomic,strong) TModel *model;
 @property (nonatomic,strong) NSArray <ssnjson_convert(TModel)>*list;
+@property (nonatomic,strong) NSArray *strings;
 @property (nonatomic,strong) NSIndexSet *iset;
 @end
 
@@ -92,6 +93,7 @@
     TModel *tm = [[TModel alloc] init];
     tm.name = @"xxxxxxx";
     model.list = @[tm];
+    model.strings = @[@"234",@"555566"];
     model.model= [[TModel alloc] init];
     model.model.name = @"dddddd";
     
