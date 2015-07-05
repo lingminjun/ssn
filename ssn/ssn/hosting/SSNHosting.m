@@ -430,7 +430,7 @@ typedef NS_ENUM(NSUInteger, SSNHostingTaskDataCodingType) {
             
             if (ret) {
                 NSLog(@"开启runloop开始等待");
-                [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return NO; } atSpellTime:0];
+                [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return NO; } atSpillTime:0];
             }
             
             pthread_mutex_lock(&_mutex);

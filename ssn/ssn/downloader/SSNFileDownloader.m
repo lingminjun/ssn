@@ -173,7 +173,7 @@ NSString *const kCompletedCallbackKey = @"completed";
     
     [self downloadFileWithURL:url progress:progressBlock completed:completed];//completed必须回调，否则runloop泄漏
     
-    [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return finish; } atSpellTime:120];
+    [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return finish; } atSpillTime:120];
     
     return result;
 }

@@ -144,7 +144,7 @@ NSString *SSNRPCErrorDomain = @"SSNRPC";
     [target rpc_processInvocation:self seq:seq result:block];
     
     //等待block执行
-    [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return finish; } atSpellTime:time];
+    [NSThread ssn_runloopBlockUntilCondition:^SSNBreak{ return finish; } atSpillTime:time];
     
     //将error赋值
     if (error) {

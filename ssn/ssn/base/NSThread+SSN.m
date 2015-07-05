@@ -32,7 +32,7 @@ NSString *const SSNAvoidEmptyLoopSourceFlag = @"SSNAvoidEmptyLoopSourceFlag";
  *  @param condition 条件，返回yes表示跳出block
  *  @param time      超时时间
  */
-+ (void)ssn_runloopBlockUntilCondition:(SSNBreak (^)(void))condition atSpellTime:(NSTimeInterval)time {
++ (void)ssn_runloopBlockUntilCondition:(SSNBreak (^)(void))condition atSpillTime:(NSTimeInterval)time {
     
     //先确保runloop非空
     [[NSThread currentThread] ssn_avoidEmptyLoopSource];

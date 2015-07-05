@@ -23,6 +23,6 @@ typedef BOOL SSNBreak;
  *  @param condition 条件，返回yes表示跳出block，nil时表示需要用户自己stop runloop
  *  @param time      超时时间，若time小于等于零，表示永不超时
  */
-+ (void)ssn_runloopBlockUntilCondition:(SSNBreak (^)(void))condition atSpellTime:(NSTimeInterval)time;
++ (void)ssn_runloopBlockUntilCondition:(SSNBreak (^)(void))condition atSpillTime:(NSTimeInterval)time;
 
 @end
