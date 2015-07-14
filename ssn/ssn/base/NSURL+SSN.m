@@ -112,7 +112,7 @@
     }
     
     NSDictionary *selfQuery = [self ssn_queryStringToDictionaryWithURLDecode:NO];//效率考虑
-    NSDictionary *otherQuery = [self ssn_queryStringToDictionaryWithURLDecode:NO];//效率考虑
+    NSDictionary *otherQuery = [url ssn_queryStringToDictionaryWithURLDecode:NO];//效率考虑
     if (![selfQuery isEqualToDictionary:otherQuery]) {
         return NO;
     }
