@@ -24,6 +24,8 @@ const char * SSN_JSON_IGNORE_superclass_KEY       = "superclass";
 NSString *const SSN_JSON_CODER_IGNORE_PROTOCOL  = @"__ssn_json_coder_ignore";
 NSString *const SSN_JSON_CODER_CORVERT_PROTOCOL  = @"__ssn_json_coder_corvert_to_";
 
+NSString *const SSN_JSON_NULL                    = @"NULL";
+
 BOOL ssn_is_kind_of(Class acls, Class other)
 {
     Class cls = acls;
@@ -40,6 +42,7 @@ BOOL ssn_is_kind_of(Class acls, Class other)
 
 @interface SSNClassProperty : NSObject
 @property (nonatomic,copy) NSString *name;  //类型名字
+@property (nonatomic,copy) NSString *key;   //对应的值名称
 @property (nonatomic) char typePrefix;      //类型编码
 @property (nonatomic) BOOL readonly;        //只读（解析时并不忽略，只是标记，只读类型先处理）
 @property (nonatomic) BOOL ignore;          //忽略
@@ -112,7 +115,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
                      https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html#//apple_ref/doc/uid/TP40008048-CH101-SW5
                      */
                     const char *attrs = property_getAttributes(property);
-                    printf("\nobj_Attributes:%s",attrs);
+//                    printf("\nobj_Attributes:%s",attrs);
                     const long length = strlen(attrs);
                     if (length <= 1) {
                         continue ;
@@ -143,6 +146,16 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
                     }
                     
                     NSArray* attributeItems = [propertyAttributes componentsSeparatedByString:@","];
+                    
+                    //取key
+                    NSString *value = [attributeItems lastObject];
+                    if (value && [value hasPrefix:@"V"]) {
+                        classProperty.key = [value substringFromIndex:1];
+                    }
+                    else {
+                        classProperty.key = classProperty.name;
+                    }
+                    
                     if ([attributeItems containsObject:@"R"]) {//read-only properties
 //                        continue; //to next property
                         classProperty.readonly = YES;
@@ -531,13 +544,28 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
                     case 'S'://	An unsigned short
                     case 'L'://	An unsigned long
                     case 'Q'://	An unsigned long long
-                    case 'f'://	A float
-                    case 'd'://	A double
+                    {// 以上数据类型直接将值encode
+                        id value = [aDecoder decodeObjectClass:nil forKey:key];
+                        if ([value respondsToSelector:@selector(longLongValue)]) {
+                            [self setValue:@([(NSNumber *)value longLongValue]) forKey:classProperty.key];
+                        }
+                    } break;
                     case 'B'://	A C++ bool or a C99 _Bool
                     {// 以上数据类型直接将值encode
-                        id value = [aDecoder decodeValueForKey:key];
-                        if (value) {
-                            [self setValue:value forKey:key];
+                        id value = [aDecoder decodeObjectClass:nil forKey:key];
+                        if ([value respondsToSelector:@selector(boolValue)]) {
+                            [self setValue:@([(NSNumber *)value boolValue]) forKey:classProperty.key];
+                        }
+                    } break;
+                    case 'f'://	A float
+                    case 'd'://	A double
+                    {
+                        id value = [aDecoder decodeObjectClass:nil forKey:key];
+                        if ([value respondsToSelector:@selector(doubleValue)]) {
+                            [self setValue:@([(NSNumber *)value doubleValue]) forKey:classProperty.key];
+                        }
+                        else if ([value respondsToSelector:@selector(longLongValue)]) {
+                            [self setValue:@([(NSNumber *)value longLongValue]) forKey:classProperty.key];
                         }
                     } break;
                     case 'v'://	A void
@@ -545,9 +573,18 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
                     } break;
                     case '*'://	A character string (char *)
                     {// 转换成NSString encode
-                        id value = [aDecoder decodeValueForKey:key];
-                        if (value) {
-                            [self setValue:value forKey:key];
+                        id value = [aDecoder decodeObjectClass:nil forKey:key];
+                        if ([value isKindOfClass:[NSString class]]) {
+                            NSString *string = [(NSString *)value uppercaseString];
+                            if (![[string uppercaseString] isEqualToString:SSN_JSON_NULL]) {
+                                [self setValue:value forKey:classProperty.key];
+                            }
+                        }
+                        else {
+                            if (value) {
+                                NSString *string = [NSString stringWithFormat:@"%@",value];
+                                [self setValue:string forKey:classProperty.key];
+                            }
                         }
                     } break;
                     case '@'://	An object (whether statically typed or typed id)
@@ -559,19 +596,33 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
                         {//1、对象容器支持
                             id value = [aDecoder decodeObjectClass:classProperty.clazz element:classProperty.subclazz forKey:key];
                             if (value) {
-                                [self setValue:value forKey:key];
+                                [self setValue:value forKey:classProperty.key];
                             }
                         }
                         else if (ssn_is_kind_of(classProperty.clazz, [NSIndexSet class])){//2、值容器支持
                             id value = [aDecoder decodeObjectClass:classProperty.clazz forKey:key];
                             if (value) {
-                                [self setValue:value forKey:key];
+                                [self setValue:value forKey:classProperty.key];
+                            }
+                        }
+                        else if (ssn_is_kind_of(classProperty.clazz, [NSString class])) {
+                            id value = [aDecoder decodeObjectClass:classProperty.clazz forKey:key];
+                            if ([value isKindOfClass:[NSString class]]) {
+                                if (![[(NSString *)value uppercaseString] isEqualToString:SSN_JSON_NULL]) {
+                                    [self setValue:value forKey:classProperty.key];
+                                }
+                            }
+                            else {
+                                if (value) {
+                                    NSString *string = [NSString stringWithFormat:@"%@",value];
+                                    [self setValue:string forKey:classProperty.key];
+                                }
                             }
                         }
                         else {
                             id value = [aDecoder decodeObjectClass:classProperty.clazz forKey:key];
                             if (value) {
-                                [self setValue:value forKey:key];
+                                [self setValue:value forKey:classProperty.key];
                             }
                         }
                     } break;
@@ -587,7 +638,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
                     {// 以上数据取出
                         id value = [aDecoder decodeValueForKey:key];
                         if (value) {
-                            [self setValue:value forKey:key];
+                            [self setValue:value forKey:classProperty.key];
                         }
                     } break;
                 }
@@ -843,9 +894,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
     id objv = [[self rootDictionary] valueForKey:key];
     
     //是字典类型 或者 数组类型，需要对值对象化
-    if ([objv isKindOfClass:[NSDictionary class]]
-        || [objv isKindOfClass:[NSArray class]])//是对象
-    {
+    if ([objv isKindOfClass:[NSDictionary class]] || [objv isKindOfClass:[NSArray class]]) {
         SSNJsonCoder *coder = [SSNJsonCoder coderWithRootObject:objv];
         coder.targetClass = clazz;
         id obj = [NSObject ssn_objectFromJsonCoder:coder element:element];
@@ -909,7 +958,11 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
     }
     
     if ([obj isKindOfClass:[NSString class]])
-    {   //step 1、 通过 c string 转入的value
+    {
+        if ([[(NSString *)obj uppercaseString] isEqualToString:SSN_JSON_NULL]) {
+            return nil;
+        }
+        //step 1、 通过 c string 转入的value
         /*
          case '*'://	A character string (char *)
          */
@@ -1111,7 +1164,7 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
 - (NSIndexSet *)decodeIndexSet {
     NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
     for (id aobj in [self rootArray]) {
-        if (![aobj isKindOfClass:[NSNumber class]]) {
+        if (![aobj respondsToSelector:@selector(longLongValue)]) {
             continue ;
         }
         int64_t i = [(NSNumber *)aobj longLongValue];

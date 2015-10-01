@@ -11,12 +11,43 @@
 #import "SSNJson.h"
 
 
-@ssnjson_interface(TModel) : NSObject
+@ssnjson_interface(TModel) : NSObject {
+    char xtap;
+}
+
+@property(nonatomic,getter=isTap,setter=funXtap:) char tap;
+
 @property (nonatomic,strong) NSString *name;
+@property (nonatomic) NSInteger age;
+@property (nonatomic) BOOL isAffirm;
+@end
+
+@interface DModel : TModel <SSNJsonCoding>
+@end
+
+@implementation DModel
+
+- (void)encodeWithJsonCoder:(SSNJsonCoder *)aCoder {
+    [super encodeWithJsonCoder:aCoder];
+    
+    [aCoder encodeString:self.name forKey:@"displayName"];
+}
+- (id)initWithJsonCoder:(SSNJsonCoder *)aDecoder {
+    self = [super initWithJsonCoder:aDecoder];
+    if (self) {
+        
+        self.name = [aDecoder decodeStringForKey:@"displayName"];
+        
+    }
+    return self;
+}
+
 @end
 
 
+
 @implementation TModel
+@synthesize tap = xtap;
 @end
 
 @ssnjson_interface(MModel) : NSObject
@@ -30,6 +61,8 @@
 
 @implementation MModel
 @end
+
+
 
 @interface ssn_json_test : XCTestCase
 
@@ -45,6 +78,51 @@
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
+}
+
+- (void)test_compatibility_propert_json {
+    NSError *error = nil;
+
+    NSDictionary *model = @{@"name":@(123456),@"age":@"12",@"isAffirm":@"1",@"tap":@('t')};
+    NSData *data = nil;
+    NSString *str = nil;
+    data = [NSJSONSerialization dataWithJSONObject:model options:NSJSONWritingPrettyPrinted error:&error];
+    str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"%@",str);
+    
+    TModel *m = [TModel ssn_objectFromJsonString:str];
+    NSLog(@"%@",m.name);
+    
+}
+
+- (void)test_model_setter_json {
+    TModel *m = [[TModel alloc] init];
+//    [m setValue:@('t') forKey:@"xtap"];
+    
+    [m setValue:@('t') forKey:@"xtap"];
+    m.name = @"xxxxxxx";
+    [m setValue:@"yyyyy" forKey:@"name"];
+    
+    NSLog(@"%@",@(m.isTap));
+    
+    if ('t' == m.isTap) {
+        NSLog(@"%@",@(m.isTap));
+    }
+}
+
+- (void)test_derive_model_json {
+    NSError *error = nil;
+    
+    NSDictionary *model = @{@"displayName":@"123456",@"age":@"12",@"isAffirm":@"1",@"tap":@('t')};
+    NSData *data = nil;
+    NSString *str = nil;
+    data = [NSJSONSerialization dataWithJSONObject:model options:NSJSONWritingPrettyPrinted error:&error];
+    str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"%@",str);
+    
+    TModel *m = [DModel ssn_objectFromJsonString:str];
+    NSLog(@"%@",m.name);
+    
 }
 
 - (void)test_1json {

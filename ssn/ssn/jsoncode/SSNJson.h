@@ -173,5 +173,5 @@
 //属性忽略coding
 @protocol __ssn_json_coder_ignore<NSObject>
 @end
-@interface NSObject (_ssn_json_coder_compatibility_ignore)
+@interface NSObject (_ssn_json_coder_compatibility_ignore) <__ssn_json_coder_ignore>
 @end
