@@ -37,6 +37,7 @@ NSString *const SSNAvoidEmptyLoopSourceFlag = @"SSNAvoidEmptyLoopSourceFlag";
     //先确保runloop非空
     [[NSThread currentThread] ssn_avoidEmptyLoopSource];
     
+    /*
     //获取超时时间
     CFAbsoluteTime beginAt = CFAbsoluteTimeGetCurrent();
     CFAbsoluteTime endAt = 0.0f;
@@ -46,6 +47,9 @@ NSString *const SSNAvoidEmptyLoopSourceFlag = @"SSNAvoidEmptyLoopSourceFlag";
     else {
         endAt = beginAt + time;
     }
+     */
+    
+    NSDate *endDate = [NSDate dateWithTimeIntervalSinceNow:time];
     
     BOOL isBreak = NO;
     
@@ -59,6 +63,12 @@ NSString *const SSNAvoidEmptyLoopSourceFlag = @"SSNAvoidEmptyLoopSourceFlag";
             }
         }
         
+        //iOS9中采用CFRunLoopRunInMode无法hold模式切换，模式切换前会返回stop，只能利用苹果自己封装的NSRunloop等待
+        if (![[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:endDate]) {
+            break;
+        }
+        
+        /*
         CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
         CFAbsoluteTime seconds = endAt - now;
         if (seconds <= 0.0f) {
@@ -75,6 +85,7 @@ NSString *const SSNAvoidEmptyLoopSourceFlag = @"SSNAvoidEmptyLoopSourceFlag";
                 break;
             }
         }
+         */
     }
     while (YES);
 }
