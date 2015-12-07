@@ -291,6 +291,7 @@
 		53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
 		53E517551A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
 		53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
+		53EE01911BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EE01901BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m */; };
 		53F5F1531A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F5F1521A5ACD27009EE27A /* UIColor+SSNUIHex.m */; };
 		53F5F1541A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F5F1521A5ACD27009EE27A /* UIColor+SSNUIHex.m */; };
 		53F5F1571A5ACECD009EE27A /* UIImage+SSNUIColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F5F1561A5ACECD009EE27A /* UIImage+SSNUIColor.m */; };
@@ -606,6 +607,8 @@
 		53E517521A5BECDF00CF47AC /* UIButton+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+SSNUIKit.h"; sourceTree = "<group>"; };
 		53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+SSNUIKit.m"; sourceTree = "<group>"; };
 		53ECB175191FC11500BEB29D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		53EE018F1BD2A2050010CB46 /* UIView+SSNLayoutConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SSNLayoutConstraint.h"; sourceTree = "<group>"; };
+		53EE01901BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SSNLayoutConstraint.m"; sourceTree = "<group>"; };
 		53F5F1501A5ACC8F009EE27A /* SSNUIEle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUIEle.h; sourceTree = "<group>"; };
 		53F5F1511A5ACD27009EE27A /* UIColor+SSNUIHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+SSNUIHex.h"; sourceTree = "<group>"; };
 		53F5F1521A5ACD27009EE27A /* UIColor+SSNUIHex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+SSNUIHex.m"; sourceTree = "<group>"; };
@@ -1188,6 +1191,7 @@
 		53BC52E41A485E6E0044C238 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				53EE018E1BD2A17D0010CB46 /* layout */,
 				535ADADC1B1406CA00265080 /* pagecontrol */,
 				53A674901B07A789000EE1B9 /* navigationbaranimator */,
 				5341731C1AFE68B600A17C5A /* scrolledge */,
@@ -1365,6 +1369,15 @@
 				53BC52E41A485E6E0044C238 /* ui */,
 			);
 			path = ssn;
+			sourceTree = "<group>";
+		};
+		53EE018E1BD2A17D0010CB46 /* layout */ = {
+			isa = PBXGroup;
+			children = (
+				53EE018F1BD2A2050010CB46 /* UIView+SSNLayoutConstraint.h */,
+				53EE01901BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m */,
+			);
+			path = layout;
 			sourceTree = "<group>";
 		};
 		53F5F14E1A5ACC08009EE27A /* ele */ = {
@@ -1547,6 +1560,7 @@
 				53CAACFF1AC6F31B0012742A /* NSURL+SSN.m in Sources */,
 				53CAAD021AC78C410012742A /* UIViewController+SSNCategory.m in Sources */,
 				533365F21ACBBBC800DC4D0F /* NSRunLoop+SSN.m in Sources */,
+				53EE01911BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m in Sources */,
 				53A48D1A1B1983AC00AC46D3 /* SSNABPerson.m in Sources */,
 				53BC533C1A485E6E0044C238 /* lock.cpp in Sources */,
 				5335EBE51A83A77D007B9DC9 /* SSNToast.m in Sources */,

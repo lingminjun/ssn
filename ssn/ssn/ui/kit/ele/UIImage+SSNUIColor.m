@@ -86,14 +86,14 @@
     CGFloat border_width = ssn_ceil(width);
     if (border_width > 0.0f) {//
         borderPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, size.width, size.height) cornerRadius:radius];
-        borderPath.lineWidth = border_width;
+//        borderPath.lineWidth = border_width;
     }
     
     UIBezierPath *fillPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(border_width, border_width, size.width - border_width * 2, size.height - border_width * 2) cornerRadius:radius - border_width];
     
     if (borderPath) {
-        [borderColor setStroke];
-        [borderPath stroke];
+        [borderColor setFill];
+        [borderPath fill];
     }
     
     [bcolor setFill];

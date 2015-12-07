@@ -139,6 +139,11 @@ static char *ssn_format_key = NULL;
  *  @return 输入框
  */
 - (void)sf_input_did_change_action:(id)sender { @autoreleasepool {
+    //解决ios7中文键盘崩溃问题
+    if (self.markedTextRange != nil) {
+        return;
+    }
+    
     NSString *text = self.text;
     if ([text length] == 0) {
         return ;
