@@ -25,25 +25,52 @@
  #define SQLITE3_TEXT     3
  */
 typedef NS_ENUM(NSUInteger, SSNDBColumnType) {
-    SSNDBColumnInt = SQLITE_INTEGER,
-    SSNDBColumnFloat = SQLITE_FLOAT,
-    SSNDBColumnBool = SQLITE_INTEGER,
-    SSNDBColumnBlob = SQLITE_BLOB,
-    SSNDBColumnText = SQLITE_TEXT,
-    SSNDBColumnNull = SQLITE_NULL,
+    SSNDBColumnInt = SQLITE_INTEGER,    //"Int"
+    SSNDBColumnFloat = SQLITE_FLOAT,    //"Float"
+    SSNDBColumnBool = SQLITE_INTEGER,   //"Bool"
+    SSNDBColumnBlob = SQLITE_BLOB,      //"Blob"
+    SSNDBColumnText = SQLITE_TEXT,      //"Text"
+    SSNDBColumnNull = SQLITE_NULL,      //"Null"
 };
 
 typedef NS_ENUM(NSUInteger, SSNDBColumnLevel) {                           //属性描述
-    SSNDBColumnNormal = 0,  //一般属性(可为空)
-    SSNDBColumnNotNull = 1, //一般属性(不允许为空)
-    SSNDBColumnPrimary = 2, //主键（不允许为空）,多个时默认形成联合组件
+    SSNDBColumnNormal = 0,  //"" 一般属性(可为空)
+    SSNDBColumnNotNull = 1, //"NotNull" 一般属性(不允许为空)
+    SSNDBColumnPrimary = 2, //"Primary" 主键（不允许为空）,多个时默认形成联合组件
 };
 
 typedef NS_ENUM(NSUInteger, SSNDBColumnIndex) {
-    SSNDBColumnNotIndex = 0,    //不需要索引
-    SSNDBColumnNormalIndex = 1, //索引（不允许为空）
-    SSNDBColumnUniqueIndex = 2, //唯一索引（不允许为空）
+    SSNDBColumnNotIndex = 0,    //"" 不需要索引
+    SSNDBColumnNormalIndex = 1, //"Index" 索引（不允许为空）
+    SSNDBColumnUniqueIndex = 2, //"Unique" 唯一索引（不允许为空）
 };
+/*
+{
+    "tb":"Person",
+    "its":[{
+        "vs":1,
+        "cl":[  {"name":"uid",    "type":"Int",   "level":"Primary",  "fill":"",  "index":"Index",   "mapping":""},
+              {"name":"name",   "type":"Text",  "level":"NotNull",  "fill":"",  "index":"Unique",  "mapping":""},
+              {"name":"sex",    "type":"Bool",  "level":"",         "fill":"",  "index":"",        "mapping":""},
+              {"name":"height", "type":"Float", "level":"",         "fill":"",  "index":"",        "mapping":""},
+              {"name":"avatar", "type":"Blob",  "level":"",         "fill":"",  "index":"",        "mapping":""},
+              {"name":"other",  "type":"Null",  "level":"",         "fill":"",  "index":"",        "mapping":""}
+              ]
+    },
+           {
+               "vs":2,
+               "cl":[  {"name":"uid",    "type":"Int",   "level":"Primary",  "fill":"",  "index":"Index",   "mapping":""},
+                     {"name":"name",   "type":"Text",  "level":"NotNull",  "fill":"",  "index":"Unique",  "mapping":""},
+                     {"name":"sex",    "type":"Bool",  "level":"",         "fill":"",  "index":"",        "mapping":""},
+                     {"name":"height", "type":"Float", "level":"",         "fill":"",  "index":"",        "mapping":""},
+                     {"name":"avatar", "type":"Blob",  "level":"",         "fill":"",  "index":"",        "mapping":""},
+                     {"name":"mobile", "type":"Text",  "level":"",         "fill":"",  "index":"Index",   "mapping":""},
+                     {"name":"other",  "type":"Null",  "level":"",         "fill":"",  "index":"",        "mapping":""}
+                     ]
+           }]
+}
+ */
+
 
 #endif
 

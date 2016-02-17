@@ -290,8 +290,9 @@ static char *ssn_dependent_layout_key = NULL;
  */
 - (void)removeSubviewForKey:(NSString *)key {
     UIView *superview = [self panel];
-    UIView *subview = [superview ssn_subviewForKey:key];
-    [subview removeFromSuperview];
+    [superview ssn_removeSubviewForKey:key];
+//    UIView *subview = [superview ssn_subviewForKey:key];
+//    [subview removeFromSuperview];
 }
 
 /**
