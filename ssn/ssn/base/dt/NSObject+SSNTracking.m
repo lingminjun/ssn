@@ -71,6 +71,39 @@ NSString *ssn_objc_forwarding_method_name(SEL selector)
 #endif
 }
 
+//是否为创建实例方法 alloc / new / copy / mutableCopy
+BOOL ssn_is_create_instance_method(SEL selector) {
+    NSString *method = NSStringFromSelector(selector);
+    if ([@"alloc" isEqualToString:method]
+        || [@"new" isEqualToString:method]
+        || [@"copy" isEqualToString:method]
+        || [@"mutableCopy" isEqualToString:method] ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//是否为初始化
+BOOL ssn_is_init_method(SEL selector) {
+    NSString *method = NSStringFromSelector(selector);
+    if ([method hasPrefix:@"init"] ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//是否为dealloc
+BOOL ssn_is_destory_instance_method(SEL selector) {
+    NSString *method = NSStringFromSelector(selector);
+    if ([method hasPrefix:@"dealloc"] ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 //记录预置参数日志
 NSString *ssn_get_save_preset(NSString *value, NSString *key) {
     static NSMutableDictionary *_ssn_track_values = nil;
@@ -235,6 +268,11 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
                 case _C_ID:
                 case _C_CLASS:
                 {
+//#if __has_feature(objc_arc)
+//                    __unsafe_unretained id obj;
+//#else
+//                    id obj;
+//#endif
                     id obj = va_arg(argumentList, id);
 #if ssn_used_string_utf8_format
                     [log appendString:[NSString stringWithUTF8Format:"%ld=%s:%p&",arg_index,[NSStringFromClass([obj class]) UTF8String],obj]];
@@ -440,14 +478,42 @@ NSInvocation *ssn_objc_invocation_v2(id target, NSMethodSignature* signature, SE
     return invocation;
 }
 
-//跟踪记录实现日志函数
-void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const long long u_cost,const long long s_cost, double cpu_usage, NSString *param_log)
-{
+dispatch_queue_t ssn_log_get_track_queue() {
     static dispatch_queue_t log_queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         log_queue = dispatch_queue_create("ssn_log_queue", DISPATCH_QUEUE_SERIAL);
     });
+    return log_queue;
+}
+
+//跟踪记录实现日志函数
+/*
+void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const long long u_cost,const long long s_cost, double cpu_usage, NSString *param_log)
+{
+    dispatch_queue_t log_queue = ssn_log_get_track_queue();
+    
+    NSString *instance = NSStringFromClass([self class]);
+#if ssn_used_string_utf8_format
+    NSString *instance_addr = [NSString stringWithUTF8Format:"%p",self];
+#else
+    NSString *instance_addr = [NSString stringWithFormat:@"%p",self];
+#endif
+    
+    //防止改变对象生命周期
+    NSMutableString *params_string = nil;
+    NSArray *keys = ssn_get_save_class_method_collect_ivar([self class], _cmd, nil, YES);
+    if ([keys count] > 0) {
+        params_string = [NSMutableString string];
+        for (NSString *key in keys) {
+            id v = [self valueForKey:key];
+#if ssn_used_string_utf8_format
+            [params_string appendString:[NSString stringWithUTF8Format:"%s=%s&",[key UTF8String],[[v description] UTF8String]]];
+#else
+            [params_string appendFormat:@"%@=%@&",key,v];
+#endif
+        }
+    }
     
     dispatch_async(log_queue, ^{
         @autoreleasepool {
@@ -459,21 +525,15 @@ void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const lon
             }
             
             //取参数
-            NSArray *keys = ssn_get_save_class_method_collect_ivar([self class], _cmd, nil, YES);
-            for (NSString *key in keys) {
-                id v = [self valueForKey:key];
-#if ssn_used_string_utf8_format
-                [logString appendString:[NSString stringWithUTF8Format:"%s=%s&",[key UTF8String],[[v description] UTF8String]]];
-#else
-                [logString appendFormat:@"%@=%@&",key,v];
-#endif
+            if (params_string) {
+                [logString appendString:params_string];
             }
             
             //参数直接key设定为index（解析分析时，只需要从后往前依次取数字key直到取到0为止）
 #if ssn_used_string_utf8_format
-            [logString appendString:[NSString stringWithUTF8Format:"0=%s:%p&1=%s&",[NSStringFromClass([self class]) UTF8String],self,[NSStringFromSelector(_cmd) UTF8String]]];
+            [logString appendString:[NSString stringWithUTF8Format:"0=%s:%s&1=%s&",[instance UTF8String],[instance_addr UTF8String],[NSStringFromSelector(_cmd) UTF8String]]];
 #else
-            [logString appendFormat:@"0=%@:%p&1=%@&",NSStringFromClass([self class]),self,NSStringFromSelector(_cmd)];
+            [logString appendFormat:@"0=%@:%@&1=%@&",instance,instance_addr,NSStringFromSelector(_cmd)];
 #endif
             
             if ([param_log length]) {
@@ -489,6 +549,50 @@ void ssn_log_track_method(id self, SEL _cmd, const long long t_callat, const lon
             
             SSNLogVerbose(@"ssn_track_log【%@】", logString);
             //ssn_log("\nssn_track_log【%s】\n",[logString UTF8String]);
+        }
+    });
+}
+ */
+
+//跟踪记录实现日志函数
+void ssn_log_track_method(NSString *instance, NSString *instance_addr, NSString *params, SEL _cmd, const long long t_callat, const long long u_cost,const long long s_cost, double cpu_usage, NSString *param_log)
+{
+    dispatch_queue_t log_queue = ssn_log_get_track_queue();
+
+    
+    dispatch_async(log_queue, ^{
+        @autoreleasepool {
+            NSMutableString *logString = [NSMutableString string];
+            //收集系统参数
+            NSString *presetlog = ssn_get_save_preset(nil, nil);
+            if (presetlog) {
+                [logString appendString:presetlog];
+            }
+            
+            //取参数
+            if (params) {
+                [logString appendString:params];
+            }
+            
+            //参数直接key设定为index（解析分析时，只需要从后往前依次取数字key直到取到0为止）
+#if ssn_used_string_utf8_format
+            [logString appendString:[NSString stringWithUTF8Format:"0=%s:%s&1=%s&",[instance UTF8String],[instance_addr UTF8String],[NSStringFromSelector(_cmd) UTF8String]]];
+#else
+            [logString appendFormat:@"0=%@:%@&1=%@&",instance,instance_addr,NSStringFromSelector(_cmd)];
+#endif
+            
+            if ([param_log length]) {
+                [logString appendString:param_log];
+            }
+            
+            //call_at与call_cost对应的key被简写
+#if ssn_used_string_utf8_format
+            [logString appendString:[NSString stringWithUTF8Format:"c_a=%lld&u_t=%lld&s_t=%lld&c_u=%f",t_callat,u_cost,s_cost,cpu_usage]];
+#else
+            [logString appendFormat:@"c_a=%lld&u_t=%lld&s_t=%lld&c_u=%f",t_callat,u_cost,s_cost,cpu_usage];
+#endif
+            
+            SSNLogVerbose(@"ssn_track_log【%@】", logString);
         }
     });
 }
@@ -516,26 +620,69 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
     gettimeofday(&t_b_tv, NULL);
     long long t_bengin = t_b_tv.tv_sec * USEC_PER_SEC + t_b_tv.tv_usec;
     
+    BOOL is_destory = ssn_is_destory_instance_method(_cmd);
+    
     //[rep_invocation invoke];
     //ssn_performance_info_t performance_info = ssn_current_performance_info();
+    //delloc方法暂时无法支持，此方法一旦执行，其self内存为非法地址，后面对象数据都将出现非法地址
     ssn_performance_info_t performance_info = ssn_performance_info_imp_called(ssn_inline_imp,(__bridge void *)(rep_invocation));
     
-    //返回值
+    //为了日志需要的参数
+    NSString *instance = NSStringFromClass([self class]);
+#if ssn_used_string_utf8_format
+    NSString *instance_addr = [NSString stringWithUTF8Format:"%p",self];
+#else
+    NSString *instance_addr = [NSString stringWithFormat:@"%p",self];
+#endif
+    
+    //防止改变对象生命周期
+    NSMutableString *params_string = nil;
+    NSArray *keys = ssn_get_save_class_method_collect_ivar([self class], _cmd, nil, YES);
+    if ([keys count] > 0) {
+        params_string = [NSMutableString string];
+        for (NSString *key in keys) {
+            id v = [self valueForKey:key];
+#if ssn_used_string_utf8_format
+            [params_string appendString:[NSString stringWithUTF8Format:"%s=%s&",[key UTF8String],[[v description] UTF8String]]];
+#else
+            [params_string appendFormat:@"%@=%@&",key,v];
+#endif
+        }
+    }
+    
+    if (is_destory) {//析构后self已经成为野指针，仅仅此函数在调用前打印日志
+        //记录跟踪
+        //ssn_log_track_method(self,_cmd,t_bengin,0,0,0.0,paramlog);
+        ssn_log_track_method(instance,instance_addr,params_string,_cmd,t_bengin,performance_info.user_time,performance_info.system_time,performance_info.cpu_usage,paramlog);
+    }
+        
+    //返回值(针对alloc / new / copy / mutableCopy返回值引用本身加一，需要采用__bridge_transfer来获取，授予arc所有权)
+    //因为alloc与init一起使用，init可以返回nil释放对象，所以init方法也需要特殊处理（init会将对象放入自动释放池，返回自释放对象，所以需要保留释放权__bridge_retained）
     id ret_val  = nil;
     NSUInteger ret_size = [methodSignature methodReturnLength];
     if(ret_size > 0) {
         
         void *returnValue = NULL;
         [rep_invocation getReturnValue:&returnValue];
-        
+#if __has_feature(objc_arc)
+        if (ssn_is_create_instance_method(_cmd)) {
+            ret_val = (__bridge_transfer id)(returnValue);//增加引用计数
+        } else if (ssn_is_init_method(_cmd)) {
+            ret_val = (__bridge id)(returnValue);
+        } else {
+            ret_val = (__bridge id)(returnValue);//不改变引用计数
+        }
+#else
         ret_val = (__bridge id)(returnValue);
+#endif
         [paramlog appendFormat:@"result=%@&",ret_val];
     }
     
-    //记录跟踪
-    //ssn_log_track_method(self,_cmd,t_bengin,0,0,0.0,paramlog);
-    ssn_log_track_method(self,_cmd,t_bengin,performance_info.user_time,performance_info.system_time,performance_info.cpu_usage,paramlog);
-    
+    if (!is_destory) {
+        //记录跟踪
+        //ssn_log_track_method(self,_cmd,t_bengin,0,0,0.0,paramlog);
+        ssn_log_track_method(instance,instance_addr,params_string,_cmd,t_bengin,performance_info.user_time,performance_info.system_time,performance_info.cpu_usage,paramlog);
+    }
     return ret_val;
 }
 
@@ -580,6 +727,15 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
 {
     NSAssert(clazz && selector, @"请传入正确参数");
     
+    //如果是delloc方法，需要另外处理
+    if (ssn_is_destory_instance_method(selector)) {
+        Method method1 = class_getInstanceMethod(clazz, selector);
+        Method method2 = class_getInstanceMethod(clazz, @selector(ssn_tracking_dealloc));
+        method_exchangeImplementations(method1, method2);
+        SSNLogVerbose(@"ssn_track_log 【ssn tracking class:%@ selector:%@】", NSStringFromClass(clazz), NSStringFromSelector(selector));
+        return ;
+    }
+    
     //1、先检查当前类是否响应此方法
     Method method = class_getInstanceMethod(clazz, selector);
     NSAssert(method, @"请确保要跟踪的类能响应此方法");
@@ -610,6 +766,49 @@ id ssn_objc_forwarding_method_imp(id self,SEL _cmd, ...)
         SSNLog(@"ssn tracking rewrite selector:%@\n",NSStringFromSelector(selector));
     }
     
+}
+
+/**
+ *  用于跟踪delloc函数
+ *
+ *  @return
+ */
+- (oneway void)ssn_tracking_dealloc {
+    
+    struct timeval t_b_tv;
+    gettimeofday(&t_b_tv, NULL);
+    long long t_bengin = t_b_tv.tv_sec * USEC_PER_SEC + t_b_tv.tv_usec;
+    
+    //为了日志需要的参数
+    NSString *instance = NSStringFromClass([self class]);
+#if ssn_used_string_utf8_format
+    NSString *instance_addr = [NSString stringWithUTF8Format:"%p",self];
+#else
+    NSString *instance_addr = [NSString stringWithFormat:@"%p",self];
+#endif
+    
+    //防止改变对象生命周期
+    NSMutableString *params_string = nil;
+    NSArray *keys = ssn_get_save_class_method_collect_ivar([self class], _cmd, nil, YES);
+    if ([keys count] > 0) {
+        params_string = [NSMutableString string];
+        for (NSString *key in keys) {
+            id v = [self valueForKey:key];
+#if ssn_used_string_utf8_format
+            [params_string appendString:[NSString stringWithUTF8Format:"%s=%s&",[key UTF8String],[[v description] UTF8String]]];
+#else
+            [params_string appendFormat:@"%@=%@&",key,v];
+#endif
+        }
+    }
+    
+    ssn_performance_info_t performance_info = ssn_performance_info_imp_called(ssn_inline_dealloc_imp,(__bridge void *)(self));
+    
+    ssn_log_track_method(instance,instance_addr,params_string,_cmd,t_bengin,performance_info.user_time,performance_info.system_time,performance_info.cpu_usage,nil);
+}
+
+void ssn_inline_dealloc_imp(void *context) {
+    [(__bridge NSObject *)context ssn_tracking_dealloc];
 }
 
 @end

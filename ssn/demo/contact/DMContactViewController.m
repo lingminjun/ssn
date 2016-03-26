@@ -121,7 +121,9 @@
     [super viewDidAppear:animated];
 }
 
-
+- (void)dealloc {
+    NSLog(@"%@ : dealloc",self);
+}
 
 - (void)addPerson:(id)sender {
     ABPeoplePickerNavigationController *ppnc = [[ABPeoplePickerNavigationController alloc] init];

@@ -250,7 +250,7 @@ BOOL ssn_is_equal_to_string(NSString *str1, NSString *str2) {
     {
         resultString = [NSString stringWithString:temString];
     }
-
+    
     return temString;
 }
 

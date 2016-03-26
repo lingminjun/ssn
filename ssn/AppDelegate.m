@@ -41,7 +41,9 @@
 #import "ssnbase.h"
 
 
-@interface AppDelegate ()<SSNRouterDelegate>
+@interface AppDelegate ()<SSNRouterDelegate> {
+    int aaa;
+}
 @end
 
 @implementation AppDelegate
@@ -49,6 +51,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     //跟踪用户行为
+    [NSObject ssn_tracking_class:[UIViewController class] selector:@selector(initWithNibName:bundle:)];
+    [NSObject ssn_tracking_class:[UIViewController class] selector:NSSelectorFromString(@"dealloc")];
     [NSObject ssn_tracking_class:[UIViewController class] selector:@selector(viewDidLoad)];
     [NSObject ssn_tracking_class:[UIViewController class] selector:@selector(viewWillAppear:)];
     [NSObject ssn_tracking_class:[UINavigationController class] selector:@selector(pushViewController:animated:)];
