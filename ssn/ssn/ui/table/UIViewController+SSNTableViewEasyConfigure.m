@@ -82,7 +82,7 @@
         return 0;
     }
     
-    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    SSNSectionModel *sec = [self.listFetchController sectionAtIndex:section];
     return [sec count];
 }
 
@@ -225,7 +225,7 @@
         return nil;
     }
     
-    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    SSNSectionModel *sec = [self.listFetchController sectionAtIndex:section];
     if (sec.hiddenHeader) {
         return nil;
     }
@@ -237,7 +237,7 @@
         return 0.0f;
     }
     
-    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    SSNSectionModel *sec = [self.listFetchController sectionAtIndex:section];
     if (sec.hiddenHeader) {
         return 0.0f;
     }
@@ -249,7 +249,7 @@
         return nil;
     }
     
-    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    SSNSectionModel *sec = [self.listFetchController sectionAtIndex:section];
     if (sec.hiddenHeader) {
         return nil;
     }
@@ -261,7 +261,7 @@
         return nil;
     }
     
-    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    SSNSectionModel *sec = [self.listFetchController sectionAtIndex:section];
     if (sec.hiddenFooter) {
         return nil;
     }
@@ -273,7 +273,7 @@
         return 0.0f;
     }
     
-    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    SSNSectionModel *sec = [self.listFetchController sectionAtIndex:section];
     if (sec.hiddenFooter) {
         return 0.0f;
     }
@@ -285,7 +285,7 @@
         return nil;
     }
     
-    SSNVMSectionInfo *sec = [self.listFetchController sectionAtIndex:section];
+    SSNSectionModel *sec = [self.listFetchController sectionAtIndex:section];
     if (sec.hiddenFooter) {
         return nil;
     }
@@ -328,7 +328,7 @@
 }
 
 #pragma mark - list fetch controller delegate
-- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeSection:(SSNVMSectionInfo *)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(SSNListFetchedChangeType)type {
+- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeSection:(SSNSectionModel *)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(SSNListFetchedChangeType)type {
     if (controller != self.listFetchController) {
         return ;
     }
@@ -445,7 +445,7 @@
     }
 }
 
-- (void)ssnlist_controller:(SSNListFetchController *)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify {
+- (void)ssnlist_controller:(SSNListFetchController *)controller sectionDidLoad:(SSNSectionModel *)section sectionIdntify:(NSString *)identify {
     if (controller != self.listFetchController) {
         return ;
     }

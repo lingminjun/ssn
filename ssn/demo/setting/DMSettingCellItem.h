@@ -6,13 +6,13 @@
 //  Copyright (c) 2015年 lingminjun. All rights reserved.
 //
 
-#import "SSNVMCellItem.h"
+#import "SSNCellModel.h"
 
-@interface DMSettingCellItem : SSNVMCellItem
+@interface DMSettingCellItem : SSNCellModel
 
 @property (nonatomic,copy) NSString *title;
 
-+ (SSNVMCellItem *)itemWithTitle:(NSString *)title;
++ (DMSettingCellItem *)itemWithTitle:(NSString *)title;
 
 @end
 

@@ -1,12 +1,12 @@
 //
-//  SSNVMCellItem.m
+//  SSNCellModel.m
 //  ssn
 //
 //  Created by lingminjun on 15/2/23.
 //  Copyright (c) 2015年 lingminjun. All rights reserved.
 //
 
-#import "SSNVMCellItem.h"
+#import "SSNCellModel.h"
 #if TARGET_IPHONE_SIMULATOR
 #import <objc/objc-runtime.h>
 #else
@@ -30,7 +30,7 @@
 }
 
 /**
- *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
+ *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNCellModel类名字
  */
 - (NSString *)cellIdentify {
     return [NSString stringWithFormat:@"%p",self];
@@ -66,7 +66,7 @@
 @end
 
 
-@implementation SSNVMCellItem
+@implementation SSNCellModel
 
 
 @synthesize userInfo = _userInfo;
@@ -94,7 +94,7 @@
     return self;
 }
 
-- (NSComparisonResult)ssn_compare:(SSNVMCellItem *)model {
+- (NSComparisonResult)ssn_compare:(SSNCellModel *)model {
     //默认地址比较
     if (self > model) {
         return NSOrderedDescending;

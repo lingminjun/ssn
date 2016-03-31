@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SSNVMCellItem.h"
+#import "SSNCellModel.h"
 #import "DMPerson.h"
 
 @interface DMPersonVM : NSObject<SSNDBFetchObject,SSNCellModel>

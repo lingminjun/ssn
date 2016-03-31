@@ -1,5 +1,5 @@
 //
-//  SSNVMCellItem.h
+//  SSNCellModel.h
 //  ssn
 //
 //  Created by lingminjun on 15/2/23.
@@ -28,7 +28,7 @@
 @property (nonatomic,copy,readonly) NSString *cellNibName;
 
 /**
- *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
+ *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNCellModel类名字
  */
 @property (nonatomic,copy,readonly) NSString *cellIdentify;
 
@@ -59,12 +59,12 @@
  *  实例代码
  
 //排序实现
-- (NSComparisonResult)ssn_compare:(SSNVMCellItem *)model {
+- (NSComparisonResult)ssn_compare:(SSNCellModel *)model {
     if (self == model) {
         return NSOrderedSame;
     }
     
-    if (![model isKindOfClass:[SSNVMCellItem class]]) {
+    if (![model isKindOfClass:[SSNCellModel class]]) {
         return NSOrderedAscending;
     }
     
@@ -89,7 +89,7 @@
 /**
  *  table view cell view model
  */
-@interface SSNVMCellItem : NSObject<SSNCellModel>
+@interface SSNCellModel : NSObject<SSNCellModel>
 
 /**
  *  业务对象，如果支持copy，请尽量采用copy方式
@@ -129,7 +129,7 @@
 
 
 /**
- *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNVMCellItem类名字
+ *  用于UITableView dequeueReusableCellWithIdentifier:方法，方便cell重用，默认用SSNCellModel类名字
  */
 @property (nonatomic,copy) NSString *cellIdentify;
 

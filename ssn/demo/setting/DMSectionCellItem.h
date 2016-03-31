@@ -6,9 +6,9 @@
 //  Copyright (c) 2015年 lingminjun. All rights reserved.
 //
 
-#import "SSNVMCellItem.h"
+#import "SSNCellModel.h"
 
-@interface DMSectionCellItem : SSNVMCellItem
+@interface DMSectionCellItem : SSNCellModel
 
 + (instancetype)item;
 

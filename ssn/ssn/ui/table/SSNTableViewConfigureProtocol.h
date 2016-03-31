@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SSNVMCellItem.h"
-#import "SSNVMSectionInfo.h"
+#import "SSNCellModel.h"
+#import "SSNSectionModel.h"
 #import "UITableView+SSNPullRefresh.h"
 #import "SSNFetchControllerPrototol.h"
 
@@ -117,7 +117,7 @@
  *  @param section    需要配置的分组，可以配置title、高度等等
  *  @param identify   分组的id
  */
-- (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify;
+- (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller sectionDidLoad:(SSNSectionModel *)section sectionIdntify:(NSString *)identify;
 
 
 @end

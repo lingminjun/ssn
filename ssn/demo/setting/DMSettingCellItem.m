@@ -22,7 +22,7 @@
     return self;
 }
 
-+ (SSNVMCellItem *)itemWithTitle:(NSString *)title {
++ (DMSettingCellItem *)itemWithTitle:(NSString *)title {
     DMSettingCellItem *item = [[DMSettingCellItem alloc] init];
     item.title = title;
     return item;

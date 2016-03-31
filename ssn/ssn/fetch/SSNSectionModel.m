@@ -1,18 +1,18 @@
 //
-//  SSNVMSectionInfo.m
+//  SSNSectionModel.m
 //  ssn
 //
 //  Created by lingminjun on 15/2/23.
 //  Copyright (c) 2015年 lingminjun. All rights reserved.
 //
 
-#import "SSNVMSectionInfo.h"
+#import "SSNSectionModel.h"
 
-@interface SSNVMSectionInfo ()
+@interface SSNSectionModel ()
 @property (nonatomic,copy) NSString *identify;
 @end
 
-@implementation SSNVMSectionInfo
+@implementation SSNSectionModel
 
 - (instancetype)init
 {
@@ -73,12 +73,12 @@
     return [self.objects indexOfObject:object];
 }
 
-- (NSComparisonResult)compare:(SSNVMSectionInfo *)info {
+- (NSComparisonResult)compare:(SSNSectionModel *)info {
     if (self == info) {
         return NSOrderedSame;
     }
     
-    if (![info isKindOfClass:[SSNVMSectionInfo class]]) {
+    if (![info isKindOfClass:[SSNSectionModel class]]) {
         return NSOrderedAscending;
     }
     
@@ -94,7 +94,7 @@
 }
 
 + (instancetype)sectionInfoWithIdentify:(NSString *)identify title:(NSString *)title {
-    SSNVMSectionInfo *info = [[SSNVMSectionInfo alloc] init];
+    SSNSectionModel *info = [[SSNSectionModel alloc] init];
     info.identify = identify;
     info.headerTitle = title;
     return info;
@@ -105,12 +105,12 @@
     return [self.identify hash];
 }
 
-- (BOOL)isEqual:(SSNVMSectionInfo *)object {
+- (BOOL)isEqual:(SSNSectionModel *)object {
     if (self == object) {
         return YES;
     }
     
-    if (![object isKindOfClass:[SSNVMSectionInfo class]]) {
+    if (![object isKindOfClass:[SSNSectionModel class]]) {
         return NO;
     }
     
@@ -123,7 +123,7 @@
 
 #pragma mark copy
 - (id)copyWithZone:(NSZone *)zone {
-    SSNVMSectionInfo *copy = [[[self class] alloc] init];
+    SSNSectionModel *copy = [[[self class] alloc] init];
     
     copy.headerTitle = self.headerTitle;
     copy.headerHeight = self.headerHeight;
@@ -146,7 +146,7 @@
 @end
 
 
-@implementation NSArray (SSNVMSectionInfos)
+@implementation NSArray (SSNSectionModels)
 
 //越界返回nil
 - (id)objectAtIndexPath:(NSIndexPath *)indexPath {
@@ -155,8 +155,8 @@
         return nil;
     }
     
-    SSNVMSectionInfo *section = [self objectAtIndex:indexPath.section];
-    if (![section isKindOfClass:[SSNVMSectionInfo class]]) {
+    SSNSectionModel *section = [self objectAtIndex:indexPath.section];
+    if (![section isKindOfClass:[SSNSectionModel class]]) {
         return nil;
     }
     

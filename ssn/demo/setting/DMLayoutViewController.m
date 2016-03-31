@@ -256,6 +256,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:false animated:animated];
 }
 
 - (void)ssn_layoutDidLoad {

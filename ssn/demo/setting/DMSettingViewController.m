@@ -246,6 +246,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             [ary addObject:[DMSettingCellItem itemWithTitle:@"========="]];
             [ary addObject:[DMSectionCellItem item]];
             
+            [ary addObject:[DMSettingCellItem itemWithTitle:@"=========0"]];
+            [ary addObject:[DMSectionCellItem item]];
+            
             [ary addObject:[DMSettingCellItem itemWithTitle:@"===ddd==="]];
             [ary addObject:[DMSectionCellItem item]];
         }
@@ -261,36 +264,33 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         [self openRelativePath:@"../layout" query:nil];
     }
     else if ([model.title isEqualToString:@"xxxxxxxx"]) {
-        [self.ssn_tableViewConfigurator.listFetchController updateDatasAtIndexPaths:@[indexPath] withContext:nil];
+        DMSettingCellItem *item = (DMSettingCellItem *)model;
+        if ([item.title isEqualToString:@"xxxxxxxx"]) {
+            item.title = @"xxx===xxxx";
+        }
+        else {
+            item.title = @"xxxxxxxx";
+        }
+        [self.ssn_tableViewConfigurator.listFetchController updateData:model atIndexPath:indexPath];
     }
     else if ([model.title isEqualToString:@"========="]) {
-        [self.ssn_tableViewConfigurator.listFetchController insertDatasAtIndexPaths:@[indexPath] withContext:nil];
+        DMSettingCellItem *item = [DMSettingCellItem itemWithTitle:@"insert"];
+        [self.ssn_tableViewConfigurator.listFetchController insertDatas:@[item,[DMSectionCellItem item]] atIndexPath:indexPath];
+    }
+    else if ([model.title isEqualToString:@"=========0"]) {
+        DMSettingCellItem *item = [DMSettingCellItem itemWithTitle:@"insert"];
+        [self.ssn_tableViewConfigurator.listFetchController insertData:item atIndexPath:indexPath];
     }
     else {
         NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
-        [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath] withContext:nil];
+        [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
     }
-}
-
-- (id<SSNCellModel>)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller insertDataWithIndexPath:(NSIndexPath *)indexPath context:(void *)context {
-    return nil;
-}
-
-- (id<SSNCellModel>)ssn_configurator:(id<SSNTableViewConfigurator>)configurator controller:(id<SSNFetchControllerPrototol>)controller updateDataWithOriginalData:(id<SSNCellModel>)model indexPath:(NSIndexPath *)indexPath context:(void *)context {
-    DMSettingCellItem *item = (DMSettingCellItem *)model;
-    if ([item.title isEqualToString:@"xxxxxxxx"]) {
-        item.title = @"xxx===xxxx";
-    }
-    else {
-        item.title = @"xxxxxxxx";
-    }
-    return item;
 }
 
 - (void)ssn_configurator:(id<SSNTableViewConfigurator>)configurator tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
-    [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath] withContext:nil];
+    [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
     
 }
 @end

@@ -1,5 +1,5 @@
 //
-//  SSNVMSectionInfo.h
+//  SSNSectionModel.h
 //  ssn
 //
 //  Created by lingminjun on 15/2/23.
@@ -13,7 +13,7 @@
 /**
  *  table section 的 view model
  */
-@interface SSNVMSectionInfo : NSObject<NSCopying>
+@interface SSNSectionModel : NSObject<NSCopying>
 
 /**
  *  id，isEqaul将比较idendify
@@ -107,7 +107,7 @@
  *
  *  @return 大小关系
  */
-- (NSComparisonResult)compare:(SSNVMSectionInfo *)info;
+- (NSComparisonResult)compare:(SSNSectionModel *)info;
 
 /**
  *  工程方法
@@ -122,7 +122,7 @@
 @end
 
 
-@interface NSArray (SSNVMSectionInfos)
+@interface NSArray (SSNSectionModels)
 
 //越界返回nil
 - (id)objectAtIndexPath:(NSIndexPath *)indexPath;

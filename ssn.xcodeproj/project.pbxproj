@@ -37,8 +37,8 @@
 		5339FC8B1AA551AA0000F6B9 /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC811AA551AA0000F6B9 /* SSNDBFetch.m */; };
 		5339FC8C1AA551AA0000F6B9 /* SSNDBFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC831AA551AA0000F6B9 /* SSNDBFetchController.m */; };
 		5339FC8D1AA551AA0000F6B9 /* SSNListFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC861AA551AA0000F6B9 /* SSNListFetchController.m */; };
-		5339FC8E1AA551AA0000F6B9 /* SSNVMCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC881AA551AA0000F6B9 /* SSNVMCellItem.m */; };
-		5339FC8F1AA551AA0000F6B9 /* SSNVMSectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC8A1AA551AA0000F6B9 /* SSNVMSectionInfo.m */; };
+		5339FC8E1AA551AA0000F6B9 /* SSNCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC881AA551AA0000F6B9 /* SSNCellModel.m */; };
+		5339FC8F1AA551AA0000F6B9 /* SSNSectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC8A1AA551AA0000F6B9 /* SSNSectionModel.m */; };
 		5339FC931AA55BE60000F6B9 /* DMPersonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC921AA55BE60000F6B9 /* DMPersonCell.m */; };
 		533BE3941A2AC30500E07FF0 /* ssn_fetch_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 533BE3931A2AC30500E07FF0 /* ssn_fetch_test.m */; };
 		533BE3961A2AC43800E07FF0 /* TestPerson.json in Resources */ = {isa = PBXBuildFile; fileRef = 533BE3951A2AC43800E07FF0 /* TestPerson.json */; };
@@ -145,8 +145,8 @@
 		53A6E5171AB28D99003BFBCF /* SSNDBFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC811AA551AA0000F6B9 /* SSNDBFetch.m */; };
 		53A6E5181AB28D99003BFBCF /* SSNDBFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC831AA551AA0000F6B9 /* SSNDBFetchController.m */; };
 		53A6E5191AB28D99003BFBCF /* SSNListFetchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC861AA551AA0000F6B9 /* SSNListFetchController.m */; };
-		53A6E51A1AB28D99003BFBCF /* SSNVMCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC881AA551AA0000F6B9 /* SSNVMCellItem.m */; };
-		53A6E51B1AB28D99003BFBCF /* SSNVMSectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC8A1AA551AA0000F6B9 /* SSNVMSectionInfo.m */; };
+		53A6E51A1AB28D99003BFBCF /* SSNCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC881AA551AA0000F6B9 /* SSNCellModel.m */; };
+		53A6E51B1AB28D99003BFBCF /* SSNSectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339FC8A1AA551AA0000F6B9 /* SSNSectionModel.m */; };
 		53A6E51C1AB28D99003BFBCF /* SSNCrashReport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5397B5D31A6FA10700CD6AFC /* SSNCrashReport.m */; };
 		53A6E51D1AB28DC7003BFBCF /* SSNMessageInterceptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE03221A9A11C800E30E0D /* SSNMessageInterceptor.m */; };
 		53A6E51E1AB28DC7003BFBCF /* SSNJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 534CA1641A6CAC9500CB55B3 /* SSNJob.m */; };
@@ -351,10 +351,10 @@
 		5339FC841AA551AA0000F6B9 /* SSNFetchControllerPrototol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNFetchControllerPrototol.h; sourceTree = "<group>"; };
 		5339FC851AA551AA0000F6B9 /* SSNListFetchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNListFetchController.h; sourceTree = "<group>"; };
 		5339FC861AA551AA0000F6B9 /* SSNListFetchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNListFetchController.m; sourceTree = "<group>"; };
-		5339FC871AA551AA0000F6B9 /* SSNVMCellItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNVMCellItem.h; sourceTree = "<group>"; };
-		5339FC881AA551AA0000F6B9 /* SSNVMCellItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMCellItem.m; sourceTree = "<group>"; };
-		5339FC891AA551AA0000F6B9 /* SSNVMSectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNVMSectionInfo.h; sourceTree = "<group>"; };
-		5339FC8A1AA551AA0000F6B9 /* SSNVMSectionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNVMSectionInfo.m; sourceTree = "<group>"; };
+		5339FC871AA551AA0000F6B9 /* SSNCellModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNCellModel.h; sourceTree = "<group>"; };
+		5339FC881AA551AA0000F6B9 /* SSNCellModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNCellModel.m; sourceTree = "<group>"; };
+		5339FC891AA551AA0000F6B9 /* SSNSectionModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNSectionModel.h; sourceTree = "<group>"; };
+		5339FC8A1AA551AA0000F6B9 /* SSNSectionModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNSectionModel.m; sourceTree = "<group>"; };
 		5339FC901AA552CF0000F6B9 /* SSNTableViewConfigureProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNTableViewConfigureProtocol.h; sourceTree = "<group>"; };
 		5339FC911AA55BE60000F6B9 /* DMPersonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPersonCell.h; sourceTree = "<group>"; };
 		5339FC921AA55BE60000F6B9 /* DMPersonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPersonCell.m; sourceTree = "<group>"; };
@@ -710,10 +710,10 @@
 				5339FC841AA551AA0000F6B9 /* SSNFetchControllerPrototol.h */,
 				5339FC851AA551AA0000F6B9 /* SSNListFetchController.h */,
 				5339FC861AA551AA0000F6B9 /* SSNListFetchController.m */,
-				5339FC871AA551AA0000F6B9 /* SSNVMCellItem.h */,
-				5339FC881AA551AA0000F6B9 /* SSNVMCellItem.m */,
-				5339FC891AA551AA0000F6B9 /* SSNVMSectionInfo.h */,
-				5339FC8A1AA551AA0000F6B9 /* SSNVMSectionInfo.m */,
+				5339FC871AA551AA0000F6B9 /* SSNCellModel.h */,
+				5339FC881AA551AA0000F6B9 /* SSNCellModel.m */,
+				5339FC891AA551AA0000F6B9 /* SSNSectionModel.h */,
+				5339FC8A1AA551AA0000F6B9 /* SSNSectionModel.m */,
 			);
 			path = fetch;
 			sourceTree = "<group>";
@@ -1631,7 +1631,7 @@
 				53BC53511A486DA30044C238 /* ssnbase64.c in Sources */,
 				534173231AFE690E00A17C5A /* SSNDefaultLoadMoreView.m in Sources */,
 				53BC53121A485E6E0044C238 /* SSNSafeDictionary.m in Sources */,
-				5339FC8E1AA551AA0000F6B9 /* SSNVMCellItem.m in Sources */,
+				5339FC8E1AA551AA0000F6B9 /* SSNCellModel.m in Sources */,
 				530BE9E01AE13D57007F0025 /* SSNHosting.m in Sources */,
 				53A48D211B19CA7300AC46D3 /* ssncrc64.c in Sources */,
 				53BC53401A485E6E0044C238 /* SSNQuantum.m in Sources */,
@@ -1650,7 +1650,7 @@
 				538E3838199869880061692E /* DMContactNavController.m in Sources */,
 				53BC53361A485E6E0044C238 /* SSNJson.m in Sources */,
 				53A1BA1A1A52A1D000C76844 /* SSNUILayout.m in Sources */,
-				5339FC8F1AA551AA0000F6B9 /* SSNVMSectionInfo.m in Sources */,
+				5339FC8F1AA551AA0000F6B9 /* SSNSectionModel.m in Sources */,
 				53BC52FA1A485E6E0044C238 /* ssndiff.c in Sources */,
 				53BC533A1A485E6E0044C238 /* inet.cpp in Sources */,
 				53C84C6F1A5B887C008AB7C8 /* UILabel+SSNUIKit.m in Sources */,
@@ -1718,8 +1718,8 @@
 				53A6E5171AB28D99003BFBCF /* SSNDBFetch.m in Sources */,
 				53A6E5181AB28D99003BFBCF /* SSNDBFetchController.m in Sources */,
 				53A6E5191AB28D99003BFBCF /* SSNListFetchController.m in Sources */,
-				53A6E51A1AB28D99003BFBCF /* SSNVMCellItem.m in Sources */,
-				53A6E51B1AB28D99003BFBCF /* SSNVMSectionInfo.m in Sources */,
+				53A6E51A1AB28D99003BFBCF /* SSNCellModel.m in Sources */,
+				53A6E51B1AB28D99003BFBCF /* SSNSectionModel.m in Sources */,
 				53A6E51C1AB28D99003BFBCF /* SSNCrashReport.m in Sources */,
 				53BC53211A485E6E0044C238 /* SSNDB.m in Sources */,
 				533BE3991A2AC4B400E07FF0 /* TSPerson.m in Sources */,

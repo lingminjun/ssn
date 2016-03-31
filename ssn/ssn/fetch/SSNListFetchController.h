@@ -14,7 +14,7 @@
 FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
 
 @protocol SSNListFetchControllerDelegate,SSNListFetchControllerDataSource,SSNCellModel;
-@class SSNVMSectionInfo;
+@class SSNSectionModel;
 
 
 /**
@@ -122,7 +122,7 @@ FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
  *
  *  @return 返回section
  */
-- (SSNVMSectionInfo *)sectionAtIndex:(NSUInteger)section;
+- (SSNSectionModel *)sectionAtIndex:(NSUInteger)section;
 
 /**
  *  返回section info
@@ -131,7 +131,7 @@ FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
  *
  *  @return 返回section
  */
-- (SSNVMSectionInfo *)sectionWithSectionIdentify:(NSString *)identify;
+- (SSNSectionModel *)sectionWithSectionIdentify:(NSString *)identify;
 
 /**
  *  返回section所在位置
@@ -140,7 +140,7 @@ FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
  *
  *  @return 位置，如果结果集中没找到返回NSNotFound
  */
-- (NSUInteger)indexWithSection:(SSNVMSectionInfo *)section;
+- (NSUInteger)indexWithSection:(SSNSectionModel *)section;
 
 /**
  *  返回section
@@ -174,26 +174,62 @@ FOUNDATION_EXTERN NSString *const SSNFetchDefaultSectionIdentify;
 /**
  *  新增数据
  *
- *  @param indexPaths  对应的位置新增数据
- *  @param context     此次操作的一些上下文
+ *  @param data       新增的数据
+ *  @param indexPath   indexPath插入data
  */
-- (void)insertDatasAtIndexPaths:(NSArray *)indexPaths withContext:(void *)context;
+- (void)insertData:(id<SSNCellModel>)data atIndexPath:(NSIndexPath *)indexPath;
+
+/**
+ *  新增数据
+ *
+ *  @param datas       新增的数据
+ *  @param indexPath   indexPath插入datas
+ */
+- (void)insertDatas:(NSArray *)datas atIndexPath:(NSIndexPath *)indexPath;
+
+/**
+ *  末尾新增数据
+ *
+ *  @param datas       新增的数据
+ */
+- (void)appendDatas:(NSArray *)datas;
+
+/**
+ *  删除数据
+ *
+ *  @param data       删除数据
+ */
+- (void)deleteData:(id<SSNCellModel>)data;
+
+/**
+ *  删除对应位置的数据
+ *
+ *  @param indexPath NSIndexPath数据所在位置
+ */
+- (void)deleteDataAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
  *  删除对应位置的数据
  *
  *  @param indexPaths NSIndexPaths数据所在位置
- *  @param context     此次操作的一些上下文
  */
-- (void)deleteDatasAtIndexPaths:(NSArray *)indexPaths withContext:(void *)context;
+- (void)deleteDatasAtIndexPaths:(NSArray *)indexPaths;
 
 /**
  *  更新位置的数据
  *
- *  @param indexPaths 位置
- *  @param context     此次操作的一些上下文
+ *  @param datas      更新的数据
+ *  @param indexPath 位置信息必须与与更新数据保持一致
  */
-- (void)updateDatasAtIndexPaths:(NSArray *)indexPaths withContext:(void *)context;
+- (void)updateData:(id<SSNCellModel>)data atIndexPath:(NSIndexPath *)indexPath;
+
+/**
+ *  更新位置的数据
+ *
+ *  @param datas      更新的数据
+ *  @param indexPaths 位置信息必须与与更新数据保持一致
+ */
+- (void)updateDatas:(NSArray *)datas atIndexPaths:(NSArray *)indexPaths;
 
 #pragma mark 工厂方法
 /**
@@ -238,7 +274,7 @@ typedef NS_ENUM(NSUInteger, SSNListFetchedChangeType){
 
 /**
 //实例代码
-- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeSection:(SSNVMSectionInfo *)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(SSNListFetchedChangeType)type {
+- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeSection:(SSNSectionModel *)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(SSNListFetchedChangeType)type {
     switch(type) {
         case SSNListFetchedChangeInsert:
             [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
@@ -293,7 +329,7 @@ typedef NS_ENUM(NSUInteger, SSNListFetchedChangeType){
 }
 */
 @required
-- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeSection:(SSNVMSectionInfo *)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(SSNListFetchedChangeType)type;
+- (void)ssnlist_controller:(SSNListFetchController *)controller didChangeSection:(SSNSectionModel *)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(SSNListFetchedChangeType)type;
 
 - (void)ssnlist_controller:(SSNListFetchController *)controller didChangeObject:(id<SSNCellModel>)object atIndexPath:(NSIndexPath *)indexPath forChangeType:(SSNListFetchedChangeType)type newIndexPath:(NSIndexPath *)newIndexPath;
 
@@ -332,29 +368,6 @@ typedef NS_ENUM(NSUInteger, SSNListFetchedChangeType){
  *  @param section    section
  *  @param identify   section的唯一标示
  */
-- (void)ssnlist_controller:(SSNListFetchController *)controller sectionDidLoad:(SSNVMSectionInfo *)section sectionIdntify:(NSString *)identify;
-
-/**
- *  选择位置插入数据回调，当调用insertDatasAtIndexPaths:withContext:方法时触发
- *
- *  @param controller 当前fetch controller
- *  @param indexPath  对应位置
- *  @param context    执行时上下文
- *
- *  @return 返回此位置要插入的数据
- */
-- (id<SSNCellModel>)ssnlist_controller:(SSNListFetchController *)controller insertDataWithIndexPath:(NSIndexPath *)indexPath context:(void *)context;
-
-/**
- *  根据位置更新数据回调，当调用updateDatasAtIndexPaths:withContext:方法时触发
- *
- *  @param controller 当前fetch controller
- *  @param model      原来位置上的数据
- *  @param indexPath  对应的位置
- *  @param context    执行时上下文
- *
- *  @return 返回新的数据
- */
-- (id<SSNCellModel>)ssnlist_controller:(SSNListFetchController *)controller updateDataWithOriginalData:(id<SSNCellModel>)model indexPath:(NSIndexPath *)indexPath context:(void *)context;
+- (void)ssnlist_controller:(SSNListFetchController *)controller sectionDidLoad:(SSNSectionModel *)section sectionIdntify:(NSString *)identify;
 
 @end
