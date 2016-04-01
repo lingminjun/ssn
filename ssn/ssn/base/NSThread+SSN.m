@@ -18,9 +18,14 @@ NSString *const SSNAvoidEmptyLoopSourceFlag = @"SSNAvoidEmptyLoopSourceFlag";
         return ;
     }
     
-    CFRunLoopSourceContext context = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-    CFRunLoopSourceRef source = CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context);
-    CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
+    if (![NSThread isMainThread]) {
+        [[NSRunLoop currentRunLoop] addPort:[[NSPort alloc] init] forMode:NSRunLoopCommonModes];
+    }
+    
+//    CFRunLoopSourceContext context = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+//    CFRunLoopSourceRef source = CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context);
+//    CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
+    
 
     //标记下
     [self.threadDictionary setObject:SSNAvoidEmptyLoopSourceFlag forKey:SSNAvoidEmptyLoopSourceFlag];
