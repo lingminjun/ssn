@@ -1137,7 +1137,10 @@ NSMutableDictionary *ssn_get_class_property_name(Class clazz) {
             target_obj = obj;
         }
         else {
-            if ([aobj respondsToSelector:@selector(mutableCopy)]) {
+            if ([aobj isKindOfClass:[NSString class]]
+                || [aobj isKindOfClass:[NSArray class]]
+                || [aobj isKindOfClass:[NSDictionary class]]
+                || [aobj isKindOfClass:[NSSet class]]) {
                 target_obj = [aobj mutableCopy];
             }
             else {

@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		53016B3D1D2911DE00D2D07A /* FJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 53016B3C1D2911DE00D2D07A /* FJSON.m */; };
+		53016B3E1D2911DE00D2D07A /* FJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 53016B3C1D2911DE00D2D07A /* FJSON.m */; };
 		530187981A3FFF0700E2CB5D /* ssn_lcs_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */; };
 		530BE9E01AE13D57007F0025 /* SSNHosting.m in Sources */ = {isa = PBXBuildFile; fileRef = 530BE9DF1AE13D57007F0025 /* SSNHosting.m */; };
 		5312CAC21A57E983009C32B1 /* DMLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312CAC11A57E983009C32B1 /* DMLayoutViewController.m */; };
 		531324811A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
 		531324821A5CFEAA0038256F /* UIImageView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324801A5CFEAA0038256F /* UIImageView+SSNUIKit.m */; };
 		531324861A5D35710038256F /* DMUIDicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 531324851A5D35710038256F /* DMUIDicViewController.m */; };
+		5324B5A01D2D483B0050DADE /* ssn_fjson_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 5324B59F1D2D483B0050DADE /* ssn_fjson_test.m */; };
 		533121821A4BE85E000F456E /* DMPersonExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 533121811A4BE85E000F456E /* DMPersonExt.m */; };
 		533121831A4BE85E000F456E /* DMPersonExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 533121811A4BE85E000F456E /* DMPersonExt.m */; };
 		533121851A4BE87D000F456E /* DMPersonExt.json in Resources */ = {isa = PBXBuildFile; fileRef = 533121841A4BE87D000F456E /* DMPersonExt.json */; };
@@ -309,6 +312,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		53016B3B1D2911DE00D2D07A /* FJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FJSON.h; sourceTree = "<group>"; };
+		53016B3C1D2911DE00D2D07A /* FJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FJSON.m; sourceTree = "<group>"; };
 		530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_lcs_test.m; sourceTree = "<group>"; };
 		530BE9DE1AE13D57007F0025 /* SSNHosting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNHosting.h; sourceTree = "<group>"; };
 		530BE9DF1AE13D57007F0025 /* SSNHosting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNHosting.m; sourceTree = "<group>"; };
@@ -320,6 +325,7 @@
 		531324851A5D35710038256F /* DMUIDicViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMUIDicViewController.m; sourceTree = "<group>"; };
 		5319DF5C1AC8386100BBAC09 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		5319DF5D1AC8386100BBAC09 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5324B59F1D2D483B0050DADE /* ssn_fjson_test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssn_fjson_test.m; sourceTree = "<group>"; };
 		533121801A4BE85E000F456E /* DMPersonExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPersonExt.h; sourceTree = "<group>"; };
 		533121811A4BE85E000F456E /* DMPersonExt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPersonExt.m; sourceTree = "<group>"; };
 		533121841A4BE87D000F456E /* DMPersonExt.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DMPersonExt.json; sourceTree = "<group>"; };
@@ -1144,6 +1150,8 @@
 			children = (
 				53BC52D41A485E6E0044C238 /* SSNJson.h */,
 				53BC52D51A485E6E0044C238 /* SSNJson.m */,
+				53016B3B1D2911DE00D2D07A /* FJSON.h */,
+				53016B3C1D2911DE00D2D07A /* FJSON.m */,
 			);
 			path = jsoncode;
 			sourceTree = "<group>";
@@ -1337,6 +1345,7 @@
 				53D9A1961A2CC66F009F777D /* ssn_log_test.m */,
 				533F4FD41A35997F009D29C6 /* ssn_datastore_test.m */,
 				530187971A3FFF0700E2CB5D /* ssn_lcs_test.m */,
+				5324B59F1D2D483B0050DADE /* ssn_fjson_test.m */,
 			);
 			path = ssnTests;
 			sourceTree = "<group>";
@@ -1606,6 +1615,7 @@
 				53BC53081A485E6E0044C238 /* NSString+SSN.m in Sources */,
 				53D82B8E1A6550AE005C2958 /* NSObject+SSNBlock.m in Sources */,
 				539B4FD41AC41ED20042F6C4 /* SSNRouter+Nice.m in Sources */,
+				53016B3D1D2911DE00D2D07A /* FJSON.m in Sources */,
 				538DDE071AD971B00082B4FE /* objscope.mm in Sources */,
 				53BC53001A485E6E0044C238 /* ssnlog.c in Sources */,
 				533BE3A41A2B02C300E07FF0 /* DMSignEngine.m in Sources */,
@@ -1715,6 +1725,7 @@
 				53A6E5271AB28DC7003BFBCF /* NSString+SSNUIKit.m in Sources */,
 				53A6E5281AB28DC7003BFBCF /* UIView+SSNUIKit.m in Sources */,
 				53A6E5291AB28DC7003BFBCF /* UITextField+SSNUIKit.m in Sources */,
+				53016B3E1D2911DE00D2D07A /* FJSON.m in Sources */,
 				53A6E5171AB28D99003BFBCF /* SSNDBFetch.m in Sources */,
 				53A6E5181AB28D99003BFBCF /* SSNDBFetchController.m in Sources */,
 				53A6E5191AB28D99003BFBCF /* SSNListFetchController.m in Sources */,
@@ -1761,6 +1772,7 @@
 				53BC53411A485E6E0044C238 /* SSNQuantum.m in Sources */,
 				53BC53011A485E6E0044C238 /* ssnlog.c in Sources */,
 				53BC53231A485E6E0044C238 /* SSNDBColumn.m in Sources */,
+				5324B5A01D2D483B0050DADE /* ssn_fjson_test.m in Sources */,
 				53BC53271A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
 				533121831A4BE85E000F456E /* DMPersonExt.m in Sources */,
 				53D2463F199C83B400EFDF29 /* DMSettingNavController.h in Sources */,
