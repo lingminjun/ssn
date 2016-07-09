@@ -293,6 +293,7 @@
 		53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DBD62719EA610100728F96 /* ssnDTTest.m */; };
 		53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
 		53E517551A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
+		53EAFD851D30EABE0002E66D /* SSNSafeKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAFD841D30EABE0002E66D /* SSNSafeKVO.m */; };
 		53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
 		53EE01911BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EE01901BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m */; };
 		53F5F1531A5ACD27009EE27A /* UIColor+SSNUIHex.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F5F1521A5ACD27009EE27A /* UIColor+SSNUIHex.m */; };
@@ -612,6 +613,8 @@
 		53DBD62719EA610100728F96 /* ssnDTTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssnDTTest.m; sourceTree = "<group>"; };
 		53E517521A5BECDF00CF47AC /* UIButton+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+SSNUIKit.h"; sourceTree = "<group>"; };
 		53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+SSNUIKit.m"; sourceTree = "<group>"; };
+		53EAFD831D30EABE0002E66D /* SSNSafeKVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNSafeKVO.h; sourceTree = "<group>"; };
+		53EAFD841D30EABE0002E66D /* SSNSafeKVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNSafeKVO.m; sourceTree = "<group>"; };
 		53ECB175191FC11500BEB29D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		53EE018F1BD2A2050010CB46 /* UIView+SSNLayoutConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SSNLayoutConstraint.h"; sourceTree = "<group>"; };
 		53EE01901BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SSNLayoutConstraint.m"; sourceTree = "<group>"; };
@@ -1042,6 +1045,8 @@
 				537F39A91B12209600EE8230 /* SSNAppInfo.m */,
 				535EDC2D1B253D0300E2C0D6 /* SSNWDT.h */,
 				535EDC2E1B253D0300E2C0D6 /* SSNWDT.m */,
+				53EAFD831D30EABE0002E66D /* SSNSafeKVO.h */,
+				53EAFD841D30EABE0002E66D /* SSNSafeKVO.m */,
 			);
 			path = base;
 			sourceTree = "<group>";
@@ -1589,6 +1594,7 @@
 				53A48D271B19E41D00AC46D3 /* SSNABRecord.m in Sources */,
 				53BC530E1A485E6E0044C238 /* SSNRigidCache.m in Sources */,
 				53A1BA1E1A52B6F700C76844 /* UIView+SSNUIFrame.m in Sources */,
+				53EAFD851D30EABE0002E66D /* SSNSafeKVO.m in Sources */,
 				53BC53141A485E6E0044C238 /* SSNSafeSet.m in Sources */,
 				5339FC8B1AA551AA0000F6B9 /* SSNDBFetch.m in Sources */,
 				531324861A5D35710038256F /* DMUIDicViewController.m in Sources */,

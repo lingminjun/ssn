@@ -17,6 +17,7 @@
 #import "SSNDefaultPullRefreshView.h"
 #import "SSNDefaultLoadMoreView.h"
 #import "SSNNavigationBarAnimator.h"
+#import "SSNSafeKVO.h"
 
 @interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate,SSNNavigationBarAnimatorDelegate> {
     NSInteger flag;
@@ -62,6 +63,12 @@
     
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];
+    
+    [self.tableView ssn_addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
+    NSLog(@"%@ : %@",object,keyPath);
 }
 
 - (void)animator:(SSNNavigationBarAnimator *)animator didSetNavigationBarHidden:(BOOL)hidden animated:(BOOL)animated {
