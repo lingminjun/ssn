@@ -18,10 +18,12 @@
 #import "SSNDefaultLoadMoreView.h"
 #import "SSNNavigationBarAnimator.h"
 #import "SSNSafeKVO.h"
+#import "DMSettingViewController+TOne.h"
 
 @interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate,SSNNavigationBarAnimatorDelegate> {
     NSInteger flag;
     SSNNavigationBarAnimator *animator;
+    dispatch_queue_t  queue;
 }
 
 @end
@@ -42,7 +44,7 @@
 {
     [super viewDidLoad];
     
-    
+    [self test_function_one];
     
     flag = 0;
 
@@ -61,8 +63,22 @@
     [animator setTargetView:self.tableView];
     animator.delegate = self;
     
+    
+    
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];
+    
+    queue = dispatch_queue_create("ddddd", DISPATCH_QUEUE_SERIAL);
+    NSLog(@"pppppp,%p",[NSThread currentThread]);
+
+    dispatch_async(queue, ^{
+        NSLog(@"=======,%p",[NSThread currentThread]);
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            NSLog(@"xxxxxxxx,%p",[NSThread currentThread]);
+        });
+    });
+    
     
     [self.tableView ssn_addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
 }
@@ -101,6 +117,8 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     animator.enabled = NO;
+    
+    
 }
 
 - (BOOL)ssn_canRespondURL:(NSURL *)url query:(NSDictionary *)query
