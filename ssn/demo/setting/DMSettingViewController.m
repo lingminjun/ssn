@@ -20,6 +20,16 @@
 #import "SSNSafeKVO.h"
 #import "DMSettingViewController+TOne.h"
 
+@interface TTSameName : NSObject
+
+@end
+
+@implementation TTSameName
+
+
+@end
+
+
 @interface DMSettingViewController ()<SSNTableViewConfiguratorDelegate,SSNNavigationBarAnimatorDelegate> {
     NSInteger flag;
     SSNNavigationBarAnimator *animator;
@@ -63,24 +73,22 @@
     [animator setTargetView:self.tableView];
     animator.delegate = self;
     
-    
-    
     //开始加载数据
     [self.ssn_tableViewConfigurator.listFetchController loadData];
     
-    queue = dispatch_queue_create("ddddd", DISPATCH_QUEUE_SERIAL);
-    NSLog(@"pppppp,%p",[NSThread currentThread]);
-
-    dispatch_async(queue, ^{
-        NSLog(@"=======,%p",[NSThread currentThread]);
-        
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            NSLog(@"xxxxxxxx,%p",[NSThread currentThread]);
-        });
-    });
+//    queue = dispatch_queue_create("ddddd", DISPATCH_QUEUE_SERIAL);
+//    NSLog(@"pppppp,%p",[NSThread currentThread]);
+//
+//    dispatch_async(queue, ^{
+//        NSLog(@"=======,%p",[NSThread currentThread]);
+//        
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            NSLog(@"xxxxxxxx,%p",[NSThread currentThread]);
+//        });
+//    });
     
     
-    [self.tableView ssn_addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+//    [self.tableView ssn_addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
@@ -247,7 +255,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
             [ary addObject:[DMSectionCellItem item]];
             
-            [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+            [ary addObject:[DMSettingCellItem itemWithTitle:@"testAdpater"]];
             [ary addObject:[DMSectionCellItem item]];
             
             [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
@@ -305,6 +313,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     else if ([model.title isEqualToString:@"=========0"]) {
         DMSettingCellItem *item = [DMSettingCellItem itemWithTitle:@"insert"];
         [self.ssn_tableViewConfigurator.listFetchController insertData:item atIndexPath:indexPath];
+    }
+    else if ([model.title isEqualToString:@"testAdpater"]) {
+        [self openRelativePath:@"../adapter" query:nil];
     }
     else {
         NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];

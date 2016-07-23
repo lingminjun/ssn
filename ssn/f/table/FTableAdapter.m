@@ -36,10 +36,11 @@ typedef NS_ENUM(NSUInteger, FTableChangeType){
     FTableChangeUpdate = 4
 };
 
+static char *ftable_cell_model_key = NULL;
+
 @implementation UITableViewCell (FTableCell)
 - (void)ftable_display:(id<FTableCellModel>)cellModel atIndexPath:(NSIndexPath *)indexPath inTable:(UITableView *)tableView {}
 
-static char *ftable_cell_model_key = NULL;
 - (void)ftable_setCellModel:(id<FTableCellModel>)cellModel {
     objc_setAssociatedObject(self, &(ftable_cell_model_key),cellModel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
@@ -58,7 +59,42 @@ static char *ftable_cell_model_key = NULL;
     @try {
         [self ftable_display:cellModel atIndexPath:indexPath inTable:tableView];
     } @catch (NSException *exception) {
-        NSLog(@"%@",exception);
+        NSLog(@"0x0:%@",exception);
+    } @finally {
+        //
+    }
+    
+    //最后防止数据被串改回来
+    [self ftable_setCellModel:cellModel];
+}
+
+- (instancetype)initWithReuseIdentifier:(nullable NSString *)reuseIdentifier {
+    return [self initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
+}
+@end
+
+@implementation UITableViewHeaderFooterView (FTableCell)
+- (void)ftable_display:(id<FTableCellModel>)cellModel atIndexPath:(NSIndexPath *)indexPath inTable:(UITableView *)tableView {}
+
+- (void)ftable_setCellModel:(id<FTableCellModel>)cellModel {
+    objc_setAssociatedObject(self, &(ftable_cell_model_key),cellModel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (id<FTableCellModel>)ftable_cellModel {
+    return objc_getAssociatedObject(self, &(ftable_cell_model_key));
+}
+
+- (void)ftable_onDisplay:(id<FTableCellModel>)cellModel atIndexPath:(NSIndexPath *)indexPath inTable:(UITableView *)tableView {
+    //防止嵌套调用ftable_display方法
+    
+    //提前替换掉cell model
+    [self ftable_setCellModel:cellModel];
+    
+    //调用展示函数
+    @try {
+        [self ftable_display:cellModel atIndexPath:indexPath inTable:tableView];
+    } @catch (NSException *exception) {
+        NSLog(@"0x1:%@",exception);
     } @finally {
         //
     }
@@ -68,19 +104,67 @@ static char *ftable_cell_model_key = NULL;
 }
 @end
 
+@interface FTableSectionNode : NSObject
+@property (nonatomic,strong) id<FTableCellModel> model;
+@property (nonatomic,strong) NSMutableArray<id<FTableCellModel>> *objs;
+@property (nonatomic) NSInteger index;//起始位置
++ (instancetype)node;
++ (instancetype)nodeWithModel:(id<FTableCellModel>)model atIndex:(NSInteger)index;
+@end
+@implementation FTableSectionNode
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _objs = [[NSMutableArray alloc] init];
+        _index = -1;
+    }
+    return self;
+}
++ (instancetype)node {
+    return [[[self class] alloc] init];
+}
++ (instancetype)nodeWithModel:(id<FTableCellModel>)model atIndex:(NSInteger)index {
+    FTableSectionNode *node = [[[self class] alloc] init];
+    node.model = model;
+    node.index = index;
+    return node;
+}
+@end
+
 
 @interface FTableAdapter () <UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic,strong) NSMutableArray<id<FTableCellModel>> *objs;//数据源
+@property (nonatomic,strong) NSMutableArray<FTableSectionNode *> *scns;//若是以分组来展示
+
+@property (nonatomic) BOOL supportSection;//支持section说明，主要是性能考虑，以此标签表示
+@property (nonatomic) BOOL operating;//操作中表示
+
+//section支持
+- (FTableSectionNode *)sectionNodeOfIndex:(NSUInteger)index;//取index所在的section
+- (FTableSectionNode *)sectionNodeOfSection:(NSUInteger)section;//取section位置的sectionNode
+- (NSUInteger)sectionOfIndex:(NSUInteger)index;//取index所在的section位置
+
+- (NSUInteger)indexOfIndexPath:(NSIndexPath *)indexPath;
+- (id<FTableCellModel>)modelOfIndexPath:(NSIndexPath *)indexPath;
+- (id<FTableCellModel>)modelAtSection:(NSUInteger)section;
+
+- (BOOL)checkIsSectionCellModel:(id<FTableCellModel>)cellModel;
 
 @end
 
 @implementation FTableAdapter
 
 - (instancetype)init {
+    return [self initWithSectionStyle:NO];
+}
+
+- (instancetype)initWithSectionStyle:(BOOL)supportSection {
     self = [super init];
     if (self) {
         _objs = [[NSMutableArray alloc] init];
+        _scns = [[NSMutableArray alloc] init];
+        _supportSection = supportSection;
     }
     return self;
 }
@@ -96,35 +180,122 @@ static char *ftable_cell_model_key = NULL;
     }
     tableView.delegate = self;
     tableView.dataSource = self;
+    
     _tableView = tableView;
     [_tableView reloadData];
 }
 
 - (void)refreash {[_tableView reloadData];}
 
-- (NSUInteger)count {return [_objs count];}
+- (NSUInteger)count {
+    if (_supportSection) {
+        FTableSectionNode *node = [_scns lastObject];
+        if (node == nil) {
+            return 0;
+        }
+        return node.index + 1 + [node.objs count];
+    } else {
+        return [_objs count];
+    }
+}
 
 - (NSArray<id<FTableCellModel> > *)models {
-    return [NSArray arrayWithArray:_objs];
+    if (_supportSection) {
+        NSMutableArray *array = [NSMutableArray array];
+        [_scns enumerateObjectsUsingBlock:^(FTableSectionNode * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (obj.model) {
+                [array addObject:obj.model];
+            }
+            
+            [obj.objs enumerateObjectsUsingBlock:^(id<FTableCellModel>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [array addObject:obj];
+            }];
+        }];
+        return array;
+    } else {
+        return [NSArray arrayWithArray:_objs];
+    }
 }
 
 - (id<FTableCellModel>)modelAtIndex:(NSUInteger)index {
-    if (index >= [_objs count]) {
-        return nil;
+    if (_supportSection) {
+        if (index > [_scns count]) {
+            return nil;
+        }
+        FTableSectionNode *node = [self sectionNodeOfIndex:index];
+        if (node.index == index) {
+            return node.model;
+        } else {
+            NSInteger idx = ((NSInteger)index - node.index - 1);//涉及到位置计算
+            if (idx >= 0 && idx < [node.objs count]) {
+                return [node.objs objectAtIndex:idx];
+            }
+            return nil;
+        }
+    } else {
+        if (index >= [_objs count]) {
+            return nil;
+        }
+        return [_objs objectAtIndex:index];
     }
-    return [_objs objectAtIndex:index];
 }
 
 - (NSUInteger)indexOfModel:(id<FTableCellModel>)model {
-    return [_objs indexOfObject:model];
+    if (model == nil) {
+        return NSNotFound;
+    }
+    if (_supportSection) {
+        for (NSInteger idx = 0; idx < [_scns count]; idx++) {
+            FTableSectionNode *node = [_scns objectAtIndex:0];
+            if ([model isEqual:node.model]) {
+                return node.index;
+            }
+            
+            if ([node.objs count] > 0) {
+                NSUInteger i = [node.objs indexOfObject:model];
+                if (i != NSNotFound) {
+                    return (node.index + i);
+                }
+            }
+        }
+        return NSNotFound;
+    } else {
+        return [_objs indexOfObject:model];
+    }
 }
 
 - (void)setModels:(NSArray<id<FTableCellModel> > *)models {
     if (models != nil) {
-        [_objs setArray:models];
+        //遍历section
+        if (_supportSection) {
+            [_scns removeAllObjects];
+            FTableSectionNode *lastNode = nil;
+            for (NSUInteger idx = 0; idx < [models count]; idx++) {
+                id<FTableCellModel> obj = [models objectAtIndex:idx];
+                
+                if ([self checkIsSectionCellModel:obj]) {
+                    lastNode = [FTableSectionNode nodeWithModel:obj atIndex:idx];
+                    [_scns addObject:lastNode];
+                    continue;
+                }
+                
+                if (lastNode == nil && idx == 0) {
+                    lastNode = [FTableSectionNode nodeWithModel:nil atIndex:-1];
+                    [_scns addObject:lastNode];
+                }
+                
+                if (lastNode != nil) {
+                    [lastNode.objs addObject:obj];
+                }
+            }
+        } else {
+             [_objs setArray:models];
+        }
         
         //需要改进
         [_tableView reloadData];
+        
+        _operating = NO;
     }
 }
 
@@ -133,8 +304,7 @@ static char *ftable_cell_model_key = NULL;
         return;
     }
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[_objs count] inSection:0];
-    [self insertDatas:models atIndexPath:indexPath];
+    [self insertDatas:models atIndex:[self count]];
 }
 
 - (void)appendModel:(id<FTableCellModel>)model {
@@ -142,8 +312,7 @@ static char *ftable_cell_model_key = NULL;
         return;
     }
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[_objs count] inSection:0];
-    [self insertDatas:@[model] atIndexPath:indexPath];
+    [self insertDatas:@[model] atIndex:[self count]];
 }
 
 - (void)insertModel:(id<FTableCellModel>)model atIndex:(NSUInteger)index {
@@ -152,12 +321,11 @@ static char *ftable_cell_model_key = NULL;
     }
     
     NSUInteger idx = index;
-    if (index >= [_objs count]) {
-        idx = [_objs count];
+    if (index >= [self count]) {
+        idx = [self count];
     }
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
-    [self insertDatas:@[model] atIndexPath:indexPath];
+    [self insertDatas:@[model] atIndex:idx];
 }
 
 - (void)insertModels:(NSArray<id<FTableCellModel> > *)models atIndex:(NSUInteger)index {
@@ -166,12 +334,11 @@ static char *ftable_cell_model_key = NULL;
     }
     
     NSUInteger idx = index;
-    if (index >= [_objs count]) {
-        idx = [_objs count];
+    if (index >= [self count]) {
+        idx = [self count];
     }
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
-    [self insertDatas:models atIndexPath:indexPath];
+    [self insertDatas:models atIndex:idx];
 }
 
 /**
@@ -240,66 +407,143 @@ static char *ftable_cell_model_key = NULL;
  *
  *  @param indexPaths  对应的位置新增，实际位置并不取决于它
  */
-- (void)insertDatas:(NSArray<id<FTableCellModel> > *)datas atIndexPath:(NSIndexPath *)indexPath {
+- (void)insertDatas:(NSArray<id<FTableCellModel> > *)datas atIndex:(NSUInteger)index {
     
     if ([datas count] == 0) {
         return ;
     }
-//    
-//    NSRunLoop *runloop = self.mainRunLoop;
-//    if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
-//        ssn_t_log(@"fetctController:%p 忽略插入！说明此时数据源并没有稳定",self);
-//        return ;
-//    }
-//    
-//    int64_t flag = [runloop ssn_push_flag_for_tag:(NSUInteger)self];
-//    ssn_t_log(@"在fetctController:%p 插入数据 标记flag = %lld",self,flag);
-//    
+
+    if (_operating) {
+        NSLog(@"fetctController:%p 忽略插入！说明此时数据源并没有稳定",self);
+        return ;
+    }
+    _operating = YES;
+  
     [self ftable_dataWillChange];
     
-//    NSMutableArray *newSections = [NSMutableArray array];
-//    NSMutableArray *changeSections = [NSMutableArray array];
-    
-    [datas enumerateObjectsUsingBlock:^(id<FTableCellModel> model, NSUInteger idx, BOOL * stop) {
+    if (_supportSection) {
         
-//        SSNSectionModel *sectionInfo = [_list objectAtIndex:indexPath.section];//
-//        if (indexPath.section >= [_list count]) {
-//            
-//            NSString *sectionIdentify = [model cellSectionIdentify];
-//            sectionInfo = [self loadSectionWithSectionIdentify:sectionIdentify];
-//            
-//            if (!sectionInfo) {
-//                return ;
-//            }
-//            
-//            [_list addObject:sectionInfo];
-//            [newSections addObject:sectionInfo];
-//            [changeSections addObject:sectionInfo];
-//            
-//            [_delegate ssnlist_controller:self didChangeSection:sectionInfo atIndex:indexPath.section forChangeType:FTableChangeInsert];
-//        }
-//        else {
-//            if (![changeSections containsObject:sectionInfo]) {
-//                [changeSections addObject:sectionInfo];
-//                
-//                //让section更新一下（修改header）
-//                [_delegate ssnlist_controller:self didChangeSection:sectionInfo atIndex:indexPath.section forChangeType:FTableChangeUpdate];
-//            }
-//        }
+        //1、寻找被插入的section
+        FTableSectionNode *first_change_node = [self sectionNodeOfIndex:index];
         
-        [_objs insertObject:model atIndex:(indexPath.row + idx)];
+        //2、没找到，则表明源数据还是空的情况，那么就先构建一个，调用插入
+        NSUInteger first_change_section = 0;
+        if (first_change_node == nil) {
+            NSLog(@"第一次插入第一个Section");
+            first_change_node = [FTableSectionNode nodeWithModel:nil atIndex:-1];
+            [_scns addObject:first_change_node];
+            [self ftable_dataDidChangeSection:first_change_node.model atIndex:0 forChangeType:FTableChangeInsert];
+        } else {
+            first_change_section = [_scns indexOfObject:first_change_node];
+        }
         
-//        if (![newSections containsObject:sectionInfo]) {
-            NSIndexPath *newIndex = [NSIndexPath indexPathForRow:(indexPath.row + idx) inSection:indexPath.section];
+        //3、找到section内插入点，并记录下插入点后面的对象
+        NSUInteger section_insert_begin = first_change_section;
+        NSRange back_models_range = NSMakeRange(0, 0);
+        NSArray<id<FTableCellModel>> * back_models = nil;
+        BOOL back_models_need_delete = NO;
+        if (index == first_change_node.index) {//显然，正好是section节点上，说明插入位置是前一个section
+            if (first_change_section > 0) {
+                first_change_section -= 1;
+                first_change_node = [_scns objectAtIndex:first_change_section];
+            }
+            NSLog(@"插入的位置真好是当前节点上%ld",index);
+        } else if ((NSInteger)index > first_change_node.index && index < (first_change_node.index + 1 + [first_change_node.objs count])) {
+            section_insert_begin += 1;//插入点在first_change_section后面
+            
+            NSUInteger loc = (NSInteger)index - (first_change_node.index + 1);
+            NSUInteger len = [first_change_node.objs count] - loc;
+            back_models_range = NSMakeRange(loc, len);
+            back_models = [first_change_node.objs subarrayWithRange:back_models_range];
+            back_models_need_delete = YES;
+        } else {//说明是尾追
+            section_insert_begin += 1;
+            NSLog(@"插入的位置说明是尾追%ld",index);
+        }
+        
+        //4、开始遍历插入数据源
+        FTableSectionNode *lastNode = first_change_node;
+        NSUInteger current_section = first_change_section;
+        for (NSUInteger idx = 0; idx < [datas count]; idx++) {
+            id<FTableCellModel> obj = [datas objectAtIndex:idx];
+            
+            //5、遍历中出现有section的情况，看看是不是第一个位置，第一个位置就直接替换，其他位置则插入
+            if ([self checkIsSectionCellModel:obj]) {
+                current_section = section_insert_begin;//记住当前section位置
+                //第一个位置正好是空缺的时
+                if (lastNode.model == nil && (index + idx) == 0) {
+                    lastNode.model = obj;
+                    lastNode.index = 0;
+                    //多调用一次update，应该没啥事
+                    [self ftable_dataDidChangeSection:lastNode.model atIndex:0 forChangeType:FTableChangeInsert];
+                } else {//不是第一个，则在insert_begin位置上插入一个section即可
+                    lastNode = [FTableSectionNode nodeWithModel:obj atIndex:(index + idx)];
+                    [_scns insertObject:lastNode atIndex:section_insert_begin];//插在其后面即可
+                    [self ftable_dataDidChangeSection:lastNode.model atIndex:section_insert_begin forChangeType:FTableChangeInsert];
+                }
+                section_insert_begin++;//后面在遇到section，插入位置往后移
+                
+                //因为插入了section，此时原来若存在插入点后的对象，统统需要从first_change_node中移除
+                if (back_models_need_delete && back_models_range.length > 0) {
+                    
+                    //section 提示刷新一下在操作数据
+                    [self ftable_dataDidChangeSection:first_change_node.model atIndex:first_change_section forChangeType:FTableChangeUpdate];
+                    for (NSUInteger i = back_models_range.location; i < back_models_range.location + back_models_range.length; i++) {
+                        id<FTableCellModel> obj = [first_change_node.objs objectAtIndex:i];
+                        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:first_change_section];
+                        [self ftable_dataDidChangeObject:obj atIndexPath:indexPath forChangeType:FTableChangeDelete newIndexPath:nil];
+                    }
+                    
+                    [first_change_node.objs removeObjectsInRange:back_models_range];//删掉全部数据
+                    
+                    //清理
+                    back_models_need_delete = NO;
+//                    back_models_range.length = 0;
+//                    back_models_range.location = 0;
+                }
+                continue;
+            }
+            
+            //通过位置取section
+            if (lastNode == nil) {
+                NSLog(@"次数不应该走进来，若走进来需要debug看看");
+            }
+            
+            //6、将数据插入到当前section中
+            NSInteger row = (NSInteger)(index + idx) - lastNode.index - 1;
+            [lastNode.objs insertObject:obj atIndex:row];
+            NSIndexPath *newIndex = [NSIndexPath indexPathForRow:row inSection:current_section];
+            [self ftable_dataDidChangeObject:obj atIndexPath:newIndex forChangeType:FTableChangeInsert newIndexPath:newIndex];
+        }
+        
+        //7、之前截断的model插入到最后
+        if (lastNode != nil && lastNode != first_change_node && [back_models count] > 0) {
+            for (NSUInteger i = 0; i < [back_models count]; i++) {
+                id<FTableCellModel> obj = [back_models objectAtIndex:i];
+                NSInteger row = [lastNode.objs count];
+                [lastNode.objs addObject:obj];
+                NSIndexPath *newIndex = [NSIndexPath indexPathForRow:row inSection:current_section];
+                [self ftable_dataDidChangeObject:obj atIndexPath:newIndex forChangeType:FTableChangeInsert newIndexPath:newIndex];
+            }
+        }
+        
+        //8、更新后面所有的section node的index
+        for (NSInteger i = current_section + 1; i < [_scns count]; i++) {
+            FTableSectionNode *node = [_scns objectAtIndex:i];
+            node.index += [datas count];
+        }
+       
+    } else {
+        [datas enumerateObjectsUsingBlock:^(id<FTableCellModel> model, NSUInteger idx, BOOL * stop) {
+            [_objs insertObject:model atIndex:(index + idx)];
+            NSIndexPath *newIndex = [NSIndexPath indexPathForRow:(index + idx) inSection:0];
             [self ftable_dataDidChangeObject:model atIndexPath:newIndex forChangeType:FTableChangeInsert newIndexPath:newIndex];
-//        }
-        
-    }];
+        }];
+    }
     
     [self ftable_dataDidChange];
     
-//    [runloop ssn_pop_flag_for_tag:(NSUInteger)self];
-//    ssn_t_log(@"在fetctController:%p 插入数据 取消标记flag = %lld",self,flag);
+    _operating = NO;
 }
 
 /**
@@ -312,17 +556,18 @@ static char *ftable_cell_model_key = NULL;
         return ;
     }
     
-//    NSRunLoop *runloop = self.mainRunLoop;
-//    if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
-//        ssn_t_log(@"fetctController:%p 忽略删除！说明此时数据源并没有稳定",self);
-//        return ;
-//    }
-//    
-//    int64_t flag = [runloop ssn_push_flag_for_tag:(NSUInteger)self];
-//    ssn_t_log(@"在fetctController:%p 删除数据 标记flag = %lld",self,flag);
+    if (_operating) {
+        NSLog(@"fetctController:%p 忽略删除！说明此时数据源并没有稳定",self);
+        return ;
+    }
+    _operating = YES;
     
     [self ftable_dataWillChange];
     
+    if (_supportSection) {
+        //
+    } else {
+
     //先计算哪些section需要改变
 //    NSMutableDictionary *changeSections = [NSMutableDictionary dictionary];
 //    NSMutableDictionary *delIndexsMap = [NSMutableDictionary dictionary];
@@ -387,11 +632,12 @@ static char *ftable_cell_model_key = NULL;
     }];
 //        }
 //    }];
+        
+    }
     
     [self ftable_dataDidChange];
     
-//    [runloop ssn_pop_flag_for_tag:(NSUInteger)self];
-//    ssn_t_log(@"在fetctController:%p 删除数据 取消标记flag = %lld",self,flag);
+    _operating = NO;
 }
 
 
@@ -406,17 +652,19 @@ static char *ftable_cell_model_key = NULL;
         return ;
     }
     
-//    NSRunLoop *runloop = self.mainRunLoop;
-//    if ([runloop ssn_flag_count_for_tag:(NSUInteger)self]) {
-//        ssn_t_log(@"fetctController:%p 更新！说明此时数据源并没有稳定",self);
-//        [self.changeIndexPaths addObjectsFromArray:indexPaths];
-//        return ;
-//    }
-//    
-//    int64_t flag = [runloop ssn_push_flag_for_tag:(NSUInteger)self];
-//    ssn_t_log(@"在fetctController:%p 更新数据 标记flag = %lld",self,flag);
+    if (_operating) {
+        NSLog(@"fetctController:%p 更新！说明此时数据源并没有稳定",self);
+        return ;
+    }
+    _operating = YES;
+    
     
     [self ftable_dataWillChange];
+    
+    if (_supportSection) {
+        //
+    } else {
+
     
 //    NSMutableArray *changeSections = [NSMutableArray array];
     [datas enumerateObjectsUsingBlock:^(id<FTableCellModel> model, NSUInteger idx, BOOL *stop) {
@@ -447,11 +695,12 @@ static char *ftable_cell_model_key = NULL;
         [self ftable_dataDidChangeObject:model atIndexPath:indexPath forChangeType:FTableChangeUpdate newIndexPath:indexPath];
         
     }];
+        
+    }
     
     [self ftable_dataDidChange];
     
-//    [runloop ssn_pop_flag_for_tag:(NSUInteger)self];
-//    ssn_t_log(@"在fetctController:%p 更新数据 取消标记flag = %lld",self,flag);
+    _operating = NO;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -462,11 +711,16 @@ static char *ftable_cell_model_key = NULL;
     
     switch(type) {
         case FTableChangeInsert:
-            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:self.animation];
+            NSLog(@"%p section FTableChangeInsert %ld",self,sectionIndex);
             break;
             
         case FTableChangeDelete:
-            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:self.animation];
+            NSLog(@"%p section FTableChangeDelete %ld",self,sectionIndex);
+            break;
+        case FTableChangeUpdate:
+            NSLog(@"%p section FTableChangeUpdate %ld",self,sectionIndex);
             break;
         default:break;
     }
@@ -480,25 +734,27 @@ static char *ftable_cell_model_key = NULL;
     switch (type) {
         case FTableChangeInsert:
         {
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:self.animation];
+            NSLog(@"%p row FTableChangeInsert (%ld,%ld)",self,indexPath.section,indexPath.row);
         }
             break;
         case FTableChangeDelete:
         {
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:self.animation];
+            NSLog(@"%p row FTableChangeDelete (%ld,%ld)",self,indexPath.section,indexPath.row);
         }
             break;
         case FTableChangeMove:
         {
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:self.animation];
+            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:self.animation];
         }
             break;
         case FTableChangeUpdate:
         {
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
             [cell ftable_onDisplay:object atIndexPath:indexPath inTable:self.tableView];
-//            [cell ssn_configureCellWithModel:object atIndexPath:indexPath inTableView:self.tableView];
+            NSLog(@"%p row FTableChangeUpdate (%ld,%ld)",self,indexPath.section,indexPath.row);
         }
             break;
         default:
@@ -520,6 +776,10 @@ static char *ftable_cell_model_key = NULL;
     if (tableView != self.tableView) {
         return 0;
     }
+    
+    if (_supportSection) {
+        return [_scns count];
+    }
     return 1;
 }
 
@@ -529,10 +789,21 @@ static char *ftable_cell_model_key = NULL;
         return 0;
     }
     
+    if (_supportSection) {
+        FTableSectionNode *node = [self sectionNodeOfSection:section];
+        return [node.objs count];
+    }
+    
     return [_objs count];
 }
 
-- (UITableViewCell *)loadCellWithTableView:(UITableView *)tableView cellModel:(id<FTableCellModel>)cellModel {
+- (id<FTableCellProtected>)loadCellWithTableView:(UITableView *)tableView cellModel:(id<FTableCellModel>)cellModel {
+    
+    BOOL isSectionHeader = false;
+    if ([cellModel respondsToSelector:@selector(ftable_isSectionHeader)]) {
+        isSectionHeader = [cellModel ftable_isSectionHeader];
+    }
+    
     //优先从nib加载
     NSString *nibName = nil;
     Class clazz = nil;
@@ -546,13 +817,27 @@ static char *ftable_cell_model_key = NULL;
     
     NSString *cellId = @"ftablecell";
     if ([nibName length] > 0) {
-        cellId = [NSString stringWithFormat:@"ftable-%@",nibName];
+        if (isSectionHeader) {
+            cellId = [NSString stringWithFormat:@"ftable-section-nib-%@",nibName];
+        } else {
+            cellId = [NSString stringWithFormat:@"ftable-nib%@",nibName];
+        }
     } else if (clazz) {
-        cellId = [NSString stringWithFormat:@"ftable-%@",NSStringFromClass(clazz)];
+        if (isSectionHeader) {
+            cellId = [NSString stringWithFormat:@"ftable-section-cls-%@",NSStringFromClass(clazz)];
+        } else {
+            cellId = [NSString stringWithFormat:@"ftable-cls-%@",NSStringFromClass(clazz)];
+        }
     }
     
     //先取复用队列
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
+    id<FTableCellProtected> cell = nil;
+    if (isSectionHeader) {//投机取巧，实际UITableViewHeaderFooterView包含接口UITableViewCell都包含
+        cell = [tableView dequeueReusableHeaderFooterViewWithIdentifier:cellId];
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:cellId];
+    }
+    
     if (cell) {
         return cell;
     }
@@ -560,7 +845,7 @@ static char *ftable_cell_model_key = NULL;
     
     if ([nibName length] > 0) {
         NSArray *views =  [[NSBundle mainBundle] loadNibNamed:nibName owner:nil options:nil];
-        cell = (UITableViewCell *)[views objectAtIndex:0];
+        cell = [views objectAtIndex:0];
     }
     if (cell) {
         return cell;
@@ -568,14 +853,17 @@ static char *ftable_cell_model_key = NULL;
     
     //自己创建
     if (clazz) {
-        cell = [[clazz alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        cell = [[clazz alloc] initWithReuseIdentifier:@"cell"];
     }
     if (cell) {
+        NSAssert([cell conformsToProtocol:@protocol(FTableCellProtected)], @"请确保FTableModel用于展示view遵循FTableCellProtected协议");
         return cell;
     }
     
     //默认返回
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+    if (!isSectionHeader) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+    }
     return cell;
 }
 
@@ -585,13 +873,13 @@ static char *ftable_cell_model_key = NULL;
         return [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
     
-    id<FTableCellModel> model = [self modelAtIndex:indexPath.row];
+    id<FTableCellModel> model = [self modelOfIndexPath:indexPath];
     
-    UITableViewCell *cell = [self loadCellWithTableView:tableView cellModel:model];
+    id<FTableCellProtected> cell = [self loadCellWithTableView:tableView cellModel:model];
     
     [cell ftable_onDisplay:model atIndexPath:indexPath inTable:tableView];
     
-    return cell;
+    return (UITableViewCell *)cell;
     
 }
 
@@ -600,7 +888,7 @@ static char *ftable_cell_model_key = NULL;
         return 44;
     }
     
-    id<FTableCellModel> model = [self modelAtIndex:indexPath.row];
+    id<FTableCellModel> model = [self modelOfIndexPath:indexPath];
     CGFloat height = 44.0f;
     if ([model respondsToSelector:@selector(ftable_cellHeight)]) {
         height = [model ftable_cellHeight];
@@ -628,11 +916,11 @@ static char *ftable_cell_model_key = NULL;
         return ;
     }
     
-    if ([self.delegate respondsToSelector:@selector(ftable_adapter:tableView:commitEditingStyle:forRowAtIndexPath:)]) {
+    if ([self.delegate respondsToSelector:@selector(ftable_adapter:tableView:commitEditingStyle:forRowAtIndex:)]) {
         @try {
-            [self.delegate ftable_adapter:self tableView:tableView commitEditingStyle:editingStyle forRowAtIndexPath:indexPath];
+            [self.delegate ftable_adapter:self tableView:tableView commitEditingStyle:editingStyle forRowAtIndex:[self indexOfIndexPath:indexPath]];
         } @catch (NSException *exception) {
-            NSLog(@"%@",exception);
+            NSLog(@"0x2:%@",exception);
         } @finally {
             //
         }
@@ -645,7 +933,7 @@ static char *ftable_cell_model_key = NULL;
         return nil;
     }
     
-    id<FTableCellModel> model = [self modelAtIndex:indexPath.row];
+    id<FTableCellModel> model = [self modelOfIndexPath:indexPath];
     if ([model respondsToSelector:@selector(ftable_cellDeleteConfirmationButtonTitle)]) {
         return [model ftable_cellDeleteConfirmationButtonTitle];
     }
@@ -657,7 +945,7 @@ static char *ftable_cell_model_key = NULL;
         return NO;
     }
     
-    id<FTableCellModel> model = [self modelAtIndex:indexPath.row];
+    id<FTableCellModel> model = [self modelOfIndexPath:indexPath];
     if ([model respondsToSelector:@selector(ftable_cellDeleteConfirmationButtonTitle)]) {
         return [model ftable_cellDeleteConfirmationButtonTitle] > 0;
     }
@@ -668,17 +956,167 @@ static char *ftable_cell_model_key = NULL;
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    id<FTableCellModel> model = [self modelAtIndex:indexPath.row];
+    id<FTableCellModel> model = [self modelOfIndexPath:indexPath];
     
-    if ([self.delegate respondsToSelector:@selector(ftable_adapter:tableView:didSelectModel:atIndexPath:)]) {
+    if ([self.delegate respondsToSelector:@selector(ftable_adapter:tableView:didSelectModel:atIndex:)]) {
         @try {
-            [self.delegate ftable_adapter:self tableView:tableView didSelectModel:model atIndexPath:indexPath];
+            [self.delegate ftable_adapter:self tableView:tableView didSelectModel:model atIndex:[self indexOfIndexPath:indexPath]];
+            NSLog(@"did selected (%@,%@)",@(indexPath.section),@(indexPath.row));
         } @catch (NSException *exception) {
-            NSLog(@"%@",exception);
+            NSLog(@"0x3:%@",exception);
         } @finally {
             //
         }
     }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// section header 支持
+//////////////////////////////////////////////////////////////////////////////////////////
+- (BOOL)checkIsSectionCellModel:(id<FTableCellModel>)cellModel {
+    if (!_supportSection) {
+        return NO;
+    }
+    
+    BOOL isSection = false;
+    if ([cellModel respondsToSelector:@selector(ftable_isSectionHeader)]) {
+        isSection = [cellModel ftable_isSectionHeader];
+    }
+    return isSection;
+}
+
+- (FTableSectionNode *)sectionNodeOfIndex:(NSUInteger)index {
+    if (!_supportSection) {
+        return nil;
+    }
+    for (NSUInteger idx = 0; idx < [_scns count]; idx++) {
+        FTableSectionNode *node = [_scns objectAtIndex:idx];
+        if ((NSInteger)index >= node.index && (NSInteger)index < (node.index + 1 + [node.objs count])) {
+            return node;
+        }
+    }
+    return [_scns lastObject];
+}
+
+- (FTableSectionNode *)sectionNodeOfSection:(NSUInteger)section {
+    if (!_supportSection) {
+        return nil;
+    }
+    if (section >= [_scns count]) {
+        return nil;
+    }
+    return [_scns objectAtIndex:section];
+}
+
+- (NSUInteger)sectionOfIndex:(NSUInteger)index {
+    if (!_supportSection) {
+        return 0;
+    }
+    NSUInteger idx = 0;
+    for (; idx < [_scns count]; idx++) {
+        FTableSectionNode *node = [_scns objectAtIndex:idx];
+        if ((NSInteger)index >= node.index && index < (node.index + 1 + [node.objs count])) {
+            return idx;
+        }
+    }
+    return idx > 0 ? idx - 1 : idx;//最后一个
+}
+
+- (NSUInteger)indexOfIndexPath:(NSIndexPath *)indexPath {
+    if (!_supportSection) {
+        if (indexPath.section != 0) {
+            return NSNotFound;
+        }
+        return indexPath.row;
+    }
+    
+    if (indexPath.section < 0 || indexPath.section >= [_scns count]) {
+        return NSNotFound;
+    }
+    
+    FTableSectionNode *node = [_scns objectAtIndex:indexPath.section];
+    return node.index + 1 + indexPath.row;
+}
+
+- (id<FTableCellModel>)modelOfIndexPath:(NSIndexPath *)indexPath {
+    if (!_supportSection) {
+        if (indexPath.section != 0) {
+            return nil;
+        }
+        if (indexPath.row < 0 || indexPath.row >= [_objs count]) {
+            return nil;
+        }
+        return [_objs objectAtIndex:indexPath.row];
+    }
+    
+    if (indexPath.section < 0 || indexPath.section >= [_scns count]) {
+        return nil;
+    }
+    
+    FTableSectionNode *node = [_scns objectAtIndex:indexPath.section];
+    if (indexPath.row < 0 || indexPath.row >= [node.objs count]) {
+        return nil;
+    }
+    return [node.objs objectAtIndex:indexPath.row];
+}
+
+- (id<FTableCellModel>)modelAtSection:(NSUInteger)section {
+    if (!_supportSection) {
+        return nil;
+    }
+    
+    if ([_scns count] == 0) {
+        return nil;
+    }
+    
+    if (section >= [_scns count]) {
+        return nil;
+    }
+    
+    return [[_scns objectAtIndex:section] model];
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if (tableView != self.tableView) {
+        return 0.0f;
+    }
+    
+    if (!_supportSection) {
+        return 0.0f;
+    }
+    
+    id<FTableCellModel> model = [self modelAtSection:section];
+    CGFloat height = 0.0f;
+    if ([model respondsToSelector:@selector(ftable_cellHeight)]) {
+        height = [model ftable_cellHeight];
+    }
+    
+    if (height <= 0) {
+        height = tableView.sectionHeaderHeight;
+    }
+    return height;
+}
+
+- (nullable UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    //- (nullable __kindof UITableViewHeaderFooterView *)dequeueReusableHeaderFooterViewWithIdentifier:(NSString *)identifier NS_AVAILABLE_IOS(6_0);  // like dequeueReusableCellWithIdentifier:, but for headers/footers
+    if (tableView != self.tableView) {
+        return nil;
+    }
+    
+    if (!_supportSection) {
+        return nil;
+    }
+    
+    id<FTableCellModel> model = [self modelAtSection:section];
+    
+    id<FTableCellProtected> cell = [self loadCellWithTableView:tableView cellModel:model];
+    
+    NSIndexPath *index = [NSIndexPath indexPathForRow:-1 inSection:section];
+    [cell ftable_onDisplay:model atIndexPath:index inTable:tableView];
+    
+    return (UITableViewHeaderFooterView *)cell;
 }
 
 @end

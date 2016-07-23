@@ -39,6 +39,7 @@
 #import "SSNRouter+Nice.h"
 #import "DMSignEngine.h"
 #import "ssnbase.h"
+#import "DMTableAdapterController.h"
 
 
 @interface AppDelegate ()<SSNRouterDelegate> {
@@ -74,6 +75,8 @@
     
     [self.ssn_router addComponent:@"layout" pageClass:[DMLayoutViewController class]];
     [self.ssn_router addComponent:@"uidic" pageClass:[DMUIDicViewController class]];
+    
+    [self.ssn_router addComponent:@"adapter" pageClass:[DMTableAdapterController class]];
 
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];

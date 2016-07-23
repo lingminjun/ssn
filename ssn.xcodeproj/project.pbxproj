@@ -297,6 +297,7 @@
 		53DBD62819EA610100728F96 /* ssnDTTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DBD62719EA610100728F96 /* ssnDTTest.m */; };
 		53E517541A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
 		53E517551A5BECDF00CF47AC /* UIButton+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */; };
+		53E6D6CB1D3D0C620039077D /* DMTableAdapterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E6D6CA1D3D0C620039077D /* DMTableAdapterController.m */; };
 		53EAFD851D30EABE0002E66D /* SSNSafeKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAFD841D30EABE0002E66D /* SSNSafeKVO.m */; };
 		53ECB176191FC11500BEB29D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECB175191FC11500BEB29D /* libsqlite3.dylib */; };
 		53EE01911BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EE01901BD2A2050010CB46 /* UIView+SSNLayoutConstraint.m */; };
@@ -623,6 +624,8 @@
 		53DBD62719EA610100728F96 /* ssnDTTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ssnDTTest.m; sourceTree = "<group>"; };
 		53E517521A5BECDF00CF47AC /* UIButton+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+SSNUIKit.h"; sourceTree = "<group>"; };
 		53E517531A5BECDF00CF47AC /* UIButton+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+SSNUIKit.m"; sourceTree = "<group>"; };
+		53E6D6C91D3D0C620039077D /* DMTableAdapterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMTableAdapterController.h; sourceTree = "<group>"; };
+		53E6D6CA1D3D0C620039077D /* DMTableAdapterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMTableAdapterController.m; sourceTree = "<group>"; };
 		53EAFD831D30EABE0002E66D /* SSNSafeKVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNSafeKVO.h; sourceTree = "<group>"; };
 		53EAFD841D30EABE0002E66D /* SSNSafeKVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNSafeKVO.m; sourceTree = "<group>"; };
 		53ECB175191FC11500BEB29D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
@@ -927,6 +930,8 @@
 				533BFAEC1D33EC590088E7B2 /* DMSettingViewController+TOne.m */,
 				533BFAEE1D33ECA70088E7B2 /* DMSettingViewController+TTwo.h */,
 				533BFAEF1D33ECA70088E7B2 /* DMSettingViewController+TTwo.m */,
+				53E6D6C91D3D0C620039077D /* DMTableAdapterController.h */,
+				53E6D6CA1D3D0C620039077D /* DMTableAdapterController.m */,
 			);
 			path = setting;
 			sourceTree = "<group>";
@@ -1627,6 +1632,7 @@
 				53F5F1571A5ACECD009EE27A /* UIImage+SSNUIColor.m in Sources */,
 				533BFAF01D33ECA70088E7B2 /* DMSettingViewController+TTwo.m in Sources */,
 				53BC52FC1A485E6E0044C238 /* NSObject+SSNTracking.m in Sources */,
+				53E6D6CB1D3D0C620039077D /* DMTableAdapterController.m in Sources */,
 				534CA1651A6CAC9500CB55B3 /* SSNJob.m in Sources */,
 				53BC53261A485E6E0044C238 /* SSNDBTable+Factory.m in Sources */,
 				5388C59B1A0499B90072C3F9 /* DMChatViewController.m in Sources */,

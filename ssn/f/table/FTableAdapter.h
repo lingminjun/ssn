@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol FTableCell,FTableCellModel,FTableAdapterDelegate;
+@protocol FTableCell,FTableCellModel,FTableCellProtected,FTableAdapterDelegate;
 
 /**
  *  UITableView适配器，更好的使用table view，也可以成为结果集管理器
@@ -16,8 +16,13 @@
  */
 @interface FTableAdapter : NSObject
 
+- (instancetype)init;
+- (instancetype)initWithSectionStyle:(BOOL)supportSection;
+
+@property (nonatomic, readonly) BOOL supportSection;
 @property (nonatomic, strong) UITableView *tableView;//所作用的table view
 @property (nonatomic, weak) id<FTableAdapterDelegate> delegate;//回调
+
 
 
 - (void)refreash;//刷新界面，也就是通知table更新
@@ -35,17 +40,14 @@
 - (void)insertModel:(id<FTableCellModel>)model atIndex:(NSUInteger)index;//在对应的位置插入数据
 - (void)insertModels:(NSArray<id<FTableCellModel> > *)models atIndex:(NSUInteger)index;//在对应位置插入数据集
 
-/**
- *  更新对应位置的数据
- *
- *  @param model 可以传入空
- *  @param index 对应位置数据更新
- */
 - (void)updateModel:(id<FTableCellModel>)model atIndex:(NSUInteger)index;//更新对应位置的数据
 
 - (void)deleteModel:(id<FTableCellModel>)model;//删除对应的数据
 - (void)deleteModelAtIndex:(NSUInteger)index;//删除对应位置的数据
 - (void)deleteModelsInRange:(NSRange)range;//删除对应位置的批量数据
+
+@property (nonatomic) UITableViewRowAnimation animation;//当table发生变化时动画配置，默认UITableViewRowAnimationFade
+
 @end
 
 /**
@@ -71,10 +73,20 @@
 
 @end
 
+@protocol FTableCellProtected <FTableCell>
+- (void)ftable_onDisplay:(id<FTableCellModel>)cellModel atIndexPath:(NSIndexPath *)indexPath inTable:(UITableView *)tableView;
+@end
+
 /**
- *  支持FTableCell，若协议支持
+ *  支持FTableCell，弱协议支持
  */
-@interface UITableViewCell (FTableCell) <FTableCell>
+@interface UITableViewCell (FTableCell) <FTableCellProtected>
+@end
+
+/**
+ *  支持FTableCell，弱协议支持
+ */
+@interface UITableViewHeaderFooterView (FTableCell) <FTableCellProtected>
 @end
 
 
@@ -95,7 +107,7 @@
  *
  *  @return 返回可复用的cell类型
  */
-- (Class<FTableCell>)ftable_displayCellClass;
+- (Class<FTableCellProtected>)ftable_displayCellClass;
 
 /**
  *  返回cell需要展示的高度
@@ -111,6 +123,14 @@
  */
 - (NSString *)ftable_cellDeleteConfirmationButtonTitle;
 
+/**
+ *  当前是section header，将会悬乎到顶部，注意若为header，呈现的View不能是UITableViewCell类型，请用UITableViewHeaderFooterView类型
+ *  否则发生错误“No index path for table cell being reused”，
+ *
+ *  @return 是否为section header，请返回既定值，否则容易发生错误
+ */
+- (BOOL)ftable_isSectionHeader;
+
 @end
 
 
@@ -119,24 +139,26 @@
  */
 @protocol FTableAdapterDelegate <NSObject>
 
+@optional
 /**
  *  选中某个cell回调
  *
  *  @param adapter   适配器
  *  @param tableView 对应的表
  *  @param model     选中的数据
- *  @param indexPath 位置
+ *  @param index     位置
  */
-- (void)ftable_adapter:(FTableAdapter *)adapter tableView:(UITableView *)tableView didSelectModel:(id<FTableCellModel>)model atIndexPath:(NSIndexPath *)indexPath;
+- (void)ftable_adapter:(FTableAdapter *)adapter tableView:(UITableView *)tableView didSelectModel:(id<FTableCellModel>)model atIndex:(NSUInteger)index;
 
+@optional
 /**
  *  删除动作回调
  *
  *  @param adapter      配置器
  *  @param tableView    所作用的表
  *  @param editingStyle 编辑类型
- *  @param indexPath    选择数据的位置
+ *  @param index        选择数据的位置
  */
-- (void)ftable_adapter:(FTableAdapter *)adapter tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)ftable_adapter:(FTableAdapter *)adapter tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndex:(NSUInteger)index;
 @end
 
