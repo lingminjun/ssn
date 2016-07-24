@@ -103,8 +103,15 @@
         for (int i = 0; i < 5; i++) {
             DMAdapterCellModel *model = [[DMAdapterCellModel alloc] init];
             model.name = [NSString stringWithFormat:@"test 2%d",i];
-            [_dataper insertModel:model atIndex:4];
+            [_dataper insertModel:model atIndex:3];
         }
+        
+        for (int i = 0; i < 5; i++) {
+            DMAdapterCellModel *model = [[DMAdapterCellModel alloc] init];
+            model.name = [NSString stringWithFormat:@"utest 2%d",i];
+            [_dataper insertModel:model atIndex:9];
+        }
+        
         for (int i = 0; i < 5; i++) {
             DMAdapterCellModel *model = [[DMAdapterCellModel alloc] init];
             model.name = [NSString stringWithFormat:@"test 22%d",i];
@@ -124,15 +131,38 @@
     });
 }
 
-- (void)ftable_adapter:(FTableAdapter *)adapter tableView:(UITableView *)tableView didSelectModel:(id<FTableCellModel>)model atIndexPath:(NSIndexPath *)indexPath {
+- (void)ftable_adapter:(FTableAdapter *)adapter tableView:(UITableView *)tableView didSelectModel:(id<FTableCellModel>)model atIndex:(NSUInteger)index {
     DMAdapterCellModel *cellModel = (DMAdapterCellModel *)model;
     if ([cellModel.name hasPrefix:@"test 2"]) {
         [_dataper deleteModel:cellModel];
     } else if ([cellModel.name hasPrefix:@"test 3"]) {
         DMAdapterCellModel *model = [[DMAdapterCellModel alloc] init];
-        model.name = [NSString stringWithFormat:@"test 2%ld",indexPath.row];
-        [_dataper insertModel:model atIndex:(indexPath.row - 5)];
+        model.name = [NSString stringWithFormat:@"test 2%ld",index];
+        [_dataper insertModel:model atIndex:(index - 5)];
+    } else if ([cellModel.name hasPrefix:@"utest 21"]) {
+        
+        DMAdapterSectionModel *model = [[DMAdapterSectionModel alloc] init];
+        model.name = [NSString stringWithFormat:@"update section first"];
+        [_dataper updateModel:model atIndex:0];
+    } else if ([cellModel.name hasPrefix:@"utest 2"]) {
+        
+        if ([[_dataper modelAtIndex:index - 1] isKindOfClass:[DMAdapterSectionModel class]]) {
+            DMAdapterCellModel *model = [[DMAdapterCellModel alloc] init];
+            model.name = [NSString stringWithFormat:@"update cell test 2%ld",index - 1];
+            [_dataper updateModel:model atIndex:index - 1];
+            
+        } else {
+            
+            DMAdapterSectionModel *model = [[DMAdapterSectionModel alloc] init];
+            model.name = [NSString stringWithFormat:@"update section test 2%ld",index];
+            [_dataper updateModel:model atIndex:index];
+        }
+    } else if ([cellModel.name hasPrefix:@"update section test"]) {
+        DMAdapterCellModel *model = [[DMAdapterCellModel alloc] init];
+        model.name = [NSString stringWithFormat:@"update cell test 2%ld",index];
+        [_dataper updateModel:model atIndex:index];
     }
+
     
 }
 

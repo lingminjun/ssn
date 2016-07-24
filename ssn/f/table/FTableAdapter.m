@@ -23,7 +23,7 @@ typedef NS_ENUM(NSUInteger, FTableChangeType){
      */
     FTableChangeInsert = 1,
     /**
-     *  数据更新
+     *  数据删除
      */
     FTableChangeDelete = 2,
     /**
@@ -165,6 +165,7 @@ static char *ftable_cell_model_key = NULL;
         _objs = [[NSMutableArray alloc] init];
         _scns = [[NSMutableArray alloc] init];
         _supportSection = supportSection;
+        _animation = UITableViewRowAnimationFade;
     }
     return self;
 }
@@ -219,7 +220,7 @@ static char *ftable_cell_model_key = NULL;
 
 - (id<FTableCellModel>)modelAtIndex:(NSUInteger)index {
     if (_supportSection) {
-        if (index > [_scns count]) {
+        if (index > [self count]) {
             return nil;
         }
         FTableSectionNode *node = [self sectionNodeOfIndex:index];
@@ -348,17 +349,60 @@ static char *ftable_cell_model_key = NULL;
  *  @param index 对应位置数据更新
  */
 - (void)updateModel:(id<FTableCellModel>)model atIndex:(NSUInteger)index {
-    if (index >= [_objs count]) {
+    if (index >= [self count]) {
         return;
     }
     
     id<FTableCellModel> md = model;
     if (md == nil) {
-        md = [_objs objectAtIndex:index];
+        md = [self modelAtIndex:index];
     }
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-    [self updateDatas:@[md] atIndexPaths:@[indexPath]];
+    [self updateDatas:@[md] atIndexs:[NSIndexSet indexSetWithIndex:index]];
+}
+
+- (void)updateModelsAtIndexs:(NSIndexSet *)indexs {
+    if ([indexs count] == 0) {
+        return;
+    }
+    @autoreleasepool {
+        NSMutableArray *objs = [NSMutableArray array];
+        NSMutableIndexSet *idxs = [NSMutableIndexSet indexSet];
+        NSUInteger count = [self count];
+        
+        NSUInteger idx = [indexs firstIndex];
+        while (idx != NSNotFound) {
+            if (idx >= count) {
+                break;//无需继续遍历，超出边界
+            } else {
+                [idxs addIndex:idx];
+                id<FTableCellModel> md = [self modelAtIndex:index];
+                [objs addObject:md];
+            }
+            idx = [indexs indexGreaterThanIndex:idx];//升序
+        }
+        [self updateDatas:objs atIndexs:idxs];
+    }
+}
+- (void)updateModelsInRange:(NSRange)range {
+    if (range.length == 0 || range.location >= [self count]) {
+        return;
+    }
+    @autoreleasepool {
+        NSMutableArray *objs = [NSMutableArray array];
+        NSMutableIndexSet *idxs = [NSMutableIndexSet indexSet];
+        NSUInteger count = [self count];
+        for (NSUInteger idx = 0; idx < range.length; idx++) {
+            if ((idx + range.location) >= count) {
+                break;//无需继续遍历，超出边界
+            }
+            [idxs addIndex:(idx + range.location)];
+            id<FTableCellModel> md = [self modelAtIndex:(idx + range.location)];
+            [objs addObject:md];
+        }
+        
+        [self updateDatas:objs atIndexs:idxs];
+    }
 }
 
 - (void)deleteModel:(id<FTableCellModel>)model {
@@ -646,9 +690,9 @@ static char *ftable_cell_model_key = NULL;
  *
  *  @param indexPaths 位置
  */
-- (void)updateDatas:(NSArray<id<FTableCellModel> > *)datas atIndexPaths:(NSArray *)indexPaths {
+- (void)updateDatas:(NSArray<id<FTableCellModel> > *)datas atIndexs:(NSIndexSet *)indexs {
     
-    if ([indexPaths count] != [datas count] || [indexPaths count] == 0) {
+    if ([indexs count] != [datas count] || [indexs count] == 0) {
         return ;
     }
     
@@ -662,40 +706,144 @@ static char *ftable_cell_model_key = NULL;
     [self ftable_dataWillChange];
     
     if (_supportSection) {
-        //
-    } else {
+        NSUInteger idx = [indexs firstIndex];
+        NSUInteger d_idx = 0;
+        NSMutableSet *sections = [NSMutableSet set];
+        while (idx != NSNotFound) {
+            
+            //取出新数据
+            id<FTableCellModel> new_model = [datas objectAtIndex:d_idx];
+            
+            //取到修改的section
+            FTableSectionNode *node = [self sectionNodeOfIndex:idx];
+            NSInteger section = [_scns indexOfObject:node];
+            
+            //如果节点正好是model，那就直接替换
+            if (node.index == (NSInteger)idx) {
+                //还要看看新数据是否为section
+                if ([self checkIsSectionCellModel:new_model]) {
+                    node.model = new_model;
+                    [self ftable_dataDidChangeSection:new_model atIndex:section forChangeType:FTableChangeUpdate];
+                } else {//从不同节点变成section，比较麻烦
+                    
+                    if (idx == 0) {//如果是第一个，也比较好办
+                        node.model = nil;
+                        node.index = -1;
+                        [self ftable_dataDidChangeSection:nil atIndex:0 forChangeType:FTableChangeUpdate];
+                        
+                        //插入第一个元素
+                        [node.objs insertObject:new_model atIndex:0];
+                        NSIndexPath *newIndex = [NSIndexPath indexPathForRow:idx inSection:0];
+                        [self ftable_dataDidChangeObject:new_model atIndexPath:newIndex forChangeType:FTableChangeInsert newIndexPath:newIndex];
+                        
+                    } else {//不是第一个，需要拆除原来section，并把数据给上一个section
+                        if (section == 0) {
+                            NSLog(@"错误逻辑校验，此时section不应该为0");
+                        }
+                        //删除原sction
+                        [self ftable_dataDidChangeSection:node.model atIndex:section forChangeType:FTableChangeDelete];
+                        [_scns removeObjectAtIndex:section];
+                        
+                        //前一个更新
+                        FTableSectionNode *pre_node = [_scns objectAtIndex:section - 1];
+                        [self ftable_dataDidChangeSection:pre_node.model atIndex:(section - 1) forChangeType:FTableChangeUpdate];
+                        
+                        //前一个开始插入数据
+                        NSInteger row = [pre_node.objs count];
+                        [pre_node.objs addObject:new_model];
+                        NSIndexPath *newIndex = [NSIndexPath indexPathForRow:row inSection:(section - 1)];
+                        [self ftable_dataDidChangeObject:new_model atIndexPath:newIndex forChangeType:FTableChangeInsert newIndexPath:newIndex];
+                        
+                        row += 1;
+                        [node.objs enumerateObjectsUsingBlock:^(id<FTableCellModel>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                            [pre_node.objs addObject:obj];
+                            NSIndexPath *newIndex = [NSIndexPath indexPathForRow:(row + idx) inSection:(section - 1)];
+                            [self ftable_dataDidChangeObject:new_model atIndexPath:newIndex forChangeType:FTableChangeInsert newIndexPath:newIndex];
+                        }];
+                    }
+                }
+            }
+            //查找节点修改点
+            else if ((NSInteger)idx > node.index && idx < (node.index + 1 + [node.objs count])) {
+                NSUInteger loc = (NSInteger)idx - (node.index + 1);
+                NSUInteger len = [node.objs count] - loc;
+                NSRange back_models_range = NSMakeRange(loc, len);
+                NSArray<id<FTableCellModel>> * back_models = [node.objs subarrayWithRange:back_models_range];
+                
+                //若更新成节点了，此时则需要将数据分割
+                if ([self checkIsSectionCellModel:new_model]) {
+                    //检查一下是不是第一个
+                    if (idx == 0) {
+                        if (node.index != -1) {
+                            NSLog(@"异常流check,不应该进入，此时只可能是-1");
+                        }
+                        
+                        node.model = new_model;
+                        node.index = 0;
+                        
+                        //删除原来位置的对象
+                        id<FTableCellModel> oldObj = [node.objs objectAtIndex:0];
+                        [node.objs removeObjectAtIndex:0];
+                        NSIndexPath *newIndex = [NSIndexPath indexPathForRow:0 inSection:0];
+                        [self ftable_dataDidChangeObject:oldObj atIndexPath:newIndex forChangeType:FTableChangeDelete newIndexPath:nil];
+                        
+                        //删完数据在更新，否则没意义
+                        [self ftable_dataDidChangeSection:new_model atIndex:0 forChangeType:FTableChangeUpdate];
+                    } else {
+                        [self ftable_dataDidChangeSection:node.model atIndex:section forChangeType:FTableChangeUpdate];
+                        
+                        //删除剩余部分
+                        for (NSUInteger i = back_models_range.location; i < back_models_range.location + back_models_range.length; i++) {
+                            id<FTableCellModel> obj = [node.objs objectAtIndex:i];
+                            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:section];
+                            [self ftable_dataDidChangeObject:obj atIndexPath:indexPath forChangeType:FTableChangeDelete newIndexPath:nil];
+                        }
+                        
+                        [node.objs removeObjectsInRange:back_models_range];//删掉全部数据
+                        
+                        //插入新的section
+                        FTableSectionNode *new_node = [FTableSectionNode nodeWithModel:new_model atIndex:idx];
+                        [_scns insertObject:new_node atIndex:section + 1];
+                        [self ftable_dataDidChangeSection:new_node.model atIndex:section + 1 forChangeType:FTableChangeInsert];
+                        
+                        //删掉第一位
+                        for (NSInteger i = 1; i < [back_models count]; i++) {
+                            id<FTableCellModel> obj = [back_models objectAtIndex:i];
+                            [new_node.objs addObject:obj];
+                            NSIndexPath *newIndex = [NSIndexPath indexPathForRow:(i-1) inSection:section + 1];
+                            [self ftable_dataDidChangeObject:obj atIndexPath:newIndex forChangeType:FTableChangeInsert newIndexPath:newIndex];
+                        }
+                    }
+                } else {
+                    [self ftable_dataDidChangeSection:node.model atIndex:section forChangeType:FTableChangeUpdate];
+                    
+                    [node.objs replaceObjectAtIndex:loc withObject:new_model];
+                    NSIndexPath *newIndex = [NSIndexPath indexPathForRow:loc inSection:section];
+                    [self ftable_dataDidChangeObject:new_model atIndexPath:newIndex forChangeType:FTableChangeUpdate newIndexPath:newIndex];
+                }
+            } else {//
+                NSLog(@"更细不应该进入到此逻辑，检查前面条件限制%ld",idx);
+            }
+            
+            //下一个，从小到大遍历
+            idx = [indexs indexGreaterThanIndex:idx];
+            d_idx++;
+        }
 
-    
-//    NSMutableArray *changeSections = [NSMutableArray array];
-    [datas enumerateObjectsUsingBlock:^(id<FTableCellModel> model, NSUInteger idx, BOOL *stop) {
-        NSIndexPath *indexPath = [indexPaths objectAtIndex:idx];
-        
-        id<FTableCellModel> oldModel = [self modelAtIndex:indexPath.row];
-        if (!oldModel) {
-            return ;
+    } else {
+        NSUInteger idx = [indexs firstIndex];
+        NSUInteger d_idx = 0;
+        while (idx != NSNotFound) {
+            id<FTableCellModel> model = [datas objectAtIndex:d_idx];
+            [_objs replaceObjectAtIndex:idx withObject:model];
+            
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+            [self ftable_dataDidChangeObject:model atIndexPath:indexPath forChangeType:FTableChangeUpdate newIndexPath:indexPath];
+            
+            //下一个，从小到大遍历
+            idx = [indexs indexGreaterThanIndex:idx];
+            d_idx++;
         }
-        
-        if (!model) {
-            return ;
-        }
-        
-//        SSNSectionModel *sectionInfo = [_list objectAtIndex:indexPath.section];//
-//        if (!sectionInfo) {
-//            return ;
-//        }
-        
-//        if (![changeSections containsObject:sectionInfo]) {
-//            [changeSections addObject:sectionInfo];
-//            
-//            //让section更新一下（修改header）
-//            [_delegate ssnlist_controller:self didChangeSection:sectionInfo atIndex:indexPath.section forChangeType:FTableChangeUpdate];
-//        }
-        
-        [_objs replaceObjectAtIndex:indexPath.row withObject:model];
-        [self ftable_dataDidChangeObject:model atIndexPath:indexPath forChangeType:FTableChangeUpdate newIndexPath:indexPath];
-        
-    }];
-        
     }
     
     [self ftable_dataDidChange];
@@ -711,12 +859,12 @@ static char *ftable_cell_model_key = NULL;
     
     switch(type) {
         case FTableChangeInsert:
-            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:self.animation];
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationNone];
             NSLog(@"%p section FTableChangeInsert %ld",self,sectionIndex);
             break;
             
         case FTableChangeDelete:
-            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:self.animation];
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationNone];
             NSLog(@"%p section FTableChangeDelete %ld",self,sectionIndex);
             break;
         case FTableChangeUpdate:

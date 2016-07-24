@@ -41,6 +41,8 @@
 - (void)insertModels:(NSArray<id<FTableCellModel> > *)models atIndex:(NSUInteger)index;//在对应位置插入数据集
 
 - (void)updateModel:(id<FTableCellModel>)model atIndex:(NSUInteger)index;//更新对应位置的数据
+- (void)updateModelsAtIndexs:(NSIndexSet *)indexs;//更新对应位置的数据
+- (void)updateModelsInRange:(NSRange)range;//更新对应位置的数据
 
 - (void)deleteModel:(id<FTableCellModel>)model;//删除对应的数据
 - (void)deleteModelAtIndex:(NSUInteger)index;//删除对应位置的数据
