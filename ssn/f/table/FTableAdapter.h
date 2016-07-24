@@ -47,6 +47,7 @@
 - (void)deleteModel:(id<FTableCellModel>)model;//删除对应的数据
 - (void)deleteModelAtIndex:(NSUInteger)index;//删除对应位置的数据
 - (void)deleteModelsInRange:(NSRange)range;//删除对应位置的批量数据
+- (void)deleteModelsAtIndexs:(NSIndexSet *)indexs;//删除对应位置的批量数据
 
 @property (nonatomic) UITableViewRowAnimation animation;//当table发生变化时动画配置，默认UITableViewRowAnimationFade
 

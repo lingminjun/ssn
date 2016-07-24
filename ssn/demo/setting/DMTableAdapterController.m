@@ -95,6 +95,7 @@
     
     _dataper.tableView = self.tableView;
     _dataper.delegate = self;
+    _dataper.animation = UITableViewRowAnimationNone;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         DMAdapterSectionModel *model = [[DMAdapterSectionModel alloc] init];
@@ -164,6 +165,10 @@
     }
 
     
+}
+
+- (void)ftable_adapter:(FTableAdapter *)adapter tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndex:(NSUInteger)index {
+    [_dataper deleteModelAtIndex:index];
 }
 
 @end

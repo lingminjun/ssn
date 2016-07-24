@@ -255,7 +255,7 @@ static char *ftable_cell_model_key = NULL;
             if ([node.objs count] > 0) {
                 NSUInteger i = [node.objs indexOfObject:model];
                 if (i != NSNotFound) {
-                    return (node.index + i);
+                    return i;
                 }
             }
         }
@@ -376,7 +376,7 @@ static char *ftable_cell_model_key = NULL;
                 break;//无需继续遍历，超出边界
             } else {
                 [idxs addIndex:idx];
-                id<FTableCellModel> md = [self modelAtIndex:index];
+                id<FTableCellModel> md = [self modelAtIndex:idx];
                 [objs addObject:md];
             }
             idx = [indexs indexGreaterThanIndex:idx];//升序
@@ -406,41 +406,57 @@ static char *ftable_cell_model_key = NULL;
 }
 
 - (void)deleteModel:(id<FTableCellModel>)model {
-    NSUInteger idx = [_objs indexOfObject:model];
+    NSUInteger idx = [self indexOfModel:model];
     
-    if (idx > [_objs count]) {
+    if (idx >= [self count]) {
         return;
     }
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
-    [self deleteDatasAtIndexPaths:@[indexPath]];
+    [self deleteDatasAtIndexs:[NSIndexSet indexSetWithIndex:idx]];
 }
 
 - (void)deleteModelAtIndex:(NSUInteger)index {
-    if (index > [_objs count]) {
+    if (index >= [self count]) {
         return;
     }
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-    [self deleteDatasAtIndexPaths:@[indexPath]];
+    [self deleteDatasAtIndexs:[NSIndexSet indexSetWithIndex:index]];
 }
 
 - (void)deleteModelsInRange:(NSRange)range {
-    if (range.location > [_objs count] || range.length == 0) {
+    if (range.location >= [self count] || range.length == 0) {
         return;
     }
     
-    NSMutableArray *ary = [NSMutableArray array];
+    NSUInteger count = [self count];
+    NSMutableIndexSet *idxs = [NSMutableIndexSet indexSet];
     for (NSUInteger idx = 0; idx < range.length; idx++) {
         NSUInteger t_idx = (idx + range.location);
-        if (t_idx > [_objs count]) {
-            continue;
+        if (t_idx >= count) {
+            break;
         }
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(idx + range.location) inSection:0];
-        [ary addObject:indexPath];
+        [idxs addIndex:t_idx];
     }
     
-    [self deleteDatasAtIndexPaths:ary];
+    [self deleteDatasAtIndexs:idxs];
+}
+
+- (void)deleteModelsAtIndexs:(NSIndexSet *)indexs {
+    NSMutableIndexSet *idxs = [NSMutableIndexSet indexSet];
+    NSUInteger count = [self count];
+    
+    NSUInteger idx = [indexs firstIndex];
+    while (idx != NSNotFound) {
+        if (idx >= count) {
+            break;//无需继续遍历，超出边界
+        } else {
+            [idxs addIndex:idx];
+        }
+        
+        idx = [indexs indexGreaterThanIndex:idx];//升序
+    }
+    
+    [self deleteDatasAtIndexs:idxs];
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -595,8 +611,8 @@ static char *ftable_cell_model_key = NULL;
  *
  *  @param indexPaths NSIndexPaths数据所在位置
  */
-- (void)deleteDatasAtIndexPaths:(NSArray *)indexPaths {
-    if ([indexPaths count] == 0) {
+- (void)deleteDatasAtIndexs:(NSIndexSet *)indexs {
+    if ([indexs count] == 0) {
         return ;
     }
     
@@ -609,73 +625,78 @@ static char *ftable_cell_model_key = NULL;
     [self ftable_dataWillChange];
     
     if (_supportSection) {
-        //
+        NSUInteger idx = [indexs lastIndex];
+        while (idx != NSNotFound) {
+            //取当前要修改的section
+            FTableSectionNode *node = [self sectionNodeOfIndex:idx];
+            NSInteger section = [_scns indexOfObject:node];
+            
+            //之前此处是一个节点，直接删除节点
+            if (node.index == idx) {
+                if (idx == 0) {//如果开始是第一个节点，则删除其数据
+                    node.model = nil;
+                    node.index = -1;
+                    
+                    [self ftable_dataDidChangeSection:node.model atIndex:section forChangeType:FTableChangeUpdate];
+                } else {
+                    
+                    if (section == 0) {
+                        NSLog(@"异常流check,此时不应该进入此分支，检查上面的逻辑");
+                    }
+                    
+                    //删除老的section
+                    [self ftable_dataDidChangeSection:node.model atIndex:section forChangeType:FTableChangeDelete];
+                    
+                    //将数据转移
+                    FTableSectionNode *pre_node = [_scns objectAtIndex:section - 1];
+                    [self ftable_dataDidChangeSection:pre_node.model atIndex:section - 1 forChangeType:FTableChangeUpdate];
+                    
+                    [node.objs enumerateObjectsUsingBlock:^(id<FTableCellModel>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        NSUInteger count = [pre_node.objs count];
+                        [pre_node.objs addObject:obj];
+                        NSIndexPath *newIndex = [NSIndexPath indexPathForRow:count inSection:section - 1];
+                        [self ftable_dataDidChangeObject:obj atIndexPath:newIndex forChangeType:FTableChangeInsert newIndexPath:newIndex];
+                    }];
+                }
+            }
+            //查找节点修改点
+            else if ((NSInteger)idx > node.index && idx < (node.index + 1 + [node.objs count])) {
+                NSUInteger del_idx = (NSInteger)idx - (node.index + 1);
+                //非常简单，直接删除即可
+                [self ftable_dataDidChangeSection:node.model atIndex:section forChangeType:FTableChangeUpdate];
+                id<FTableCellModel> del_model = [node.objs objectAtIndex:del_idx];
+                
+                NSIndexPath *path = [NSIndexPath indexPathForRow:del_idx inSection:section];
+                [self ftable_dataDidChangeObject:del_model atIndexPath:path forChangeType:FTableChangeDelete newIndexPath:nil];
+                [node.objs removeObjectAtIndex:del_idx];
+                
+                //接下来修改后面section的值
+                for (NSUInteger s_idx = section + 1; s_idx < [_scns count]; s_idx++) {
+                    FTableSectionNode *node = [_scns objectAtIndex:s_idx];
+                    node.index -= 1;
+                }
+            }
+            else {
+                NSLog(@"删除不应该进入到此逻辑，检查前面条件限制%ld",idx);
+            }
+        
+            
+            
+            
+            idx = [indexs indexLessThanIndex:idx];//从大到小删比较安全
+        }
     } else {
 
-    //先计算哪些section需要改变
-//    NSMutableDictionary *changeSections = [NSMutableDictionary dictionary];
-//    NSMutableDictionary *delIndexsMap = [NSMutableDictionary dictionary];
-//    NSMutableDictionary *delPathsMap = [NSMutableDictionary dictionary];
-//    [indexPaths enumerateObjectsUsingBlock:^(NSIndexPath *path, NSUInteger idx, BOOL *stop) {
-//        NSNumber *section = @(path.section);
-//        
-//        SSNSectionModel *sectionInfo = [changeSections objectForKey:section];//哪些section发生了改变
-//        if (!sectionInfo) {
-//            sectionInfo = [_list objectAtIndex:path.section];
-//            [changeSections setObject:sectionInfo forKey:section];
-//        }
-//        
-//        NSMutableArray *delPaths = [delPathsMap objectForKey:section];//需要删除的path
-//        if (!delPaths) {
-//            delPaths = [NSMutableArray array];
-//            [delPathsMap setObject:delPaths forKey:section];
-//        }
-//        
-//        if (![delPaths containsObject:indexPaths]) {
-//            [delPaths addObject:path];
-//        }
-//        
-//        NSMutableIndexSet *delIndexs = [delIndexsMap objectForKey:section];//需要删除的range
-//        if (!delIndexs) {
-//            delIndexs = [NSMutableIndexSet indexSet];
-//            [delIndexsMap setObject:delIndexs forKey:section];
-//        }
-//        
-//        [delIndexs addIndex:path.row];
-//    }];
-//    
-//    [changeSections enumerateKeysAndObjectsUsingBlock:^(NSNumber *key, SSNSectionModel *obj, BOOL *stop) {
-//        NSUInteger section = [key integerValue];
-//        
-//        NSIndexSet *delSet = [delIndexsMap objectForKey:key];
-//        NSArray *oldObjs = [obj.objects copy];
-//        [obj.objects removeObjectsAtIndexes:delSet];
-//        
-//        //表示直接可以删除
-//        if ([obj.objects count] == 0) {
-//            ssn_t_log(@"delete section at index %lu",section);
-//            [_sectionMap removeObjectForKey:obj.identify];
-//            [_list removeObject:obj];//删除section
-//            
-//            //仅仅删除section
-//            [_delegate ssnlist_controller:self didChangeSection:obj atIndex:section forChangeType:FTableChangeDelete];
-//        }
-//        else {
-//            [_delegate ssnlist_controller:self didChangeSection:obj atIndex:section forChangeType:FTableChangeUpdate];
-//            NSArray *delPaths = [delPathsMap objectForKey:key];
-    NSArray<id<FTableCellModel> > *olddata = [self models];
-    NSMutableIndexSet *delIndexs = [NSMutableIndexSet indexSet];
-    [indexPaths enumerateObjectsUsingBlock:^(NSIndexPath *path, NSUInteger idx, BOOL *stop) {
-        [delIndexs addIndex:path.row];
-    }];
-    [_objs removeObjectsAtIndexes:delIndexs];
-    
-    [indexPaths enumerateObjectsUsingBlock:^(NSIndexPath *indexPath, NSUInteger idx, BOOL *stop) {
-        id<FTableCellModel> obj = [olddata objectAtIndex:indexPath.row];
-        [self ftable_dataDidChangeObject:obj atIndexPath:indexPath forChangeType:FTableChangeDelete newIndexPath:nil];
-    }];
-//        }
-//    }];
+        NSUInteger idx = [indexs lastIndex];
+        while (idx != NSNotFound) {
+            id<FTableCellModel> obj = [_objs objectAtIndex:idx];
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+            [self ftable_dataDidChangeObject:obj atIndexPath:indexPath forChangeType:FTableChangeDelete newIndexPath:nil];
+            
+            idx = [indexs indexLessThanIndex:idx];//从大到小删比较安全
+        }
+        
+        [_objs removeObjectsAtIndexes:indexs];
         
     }
     
@@ -708,7 +729,6 @@ static char *ftable_cell_model_key = NULL;
     if (_supportSection) {
         NSUInteger idx = [indexs firstIndex];
         NSUInteger d_idx = 0;
-        NSMutableSet *sections = [NSMutableSet set];
         while (idx != NSNotFound) {
             
             //取出新数据
@@ -822,7 +842,7 @@ static char *ftable_cell_model_key = NULL;
                     [self ftable_dataDidChangeObject:new_model atIndexPath:newIndex forChangeType:FTableChangeUpdate newIndexPath:newIndex];
                 }
             } else {//
-                NSLog(@"更细不应该进入到此逻辑，检查前面条件限制%ld",idx);
+                NSLog(@"更新不应该进入到此逻辑，检查前面条件限制%ld",idx);
             }
             
             //下一个，从小到大遍历
@@ -1263,6 +1283,8 @@ static char *ftable_cell_model_key = NULL;
     
     NSIndexPath *index = [NSIndexPath indexPathForRow:-1 inSection:section];
     [cell ftable_onDisplay:model atIndexPath:index inTable:tableView];
+    
+//    [(UITableViewHeaderFooterView *)cell setFrame:CGRectZero];
     
     return (UITableViewHeaderFooterView *)cell;
 }
