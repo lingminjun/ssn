@@ -104,6 +104,42 @@ static char *ftable_cell_model_key = NULL;
 }
 @end
 
+//兼容Section展示
+@interface FTableSectionCellCompatible : UITableViewCell
+@property (nonatomic,strong) UITableViewHeaderFooterView *header;
+@end
+
+@implementation FTableSectionCellCompatible
+
+- (instancetype)initWithCustomView:(UITableViewHeaderFooterView *)header reuseIdentifier:(NSString *)reuseIdentifier {
+    self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
+    if (self) {
+        _header = header;
+        _header.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        [_header setFrame:self.contentView.bounds];
+        [self.contentView addSubview:header];
+    }
+    return self;
+}
+
+- (void)ftable_display:(id<FTableCellModel>)cellModel atIndexPath:(NSIndexPath *)indexPath inTable:(UITableView *)tableView {
+    [_header ftable_display:cellModel atIndexPath:indexPath inTable:tableView];
+}
+
+- (void)ftable_setCellModel:(id<FTableCellModel>)cellModel {
+    [_header ftable_setCellModel:cellModel];
+}
+
+- (id<FTableCellModel>)ftable_cellModel {
+    return [_header ftable_cellModel];
+}
+
+- (void)ftable_onDisplay:(id<FTableCellModel>)cellModel atIndexPath:(NSIndexPath *)indexPath inTable:(UITableView *)tableView {
+    [_header ftable_onDisplay:cellModel atIndexPath:indexPath inTable:tableView];
+}
+
+@end
+
 @interface FTableSectionNode : NSObject
 @property (nonatomic,strong) id<FTableCellModel> model;
 @property (nonatomic,strong) NSMutableArray<id<FTableCellModel>> *objs;
@@ -965,10 +1001,26 @@ static char *ftable_cell_model_key = NULL;
     return [_objs count];
 }
 
+- (id<FTableCellProtected>)checkCellType:(BOOL)isSection correct:(id<FTableCellProtected>)originCell identifier:(NSString *)cellId {
+    if (isSection && [originCell isKindOfClass:[UITableViewHeaderFooterView class]]) {
+        return originCell;
+    } else if (!isSection && [originCell isKindOfClass:[UITableViewCell class]]) {
+        return originCell;
+    }
+    
+    if (isSection) {
+        NSLog(@"Serious warning！！呈现的section header，请继承自UITableViewHeaderFooterView类，否则将出现异常");
+        return originCell;
+    } else {
+        NSLog(@"Serious warning！！呈现的cell，请继承自UITableViewCell类，否则将出现异常");
+        return [[FTableSectionCellCompatible alloc] initWithCustomView:(UITableViewHeaderFooterView *)originCell reuseIdentifier:cellId];
+    }
+}
+
 - (id<FTableCellProtected>)loadCellWithTableView:(UITableView *)tableView cellModel:(id<FTableCellModel>)cellModel {
     
     BOOL isSectionHeader = false;
-    if ([cellModel respondsToSelector:@selector(ftable_isSectionHeader)]) {
+    if (_supportSection && [cellModel respondsToSelector:@selector(ftable_isSectionHeader)]) {
         isSectionHeader = [cellModel ftable_isSectionHeader];
     }
     
@@ -1007,7 +1059,7 @@ static char *ftable_cell_model_key = NULL;
     }
     
     if (cell) {
-        return cell;
+        return [self checkCellType:isSectionHeader correct:cell identifier:cellId];
     }
     
     
@@ -1016,7 +1068,7 @@ static char *ftable_cell_model_key = NULL;
         cell = [views objectAtIndex:0];
     }
     if (cell) {
-        return cell;
+        return [self checkCellType:isSectionHeader correct:cell identifier:cellId];
     }
     
     //自己创建
@@ -1025,7 +1077,7 @@ static char *ftable_cell_model_key = NULL;
     }
     if (cell) {
         NSAssert([cell conformsToProtocol:@protocol(FTableCellProtected)], @"请确保FTableModel用于展示view遵循FTableCellProtected协议");
-        return cell;
+        return [self checkCellType:isSectionHeader correct:cell identifier:cellId];
     }
     
     //默认返回
