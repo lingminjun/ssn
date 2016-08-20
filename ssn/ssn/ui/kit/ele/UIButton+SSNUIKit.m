@@ -58,7 +58,7 @@ ssn_uikit_value_synthesize(float,ssn_edge_width,Ssn_edge_width)
     }
     
     if (disabledColor) {
-        [button setTitleColor:selectedColor forState:UIControlStateDisabled];
+        [button setTitleColor:disabledColor forState:UIControlStateDisabled];
     }
     
     if (backgroud) {

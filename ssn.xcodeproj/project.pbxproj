@@ -131,6 +131,7 @@
 		538E384D19986A700061692E /* DMSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538E384C19986A700061692E /* DMSettingViewController.m */; };
 		5397B5D41A6FA10700CD6AFC /* SSNCrashReport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5397B5D31A6FA10700CD6AFC /* SSNCrashReport.m */; };
 		539B4FD41AC41ED20042F6C4 /* SSNRouter+Nice.m in Sources */ = {isa = PBXBuildFile; fileRef = 539B4FD31AC41ED20042F6C4 /* SSNRouter+Nice.m */; };
+		53A0B9851D4AE91400CB7703 /* FRPC.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A0B9841D4AE91400CB7703 /* FRPC.m */; };
 		53A1BA161A52A14C00C76844 /* SSNPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA151A52A14C00C76844 /* SSNPanel.m */; };
 		53A1BA171A52A14C00C76844 /* SSNPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA151A52A14C00C76844 /* SSNPanel.m */; };
 		53A1BA1A1A52A1D000C76844 /* SSNUILayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A1BA191A52A1D000C76844 /* SSNUILayout.m */; };
@@ -463,6 +464,8 @@
 		5397B5D31A6FA10700CD6AFC /* SSNCrashReport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNCrashReport.m; sourceTree = "<group>"; };
 		539B4FD21AC41ED20042F6C4 /* SSNRouter+Nice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSNRouter+Nice.h"; sourceTree = "<group>"; };
 		539B4FD31AC41ED20042F6C4 /* SSNRouter+Nice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SSNRouter+Nice.m"; sourceTree = "<group>"; };
+		53A0B9831D4AE91400CB7703 /* FRPC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FRPC.h; sourceTree = "<group>"; };
+		53A0B9841D4AE91400CB7703 /* FRPC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRPC.m; sourceTree = "<group>"; };
 		53A1BA141A52A14C00C76844 /* SSNPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNPanel.h; sourceTree = "<group>"; };
 		53A1BA151A52A14C00C76844 /* SSNPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNPanel.m; sourceTree = "<group>"; };
 		53A1BA181A52A1D000C76844 /* SSNUILayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSNUILayout.h; sourceTree = "<group>"; };
@@ -680,6 +683,7 @@
 		531E4EF31D3BC65C00D9E8B5 /* f */ = {
 			isa = PBXGroup;
 			children = (
+				53A0B9821D4AE8E900CB7703 /* rpc */,
 				531E4EF41D3BC65C00D9E8B5 /* json */,
 				531E4EF71D3BC65C00D9E8B5 /* table */,
 			);
@@ -965,6 +969,15 @@
 				5397B5D31A6FA10700CD6AFC /* SSNCrashReport.m */,
 			);
 			path = crash;
+			sourceTree = "<group>";
+		};
+		53A0B9821D4AE8E900CB7703 /* rpc */ = {
+			isa = PBXGroup;
+			children = (
+				53A0B9831D4AE91400CB7703 /* FRPC.h */,
+				53A0B9841D4AE91400CB7703 /* FRPC.m */,
+			);
+			path = rpc;
 			sourceTree = "<group>";
 		};
 		53A1BA131A52A12A00C76844 /* kit */ = {
@@ -1728,6 +1741,7 @@
 				5339FC8C1AA551AA0000F6B9 /* SSNDBFetchController.m in Sources */,
 				53BC53461A485E6E0044C238 /* NSURL+Router.m in Sources */,
 				5339FC8D1AA551AA0000F6B9 /* SSNListFetchController.m in Sources */,
+				53A0B9851D4AE91400CB7703 /* FRPC.m in Sources */,
 				535C0E091AD0373D0033EB92 /* NSObject+SSN.m in Sources */,
 				53620B2F1AB3217F00381C3C /* SSNRPCInvocation.m in Sources */,
 				53BC52FE1A485E6E0044C238 /* ssncop.c in Sources */,
