@@ -25,7 +25,7 @@
 
 
 
-- (void)refreash;//刷新界面，也就是通知table更新
+- (void)refresh;//刷新界面，也就是通知table更新
 
 - (NSUInteger)count;//数据个数
 

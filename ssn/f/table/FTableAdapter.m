@@ -222,7 +222,7 @@ static char *ftable_cell_model_key = NULL;
     [_tableView reloadData];
 }
 
-- (void)refreash {[_tableView reloadData];}
+- (void)refresh {[_tableView reloadData];}
 
 - (NSUInteger)count {
     if (_supportSection) {
