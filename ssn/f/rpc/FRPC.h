@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @protocol FRPCCancelable,FRPCRes,FRPCEntity;
-@class FRPCReq;
+@class FRPC,FRPCReq,FRPCCombinEntityWrapper;
 
 FOUNDATION_EXTERN NSString *const FRPCErrorDomain; //rpc错误异常domain
 
@@ -28,6 +28,17 @@ FOUNDATION_EXTERN NSString *const FRPCErrorDomain; //rpc错误异常domain
 typedef id<FRPCCancelable>(^frpc_res_block_t)(FRPCReq * main_req, FRPCReq * req, id<FRPCEntity> result, BOOL is_cache, NSUInteger index, NSError *error);
 
 /**
+ *  组合请求值返回
+ *
+ *  @param reqs   请求体
+ *  @param result 结果集
+ *  @param error  第一个请求错误
+ *
+ *  @return 返回当前请求cancel类
+ */
+typedef id<FRPCCancelable>(^frpc_res_combin_block_t)(NSArray<FRPCReq *> *reqs, FRPCCombinEntityWrapper *result, NSError *error);
+
+/**
  *  请求策略控制
  */
 typedef NS_ENUM(NSUInteger, FRPCReqStrategy) {
@@ -42,16 +53,67 @@ typedef NS_ENUM(NSUInteger, FRPCReqStrategy) {
     /**
      *  中断
      */
-    FRPCBreak,
+    FRPCBreak
 };
+
+///**
+// *  请求状态
+// */
+//typedef NS_ENUM(NSUInteger, FRPCReqStatus) {
+//    /**
+//     *  准备开始
+//     */
+//    FRPCReqWill,
+//    /**
+//     *  请求中
+//     */
+//    FRPCReqDoing,
+//    /**
+//     *  请求完
+//     */
+//    FRPCReqDid,
+//    /**
+//     *  失败
+//     */
+//    FRPCReqFailed
+//};
+//
+///**
+// *  请求过滤器
+// */
+//@protocol FRPCFilter <NSObject>
+//
+//@required
+///**
+// *  请求过滤器实现方法
+// *
+// *  @param rpc    请求器
+// *  @param req    请求体
+// *  @param status 请求状态
+// *
+// *  @return 返回新的请求体，返回nil时表示禁用此请求
+// */
+//- (FRPCReq *)frpc_filter:(FRPCReq *)req status:(FRPCReqStatus)status;
+//
+//@end
+
+
 
 /**
  *  rpc调用定义
  */
 @interface FRPC : NSObject
 
+//调用方法
 + (id<FRPCCancelable>)call_req:(FRPCReq *)req res:(id<FRPCRes>)res;
 + (id<FRPCCancelable>)call_req:(FRPCReq *)req res_block:(frpc_res_block_t)block;
+
+//增加过滤器
+//+ (void)add_filter:(id<FRPCFilter>)filter;
+
+//组合请求调用(组合请求不支持链式)
++ (id<FRPCCancelable>)call_reqs:(NSArray<FRPCReq *> *)reqs res:(id<FRPCRes>)res;
++ (id<FRPCCancelable>)call_reqs:(NSArray<FRPCReq *> *)reqs res_block:(frpc_res_combin_block_t)block;
 
 @end
 
@@ -80,6 +142,46 @@ typedef NS_ENUM(NSUInteger, FRPCReqStrategy) {
  */
 - (void)frpc_fill:(NSObject *)obj type:(NSString *)type;
 
+@end
+
+/**
+ *  组合请求返回值包装体
+ */
+@interface FRPCCombinEntityWrapper : NSObject<FRPCEntity>
+
+/**
+ *  按照请求放入的位置取参数
+ *
+ *  @param index
+ *
+ *  @return 若数据不存在，可能返回NSError
+ */
+- (id<FRPCEntity>)getResultAtIndex:(NSUInteger)index;
+
+/**
+ *  是否为缓存数据
+ *
+ *  @param index 请求位置
+ *
+ *  @return 返回是否为缓存
+ */
+- (BOOL)isCacheAtIndex:(NSUInteger)index;
+
+/**
+ *  获取错误信息
+ *
+ *  @param index
+ *
+ *  @return 返回对应请求的错误
+ */
+- (NSError *)getErrorAtIndex:(NSUInteger)index;
+
+@end
+
+/**
+ *  error弱协议支持
+ */
+@interface NSError (FRPCEntity) <FRPCEntity>
 @end
 
 
@@ -197,5 +299,15 @@ typedef NS_ENUM(NSUInteger, FRPCReqStrategy) {
  *  @param error    错误描述
  */
 - (void)frpc_res_main:(FRPCReq *)main_req req:(FRPCReq *)req result:(id<FRPCEntity>)entity cache:(BOOL)is_cache index:(NSUInteger)index error:(NSError *)error;
+
+@optional
+/**
+ *  组合请求回调，若调用组合请求，请务必事先此方法
+ *
+ *  @param reqs   请求体
+ *  @param entity 结果集
+ *  @param error  第一个请求是否出错
+ */
+- (void)frpc_res_combin:(NSArray<FRPCReq *> *)reqs result:(FRPCCombinEntityWrapper *)entity error:(NSError *)error;
 
 @end

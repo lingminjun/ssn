@@ -7,11 +7,16 @@
 //
 
 #import "FRPC.h"
+//#import "SSNSafeArray.h"
+#import "SSNSafeDictionary.h"
+#import "SSNSafeSet.h"
 
 NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
 
+//响应block包装体
 @interface FRPCResWrapper : NSObject <FRPCRes>
 @property (nonatomic,copy) frpc_res_block_t block;
+@property (nonatomic,copy) frpc_res_combin_block_t combin_block;
 @end
 
 @implementation FRPCResWrapper
@@ -22,11 +27,81 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
     return res;
 }
 
++ (instancetype)res_combin:(frpc_res_combin_block_t)block {
+    FRPCResWrapper *res = [[FRPCResWrapper alloc] init];
+    res.combin_block = block;
+    return res;
+}
+
 - (void)frpc_res_main:(FRPCReq *)main_req req:(FRPCReq *)req result:(id<FRPCEntity>)entity cache:(BOOL)is_cache index:(NSUInteger)index error:(NSError *)error {
     self.block(main_req,req,entity,is_cache,index,error);
 }
 
+- (void)frpc_res_combin:(NSArray<FRPCReq *> *)reqs result:(FRPCCombinEntityWrapper *)entity error:(NSError *)error {
+    self.combin_block(reqs,entity,error);
+}
+
 @end
+
+//返回值包装体
+@implementation FRPCCombinEntityWrapper {
+    @public
+    SSNSafeDictionary *_ets;
+    SSNSafeSet *_chs;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _ets = [[SSNSafeDictionary alloc] initWithCapacity:3];
+        _chs = [[SSNSafeSet alloc] initWithCapacity:3];
+    }
+    return self;
+}
+
+- (id<FRPCEntity>)getResultAtIndex:(NSUInteger)index {
+    return [_ets objectForKey:@(index)];
+}
+
+- (BOOL)isCacheAtIndex:(NSUInteger)index {
+    return [_chs containsObject:@(index)];
+}
+
+- (NSError *)getErrorAtIndex:(NSUInteger)index {
+    return [_ets objectForKey:@(-((NSInteger)index))];
+}
+
+- (id)objectAtIndexedSubscript:(NSUInteger)idx {
+    return [self getResultAtIndex:idx];
+}
+
+- (void)setObject:(id)obj atIndexedSubscript:(NSUInteger)idx {
+    [_ets setObject:obj forKey:@(idx)];
+}
+
+- (void)frpc_fill:(NSObject *)obj type:(NSString *)type {}
+@end
+
+//错误协议支持
+@implementation NSError (FRPCEntity)
+- (void)frpc_fill:(NSObject *)obj type:(NSString *)type {}
+@end
+
+//请求体包装体
+@interface FRPCCombinReqWrapper : NSObject <FRPCCancelable>
+@property(nonatomic,copy) NSArray <FRPCReq *>*reqs;
+@end
+
+@implementation FRPCCombinReqWrapper
+
+- (void)frpc_cancel {
+    [_reqs enumerateObjectsUsingBlock:^(FRPCReq * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj frpc_cancel];
+    }];
+}
+
+@end
+
 
 @interface FRPCReq()
 @property (nonatomic,weak) FRPCReq * main_req;//主请求
@@ -46,23 +121,57 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
 
 @implementation FRPC
 
-+ (void)work_thread_sync:(dispatch_block_t)block {
+static dispatch_queue_t get_work_queue() {
     static dispatch_queue_t work = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         work = dispatch_queue_create("frpc.work.queue", DISPATCH_QUEUE_CONCURRENT);//并发queue
     });
-    dispatch_async(work, block);
+    return work;
 }
 
-+ (void)main_thread_sync:(dispatch_block_t)block {
++ (void)work_thread_async:(dispatch_block_t)block {
+    dispatch_async(get_work_queue(), block);
+}
+
++ (void)main_thread_async:(dispatch_block_t)block {
     //不采用main_queue是为了防止使用者在回调中使用嵌套runloop，从而阻塞main_queue. // dispatch_async(dispatch_get_main_queue(), block);
     [(id)self performSelectorOnMainThread:@selector(exec_main_block:) withObject:block waitUntilDone:NO];
+}
+
++ (void)work_group_async:(NSArray *)objs iterate:(void(^)(id obj,NSUInteger idx))iterate notice:(dispatch_block_t)block {
+    dispatch_group_t group = dispatch_group_create();
+    
+    [objs enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        dispatch_group_async(group, get_work_queue(), ^{
+            iterate(obj,idx);
+        });
+    }];
+    
+    dispatch_group_async(group, dispatch_get_main_queue(), ^{
+        [self main_thread_async:block];
+    });
 }
 
 + (void)exec_main_block:(dispatch_block_t)block {
     block();
 }
+
+////增加过滤器
+//+ (SSNSafeArray *)rpc_filters {
+//    static SSNSafeArray *_filters = nil;
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//        _filters = [[SSNSafeArray alloc] initWithCapacity:3];
+//    });
+//    return _filters;
+//}
+//
+//+ (void)add_filter:(id<FRPCFilter>)filter {
+//    if (filter != nil) {
+//        [[self rpc_filters] addObject:filter];
+//    }
+//}
 
 + (id<FRPCCancelable>)call_req:(FRPCReq *)req res:(id<FRPCRes>)res {
     if (req == nil || res == nil) {
@@ -70,7 +179,7 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
     }
     
     //启动工作线程
-    [self work_thread_sync:^{
+    [self work_thread_async:^{
         [self chainCallIMP:req res:res];
     }];
     
@@ -97,7 +206,7 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
     //开始请求
     BOOL has_begin = [res respondsToSelector:@selector(frpc_res_start:)];
     if (has_begin) {
-        [self main_thread_sync:^{
+        [self main_thread_async:^{
             //        if (checkInterceptor(mainReq,res)) {
             //            return;
             //        }
@@ -169,7 +278,7 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
     
     //最终回调
     if (has_begin && [res respondsToSelector:@selector(frpc_res_finish:)]) {
-        [self main_thread_sync:^{
+        [self main_thread_async:^{
 //            if (checkInterceptor(mainReq,res)) {
 //                return;
 //            }
@@ -191,7 +300,7 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
         @try {
             id<FRPCEntity> o = [req cache:maxAge];
             if (o) {
-                [self main_thread_sync:^{
+                [self main_thread_async:^{
 //                    if (checkInterceptor(req, res)) {
 //                        return;
 //                    }
@@ -244,7 +353,7 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
             req.result = o;
             
             //成功回调
-            [self main_thread_sync:^{
+            [self main_thread_async:^{
 //                if (checkInterceptor(req,res)) {
 //                    return;
 //                }
@@ -267,7 +376,7 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
 //            result = FRPCBreak;
 //        } else {
             //异常回调
-        [self main_thread_sync:^{
+        [self main_thread_async:^{
 //            if (checkInterceptor(req, res)) {
 //                return;
 //            }
@@ -291,6 +400,136 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
         return nil;
     }
     return [self call_req:req res:[FRPCResWrapper res:block]];
+}
+
+
+//组合请求实现
++ (id<FRPCCancelable>)call_reqs:(NSArray<FRPCReq *> *)reqs res:(id<FRPCRes>)res {
+    if (reqs == nil || [reqs count] == 0 || res == nil) {
+        return nil;
+    }
+    
+    FRPCCombinReqWrapper *wrapper = [[FRPCCombinReqWrapper alloc] init];
+    wrapper.reqs = reqs;
+    
+    //启动工作线程
+    [self work_thread_async:^{
+        [self combinCallIMP:wrapper res:res];
+    }];
+    
+   
+    return wrapper;
+}
+
++ (id<FRPCCancelable>)call_reqs:(NSArray<FRPCReq *> *)reqs res_block:(frpc_res_combin_block_t)block {
+    if (reqs == nil || [reqs count] == 0 || block == nil) {
+        return nil;
+    }
+    return [self call_reqs:reqs res:[FRPCResWrapper res_combin:block]];
+}
+
+
++ (void)combinCallIMP:(FRPCCombinReqWrapper *)reqs res:(id<FRPCRes>) res {
+    
+    FRPCReq *mainReq = reqs.reqs[0];
+    
+    //开始请求
+    BOOL has_begin = [res respondsToSelector:@selector(frpc_res_start:)];
+    if (has_begin) {
+        [res frpc_res_start:mainReq];
+    }
+
+    FRPCCombinEntityWrapper *wrapper = [[FRPCCombinEntityWrapper alloc] init];
+    [self work_group_async:reqs.reqs iterate:^(FRPCReq * obj, NSUInteger idx) {
+        obj.main_req = mainReq;//防止主请求取不到
+        
+        //执行请求
+        [self callIMP:obj wrapper:wrapper index:idx];
+    } notice:^{
+        
+        //响应返回
+        NSError *error = [wrapper getErrorAtIndex:0];
+        if ([res respondsToSelector:@selector(frpc_res_combin:result:error:)]) {
+            [res frpc_res_combin:reqs.reqs result:wrapper error:error];
+        } else {
+            [res frpc_res_main:mainReq req:nil result:wrapper cache:NO index:0 error:error];
+        }
+        
+        //结束回调
+        //最终回调
+        if (has_begin && [res respondsToSelector:@selector(frpc_res_finish:)]) {
+            [res frpc_res_finish:mainReq];
+        }
+        
+        //还原请求体，防止多次请求数据被重用
+        [reqs.reqs enumerateObjectsUsingBlock:^(FRPCReq * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [obj reset];
+        }];
+    }];
+    
+}
+
+//成功继续，失败skip，中断break
++ (FRPCReqStrategy)callIMP:(FRPCReq *)req wrapper:(FRPCCombinEntityWrapper *)wrapper index:(NSUInteger)idx {
+    
+    //读取文件缓存
+    BOOL needReq = true;
+    NSUInteger maxAge = req.maxAge;
+    if (maxAge > 0) {
+        @try {
+            id<FRPCEntity> o = [req cache:maxAge];
+            if (o) {
+                //直接使用缓存数据
+                if (req.usedCache) {
+                    req.result = o;
+                    wrapper[idx] = o;
+                    [wrapper->_chs addObject:@(idx)];
+                    needReq = false;
+                }
+            }
+        } @catch (NSException *exception) {
+            NSLog(@"%@",exception);
+        }
+    }
+    
+    if (!needReq) {
+        return FRPCContinue;
+    }
+    
+    FRPCReqStrategy result = FRPCContinue;
+    @try {
+        NSUInteger out_times = 0;
+        id<FRPCEntity> o = [req call:&out_times];
+        NSUInteger times = out_times;
+        
+        //开始重试
+        while (times > 0 && o == nil) {
+            NSLog(@"rpc retry %@",req);
+            times--;
+            o = [req call:&out_times];
+        }
+        
+        //直接中断
+        //            if (checkInterceptor(req, res)) {
+        //                result = FRPCBreak;
+        //            }
+        
+        //若没有请求到继续使用cache的值
+        if (o != nil) {
+            req.result = o;
+            wrapper[idx] = o;
+            [wrapper->_chs removeObject:@(idx)];
+        }
+        
+    } @catch (NSException *exception) {
+        NSDictionary *info = @{NSLocalizedDescriptionKey:FRPC_NO_NULL(exception.reason),
+                               NSLocalizedFailureReasonErrorKey:FRPC_NO_NULL(exception.reason),
+                               NSLocalizedRecoverySuggestionErrorKey:FRPC_NO_NULL(exception.name)};
+        NSError *error = [NSError errorWithDomain:FRPCErrorDomain code:-1 userInfo:info];
+        [wrapper->_ets setObject:error forKey:@(-((NSInteger)idx))];
+        result = FRPCSkip;
+    }
+    return result;
 }
 
 @end
