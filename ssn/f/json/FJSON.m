@@ -1084,7 +1084,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 ////////////////////////////////////////////////////////////////////////////////////////
 //object-c class类型
 - (void)encodeObject:(id)objv forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0 && objv, @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0 && objv, @"FJsonCoder：请传入正确参数");
     if ([objv isKindOfClass:[NSData class]])
     {
         [self encodeData:(NSData *)objv forKeys:keys];
@@ -1131,26 +1131,26 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 
 - (void)encodeData:(NSData *)data forKeys:(NSSet<NSString *> *)keys {
     NSLog(@"FJSON暂时未对NSData类型做支持，没有支持的类型");
-//    NSAssert([keys count] > 0 && [data length] > 0, @"FJsonCoder：传入正确参数");
+//    NSAssert([keys count] > 0 && [data length] > 0, @"FJsonCoder：请传入正确参数");
 //    NSString *base64 = [data ssn_base64];
 //    [[self rootDictionary] setValue:base64 forKey:key];
 }
 
 - (void)encodeDate:(NSDate *)date forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0 && date, @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0 && date, @"FJsonCoder：请传入正确参数");
     long long utc = [date timeIntervalSince1970];
     [self encodeInt64:utc forKeys:keys];
 }
 
 - (void)encodeString:(NSString *)string forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0 && [string length] > 0, @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0 && string != nil, @"FJsonCoder：请传入正确参数");
     for (NSString *key in keys) {
         [[self rootDictionary] setValue:string forKey:key];
     }
 }
 
 - (void)encodeValue:(NSValue *)value forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0 && value, @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0 && value, @"FJsonCoder：请传入正确参数");
     const char *type = [value objCType];
     if (strlen(type) <= 0) {
         return ;
@@ -1223,56 +1223,56 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 }
 
 - (void)encodeBool:(BOOL)boolv forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0 , @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0 , @"FJsonCoder：请传入正确参数");
     for (NSString *key in keys) {
         [[self rootDictionary] setValue:@(boolv) forKey:key];
     }
 }
 
 - (void)encodeInt:(int)intv forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0, @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0, @"FJsonCoder：请传入正确参数");
     for (NSString *key in keys) {
         [[self rootDictionary] setValue:@(intv) forKey:key];
     }
 }
 
 - (void)encodeInt32:(int32_t)intv forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0 , @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0 , @"FJsonCoder：请传入正确参数");
     for (NSString *key in keys) {
         [[self rootDictionary] setValue:@(intv) forKey:key];
     }
 }
 
 - (void)encodeInt64:(int64_t)intv forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0 , @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0 , @"FJsonCoder：请传入正确参数");
     for (NSString *key in keys) {
         [[self rootDictionary] setValue:@(intv) forKey:key];
     }
 }
 
 - (void)encodeFloat:(float)realv forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0 , @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0 , @"FJsonCoder：请传入正确参数");
     for (NSString *key in keys) {
         [[self rootDictionary] setValue:@(realv) forKey:key];
     }
 }
 
 - (void)encodeDouble:(double)realv forKeys:(NSSet<NSString *> *)keys {
-    NSAssert([keys count] > 0 , @"FJsonCoder：传入正确参数");
+    NSAssert([keys count] > 0 , @"FJsonCoder：请传入正确参数");
     for (NSString *key in keys) {
         [[self rootDictionary] setValue:@(realv) forKey:key];
     }
 }
 
 - (id)decodeObjectClass:(Class)clazz forKey:(NSString *)key {
-    NSAssert([key length] > 0, @"FJsonCoder：传入正确参数");
+    NSAssert([key length] > 0, @"FJsonCoder：请传入正确参数");
     
     return [self decodeObjectClass:clazz element:nil forKey:key];
 }
 
 //专门解析容器元素
 - (id)decodeObjectClass:(Class)clazz element:(Class)element forKey:(NSString *)key {
-    NSAssert([key length] > 0, @"FJsonCoder：传入正确参数");
+    NSAssert([key length] > 0, @"FJsonCoder：请传入正确参数");
     
     //step 1 从code中取出数据，检查是否为容器类型（字典或者数组，需要进一步处理）
     id objv = [[self rootDictionary] valueForKey:key];
@@ -1294,7 +1294,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 }
 
 - (id)decodeObjectForKey:(NSString *)key {
-    NSAssert([key length] > 0, @"FJsonCoder：传入正确参数");
+    NSAssert([key length] > 0, @"FJsonCoder：请传入正确参数");
     return [self decodeObjectClass:nil forKey:key];
 }
 
@@ -1414,7 +1414,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 }
 
 - (void)encodeInteger:(NSInteger)intv forKey:(NSString *)key {
-    NSAssert([key length] > 0, @"FJsonCoder：传入正确参数");
+    NSAssert([key length] > 0, @"FJsonCoder：请传入正确参数");
     [[self rootDictionary] setValue:@(intv) forKey:key];
 }
 
@@ -1423,14 +1423,14 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 }
 
 - (void)encodeArray:(NSArray *)array {
-    NSAssert(array, @"FJsonCoder：传入正确参数");
+    NSAssert(array, @"FJsonCoder：请传入正确参数");
     for (id obj in array) {
         [self addEncodeObjectInArray:obj];
     }
 }
 
 - (void)addEncodeObjectInArray:(id)objv {
-    NSAssert(objv, @"FJsonCoder：传入正确参数");
+    NSAssert(objv, @"FJsonCoder：请传入正确参数");
     
     FJsonCoder *coder = [self subCoderWithObject:nil targetClass:[objv class]];
     [coder encodeObject:objv];
@@ -1473,7 +1473,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 }
 
 - (void)encodeSet:(NSSet *)set {
-    NSAssert(set, @"FJsonCoder：传入正确参数");
+    NSAssert(set, @"FJsonCoder：请传入正确参数");
     [self encodeArray:[set allObjects]];
 }
 - (NSSet *)decodeSetObjectClass:(Class)clazz {
@@ -1482,7 +1482,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 }
 
 - (void)encodeDictionary:(NSDictionary *)dic {
-    NSAssert(dic, @"FJsonCoder：传入正确参数");
+    NSAssert(dic, @"FJsonCoder：请传入正确参数");
     
     for (id key in [dic allKeys]) {
         NSString *keyStr = nil;
@@ -1499,7 +1499,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 }
 
 - (void)addEncodeValueInDictionary:(id)objv forKey:(NSString *)key {
-    NSAssert(objv && key, @"FJsonCoder：传入正确参数");
+    NSAssert(objv && key, @"FJsonCoder：请传入正确参数");
     FJsonCoder *coder = [self subCoderWithObject:nil targetClass:[objv class]];
     if ([coder encodeObject:objv] && coder.rootJsonObj) {
         [[self rootDictionary] setObject:coder.rootJsonObj forKey:key];
@@ -1560,7 +1560,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 }
 
 - (void)encodeIndexSet:(NSIndexSet *)set {
-    NSAssert(set, @"FJsonCoder：传入正确参数");
+    NSAssert(set, @"FJsonCoder：请传入正确参数");
     NSMutableArray *ary = [NSMutableArray array];
     [set enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         [ary addObject:@(idx)];

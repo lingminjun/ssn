@@ -17,7 +17,7 @@ FOUNDATION_EXTERN NSString *const FRPCErrorDomain; //rpc错误异常domain
  *  block回调请求定义
  *
  *  @param main_req 主请求，组合请求则取第一个
- *  @param req      当前请求
+ *  @param req      当前请求(支持一组请求)
  *  @param result   返回结果集，根据请求体位置取值
  *  @param index    链式请求中第几个请求，主请求为0
  *  @param error    错误描述，只有reqs的第一个请求错误会被暴露出来，其他错误可以到result中按照位置取error
@@ -282,7 +282,7 @@ typedef NS_ENUM(NSUInteger, FRPCReqStrategy) {
  *  回调请求定义
  *
  *  @param main_req 主请求，组合请求则取第一个
- *  @param req      当前请求
+ *  @param req      当前请求(支持一组请求)
  *  @param result   返回体实例
  *  @param index    链式请求中第几个请求，主请求为0
  *  @param error    错误描述

@@ -147,7 +147,7 @@ static char * tdes_cmd_key = NULL;
 - (void)test_derive_model_json {
     NSError *error = nil;
     
-    NSDictionary *model = @{@"displayName":@"123456",@"age":@"12",@"isAffirm":@"1",@"tap":@('t')};
+    NSDictionary *model = @{@"displayName":@"null",@"age":@"<null>",@"isAffirm":@"(null)",@"tap":@('t')};
     NSData *data = nil;
     NSString *str = nil;
     data = [NSJSONSerialization dataWithJSONObject:model options:NSJSONWritingPrettyPrinted error:&error];
