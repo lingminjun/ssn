@@ -246,6 +246,8 @@
 		53BC534D1A485E6E0044C238 /* SSNNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC52F11A485E6E0044C238 /* SSNNavigationController.m */; };
 		53BC53511A486DA30044C238 /* ssnbase64.c in Sources */ = {isa = PBXBuildFile; fileRef = 53BC534F1A486DA30044C238 /* ssnbase64.c */; };
 		53BC53521A486DA30044C238 /* ssnbase64.c in Sources */ = {isa = PBXBuildFile; fileRef = 53BC534F1A486DA30044C238 /* ssnbase64.c */; };
+		53C03EC01D79BDB40014F3F1 /* FHTTPAccessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C03EBF1D79BDB40014F3F1 /* FHTTPAccessor.m */; };
+		53C03EC31D79D2120014F3F1 /* FSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C03EC21D79D2120014F3F1 /* FSecurityPolicy.m */; };
 		53C84C6F1A5B887C008AB7C8 /* UILabel+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C6E1A5B887C008AB7C8 /* UILabel+SSNUIKit.m */; };
 		53C84C721A5B9586008AB7C8 /* NSString+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C711A5B9586008AB7C8 /* NSString+SSNUIKit.m */; };
 		53C84C751A5BB355008AB7C8 /* UIView+SSNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C84C741A5BB355008AB7C8 /* UIView+SSNUIKit.m */; };
@@ -564,6 +566,10 @@
 		53BC52F11A485E6E0044C238 /* SSNNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSNNavigationController.m; sourceTree = "<group>"; };
 		53BC534F1A486DA30044C238 /* ssnbase64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssnbase64.c; sourceTree = "<group>"; };
 		53BC53501A486DA30044C238 /* ssnbase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssnbase64.h; sourceTree = "<group>"; };
+		53C03EBE1D79BDB40014F3F1 /* FHTTPAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FHTTPAccessor.h; sourceTree = "<group>"; };
+		53C03EBF1D79BDB40014F3F1 /* FHTTPAccessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FHTTPAccessor.m; sourceTree = "<group>"; };
+		53C03EC11D79D2120014F3F1 /* FSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSecurityPolicy.h; sourceTree = "<group>"; };
+		53C03EC21D79D2120014F3F1 /* FSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSecurityPolicy.m; sourceTree = "<group>"; };
 		53C84C6D1A5B887C008AB7C8 /* UILabel+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+SSNUIKit.h"; sourceTree = "<group>"; };
 		53C84C6E1A5B887C008AB7C8 /* UILabel+SSNUIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+SSNUIKit.m"; sourceTree = "<group>"; };
 		53C84C701A5B9585008AB7C8 /* NSString+SSNUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSNUIKit.h"; sourceTree = "<group>"; };
@@ -683,6 +689,7 @@
 		531E4EF31D3BC65C00D9E8B5 /* f */ = {
 			isa = PBXGroup;
 			children = (
+				53C03EBD1D79BD780014F3F1 /* http */,
 				53A0B9821D4AE8E900CB7703 /* rpc */,
 				531E4EF41D3BC65C00D9E8B5 /* json */,
 				531E4EF71D3BC65C00D9E8B5 /* table */,
@@ -1304,6 +1311,17 @@
 			path = bbox;
 			sourceTree = "<group>";
 		};
+		53C03EBD1D79BD780014F3F1 /* http */ = {
+			isa = PBXGroup;
+			children = (
+				53C03EBE1D79BDB40014F3F1 /* FHTTPAccessor.h */,
+				53C03EBF1D79BDB40014F3F1 /* FHTTPAccessor.m */,
+				53C03EC11D79D2120014F3F1 /* FSecurityPolicy.h */,
+				53C03EC21D79D2120014F3F1 /* FSecurityPolicy.m */,
+			);
+			path = http;
+			sourceTree = "<group>";
+		};
 		53CB29F71A89EB8200509148 /* category */ = {
 			isa = PBXGroup;
 			children = (
@@ -1664,6 +1682,7 @@
 				538E384D19986A700061692E /* DMSettingViewController.m in Sources */,
 				535ADAF21B14B6DD00265080 /* SSNPageControl.m in Sources */,
 				53BC53441A485E6E0044C238 /* NiceQueue.m in Sources */,
+				53C03EC31D79D2120014F3F1 /* FSecurityPolicy.m in Sources */,
 				53BC53281A485E6E0044C238 /* SSNDBTable.m in Sources */,
 				5334C0E01ACA3DD900094768 /* NSNotificationCenter+SSN.m in Sources */,
 				535C0E0D1AD37A780033EB92 /* NSData+SSN.m in Sources */,
@@ -1697,6 +1716,7 @@
 				53620B351AB5D1C300381C3C /* NSThread+SSN.m in Sources */,
 				538E384A19986A560061692E /* DMSessionViewController.m in Sources */,
 				538706711ACD762A001F3880 /* SSNFileDownloader.m in Sources */,
+				53C03EC01D79BDB40014F3F1 /* FHTTPAccessor.m in Sources */,
 				53BC53381A485E6E0044C238 /* buffer.cpp in Sources */,
 				5339FC7D1AA547DA0000F6B9 /* UIViewController+SSNTableViewDBConfigure.m in Sources */,
 				53D9ED871A8DE20900CAFADE /* UITableView+SSNPullRefresh.m in Sources */,

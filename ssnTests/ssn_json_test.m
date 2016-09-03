@@ -27,6 +27,10 @@
 @property (nonatomic,strong) NSString *name;
 @property (nonatomic) NSInteger age;
 @property (nonatomic) BOOL isAffirm;
+
+@property (nonatomic,copy) NSMutableString *txname;
+@property (nonatomic,strong) NSMutableString * txrname;
+
 @end
 
 @interface DModel : TModel <SSNJsonCoding>
@@ -117,15 +121,28 @@ static char * tdes_cmd_key = NULL;
 - (void)test_compatibility_propert_json {
     NSError *error = nil;
 
-    NSDictionary *model = @{@"name":@(123456),@"age":@"12",@"isAffirm":@"1",@"tap":@('t')};
+    NSDictionary *model = @{@"name":@(123456),@"age":@"12",@"isAffirm":@"1",@"tap":@('t'),@"txname":@"lingminjun",@"txrname":@"0lingminjun"};
     NSData *data = nil;
     NSString *str = nil;
     data = [NSJSONSerialization dataWithJSONObject:model options:NSJSONWritingPrettyPrinted error:&error];
     str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"%@",str);
     
-    TModel *m = [TModel ssn_objectFromJsonString:str];
+    TModel *m = [FJSON entity:[TModel class] fromJSONData:data];//[TModel ssn_objectFromJsonString:str];
     NSLog(@"%@",m.name);
+    
+    [m.txrname insertString:@"0000" atIndex:1];
+    NSLog(@"%@",m.txrname);
+    
+    [m.txname insertString:@"0000" atIndex:1];
+    NSLog(@"%@",m.txname);
+    
+    NSString *str1 = @"1234";
+    NSString *str2 = @"1234";
+    if (str1 == str2) {
+        NSLog(@"===============");
+    }
+   
     
 }
 
@@ -216,11 +233,13 @@ static char * tdes_cmd_key = NULL;
     
     model.iset = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 4)];
     
-    NSString *json = [model ssn_toJsonString];
-    NSLog(@"%@",json);
-    MModel *m = [MModel ssn_objectFromJsonString:json targetClass:[MModel class]];
+    NSData *data = [FJSON toJSONData:model];
+//    NSString *json = [model ssn_toJsonString];
+    NSLog(@"%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    MModel *m = [FJSON entity:[MModel class] fromJSONData:data];//[MModel ssn_objectFromJsonString:json targetClass:[MModel class]];
     NSLog(@"%@",model.model.name);
-    NSLog(@"%@",[m ssn_toJsonString]);
+//    NSLog(@"%@",[m ssn_toJsonString]);
+    NSLog(@"%@",[[NSString alloc] initWithData:[FJSON toJSONData:m] encoding:NSUTF8StringEncoding]);
     
 }
 

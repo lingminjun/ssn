@@ -1014,25 +1014,34 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
                                 }
                                 if (!set) {
                                     fjson_safe_kvc_set(object,value,classProperty.key);
-//                                    [object setValue:value forKey:classProperty.key];
                                 }
                             } else if (fjson_is_kind_of(classProperty.clazz, [NSString class])) {//字符容器支持
                                 id value = [self decodeObjectClass:classProperty.clazz forKey:key];
                                 BOOL set = NO;
                                 if (resp_json_kvc && value != nil) {
-                                    set = [(id<FJSONEntity>)object fjson_setValue:value forKey:key];
+                                    if (fjson_is_kind_of(classProperty.clazz, [NSMutableString class]) && [value isKindOfClass:[NSString class]]) {
+                                        set = [(id<FJSONEntity>)object fjson_setValue:[value mutableCopy] forKey:key];
+                                    } else {
+                                        set = [(id<FJSONEntity>)object fjson_setValue:value forKey:key];
+                                    }
                                 }
                                 if (!set) {
                                     if ([value isKindOfClass:[NSString class]]) {
                                         if (![[(NSString *)value uppercaseString] isEqualToString:FJSON_NULL]) {
-                                            fjson_safe_kvc_set(object,value,classProperty.key);
-                                            //                                        [object setValue:value forKey:classProperty.key];
+                                            if (fjson_is_kind_of(classProperty.clazz, [NSMutableString class])) {
+                                                fjson_safe_kvc_set(object,[value mutableCopy],classProperty.key);
+                                            } else {
+                                                fjson_safe_kvc_set(object,value,classProperty.key);
+                                            }
                                         }
                                     } else {
                                         if (value) {
                                             NSString *string = [NSString stringWithFormat:@"%@",value];
-                                            fjson_safe_kvc_set(object,string,classProperty.key);
-                                            //                                        [object setValue:string forKey:classProperty.key];
+                                            if (fjson_is_kind_of(classProperty.clazz, [NSMutableString class])) {
+                                                fjson_safe_kvc_set(object,[string mutableCopy],classProperty.key);
+                                            } else {
+                                                fjson_safe_kvc_set(object,string,classProperty.key);
+                                            }
                                         }
                                     }
                                 }
