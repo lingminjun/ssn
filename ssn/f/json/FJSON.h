@@ -113,7 +113,12 @@ typedef Class (^FJSONGeneric)(Class entityClass, NSString *undefinedKey);
  */
 + (id)entity:(Class)entityClass fromJSONData:(NSData *)jsonData filter:(FJSONFilter)filter mapping:(FJSONMapping)mapping generic:(FJSONGeneric)generic;
 
-
+/**
+ *  对已有对象填充，不支持从JSONArray中填充数据
+ */
++ (void)fillEntity:(id)entity fromJSONData:(NSData *)jsonData;
++ (void)fillEntity:(id)entity fromJSONData:(NSData *)jsonData config:(FJSONConfig *)config;
++ (void)fillEntity:(id)entity fromJSONData:(NSData *)jsonData filter:(FJSONFilter)filter mapping:(FJSONMapping)mapping generic:(FJSONGeneric)generic;
 @end
 
 /**

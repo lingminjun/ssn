@@ -343,7 +343,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 + (FJsonCoder *)coderWithRootObject:(id)objv;
 
 - (BOOL)encodeObject:(NSObject *)object;//encode入口
-- (id)decodeObject:(Class)element;//decode入口
+- (id)decodeObject:(Class)element toObject:(id)obj;//decode入口
 
 /**
  *  encode对象类型
@@ -452,9 +452,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
  *  @return 返回json data (UTF8code)
  */
 + (NSData *)toJSONData:(NSObject *)entity {
-    FJsonCoder *coder = [FJsonCoder coderWithTargetClass:[entity class]];
-    [coder encodeObject:entity];
-    return [coder encodeData];
+    return [self toJSONData:entity config:nil];
 }
 
 
@@ -471,14 +469,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
  *  @return 返回实例对象
  */
 + (id)entity:(Class)entityClass fromJSONData:(NSData *)jsonData {
-    FJsonCoder *coder = [FJsonCoder coderWithTargetClass:entityClass];
-    [coder setEncodeData:jsonData];
-    
-    if (coder.isArray) {
-        return [coder decodeArrayObjectClass:entityClass];
-    } else {
-        return [coder decodeObject:nil];
-    }
+    return [self entity:entityClass fromJSONData:jsonData config:nil];
 }
 
 /**
@@ -508,13 +499,13 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
  *  @return 返回json data (UTF8code)
  */
 + (NSData *)toJSONData:(NSObject *)entity filter:(FJSONFilter)filter mapping:(FJSONMapping)mapping {
-    FJsonCoder *coder = [FJsonCoder coderWithTargetClass:[entity class]];
+    FJSONConfig *config = nil;
     if (filter != nil || mapping != nil) {
-        coder.config.bfilter = filter;
-        coder.config.bmapping = mapping;
+        config = [[FJSONConfig alloc] init];
+        config.bfilter = filter;
+        config.bmapping = mapping;
     }
-    [coder encodeObject:entity];
-    return [coder encodeData];
+    return [self toJSONData:entity config:config];
 }
 
 /**
@@ -538,7 +529,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
     if (coder.isArray) {
         return [coder decodeArrayObjectClass:entityClass];
     } else {
-        return [coder decodeObject:nil];
+        return [coder decodeObject:nil toObject:nil];
     }
 }
 
@@ -554,23 +545,53 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
  *  @return 返回实例对象
  */
 + (id)entity:(Class)entityClass fromJSONData:(NSData *)jsonData filter:(FJSONFilter)filter mapping:(FJSONMapping)mapping generic:(FJSONGeneric)generic {
-    FJsonCoder *coder = [FJsonCoder coderWithTargetClass:entityClass];
     
+    FJSONConfig *config = nil;
     if (filter != nil || mapping != nil || generic != nil) {
-        coder.config.bfilter = filter;
-        coder.config.bmapping = mapping;
-        coder.config.bgeneric = generic;
+        config = [[FJSONConfig alloc] init];
+        config.bfilter = filter;
+        config.bmapping = mapping;
+        config.bgeneric = generic;
+    }
+    
+    return [self entity:entityClass fromJSONData:jsonData config:config];
+}
+
+
++ (void)fillEntity:(id)entity fromJSONData:(NSData *)jsonData {
+    [self fillEntity:entity fromJSONData:jsonData config:nil];
+}
++ (void)fillEntity:(id)entity fromJSONData:(NSData *)jsonData config:(FJSONConfig *)config {
+    if (entity == nil) {
+        return;
+    }
+    
+    FJsonCoder *coder = [FJsonCoder coderWithTargetClass:[entity class]];
+    
+    if (config != nil) {
+        coder.config = config;
     }
     
     [coder setEncodeData:jsonData];
     
+    NSAssert(!coder.isArray, @"fill entity 不支持数组json");
+    
     if (coder.isArray) {
-        return [coder decodeArrayObjectClass:entityClass];
+        NSLog(@"fill entity 不支持数组json");
     } else {
-        return [coder decodeObject:nil];
+        [coder decodeObject:nil toObject:entity];
     }
 }
-
++ (void)fillEntity:(id)entity fromJSONData:(NSData *)jsonData filter:(FJSONFilter)filter mapping:(FJSONMapping)mapping generic:(FJSONGeneric)generic {
+    FJSONConfig *config = nil;
+    if (filter != nil || mapping != nil || generic != nil) {
+        config = [[FJSONConfig alloc] init];
+        config.bfilter = filter;
+        config.bmapping = mapping;
+        config.bgeneric = generic;
+    }
+    [self fillEntity:entity fromJSONData:jsonData config:config];
+}
 @end
 
 @implementation FJsonCoder
@@ -813,14 +834,19 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
 }
 
 //decode出口
-- (id)decodeObject:(Class)element {
+- (id)decodeObject:(Class)element toObject:(id)to_obj {
 
     Class clazz = [self targetClass];
     if (clazz == nil) {
         return nil;
     }
     
-    id object = [[clazz alloc] init];//生产实例
+    id object = nil;
+    if (to_obj != nil) {
+        object = to_obj;
+    } else {
+        object = [[clazz alloc] init];//生产实例
+    }
     
     if (object) {
         if ([object class] == [NSObject class]) {
@@ -1290,7 +1316,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
     if ([objv isKindOfClass:[NSDictionary class]] || [objv isKindOfClass:[NSArray class]]) {
         FJsonCoder *coder = [self subCoderWithObject:objv targetClass:nil];
         coder.targetClass = clazz;
-        id obj = [coder decodeObject:element];
+        id obj = [coder decodeObject:element toObject:nil];
         if (obj) {
             return obj;
         }
@@ -1458,7 +1484,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
         id target_obj = nil;
         FJsonCoder *coder = [self subCoderWithObject:aobj targetClass:nil];
         coder.targetClass = clazz;
-        id obj = [coder decodeObject:clazz];
+        id obj = [coder decodeObject:clazz toObject:nil];
         if (obj) {
             target_obj = obj;
         }
@@ -1549,7 +1575,7 @@ NSDictionary<NSString *, FJSONClassProperty *> *fjson_get_class_property_name(Cl
         id target_obj = nil;
         FJsonCoder *coder = [self subCoderWithObject:aobj targetClass:nil];
         coder.targetClass = clazz;
-        id obj = [coder decodeObject:clazz];
+        id obj = [coder decodeObject:clazz toObject:nil];
         if (obj) {
             target_obj = obj;
         }

@@ -237,9 +237,15 @@ static char * tdes_cmd_key = NULL;
 //    NSString *json = [model ssn_toJsonString];
     NSLog(@"%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     MModel *m = [FJSON entity:[MModel class] fromJSONData:data];//[MModel ssn_objectFromJsonString:json targetClass:[MModel class]];
-    NSLog(@"%@",model.model.name);
+    NSLog(@"%@",m.model.name);
 //    NSLog(@"%@",[m ssn_toJsonString]);
     NSLog(@"%@",[[NSString alloc] initWithData:[FJSON toJSONData:m] encoding:NSUTF8StringEncoding]);
+    
+    MModel *mm = [[MModel alloc] init];
+    [FJSON fillEntity:mm fromJSONData:data];
+    NSLog(@"%@",mm.model.name);
+    NSLog(@"%@",[[NSString alloc] initWithData:[FJSON toJSONData:mm] encoding:NSUTF8StringEncoding]);
+
     
 }
 
