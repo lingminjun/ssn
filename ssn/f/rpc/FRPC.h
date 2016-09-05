@@ -44,48 +44,6 @@ typedef NS_ENUM(NSUInteger, FRPCReqStrategy) {
     FRPCBreak
 };
 
-///**
-// *  请求状态
-// */
-//typedef NS_ENUM(NSUInteger, FRPCReqStatus) {
-//    /**
-//     *  准备开始
-//     */
-//    FRPCReqWill,
-//    /**
-//     *  请求中
-//     */
-//    FRPCReqDoing,
-//    /**
-//     *  请求完
-//     */
-//    FRPCReqDid,
-//    /**
-//     *  失败
-//     */
-//    FRPCReqFailed
-//};
-//
-///**
-// *  请求过滤器
-// */
-//@protocol FRPCFilter <NSObject>
-//
-//@required
-///**
-// *  请求过滤器实现方法
-// *
-// *  @param rpc    请求器
-// *  @param req    请求体
-// *  @param status 请求状态
-// *
-// *  @return 返回新的请求体，返回nil时表示禁用此请求
-// */
-//- (FRPCReq *)frpc_filter:(FRPCReq *)req status:(FRPCReqStatus)status;
-//
-//@end
-
-
 
 /**
  *  rpc调用定义
