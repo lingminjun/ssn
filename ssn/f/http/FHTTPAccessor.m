@@ -122,7 +122,7 @@
 }
 
 #pragma mark - 添加task
-- (NSData * __nullable)syncRequest:(id<FHTTRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error
+- (NSData * __nullable)syncRequest:(id<FHTTPRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error
 {
     if (request == nil) {
         return nil;
@@ -144,7 +144,7 @@
     return data;
 }
 
-- (NSData * __nullable)barrierRequest:(id<FHTTRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt
+- (NSData * __nullable)barrierRequest:(id<FHTTPRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt
 {
     if (request == nil) {
         return nil;
@@ -186,7 +186,7 @@
     }
 }
 
-- (NSData *)dataWithRequest:(id<FHTTRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error {
+- (NSData *)dataWithRequest:(id<FHTTPRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error {
     NSURLSession * session = self.session;
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -294,9 +294,9 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
 
 
 /**
- *  FHTTRequest支持
+ *  FHTTPRequest支持
  */
-@implementation NSURLRequest (FHTTRequest)
+@implementation NSURLRequest (FHTTPRequest)
 - (NSURLRequest * __nonnull)fhttp_mixHTTPRequest {
     return self;
 }
