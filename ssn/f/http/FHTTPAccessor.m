@@ -73,15 +73,17 @@
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     }
     
+//    configuration.HTTPShouldUsePipelining = YES;
+    
     //构建锁
     pthread_mutex_init(&_mutex, NULL);
     pthread_cond_init(&_cond,NULL);
     
     //结果处理队列
-    NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
-    operationQueue.maxConcurrentOperationCount = 4;
+//    NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
+//    operationQueue.maxConcurrentOperationCount = 4;
     
-    self.session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:operationQueue];
+    self.session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     
     self.securityPolicy = [FSecurityPolicy policy];
     
@@ -205,7 +207,7 @@
         if (out_response && [response isKindOfClass:[NSHTTPURLResponse class]]) {
             *out_response = (NSHTTPURLResponse *)response;
         } else {
-            NSLog(@"FHTTPAccessor: 位置类型的请求！！！");
+            NSLog(@"FHTTPAccessor: 不关心response！！！");
         }
         
         out_data = data;//填充数据

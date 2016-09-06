@@ -24,7 +24,7 @@ FOUNDATION_EXTERN NSString *const FRPCErrorDomain; //rpc错误异常domain
  *
  *  @return 返回当前请求cancel类
  */
-typedef id<FRPCCancelable>(^frpc_res_block_t)(FRPCReq *main_req, NSArray<FRPCReq *> *reqs, FRPCResultWrapper *result, NSUInteger index, NSError *error);
+typedef void(^frpc_res_block_t)(FRPCReq *main_req, NSArray<FRPCReq *> *reqs, FRPCResultWrapper *result, NSUInteger index, NSError *error);
 
 /**
  *  请求策略控制
@@ -95,7 +95,7 @@ typedef NS_ENUM(NSUInteger, FRPCReqStrategy) {
  *  支持objectAtIndexedSubscript取值:
  *  SampleEntity *entity = result[0];
  */
-@interface FRPCResultWrapper : NSObject<FRPCEntity>
+@interface FRPCResultWrapper : NSObject
 
 /**
  *  按照请求放入的位置取参数
@@ -166,6 +166,13 @@ typedef NS_ENUM(NSUInteger, FRPCReqStrategy) {
 - (FRPCReqStrategy)shouldContinue;
 
 /**
+ *  设置是否继续请求的策略
+ *
+ *  @param strategy 设置策略
+ */
+- (void)setStrategy:(FRPCReqStrategy(^)(FRPCReq *req))strategy;
+
+/**
  * 链式请求使用的方法，当获得本请求数据时，你可以在此方法中组装数据【main thread】(线程安全区域)
  * call:返回数据后将触发，若cache:有数据返回时也将触发此回调，is_cache表示是否为缓存数据
  * @param mainReq
@@ -174,6 +181,13 @@ typedef NS_ENUM(NSUInteger, FRPCReqStrategy) {
  * @param is_cache 是否为缓存数据
  */
 - (void)onAssembly:(FRPCReq *)mainReq prev:(FRPCReq *)prevReq result:(id<FRPCEntity>)result cache:(BOOL)is_cache;
+
+/**
+ *  设置assembly，如继承则建议重写-onAssembly:prev:result:cache:方法，若不继承，请设置数据组装处理block（注意不要循环引用）
+ *
+ *  @param assembly assembly
+ */
+- (void)setAssembly:(void(^)(FRPCReq *req,FRPCReq *mainReq,FRPCReq *preReq,id<FRPCEntity> result,BOOL is_cache))assembly;
 
 /**
  * 链式请求支持

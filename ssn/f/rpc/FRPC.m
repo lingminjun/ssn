@@ -71,7 +71,7 @@ NSString *const FRPCErrorDomain = @"FRPCErrorDomain";
 //    [_ets setObject:obj forKey:@(idx)];
 //}
 
-- (void)frpc_fill:(NSObject *)obj type:(NSString *)type {}
+//- (void)frpc_fill:(NSObject *)obj type:(NSString *)type {}
 @end
 
 //错误协议支持
@@ -587,6 +587,15 @@ static dispatch_queue_t get_work_queue() {
 }
 
 /**
+ *  设置是否继续请求的策略
+ *
+ *  @param strategy 设置策略
+ */
+- (void)setStrategy:(FRPCReqStrategy(^)(FRPCReq *req))strategy {
+    _strategy_block = strategy;
+}
+
+/**
  * 链式请求使用的方法，当获得本请求数据时，你可以在此方法中组装数据【main thread】(线程安全区域)
  * @param mainReq
  * @param prevReq
@@ -597,6 +606,15 @@ static dispatch_queue_t get_work_queue() {
     if (_assembly_block) {
         _assembly_block(self,mainReq,prevReq,result,is_cache);
     }
+}
+
+/**
+ *  设置assembly
+ *
+ *  @param assembly assembly
+ */
+- (void)setAssembly:(void(^)(FRPCReq *req,FRPCReq *mainReq,FRPCReq *preReq,id<FRPCEntity> result,BOOL is_cache))assembly {
+    self.assembly_block = assembly;
 }
 
 /**
