@@ -25,16 +25,35 @@
 @property (nonatomic, strong, nullable) FSecurityPolicy *securityPolicy;
 
 /**
+ *  NSURLSessionConfiguration可配置支持
+ */
+@property (nullable, copy) NSDictionary *HTTPAdditionalHeaders;
+@property (nullable, retain) NSHTTPCookieStorage *HTTPCookieStorage;
+@property (nullable, retain) NSURLCredentialStorage *URLCredentialStorage;
+@property (nullable, retain) NSURLCache *URLCache;
+
+/**
  *  获取网络请求
  *
  *  @param request 请求体
  *  @param data    返回的数据
  *  @param error   请求是否出错
  *
- *  @return 响应体
+ *  @return 返回的数据body
  */
 - (NSData * __nullable)syncRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error;
 
+/**
+ *  单通道获取网络请求，限制端口串行，一般使用在认证权限接口，防止客户端并发造成服务端返回多个access_token，瞬间互踢
+ *
+ *  @param request 请求体
+ *  @param data    返回的数据
+ *  @param error   请求是否出错
+ *  @param expt    输出回调，既然此请求需要设置栅栏，就请在栅栏的出口处将数据储存好，一般此时修改HTTPAdditionalHeaders中的验权字段，切记此处不可嵌套使用FHTTPAccessor的方法，返回值直接被设置成HTTPAdditionalHeaders
+ *
+ *  @return 返回的数据body
+ */
+- (NSData * __nullable)barrierRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt;
 
 /**
  *  默认的Accessor

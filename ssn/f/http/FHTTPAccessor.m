@@ -12,13 +12,52 @@
 
 #import <netinet/in.h>
 #import <arpa/inet.h>
+#import <pthread.h>
 
 
 @interface FHTTPAccessor () <NSURLSessionDelegate>
 @property (nonatomic,strong) NSURLSession *session;
 @end
 
-@implementation FHTTPAccessor
+@implementation FHTTPAccessor {
+    pthread_mutex_t _mutex;
+    pthread_cond_t _cond;
+    /*volatile*//*效率稍微低一点，考虑是否要用*/ int flag;//
+}
+
+@dynamic HTTPAdditionalHeaders;
+@dynamic HTTPCookieStorage;
+@dynamic URLCredentialStorage;
+@dynamic URLCache;
+
+- (NSDictionary *)HTTPAdditionalHeaders {
+    return _session.configuration.HTTPAdditionalHeaders;
+}
+
+- (void)setHTTPAdditionalHeaders:(NSDictionary *)HTTPAdditionalHeaders {
+    _session.configuration.HTTPAdditionalHeaders = HTTPAdditionalHeaders;
+}
+
+- (NSHTTPCookieStorage *)HTTPCookieStorage {
+    return _session.configuration.HTTPCookieStorage;
+}
+- (void)setHTTPCookieStorage:(NSHTTPCookieStorage *)HTTPCookieStorage {
+    _session.configuration.HTTPCookieStorage = HTTPCookieStorage;
+}
+
+- (NSURLCredentialStorage *)URLCredentialStorage {
+    return _session.configuration.URLCredentialStorage;
+}
+- (void)setURLCredentialStorage:(NSURLCredentialStorage *)URLCredentialStorage {
+    _session.configuration.URLCredentialStorage = URLCredentialStorage;
+}
+
+- (NSURLCache *)URLCache {
+    return _session.configuration.URLCache;
+}
+- (void)setURLCache:(NSURLCache *)URLCache {
+    _session.configuration.URLCache = URLCache;
+}
 
 - (instancetype)init {
     return [self initWithSessionConfiguration:nil];
@@ -34,6 +73,10 @@
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     }
     
+    //构建锁
+    pthread_mutex_init(&_mutex, NULL);
+    pthread_cond_init(&_cond,NULL);
+    
     //结果处理队列
     NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
     operationQueue.maxConcurrentOperationCount = 4;
@@ -44,6 +87,30 @@
     
     return self;
 }
+
+- (void)dealloc
+{
+    pthread_mutex_destroy(&_mutex);
+    pthread_cond_destroy(&_cond);
+}
+
+- (void)check_single_channel_and_wait {
+    if (flag > 0) {//一般条件下不需要进入wait
+        pthread_mutex_lock(&_mutex);
+        while (flag > 0) {
+            pthread_cond_wait(&_cond,&_mutex);
+        }
+        pthread_mutex_unlock(&_mutex);
+    }
+}
+
+//- (void)broadcast_condition {
+//    pthread_cond_broadcast(&_cond);
+//}
+
+//- (void)signal {
+//    pthread_cond_signal(&_cond);
+//}
 
 + (instancetype)defaultInstance {
     static FHTTPAccessor *accessor = nil;
@@ -57,7 +124,61 @@
 #pragma mark - 添加task
 - (NSData * __nullable)syncRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error
 {
+    NSData *data = nil;
     
+    [self check_single_channel_and_wait];
+    
+    @try {
+        data = [self dataWithRequest:request response:out_response error:out_error];
+    } @catch (NSException *exception) {
+        if (out_error) {
+            *out_error = [[NSError alloc] initWithDomain:@"FHTTPAccessor" code:-1 userInfo:@{NSLocalizedDescriptionKey:exception.name,NSLocalizedFailureReasonErrorKey:(exception.reason ? @"" : exception.reason)}];
+        }
+    } @finally {
+    }
+    
+    return data;
+}
+
+- (NSData * __nullable)barrierRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt
+{
+    NSData *data = nil;
+    
+    pthread_mutex_lock(&_mutex);
+    flag = 1;
+    
+    @try {
+        NSHTTPURLResponse *res = nil;
+        NSError *err = nil;
+        data = [self dataWithRequest:request response:&res error:&err];
+        
+        if (response) {
+            *response = res;
+        }
+        
+        if (error) {
+            *error = err;
+        }
+        
+        if (expt) {
+            NSDictionary *headers = expt(data,res,err);
+            
+            if (headers) {//若设置了值，则设置headers
+                self.HTTPAdditionalHeaders = headers;
+            }
+        }
+    } @catch (NSException *exception) {
+        if (error) {
+            *error = [[NSError alloc] initWithDomain:@"FHTTPAccessor" code:-1 userInfo:@{NSLocalizedDescriptionKey:exception.name,NSLocalizedFailureReasonErrorKey:(exception.reason ? @"" : exception.reason)}];
+        }
+    } @finally {
+        flag = 0;
+        pthread_cond_broadcast(&_cond);
+        pthread_mutex_unlock(&_mutex);
+    }
+}
+
+- (NSData *)dataWithRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error {
     NSURLSession * session = self.session;
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -86,6 +207,31 @@
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     
     return out_data;
+}
+
+- (void)serial:(dispatch_block_t __nonnull)block {
+    if (block == nil) {
+        return ;
+    }
+    
+    BOOL lock = NO;
+    if (flag != 1) {//等于1表示嵌套
+        lock = YES;
+        pthread_mutex_lock(&_mutex);
+        flag = 1;
+    }
+    
+    @try {
+        block();
+    } @catch (NSException *exception) {
+        NSLog(@"FHTTPAccessor %@",exception);
+    } @finally {
+        if (lock) {
+            flag = 0;
+            pthread_cond_broadcast(&_cond);
+            pthread_mutex_unlock(&_mutex);
+        }
+    }
 }
 
 - (void)session:(NSURLSession *)session authChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler {
