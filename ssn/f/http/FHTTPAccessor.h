@@ -55,7 +55,7 @@
  *
  *  @return 返回的数据body
  */
-- (NSData * __nullable)barrierRequest:(id<FHTTPRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt;
+- (NSData * __nullable)barrierRequest:(id<FHTTPRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable err))expt;
 
 /**
  *  默认的Accessor
@@ -74,9 +74,9 @@
 /**
  *  获得可用的http请求方式
  *
- *  @return NSURLRequest请求体
+ *  @return NSURLRequest请求体,返回nil表示取消本次请求
  */
-- (NSURLRequest * __nonnull)fhttp_mixHTTPRequest;
+- (NSURLRequest * __nullable)fhttp_mixHTTPRequest;
 
 @end
 

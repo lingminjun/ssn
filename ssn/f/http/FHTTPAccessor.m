@@ -144,7 +144,7 @@
     return data;
 }
 
-- (NSData * __nullable)barrierRequest:(id<FHTTPRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt
+- (NSData * __nullable)barrierRequest:(id<FHTTPRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable err))expt
 {
     if (request == nil) {
         return nil;
@@ -187,6 +187,12 @@
 }
 
 - (NSData *)dataWithRequest:(id<FHTTPRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error {
+    
+    NSURLRequest *httpReq = [request fhttp_mixHTTPRequest];
+    if (httpReq == nil) {
+        return nil;
+    }
+    
     NSURLSession * session = self.session;
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -297,7 +303,7 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
  *  FHTTPRequest支持
  */
 @implementation NSURLRequest (FHTTPRequest)
-- (NSURLRequest * __nonnull)fhttp_mixHTTPRequest {
+- (NSURLRequest * __nullable)fhttp_mixHTTPRequest {
     return self;
 }
 @end
