@@ -10,6 +10,8 @@
 #import <Security/Security.h>
 
 @class FSecurityPolicy;
+@protocol FHTTRequest;
+
 
 /**
  *  HTTP/HTTPS读取器
@@ -41,7 +43,7 @@
  *
  *  @return 返回的数据body
  */
-- (NSData * __nullable)syncRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error;
+- (NSData * __nullable)syncRequest:(id<FHTTRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error;
 
 /**
  *  单通道获取网络请求，限制端口串行，一般使用在认证权限接口，防止客户端并发造成服务端返回多个access_token，瞬间互踢
@@ -53,7 +55,7 @@
  *
  *  @return 返回的数据body
  */
-- (NSData * __nullable)barrierRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt;
+- (NSData * __nullable)barrierRequest:(id<FHTTRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt;
 
 /**
  *  默认的Accessor
@@ -63,6 +65,26 @@
 + (instancetype __nonnull)defaultInstance;
 @end
 
+/**
+ *  获取http请求体
+ */
+@protocol FHTTRequest <NSObject>
+
+@required
+/**
+ *  获得可用的http请求方式
+ *
+ *  @return NSURLRequest请求体
+ */
+- (NSURLRequest * __nonnull)fhttp_mixHTTPRequest;
+
+@end
+
+/**
+ *  FHTTRequest支持
+ */
+@interface NSURLRequest (FHTTRequest) <FHTTRequest>
+@end
 
 /**
  *  证书认证

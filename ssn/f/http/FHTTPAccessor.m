@@ -116,14 +116,18 @@
     static FHTTPAccessor *accessor = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        accessor = [[FHTTPAccessor alloc] init];
+        accessor = [[[self class] alloc] init];
     });
     return accessor;
 }
 
 #pragma mark - 添加task
-- (NSData * __nullable)syncRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error
+- (NSData * __nullable)syncRequest:(id<FHTTRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error
 {
+    if (request == nil) {
+        return nil;
+    }
+    
     NSData *data = nil;
     
     [self check_single_channel_and_wait];
@@ -140,8 +144,12 @@
     return data;
 }
 
-- (NSData * __nullable)barrierRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt
+- (NSData * __nullable)barrierRequest:(id<FHTTRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)response error:(NSError *__nullable* __nullable)error exportHeaders:(NSDictionary *__nullable (^ __nonnull)(NSData * __nullable data, NSHTTPURLResponse * __nullable res,NSError *__nullable))expt
 {
+    if (request == nil) {
+        return nil;
+    }
+    
     NSData *data = nil;
     
     pthread_mutex_lock(&_mutex);
@@ -178,7 +186,7 @@
     }
 }
 
-- (NSData *)dataWithRequest:(NSURLRequest * __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error {
+- (NSData *)dataWithRequest:(id<FHTTRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error {
     NSURLSession * session = self.session;
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -186,7 +194,7 @@
     __block NSData *out_data = nil;
     
     // 基本网络请求
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:[request fhttp_mixHTTPRequest] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (out_response && [response isKindOfClass:[NSHTTPURLResponse class]]) {
             *out_response = (NSHTTPURLResponse *)response;
@@ -280,6 +288,22 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
 }
 
 @end
+
+
+
+
+
+/**
+ *  FHTTRequest支持
+ */
+@implementation NSURLRequest (FHTTRequest)
+- (NSURLRequest * __nonnull)fhttp_mixHTTPRequest {
+    return self;
+}
+@end
+
+
+
 
 
 
