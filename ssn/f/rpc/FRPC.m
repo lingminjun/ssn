@@ -291,6 +291,8 @@ static dispatch_queue_t get_work_queue() {
     
     FRPCResultWrapper *wrapper = [[FRPCResultWrapper alloc] init];
     NSArray *reqs = @[req];
+    FRPCReq *main_req = req.main_req;//入栈保留
+    FRPCReq *prev_req = req.prev_req;//入栈保留
     
     //读取文件缓存
     BOOL needReq = true;
@@ -306,7 +308,7 @@ static dispatch_queue_t get_work_queue() {
                     
                     //组合数据
                     @try {
-                        [req onAssembly:req.main_req prev:req.prev_req result:o cache:YES];
+                        [req onAssembly:main_req prev:prev_req result:o cache:YES];
                     } @catch (NSException *exception) {
                         NSLog(@"%@",exception);
                     }
@@ -314,7 +316,7 @@ static dispatch_queue_t get_work_queue() {
                 
                     [wrapper->_ets setObject:o forKey:@(0)];
                     [wrapper->_chs addObject:@(0)];//是缓存数据
-                    [res frpc_res_main:req.main_req req:reqs result:wrapper index:idx error:nil];
+                    [res frpc_res_main:main_req req:reqs result:wrapper index:idx error:nil];
                 }];
                 
                 //直接使用缓存数据
@@ -362,14 +364,14 @@ static dispatch_queue_t get_work_queue() {
                 
                 //组合数据
                 @try {
-                    [req onAssembly:req.main_req prev:req.prev_req result:o cache:NO];
+                    [req onAssembly:main_req prev:prev_req result:o cache:NO];
                 } @catch (NSException *exception) {
                     NSLog(@"%@",exception);
                 }
                 
                 [wrapper->_ets setObject:o forKey:@(0)];
                 [wrapper->_chs removeObject:@(0)];//是缓存数据
-                [res frpc_res_main:req.main_req req:reqs result:wrapper index:idx error:nil];
+                [res frpc_res_main:main_req req:reqs result:wrapper index:idx error:nil];
             }];
         }
         
@@ -393,7 +395,7 @@ static dispatch_queue_t get_work_queue() {
             NSError *error = [NSError errorWithDomain:FRPCErrorDomain code:-1 userInfo:info];
             
             [wrapper->_ets setObject:error forKey:@(FRPC_ERROR_IDX(0))];
-            [res frpc_res_main:req.main_req req:reqs result:wrapper index:idx error:error];
+            [res frpc_res_main:main_req req:reqs result:wrapper index:idx error:error];
         }];
         result = FRPCSkip;
 //        }
