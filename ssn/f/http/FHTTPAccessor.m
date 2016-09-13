@@ -14,6 +14,8 @@
 #import <arpa/inet.h>
 #import <pthread.h>
 
+#import <Foundation/NSObjCRuntime.h>
+
 
 @interface FHTTPAccessor () <NSURLSessionDelegate>
 @property (nonatomic,strong) NSURLSession *session;
@@ -188,6 +190,13 @@
     }
 }
 
+//防止没有定义宏
+#ifndef NSFoundationVersionNumber_iOS_8_0
+#define NSFoundationVersionNumber_With_Fixed_5871104061079552_bug 1140.11
+#else
+#define NSFoundationVersionNumber_With_Fixed_5871104061079552_bug NSFoundationVersionNumber_iOS_8_0
+#endif
+
 - (NSData *)dataWithRequest:(id<FHTTPRequest> __nonnull)request response:(NSHTTPURLResponse * __nullable * __nullable)out_response error:(NSError *__nullable* __nullable)out_error {
     
     NSURLRequest *httpReq = [request fhttp_mixHTTPRequest];
@@ -195,34 +204,68 @@
         return nil;
     }
     
-    NSURLSession * session = self.session;
     
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    __block NSData *out_data = nil;
-    
-    // 基本网络请求
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:[request fhttp_mixHTTPRequest] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    // 如果是iOS7.x时，使用串行队列同步执行NSURLSession创建Task的操作
+    //索性iOS7一下就采用NSURLConnenction
+    /*
+    if (NSFoundationVersionNumber < NSFoundationVersionNumber_With_Fixed_5871104061079552_bug) {
+        //若考虑需要配置一些header,cookie等等，此举修改并不是非常合理
+        return [NSURLConnection sendSynchronousRequest:httpReq returningResponse:out_response error:out_error];
+    } else {
+        */
+        NSURLSession * session = self.session;
         
-        if (out_response && [response isKindOfClass:[NSHTTPURLResponse class]]) {
-            *out_response = (NSHTTPURLResponse *)response;
-        } else {
-            NSLog(@"FHTTPAccessor: 不关心response！！！");
-        }
-        
-        out_data = data;//填充数据
-        
-        if (out_error != NULL && error) {
-            *out_error = error;
-        }
-        dispatch_semaphore_signal(semaphore);
-    }];
+        //采用型号锁存在假死状态，暂时还没发现原因
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [dataTask resume];
-    
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        __block NSData *out_data = nil;
+        // 基本网络请求
+        void (^handler)(NSData * __nullable data, NSURLResponse * __nullable response, NSError * __nullable error) = ^(NSData *data, NSURLResponse *response, NSError *error) {
+            
+            if (out_response && [response isKindOfClass:[NSHTTPURLResponse class]]) {
+                *out_response = (NSHTTPURLResponse *)response;
+            } else {
+                NSLog(@"FHTTPAccessor: 不关心response！！！");
+            }
+            
+            out_data = data;//填充数据
+            
+            if (out_error != NULL && error) {
+                *out_error = error;
+            }
+            dispatch_semaphore_signal(semaphore);
+        };
+        
+        __block NSURLSessionDataTask *dataTask = nil;
+        url_session_manager_create_task_safely(^{
+            dataTask = [session dataTaskWithRequest:[request fhttp_mixHTTPRequest] completionHandler:handler];
+        });
+        
+        [dataTask resume];
+        
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    /*}*/
     
     return out_data;
+}
+
+static void url_session_manager_create_task_safely(dispatch_block_t block) {
+    static dispatch_queue_t _queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _queue = dispatch_queue_create("fhttp.session.manager.creation", DISPATCH_QUEUE_SERIAL);
+    });
+    // 如果是iOS7.x时，使用串行队列同步执行NSURLSession创建Task的操作
+    // 如果是iOS8.x时，随便....
+    if (NSFoundationVersionNumber < NSFoundationVersionNumber_With_Fixed_5871104061079552_bug) {
+        // Fix of bug
+        // Open Radar:http://openradar.appspot.com/radar?id=5871104061079552 (status: Fixed in iOS8)
+        // Issue about:https://github.com/AFNetworking/AFNetworking/issues/2093
+        dispatch_sync(_queue, block);
+    } else {
+        block();
+    }
 }
 
 - (void)serial:(dispatch_block_t __nonnull)block {
