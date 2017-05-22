@@ -19,6 +19,8 @@
 #import "SSNNavigationBarAnimator.h"
 #import "SSNSafeKVO.h"
 #import "DMSettingViewController+TOne.h"
+#import "SSNBriefRSA.h"
+#import "ssninteger.h"
 
 @interface TTSameName : NSObject
 
@@ -246,7 +248,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             [ary addObject:[DMSettingCellItem itemWithTitle:@"UIDic"]];
             [ary addObject:[DMSectionCellItem item]];
             
-            [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
+            [ary addObject:[DMSettingCellItem itemWithTitle:@"brief_rsa"]];
             [ary addObject:[DMSectionCellItem item]];
             
             [ary addObject:[DMSettingCellItem itemWithTitle:@"UILayout"]];
@@ -296,6 +298,10 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     else if ([model.title isEqualToString:@"UILayout"]) {
         [self openRelativePath:@"../layout" query:nil];
     }
+    else if ([model.title isEqualToString:@"brief_rsa"]) {
+        //
+        [self briefTesting];
+    }
     else if ([model.title isEqualToString:@"xxxxxxxx"]) {
         DMSettingCellItem *item = (DMSettingCellItem *)model;
         if ([item.title isEqualToString:@"xxxxxxxx"]) {
@@ -328,5 +334,131 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     NSIndexPath *nextPath = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
     [self.ssn_tableViewConfigurator.listFetchController deleteDatasAtIndexPaths:@[indexPath,nextPath]];
     
+}
+
+- (void)briefTesting {
+    //9,223,372,036,854,775,807
+    //rsa pub key:(n,e) = (826758626753975959,65537) = Yjc5M2M5NzM2YTkxNjk3KzEwMDAx
+    //rsa pri key:(n,d) = (826758626753975959,52983600480739073) = Yjc5M2M5NzM2YTkxNjk3K2JjM2M0ZGNkOTM1ZjAx
+    
+    
+    {
+        NSString *msg = @"www.fengqu.com";
+        NSData *data = [msg dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *sign = [SSNBriefRSA sign:@"Yjc5M2M5NzM2YTkxNjk3K2JjM2M0ZGNkOTM1ZjAx" data:data];
+        NSLog(@"%@",sign);
+        if ([SSNBriefRSA verify:@"Yjc5M2M5NzM2YTkxNjk3KzEwMDAx" sign:sign data:data]) {
+            NSLog(@"verify true");
+        }
+    }
+    {
+        NSString *msg = @"肖信波 杨世亮";
+        NSData *data = [msg dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *sign = [SSNBriefRSA sign:@"Yjc5M2M5NzM2YTkxNjk3K2JjM2M0ZGNkOTM1ZjAx" data:data];
+        NSLog(@"%@",sign);
+        if ([SSNBriefRSA verify:@"Yjc5M2M5NzM2YTkxNjk3KzEwMDAx" sign:sign data:data]) {
+            NSLog(@"verify true");
+        }
+    }
+    {
+        NSString *msg = @"打算大家送大礼斯柯达dhjkasakda哈佛爱的大声道啊";
+        NSData *data = [msg dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *sign = [SSNBriefRSA sign:@"Yjc5M2M5NzM2YTkxNjk3K2JjM2M0ZGNkOTM1ZjAx" data:data];
+        NSLog(@"%@",sign);
+        if ([SSNBriefRSA verify:@"Yjc5M2M5NzM2YTkxNjk3KzEwMDAx" sign:sign data:data]) {
+            NSLog(@"verify true");
+        }
+    }
+//    {
+//        int64_t ll = -54343214504323ll;
+//        SSNBInteger lv;
+//        ssn_long_to_bigInt(ll, &lv);
+//        ssn_bigint_print(&lv);
+//        char dl[64];
+//        int len = ssn_bigint_transform_in_bytes(&lv, dl);
+//        NSLog(@"len %d",len);
+//        SSNBInteger lvv;
+//        ssn_bigint_transform_from_bytes(dl, &lvv, len);
+//        int64_t kvv = ssn_bigint_to_long(&lvv);
+//        ssn_bigint_print(&lvv);
+//        NSLog(@"kvv %lld",kvv);
+//        if (ll == kvv) {
+//            NSLog(@"最后相等======%lld",kvv);
+//        }
+//    }
+    
+    {
+        int64_t ll = -144343214504323l;//-144343214504323
+        SSNBInteger lv;
+        ssn_long_to_bigInt(ll, &lv);
+//        ssn_bigint_print(&lv);
+        char dl[64];
+        int len = ssn_bigint_transform_in_bytes(&lv, dl, 64);
+        NSLog(@"len %d",len);
+//        SSNBInteger lvv;
+//        ssn_bigint_transform_from_bytes(dl, &lvv, len);
+//        int64_t kvv = ssn_bigint_to_long(&lvv);
+//        ssn_bigint_print(&lvv);
+        for (int ii = 0; ii < len; ii++) {
+            printf("%d,",dl[ii]);
+        }
+        printf("\n");
+        NSData *sign = [NSData dataWithBytes:dl length:len];
+        NSLog(@"%@",[sign base64EncodedStringWithOptions:0]);
+    }
+//    {
+//        char chs[1024];
+//        for (int i = 1; i <= 9; i++) {
+//            for (int j = 1; j <= 9; j++) {
+//                memset(chs, 0x00, 1024);
+//                chs[0] = '0' + i;
+//                chs[1] = '0' + j;
+//                strcat(chs, "4343214504323");
+//                int64_t dddll = strtoll(chs, NULL, 10);
+//                {
+//                    int64_t ll = -dddll;
+//                    SSNBInteger lv;
+//                    ssn_long_to_bigInt(ll, &lv);
+//                    //                ssn_bigint_print(&lv);
+//                    char dl[64];
+//                    int len = ssn_bigint_transform_in_bytes(&lv, dl, 64);
+////                                    NSLog(@"len %d",len);
+//                    
+//                    SSNBInteger lvv;
+//                    ssn_bigint_transform_from_bytes(dl, &lvv, len);
+//                    
+//                    int64_t kvv = ssn_bigint_to_long(&lvv);
+//                    
+////                    for (int ii = 0; ii < len; ii++) {
+////                        printf("%d,",dl[ii]);
+////                    }
+////                    printf("\n");
+//
+//                    NSData *sign = [NSData dataWithBytes:dl length:len];
+//                    NSLog(@"%@ === %lld == %lld",[sign base64EncodedStringWithOptions:0],ll,kvv);
+//                }{
+//                     int64_t ll = dddll;
+//                    SSNBInteger lv;
+//                    ssn_long_to_bigInt(ll, &lv);
+//                    //                ssn_bigint_print(&lv);
+//                    char dl[64];
+//                    int len = ssn_bigint_transform_in_bytes(&lv, dl, 64);
+////                                    NSLog(@"len %d",len);
+//                    
+//                    SSNBInteger lvv;
+//                    ssn_bigint_transform_from_bytes(dl, &lvv, len);
+//                    int64_t kvv = ssn_bigint_to_long(&lvv);
+//                    
+////                    for (int ii = 0; ii < len; ii++) {
+////                        printf("%d,",dl[ii]);
+////                    }
+////                    printf("\n");
+//
+//                    NSData *sign = [NSData dataWithBytes:dl length:len];
+//                    NSLog(@"%@ === %lld == %lld",[sign base64EncodedStringWithOptions:0],ll,kvv);
+//                }
+//            }
+//        }
+//    }
 }
 @end
