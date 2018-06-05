@@ -7,12 +7,12 @@
 //
 
 #import "FJSON.h"
-#if TARGET_IPHONE_SIMULATOR
-#import <objc/objc-runtime.h>
-#else
+//#if TARGET_IPHONE_SIMULATOR
+//#import <objc/objc-runtime.h>
+//#else
 #import <objc/runtime.h>
 #import <objc/message.h>
-#endif
+//#endif
 
 NSString *const FJSON_NULL                    = @"NULL";
 

@@ -7,12 +7,12 @@
 //
 
 #import "NSObject+SSN.h"
-#if TARGET_IPHONE_SIMULATOR
-#import <objc/objc-runtime.h>
-#else
+//#if TARGET_IPHONE_SIMULATOR
+//#import <objc/objc-runtime.h>
+//#else
 #import <objc/runtime.h>
 #import <objc/message.h>
-#endif
+//#endif
 
 const char * SSN_IGNORE_description_KEY      = "description";
 const char * SSN_IGNORE_debugDescription_KEY = "debugDescription";

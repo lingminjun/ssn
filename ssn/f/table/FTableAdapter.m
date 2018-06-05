@@ -7,12 +7,12 @@
 //
 
 #import "FTableAdapter.h"
-#if TARGET_IPHONE_SIMULATOR
-#import <objc/objc-runtime.h>
-#else
+//#if TARGET_IPHONE_SIMULATOR
+//#import <objc/objc-runtime.h>
+//#else
 #import <objc/runtime.h>
 #import <objc/message.h>
-#endif
+//#endif
 
 /**
  *  数据修改委托

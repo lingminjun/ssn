@@ -7,12 +7,12 @@
 //
 
 #import "SSNToast.h"
-#if TARGET_IPHONE_SIMULATOR
-#import <objc/objc-runtime.h>
-#else
+//#if TARGET_IPHONE_SIMULATOR
+//#import <objc/objc-runtime.h>
+//#else
 #import <objc/runtime.h>
 #import <objc/message.h>
-#endif
+//#endif
 
 #define SSNTOAST_DEFAULT_FONT [UIFont boldSystemFontOfSize:15]
 #define SSNTOAST_MIN_WIDTH    (100)

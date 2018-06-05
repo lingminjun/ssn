@@ -8,12 +8,12 @@
 
 #import "SSNDBFetch.h"
 #import "NSString+SSN.h"
-#if TARGET_IPHONE_SIMULATOR
-#import <objc/objc-runtime.h>
-#else
+//#if TARGET_IPHONE_SIMULATOR
+//#import <objc/objc-runtime.h>
+//#else
 #import <objc/runtime.h>
 #import <objc/message.h>
-#endif
+//#endif
 
 @interface NSObject (SSNDBFetch)
 @end

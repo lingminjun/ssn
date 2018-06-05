@@ -7,12 +7,12 @@
 //
 
 #import "SSNPanel.h"
-#if TARGET_IPHONE_SIMULATOR
-#import <objc/objc-runtime.h>
-#else
+//#if TARGET_IPHONE_SIMULATOR
+//#import <objc/objc-runtime.h>
+//#else
 #import <objc/runtime.h>
 #import <objc/message.h>
-#endif
+//#endif
 
 #define ssn_uilayout_value_synthesize(type,get,set) _ssn_uilayout_value_synthesize_(type,get,set)
 

@@ -7,12 +7,12 @@
 //
 
 #import "UIView+SSNUIKit.h"
-#if TARGET_IPHONE_SIMULATOR
-#import <objc/objc-runtime.h>
-#else
+//#if TARGET_IPHONE_SIMULATOR
+//#import <objc/objc-runtime.h>
+//#else
 #import <objc/runtime.h>
 #import <objc/message.h>
-#endif
+//#endif
 
 NSString *const SSNUIThemeChangedNotification = @"SSNUIThemeChangedNotification";//主题变化通知
 NSString *const SSNUIThemeUserInfoKey         = @"SSNUIThemeUserInfoKey";//NSDictionary主题包

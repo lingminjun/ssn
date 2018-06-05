@@ -7,12 +7,12 @@
 //
 
 #import "UIView+SSNLayoutConstraint.h"
-#if TARGET_IPHONE_SIMULATOR
-#import <objc/objc-runtime.h>
-#else
+//#if TARGET_IPHONE_SIMULATOR
+//#import <objc/objc-runtime.h>
+//#else
 #import <objc/runtime.h>
 #import <objc/message.h>
-#endif
+//#endif
 
 NSString *const SSN_REFER_EXCEPTION_NAME = @"SSNReferException";
 #define SSN_THROW_E(msg) @throw [[NSException alloc] initWithName:SSN_REFER_EXCEPTION_NAME reason:(msg) userInfo:nil]

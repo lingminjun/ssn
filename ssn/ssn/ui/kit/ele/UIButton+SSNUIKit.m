@@ -8,12 +8,12 @@
 
 #import "UIButton+SSNUIKit.h"
 #import "UIView+SSNUIKit.h"
-#if TARGET_IPHONE_SIMULATOR
-#import <objc/objc-runtime.h>
-#else
+//#if TARGET_IPHONE_SIMULATOR
+//#import <objc/objc-runtime.h>
+//#else
 #import <objc/runtime.h>
 #import <objc/message.h>
-#endif
+//#endif
 #import "NSString+SSNUIKit.h"
 #import "UIImage+SSNUIColor.h"
 
