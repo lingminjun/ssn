@@ -352,6 +352,7 @@
         [fromDic setValue:col forKey:col.name];
     }
 
+    //判断没有任何迁移动作
     if ([fromCols count] == [toCols count])
     {
 
@@ -359,7 +360,7 @@
         for (SSNDBColumn *col in fromCols)
         {
             SSNDBColumn *tcol = [toDic objectForKey:col.name];
-            if ([tcol isEqualToColumnInfo:col ignoreMapping:YES])
+            if (![tcol isEqualToColumnInfo:col ignoreMapping:YES])
             {
                 colNotChange = NO;
                 break;
